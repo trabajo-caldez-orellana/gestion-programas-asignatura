@@ -1,5 +1,7 @@
 from django.db import models
 
+from .asignatura import Asignatura
+
 
 class PlanDeEstudio(models.Model):
     fecha_inicio = models.DateField()
@@ -10,6 +12,9 @@ class PlanDeEstudio(models.Model):
     # Foreign key
     carrera = models.ForeignKey("Carrera", on_delete=models.CASCADE)
 
+    # Many to Many
+    asignaturas = models.ManyToManyField(Asignatura)
+
     class Meta:
         constraints = [
             models.CheckConstraint(
@@ -18,3 +23,6 @@ class PlanDeEstudio(models.Model):
                 violation_error_message="Fecha fin mayor o igual a fecha inicio.",  # Hacer archivo de constantes para mensajes de error
             )
         ]
+
+    def __str__(self):
+        return self.nombre
