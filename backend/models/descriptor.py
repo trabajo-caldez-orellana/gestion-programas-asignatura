@@ -5,7 +5,7 @@ from backend.common.choices import TipoDescriptor
 
 
 class Descriptor(models.Model):
-    estandar = models.ForeignKey(Estandar, on_delete=models.CASCADE)
+    estandar = models.ForeignKey(Estandar, on_delete=models.PROTECT)
     descripcion = models.CharField(max_length=255)
     tipo = models.CharField(choices=TipoDescriptor.choices, max_length=1)
 

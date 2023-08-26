@@ -3,6 +3,7 @@ from django.db import models
 from backend.common.choices import EstadoAsignatura
 from .asignatura import Asignatura
 from .semestre import Semestre
+from .resultado_de_aprendizaje import ResultadoDeAprendizaje
 
 
 class VersionProgramaAsignatura(models.Model):
@@ -11,16 +12,17 @@ class VersionProgramaAsignatura(models.Model):
     estado = models.CharField(
         max_length=2, choices=EstadoAsignatura.choices, default=EstadoAsignatura.ABIERTO
     )
-    resultados_aprendizaje = models.JSONField()
-    semanas_dictado = models.IntegerField()
-    semanal_teoria_presencial = models.IntegerField(blank=True, null=True)
-    semanal_practica_presencial = models.IntegerField(blank=True, null=True)
-    semanal_teorico_practico_presencial = models.IntegerField(blank=True, null=True)
-    semanal_lab_presencial = models.IntegerField(blank=True, null=True)
-    semanal_teoria_remoto = models.IntegerField(blank=True, null=True)
-    semanal_practica_remoto = models.IntegerField(blank=True, null=True)
-    semanal_teorico_practico_remoto = models.IntegerField(blank=True, null=True)
-    semanal_lab_remoto = models.IntegerField(blank=True, null=True)
+    semanas_dictado = models.PositiveIntegerField()
+    semanal_teoria_presencial = models.PositiveIntegerField(blank=True, null=True)
+    semanal_practica_presencial = models.PositiveIntegerField(blank=True, null=True)
+    semanal_teorico_practico_presencial = models.PositiveIntegerField(
+        blank=True, null=True
+    )
+    semanal_lab_presencial = models.PositiveIntegerField(blank=True, null=True)
+    semanal_teoria_remoto = models.PositiveIntegerField(blank=True, null=True)
+    semanal_practica_remoto = models.PositiveIntegerField(blank=True, null=True)
+    semanal_teorico_practico_remoto = models.PositiveIntegerField(blank=True, null=True)
+    semanal_lab_remoto = models.PositiveIntegerField(blank=True, null=True)
     contenidos = models.TextField()
     bibliografia = models.TextField()
     metodologia = models.TextField()
@@ -31,3 +33,5 @@ class VersionProgramaAsignatura(models.Model):
     extension_docentes = models.TextField()
     extension_estudiantes = models.TextField()
     cronograma = models.TextField()
+
+    resultados_de_aprendizaje = models.ManyToManyField(ResultadoDeAprendizaje)
