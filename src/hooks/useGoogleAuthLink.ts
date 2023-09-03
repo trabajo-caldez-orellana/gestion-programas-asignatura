@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getGoogleAuthLink } from "api";
+import { getGoogleAuthLink } from "../api";
 
 const useGoogleAuthLink = () =>
   useQuery({

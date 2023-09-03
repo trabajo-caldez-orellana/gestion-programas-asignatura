@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProfile } from "api";
+
+// TODO. Configurar ts para no usar import relativos y usar imports absolutos
+import { getProfile } from "../api";
 
 const useProfile = () =>
   useQuery({

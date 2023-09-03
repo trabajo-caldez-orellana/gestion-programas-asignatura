@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { getGoogleAuthToken, OAuthCredential, TOKEN_KEY } from "api";
+import { getGoogleAuthToken, OAuthCredential, TOKEN_KEY } from "../api";
 
 const useGoogleAuthToken = () =>
   useMutation({

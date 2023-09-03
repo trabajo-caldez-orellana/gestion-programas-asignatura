@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 
-import useProfile from "hooks/useProfile";
-import useGoogleAuthLink from "hooks/useGoogleAuthLink";
-import useGoogleAuthToken from "hooks/useGoogleAuthToken";
+import useProfile from "./hooks/useProfile";
+import useGoogleAuthLink from "./hooks/useGoogleAuthLink";
+import useGoogleAuthToken from "./hooks/useGoogleAuthToken";
 
 function App() {
   // TODO. Crear un contenedor para poder wrap la app con todo esto en vez de que quede todo aca y sucio
