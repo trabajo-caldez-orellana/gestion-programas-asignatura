@@ -27,6 +27,7 @@ client.interceptors.request.use((config) => {
   // TODO: Conviene localstorage o usar cookies?
   const token = localStorage.getItem(TOKEN_KEY);
   if (token) {
+    console.log("I have a token!", token);
     config.headers["Authorization"] = `Token ${token}`;
   }
 

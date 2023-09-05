@@ -23,6 +23,7 @@ function App() {
     const state = searchParams.get("state");
 
     if (code && state) {
+      console.log(code, state);
       mutate({ code, state });
     }
   }, [mutate]);

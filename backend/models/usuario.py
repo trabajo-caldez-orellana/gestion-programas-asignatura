@@ -32,7 +32,7 @@ class UserManager(BaseUserManager):
         if kwargs.get("is_active") is not True:
             raise ValidationError({"is_active": MENSAJE_SUPERUSUARIO_ACTIVO})
         if kwargs.get("is_staff") is not True:
-            raise ValidationError({"is_staff": MENSAJE_SUPERUSUARIO_ACTIVO})
+            raise ValidationError({"is_staff": MENSAJE_SUPERUSUARIO_STAFF})
         if kwargs.get("is_superuser") is not True:
             raise ValidationError({"is_superuser": MENSAJE_SUPERUSUARIO})
         return self.create_user(email, password, **kwargs)
