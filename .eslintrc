@@ -1,0 +1,129 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+   ],
+    "react/jsx-props-no-spreading": "off",
+    "jsx-a11y/img-redundant-alt": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "no-unused-vars": "warn",
+    "no-nested-ternary": "off",
+    "react/require-default-props": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "no-console": "warn",
+    "sort-imports": 0,
+    "jsx-no-lambda": 0,
+    "member-ordering": 0,
+    "object-literal-sort": 0,
+    "padding-line-between-statements": [
+      "error",
+      /**
+       * Add spacing before and after any multiline blocks
+       */
+      { "blankLine": "always", "prev": "multiline-block-like", "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": "multiline-block-like" },
+      /**
+       * Add spacing before and after any multiline const declarations
+       */
+      { "blankLine": "always", "prev": "multiline-const", "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": "multiline-const" },
+      /**
+       * Add spacing before and after any multiline let declarations
+       */
+      { "blankLine": "always", "prev": "multiline-let", "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": "multiline-let" },
+      /**
+       * Add spacing before and after any multiline var declarations
+       */
+      { "blankLine": "always", "prev": "multiline-var", "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": "multiline-var" },
+      /**
+       * Add spacing before and after any multiline expressions
+       */
+      { "blankLine": "always", "prev": "multiline-expression", "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": "multiline-expression" },
+      /**
+       * Add spacing before all return
+       */
+      {
+        "blankLine": "always",
+        "prev": ["const", "let", "var"],
+        "next": "return"
+      }
+    ],
+    "react/prop-types": "warn",
+    "react/no-unescaped-entities": "warn",
+    "no-extra-boolean-cast": 0,
+    "no-case-declarations": 0,
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": ["arrow-function", "function-declaration"],
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "import/no-extraneous-dependencies": 0,
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "enum",
+        "format": ["UPPER_CASE"]
+      }
+    ]
+  },
+  "plugins": ["prettier", "react", "import", "jsx-a11y", "react-hooks"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "JSX":"readonly",
+    "NodeJS": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "paths": ["./src"],
+        "moduleDirectory": ["./src", "node_modules"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
+}
