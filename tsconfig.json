@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    "target": "ES5",
+    "target": "ES2016",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "allowJs": false, // Ver si cambio a true despues
     "skipLibCheck": true,
