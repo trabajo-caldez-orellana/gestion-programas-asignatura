@@ -13,3 +13,4 @@ from .carga_bloque import CargaBloque
 from .usuario import Usuario
 from .rol import Rol
 from .auditoria_estado_version_programa import AuditoriaEstadoVersionPrograma
+from .notificacion import Notificacion
