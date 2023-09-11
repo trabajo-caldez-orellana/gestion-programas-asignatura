@@ -3,7 +3,6 @@ from django.db import models
 from backend.common.choices import EstadoAsignatura
 from .asignatura import Asignatura
 from .semestre import Semestre
-from .resultado_de_aprendizaje import ResultadoDeAprendizaje
 
 
 class VersionProgramaAsignatura(models.Model):
@@ -34,4 +33,7 @@ class VersionProgramaAsignatura(models.Model):
     extension_estudiantes = models.TextField()
     cronograma = models.TextField()
 
-    resultados_de_aprendizaje = models.ManyToManyField(ResultadoDeAprendizaje)
+    resultados_de_aprendizaje = models.JSONField()
+
+    class Meta:
+        verbose_name_plural = "Versiones de Programa de Asignatura"

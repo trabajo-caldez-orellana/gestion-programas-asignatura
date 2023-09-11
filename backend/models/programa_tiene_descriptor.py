@@ -11,3 +11,6 @@ class ProgramaTieneDescriptor(models.Model):
         VersionProgramaAsignatura, on_delete=models.CASCADE
     )
     nivel = models.IntegerField(choices=NivelDescriptor.choices)
+
+    class Meta:
+        verbose_name_plural = "Descriptores para Programas"

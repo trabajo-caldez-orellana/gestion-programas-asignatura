@@ -11,3 +11,6 @@ class Descriptor(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.tipo, self.descripcion)
+
+    class Meta:
+        verbose_name_plural = "Descriptores"

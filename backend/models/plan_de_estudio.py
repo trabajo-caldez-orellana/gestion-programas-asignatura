@@ -14,6 +14,7 @@ class PlanDeEstudio(models.Model):
     asignaturas = models.ManyToManyField(Asignatura)
 
     class Meta:
+        verbose_name_plural = "Planes de Estudio"
         constraints = [
             models.CheckConstraint(
                 name="backend_plan_de_estudio_fecha_fin_posterior_a_fecha_inicio",

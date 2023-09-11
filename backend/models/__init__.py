@@ -10,5 +10,6 @@ from .version_programa_asignatura import VersionProgramaAsignatura
 from .programa_tiene_descriptor import ProgramaTieneDescriptor
 from .correlativa import Correlativa
 from .carga_bloque import CargaBloque
-from .resultado_de_aprendizaje import ResultadoDeAprendizaje
 from .usuario import Usuario
+from .rol import Rol
+from .auditoria_estado_version_programa import AuditoriaEstadoVersionPrograma

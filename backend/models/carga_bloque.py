@@ -10,3 +10,6 @@ class CargaBloque(models.Model):
         VersionProgramaAsignatura, on_delete=models.PROTECT
     )
     bloque_curricular = models.ForeignKey(BloqueCurricular, on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name_plural = "Carga Bloques"

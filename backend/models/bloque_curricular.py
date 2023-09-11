@@ -9,3 +9,6 @@ class BloqueCurricular(models.Model):
 
     def __str__(self):
         return "{}".format(self.nombre)
+
+    class Meta:
+        verbose_name_plural = "Bloques Curriculares"

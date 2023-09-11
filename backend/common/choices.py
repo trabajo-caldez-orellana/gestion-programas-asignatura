@@ -34,3 +34,16 @@ class TipoCorrelativa(TextChoices):
 # TODO: preguntar que tipo de notificaciones habria que mandar
 class TipoNotificacion(TextChoices):
     VERSION_PENDIENTE = "VP", "Version pendiente para correccion"
+
+
+class Roles(TextChoices):
+    DIRECTOR_CARRERA = "DC", "Director de Carrera"
+    TITULAR_CATEDRA = (
+        "TC",
+        "Titular de Catedra",
+    )
+    SECRETARIO = (
+        "SA",
+        "Secretario Academico",
+    )
+    DOCENTE = "D", "Docente"
