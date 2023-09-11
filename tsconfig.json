@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    "target": "ES2016",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "target": "ES5",
     "allowJs": false, // Ver si cambio a true despues
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-
-    "useDefineForClassFields": true,
 
     /* Bundler mode */
     "moduleResolution": "Node",
