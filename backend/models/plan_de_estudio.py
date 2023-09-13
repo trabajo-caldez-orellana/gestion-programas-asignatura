@@ -1,7 +1,16 @@
+from typing import Any
 from django.db import models
 
 from .asignatura import Asignatura
 from backend.common.mensajes_de_error import MENSAJE_FECHAS_INCORRECTAS
+
+
+class MangerPlanDeEstudio(models.Manager):
+    def create(self, **kwargs: Any) -> Any:
+        """
+        Crea un nuevo Plan de Estudio. Verificar que no haya ninguno vigente al momento de crearlo.
+        """
+        return super().create(**kwargs)
 
 
 class PlanDeEstudio(models.Model):
