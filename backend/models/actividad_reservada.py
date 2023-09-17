@@ -8,7 +8,7 @@ class ActividadReservada(models.Model):
     descripcion = models.CharField(max_length=255)
 
     def __str__(self):
-        return "{} - {}".format(self.tipo, self.descripcion)
+        return self.descripcion
 
     class Meta:
         verbose_name_plural = "Actividades Reservadas"

@@ -17,4 +17,4 @@ class Semestre(models.Model):
         ]
 
     def __str__(self):
-        return "{} - {}".format(self.fecha_inicio, self.fecha_fin)
+        return "Semestre {} - {}".format(self.fecha_inicio, self.fecha_fin)

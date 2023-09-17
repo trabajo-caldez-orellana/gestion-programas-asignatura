@@ -1,5 +1,6 @@
 from typing import Any
 from django.db import models
+from django.utils import timezone
 
 from .asignatura import Asignatura
 from backend.common.mensajes_de_error import MENSAJE_FECHAS_INCORRECTAS
@@ -15,12 +16,19 @@ class MangerPlanDeEstudio(models.Manager):
 
 class PlanDeEstudio(models.Model):
     fecha_inicio = models.DateField()
-    fecha_fin = models.DateField()
+    fecha_fin = models.DateField(blank=True, null=True)
     version = models.TextField()
     nombre = models.TextField()
 
     carrera = models.ForeignKey("Carrera", on_delete=models.PROTECT)
     asignaturas = models.ManyToManyField(Asignatura)
+
+    @property
+    def esta_activo(self):
+        return (
+            self.fecha_fin is not None
+            or self.fecha_fin >= timezone.now().astimezone().date()
+        )
 
     class Meta:
         verbose_name_plural = "Planes de Estudio"
