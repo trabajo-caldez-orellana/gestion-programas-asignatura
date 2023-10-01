@@ -1,34 +1,48 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useState } from 'react'
+import './App.css'
+import Navbar from './components/Navbar/Navbar'
+import { Routes, Route } from 'react-router-dom'
+import ProgramasAsignaturas from './pages/ProgramasAsignaturas'
+import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
 
 function App() {
-  const [count, setCount] = useState(0);
+  // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Navbar
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
+      <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
+        <Routes>
+          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/semestres" element={<h1>Semestres</h1>} />
+          <Route path="/parametros" element={<h1>Parametros</h1>} />
+          <Route path="/estandar" element={<h1>Estandares</h1>} />
+          <Route path="/usuarios" element={<h1>Usuarios</h1>} />
+          <Route path="/carrera" element={<h1>Carrera</h1>} />
+          <Route path="/plan-estudio" element={<h1>Plan de Estudio</h1>} />
+          <Route path="/descriptores" element={<h1>Descriptores</h1>} />
+          <Route
+            path="/bloque-curricular"
+            element={<h1>Bloque curricular</h1>}
+          />
+          <Route
+            path="/programa-asignaturas"
+            element={<ProgramasAsignaturas />}
+          />
+          <Route
+            path="/programa-asignaturas/:id"
+            element={<ProgramaAsignatura />}
+          />
+          <Route path="/auditoria" element={<h1>Auditoria</h1>} />
+          <Route path="*" element={<h1>Not found</h1>} />
+        </Routes>
+      </main>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

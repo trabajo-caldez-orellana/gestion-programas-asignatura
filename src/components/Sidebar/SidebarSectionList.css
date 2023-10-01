@@ -1,0 +1,28 @@
+.section-header {
+  background-color: rgb(255, 107, 107);
+}
+
+.section-header h2 {
+  color: white;
+  padding: 0.25rem 0rem;
+  padding-left: 0.5rem;
+}
+
+ul.sidebar-section-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-section-items li {
+  width: 100%;
+  list-style: none;
+  background-color: rgb(255, 122, 122);
+  padding: 1rem 0rem;
+  padding-left: 0.5rem;
+  color: white;
+}
+
+.sidebar-section-items li a {
+  color: inherit;
+  text-decoration: none;
+}
