@@ -24,7 +24,9 @@ class VersionProgramaAsignatura(models.Model):
     semanal_lab_remoto = models.PositiveIntegerField(blank=True, null=True)
     contenidos = models.TextField()
     bibliografia = models.TextField()
-    metodologia = models.TextField()
+    metodologia = (
+        models.TextField()
+    )  # TODO. es necesario? Porque la asignatura ya tiene metodologia
     recursos = models.TextField()
     evaluacion = models.TextField()
     investigacion_docentes = models.TextField()
@@ -37,3 +39,6 @@ class VersionProgramaAsignatura(models.Model):
 
     class Meta:
         verbose_name_plural = "Versiones de Programa de Asignatura"
+
+    def str(self):
+        return self.asignatura + "-" + self.semestre

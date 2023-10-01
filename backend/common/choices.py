@@ -3,7 +3,6 @@ from django.db.models import TextChoices, IntegerChoices
 
 class TipoDescriptor(TextChoices):
     EJE_TRANSVERSAL = ("E", "Eje Transversal")
-    ACT_RESERVADA = ("A", "Actividad Reservada")
     DESCRIPTOR = "D", "Descriptor"
 
 

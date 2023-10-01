@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 from django.db import models
 from django.core.validators import MinLengthValidator
@@ -19,7 +20,7 @@ class Asignatura(models.Model):
     bloque_curricular = models.ForeignKey(BloqueCurricular, on_delete=models.PROTECT)
 
     def clean(self):
-        if re.match(CODIGO_ASIGANTURA_REGEXP, self.codigo):
+        if not re.match(CODIGO_ASIGANTURA_REGEXP, self.codigo):
             raise ValidationError({"codigo": CODIGO_ASIGNATURA_INCORRECTO})
 
     def __str__(self):
