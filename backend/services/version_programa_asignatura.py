@@ -284,7 +284,7 @@ class ServicioVersionProgramaAsignatura:
 
     def reutilizar_ultimo_plan(self, asignatura: Asignatura):
         """
-        Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos y presenta para aprobacion.
+        Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
         """
 
         if not self.__es_posible_crear_nueva_version_de_programa():
@@ -401,5 +401,4 @@ class ServicioVersionProgramaAsignatura:
                 horas=carga_bloque_programa.horas,
             )
 
-        self.presentar_programa_para_aprobacion(nuevo_programa)
         return nuevo_programa
