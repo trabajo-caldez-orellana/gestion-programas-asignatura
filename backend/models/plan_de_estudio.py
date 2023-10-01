@@ -6,7 +6,7 @@ from .asignatura import Asignatura
 from backend.common.mensajes_de_error import MENSAJE_FECHAS_INCORRECTAS
 
 
-class MangerPlanDeEstudio(models.Manager):
+class ManagerPlanDeEstudio(models.Manager):
     def create(self, **kwargs: Any) -> Any:
         """
         Crea un nuevo Plan de Estudio. Verificar que no haya ninguno vigente al momento de crearlo.
@@ -39,6 +39,8 @@ class PlanDeEstudio(models.Model):
                 violation_error_message=MENSAJE_FECHAS_INCORRECTAS,
             )
         ]
+
+    objects = ManagerPlanDeEstudio()
 
     def __str__(self):
         return self.nombre
