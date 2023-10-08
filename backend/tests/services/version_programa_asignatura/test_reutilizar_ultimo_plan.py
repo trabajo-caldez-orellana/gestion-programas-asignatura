@@ -3,9 +3,10 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from backend.services import ServicioVersionProgramaAsignatura
+from backend.services import ServicioVersionProgramaAsignatura, ServicioSemestre
 from backend.tests.utils import (
     set_up_tests,
+    crear_programa_de_asignatura,
     CODIGO_ASIGNATURA_1,
     CODIGO_ASIGNATURA_2,
     CARRERA_1,
@@ -39,6 +40,7 @@ from backend.common.mensajes_de_error import (
     MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
     MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA,
+    MENSAJE_SOLO_UN_PROGRAMA_POR_SEMESTRE,
 )
 from backend.common.choices import EstadoAsignatura, NivelDescriptor, TipoDescriptor
 from backend.common.constantes import (
@@ -49,6 +51,7 @@ from backend.common.constantes import (
 
 class TestReutilizarUltimoPlan(TestCase):
     servicio_version_programa_asignatura = ServicioVersionProgramaAsignatura()
+    servicio_semestre = ServicioSemestre()
 
     def setUp(self):
         set_up_tests()
@@ -1042,4 +1045,119 @@ class TestReutilizarUltimoPlan(TestCase):
             )
 
     def test_reutiliza_programa_correctamente(self):
-        pass
+        version_anterior = self.__crear_version_anterior_con_datos_default()
+
+        estandar_carrera = Estandar.objects.get(carrera=self.carrera)
+        # Agrego actividades reservadas
+        actividades_reservadas_carrera = ActividadReservada.objects.filter(
+            estandar=estandar_carrera
+        )
+
+        ProgramaTieneActividadReservada.objects.create(
+            version_programa_asignatura=version_anterior,
+            actividad_reservada=actividades_reservadas_carrera.first(),
+            nivel=NivelDescriptor.BAJO,
+        )
+
+        descriptores_carrera = estandar_carrera.descriptores.all()
+        # Agrego ejes transversales
+        ejes_transversales = descriptores_carrera.filter(
+            tipo=TipoDescriptor.EJE_TRANSVERSAL
+        )
+        for eje in ejes_transversales:
+            ProgramaTieneDescriptor.objects.create(
+                descriptor=eje,
+                version_programa_asignatura=version_anterior,
+                nivel=NivelDescriptor.BAJO,
+            )
+
+        # Agrego descriptores
+        descriptores = descriptores_carrera.filter(tipo=TipoDescriptor.DESCRIPTOR)
+        for descriptor in descriptores:
+            ProgramaTieneDescriptor.objects.create(
+                descriptor=descriptor,
+                version_programa_asignatura=version_anterior,
+                nivel=NivelDescriptor.BAJO,
+            )
+
+        # Agrego carga horaria al bloque
+        carga_bloque = CargaBloque.objects.create(
+            horas=20,
+            version_programa_asignatura=version_anterior,
+            bloque_curricular=self.asignatura.bloque_curricular,
+        )
+
+        try:
+            version_nueva = (
+                self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                    self.asignatura
+                )
+            )
+            self.assertIsNotNone(
+                version_nueva, MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE
+            )
+
+        except ValidationError as e:
+            self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
+
+    def test_ya_hay_programa_creado_para_el_semestre(self):
+        semestre_actual = self.servicio_semestre.obtener_semestre_actual()
+        crear_programa_de_asignatura(
+            asignatura=self.asignatura, semestre=semestre_actual, carrera=self.carrera
+        )
+
+        version_anterior = self.__crear_version_anterior_con_datos_default()
+        estandar_carrera = Estandar.objects.get(carrera=self.carrera)
+        # Agrego actividades reservadas
+        actividades_reservadas_carrera = ActividadReservada.objects.filter(
+            estandar=estandar_carrera
+        )
+
+        ProgramaTieneActividadReservada.objects.create(
+            version_programa_asignatura=version_anterior,
+            actividad_reservada=actividades_reservadas_carrera.first(),
+            nivel=NivelDescriptor.BAJO,
+        )
+
+        descriptores_carrera = estandar_carrera.descriptores.all()
+        # Agrego ejes transversales
+        ejes_transversales = descriptores_carrera.filter(
+            tipo=TipoDescriptor.EJE_TRANSVERSAL
+        )
+        for eje in ejes_transversales:
+            ProgramaTieneDescriptor.objects.create(
+                descriptor=eje,
+                version_programa_asignatura=version_anterior,
+                nivel=NivelDescriptor.BAJO,
+            )
+
+        # Agrego descriptores
+        descriptores = descriptores_carrera.filter(tipo=TipoDescriptor.DESCRIPTOR)
+        for descriptor in descriptores:
+            ProgramaTieneDescriptor.objects.create(
+                descriptor=descriptor,
+                version_programa_asignatura=version_anterior,
+                nivel=NivelDescriptor.BAJO,
+            )
+
+        # Agrego carga horaria al bloque
+        carga_bloque = CargaBloque.objects.create(
+            horas=20,
+            version_programa_asignatura=version_anterior,
+            bloque_curricular=self.asignatura.bloque_curricular,
+        )
+
+        try:
+            version_nueva = (
+                self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                    self.asignatura
+                )
+            )
+            self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
+
+        except ValidationError as e:
+            self.assertIn("__all__", e.message_dict)
+            self.assertIn(
+                MENSAJE_SOLO_UN_PROGRAMA_POR_SEMESTRE,
+                e.message_dict.get("__all__"),
+            )

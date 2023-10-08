@@ -11,11 +11,16 @@ from backend.models import (
     ActividadReservada,
     Descriptor,
     Semestre,
+    VersionProgramaAsignatura,
+    ProgramaTieneActividadReservada,
+    ProgramaTieneDescriptor,
+    CargaBloque,
 )
 from backend.common.choices import (
     MetodologiaAsignatura,
     TipoDescriptor,
     EstadoAsignatura,
+    NivelDescriptor,
 )
 from backend.common.constantes import MINIMO_RESULTADOS_DE_APRENDIZAJE
 
@@ -164,6 +169,57 @@ def set_up_tests():
     semestre = Semestre.objects.create(
         fecha_inicio=fecha_inicio, fecha_fin=fecha_fin_semestre
     )
+
+
+def crear_programa_de_asignatura(
+    asignatura: Asignatura, semestre: Semestre, carrera: Carrera
+):
+    datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+    datos_version_anterior["semestre"] = semestre
+    datos_version_anterior["asignatura"] = asignatura
+
+    programa = VersionProgramaAsignatura.objects.create(**datos_version_anterior)
+    estandar_carrera = Estandar.objects.get(carrera=carrera)
+
+    # Agrego actividades reservadas
+    actividades_reservadas_carrera = ActividadReservada.objects.filter(
+        estandar=estandar_carrera
+    )
+    ProgramaTieneActividadReservada.objects.create(
+        version_programa_asignatura=programa,
+        actividad_reservada=actividades_reservadas_carrera.first(),
+        nivel=NivelDescriptor.BAJO,
+    )
+
+    descriptores_carrera = estandar_carrera.descriptores.all()
+    # Agrego ejes transversales
+    ejes_transversales = descriptores_carrera.filter(
+        tipo=TipoDescriptor.EJE_TRANSVERSAL
+    )
+    for eje in ejes_transversales:
+        ProgramaTieneDescriptor.objects.create(
+            descriptor=eje,
+            version_programa_asignatura=programa,
+            nivel=NivelDescriptor.BAJO,
+        )
+
+    # Agrego descriptores
+    descriptores = descriptores_carrera.filter(tipo=TipoDescriptor.DESCRIPTOR)
+    for descriptor in descriptores:
+        ProgramaTieneDescriptor.objects.create(
+            descriptor=descriptor,
+            version_programa_asignatura=programa,
+            nivel=NivelDescriptor.BAJO,
+        )
+
+    # Agrego carga horaria al bloque
+    carga_bloque = CargaBloque.objects.create(
+        horas=20,
+        version_programa_asignatura=programa,
+        bloque_curricular=asignatura.bloque_curricular,
+    )
+
+    return programa
 
 
 # VALORES DEFAULT
