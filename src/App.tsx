@@ -1,13 +1,53 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
 import ProgramasAsignaturas from './pages/ProgramasAsignaturas'
 import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
+import useProfile from './hooks/useProfile'
+import useGoogleAuthLink from './hooks/useGoogleAuthLink'
+import useGoogleAuthToken from './hooks/useGoogleAuthToken'
 
-function App() {
+export default function App() {
   // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const { data: profile, refetch: fetchProfile } = useProfile()
+  const { data: googleAuth, refetch: fetchGoogleAuth } = useGoogleAuthLink()
+  const { mutate, isSuccess } = useGoogleAuthToken()
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search)
+
+    const code = searchParams.get('code')
+    const state = searchParams.get('state')
+
+    if (code && state) {
+      console.log(code, state)
+      mutate({ code, state })
+    }
+  }, [mutate])
+
+  useEffect(() => {
+    if (isSuccess) {
+      fetchProfile()
+    }
+  }, [isSuccess, fetchProfile])
+
+  useEffect(() => {
+    if (googleAuth) {
+      window.location.replace(googleAuth.authorizationUrl)
+    }
+  }, [googleAuth])
+
+  useEffect(() => {
+    if (googleAuth) {
+      window.location.replace(googleAuth.authorizationUrl)
+    }
+  }, [googleAuth])
+
+  const handleGoogleLogin = () => {
+    fetchGoogleAuth()
+  }
 
   return (
     <>
@@ -17,7 +57,20 @@ function App() {
       />
       <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
         <Routes>
-          <Route path="/" element={<h1>Home</h1>} />
+          <Route
+            path="/"
+            element={
+              <div className="App">
+                {profile ? (
+                  <h1>Bienvenido {profile.firstName}! :D</h1>
+                ) : (
+                  <button onClick={handleGoogleLogin}>
+                    Iniciar sesion con Google
+                  </button>
+                )}
+              </div>
+            }
+          />
           <Route path="/semestres" element={<h1>Semestres</h1>} />
           <Route path="/parametros" element={<h1>Parametros</h1>} />
           <Route path="/estandar" element={<h1>Estandares</h1>} />
@@ -45,4 +98,4 @@ function App() {
   )
 }
 
-export default App
+

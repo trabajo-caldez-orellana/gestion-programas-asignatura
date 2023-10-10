@@ -1,9 +1,8 @@
-from django.db.models import TextChoices, IntegerField
+from django.db.models import TextChoices, IntegerChoices
 
 
 class TipoDescriptor(TextChoices):
     EJE_TRANSVERSAL = ("E", "Eje Transversal")
-    ACT_RESERVADA = ("A", "Actividad Reservada")
     DESCRIPTOR = "D", "Descriptor"
 
 
@@ -19,7 +18,7 @@ class EstadoAsignatura(TextChoices):
     APROBADO = "AP", "Aprobado"
 
 
-class NivelDescriptor(IntegerField):
+class NivelDescriptor(IntegerChoices):
     NADA = 0, "Nada"
     BAJO = 1, "Bajo / Si"
     MEDIO = 2, "Medio"
@@ -29,3 +28,21 @@ class NivelDescriptor(IntegerField):
 class TipoCorrelativa(TextChoices):
     REGULAR = "R", "Regular"
     APROBADO = "A", "Aprobado"
+
+
+# TODO: preguntar que tipo de notificaciones habria que mandar
+class TipoNotificacion(TextChoices):
+    VERSION_PENDIENTE = "VP", "Version pendiente para correccion"
+
+
+class Roles(TextChoices):
+    DIRECTOR_CARRERA = "DC", "Director de Carrera"
+    TITULAR_CATEDRA = (
+        "TC",
+        "Titular de Catedra",
+    )
+    SECRETARIO = (
+        "SA",
+        "Secretario Academico",
+    )
+    DOCENTE = "D", "Docente"
