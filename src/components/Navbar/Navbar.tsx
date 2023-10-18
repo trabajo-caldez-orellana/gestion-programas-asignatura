@@ -1,17 +1,25 @@
 import './Navbar.css'
 import Sidebar from '../Sidebar/Sidebar'
 import Button from '../ui/Button'
+import { Profile } from '../../api/types.ts'
 
 interface NavbarProps {
   isSidebarOpen: boolean
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
+  isLogged: Profile | undefined
+  handleLogin: () => void
+  handleLogout: () => void
 }
 
-
-export default function Navbar({ isSidebarOpen, setIsSidebarOpen }: NavbarProps) {
-
+export default function Navbar({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  isLogged,
+  handleLogin,
+  handleLogout
+}: NavbarProps) {
   const handleOpenSidebar = () => {
-    setIsSidebarOpen((prevState) => !prevState);
+    setIsSidebarOpen((prevState) => !prevState)
   }
 
   return (
@@ -33,12 +41,20 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }: NavbarProps)
           <li>
             <Button text="Nuevo usuario" />
           </li>
-          <li>
-            <Button text="Iniciar Sesion" />
-          </li>
+          {isLogged ? (
+            <li>
+              <Button text="Cerrar Sesion" onClick={handleLogout} />
+            </li>
+          ) : (
+            <li>
+              <Button text="Iniciar Sesion" onClick={handleLogin} />
+            </li>
+          )}
         </ul>
         <div className="sidebar">
-          < Sidebar userinfo={{name: 'Gonzalo Orellana', email: 'ore@gmail.com'}}/>
+          <Sidebar
+            userinfo={{ name: 'Gonzalo Orellana', email: 'ore@gmail.com' }}
+          />
         </div>
       </nav>
     </>

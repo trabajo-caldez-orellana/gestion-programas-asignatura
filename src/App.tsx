@@ -7,6 +7,7 @@ import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/Programa
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
+// import { getProfile } from './api'
 
 export default function App() {
   // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
@@ -15,6 +16,30 @@ export default function App() {
   const { data: googleAuth, refetch: fetchGoogleAuth } = useGoogleAuthLink()
   const { mutate, isSuccess } = useGoogleAuthToken()
 
+
+  // const [isProfileFetched, setIsProfileFetched] = useState(false);
+  // const [profile, setProfile] = useState<any>(null);
+  // useEffect(() => {
+  //   if (!isProfileFetched && googleAuth) {
+  //     // Llamar al endpoint solo si no se ha hecho antes
+  //     getProfile()
+  //       .then((data) => {
+  //         debugger;
+  //         setProfile(data);
+  //         setIsProfileFetched(true);
+  //       })
+  //       .catch((error) => {
+  //         // Manejar errores aquí
+  //         console.error('Error fetching profile:', error);
+  //       });
+  //   }
+  // }, [isProfileFetched, googleAuth]);
+
+
+  console.log(profile)
+  console.log(googleAuth)
+  console.log(isSuccess)
+
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search)
 
@@ -22,7 +47,6 @@ export default function App() {
     const state = searchParams.get('state')
 
     if (code && state) {
-      console.log(code, state)
       mutate({ code, state })
     }
   }, [mutate])
@@ -39,9 +63,19 @@ export default function App() {
     }
   }, [googleAuth])
 
+
+  // Handlers
   const handleGoogleLogin = () => {
     fetchGoogleAuth()
   }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remueve el token
+
+    // Redirecciona a la página principal
+    // TODO: Cambiar por la página de login
+    window.location.href = '/'; 
+  };
 
   // TODO: Poner en otro archivo y crear archivo de constantes
   // const routes = {
@@ -92,6 +126,9 @@ export default function App() {
       <Navbar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        isLogged={profile}
+        handleLogin={handleGoogleLogin}
+        handleLogout={handleLogout}
       />
       <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
         <Routes>
@@ -99,13 +136,7 @@ export default function App() {
             path="/"
             element={
               <div className="App">
-                {profile ? (
-                  <h1>Bienvenido {profile.firstName}! :D</h1>
-                ) : (
-                  <button onClick={handleGoogleLogin}>
-                    Iniciar sesion con Google
-                  </button>
-                )}
+                {profile ? <h1>Bienvenido {profile.firstName}! :D</h1> : <></>}
               </div>
             }
           />
