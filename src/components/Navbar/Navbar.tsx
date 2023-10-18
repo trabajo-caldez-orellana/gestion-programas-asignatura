@@ -6,7 +6,7 @@ import { Profile } from '../../api/types.ts'
 interface NavbarProps {
   isSidebarOpen: boolean
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
-  isLogged: Profile | undefined
+  profile: Profile | undefined
   handleLogin: () => void
   handleLogout: () => void
 }
@@ -14,7 +14,7 @@ interface NavbarProps {
 export default function Navbar({
   isSidebarOpen,
   setIsSidebarOpen,
-  isLogged,
+  profile,
   handleLogin,
   handleLogout
 }: NavbarProps) {
@@ -22,16 +22,22 @@ export default function Navbar({
     setIsSidebarOpen((prevState) => !prevState)
   }
 
+  // Si tenemos un profile es porque estamos logueados
+
   return (
     <>
       <nav className={`navbar wrapper ${isSidebarOpen ? '' : 'inactive'}`}>
         <div className="section">
           <div className="top_navbar">
-            <div className="hamburger">
-              <a href="#" onClick={handleOpenSidebar}>
-                <i className="fas fa-bars"></i>
-              </a>
-            </div>
+            {profile ? (
+              <div className="hamburger">
+                <a href="#" onClick={handleOpenSidebar}>
+                  <i className="fas fa-bars"></i>
+                </a>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <ul id="navbar-items">
@@ -41,7 +47,7 @@ export default function Navbar({
           <li>
             <Button text="Nuevo usuario" />
           </li>
-          {isLogged ? (
+          {profile ? (
             <li>
               <Button text="Cerrar Sesion" onClick={handleLogout} />
             </li>
@@ -52,9 +58,16 @@ export default function Navbar({
           )}
         </ul>
         <div className="sidebar">
-          <Sidebar
-            userinfo={{ name: 'Gonzalo Orellana', email: 'ore@gmail.com' }}
-          />
+          {profile ? (
+            <Sidebar
+              userinfo={{
+                name: `${profile.firstName} ${profile.lastName}`,
+                email: profile.email
+              }}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       </nav>
     </>

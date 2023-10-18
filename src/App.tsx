@@ -7,7 +7,6 @@ import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/Programa
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
-// import { getProfile } from './api'
 
 export default function App() {
   // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
@@ -15,30 +14,6 @@ export default function App() {
   const { data: profile, refetch: fetchProfile } = useProfile()
   const { data: googleAuth, refetch: fetchGoogleAuth } = useGoogleAuthLink()
   const { mutate, isSuccess } = useGoogleAuthToken()
-
-
-  // const [isProfileFetched, setIsProfileFetched] = useState(false);
-  // const [profile, setProfile] = useState<any>(null);
-  // useEffect(() => {
-  //   if (!isProfileFetched && googleAuth) {
-  //     // Llamar al endpoint solo si no se ha hecho antes
-  //     getProfile()
-  //       .then((data) => {
-  //         debugger;
-  //         setProfile(data);
-  //         setIsProfileFetched(true);
-  //       })
-  //       .catch((error) => {
-  //         // Manejar errores aquí
-  //         console.error('Error fetching profile:', error);
-  //       });
-  //   }
-  // }, [isProfileFetched, googleAuth]);
-
-
-  console.log(profile)
-  console.log(googleAuth)
-  console.log(isSuccess)
 
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search)
@@ -63,19 +38,19 @@ export default function App() {
     }
   }, [googleAuth])
 
-
   // Handlers
   const handleGoogleLogin = () => {
     fetchGoogleAuth()
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remueve el token
+    localStorage.removeItem('token') // Remueve el token
 
     // Redirecciona a la página principal
     // TODO: Cambiar por la página de login
-    window.location.href = '/'; 
-  };
+    // TODO: Implementar en el backend
+    window.location.href = '/'
+  }
 
   // TODO: Poner en otro archivo y crear archivo de constantes
   // const routes = {
@@ -126,7 +101,7 @@ export default function App() {
       <Navbar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
-        isLogged={profile}
+        profile={profile}
         handleLogin={handleGoogleLogin}
         handleLogout={handleLogout}
       />
