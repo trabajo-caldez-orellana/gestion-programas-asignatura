@@ -1,3 +1,5 @@
+/* Damos los estilos grid */
+
 .carga-horaria-form {
   display: grid;
   gap: 8px;
@@ -5,6 +7,12 @@
 }
 
 .informacion-adicional-form {
+  display: grid;
+  gap: 8px;
+  line-height: 1.3;
+}
+
+.seccion-descriptores-form {
   display: grid;
   gap: 8px;
   line-height: 1.3;
@@ -20,6 +28,22 @@
 }
 
 .carga-horaria-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 0 0 5px 5px;
+  font-size: 16px;
+}
+
+.seccion-descriptores-form label {
+  display: block;
+  background-color: #ff6b6b;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px 5px 0 0;
+}
+
+.seccion-descriptores-form input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -51,8 +75,17 @@
   width: 85%;
 }
 
+.modal-input {
+  display: flex;
+}
+
+
 @media screen and (min-width: 800px) {
   .carga-horaria-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .seccion-descriptores-form {
     grid-template-columns: 1fr 1fr;
   }
 }

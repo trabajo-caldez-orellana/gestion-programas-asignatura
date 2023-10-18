@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { camelCase } from 'lodash'
+import camelCase from 'lodash/camelCase'
 
 export default function CargaHoraria() {
   const [formValues, setFormValues] = useState({

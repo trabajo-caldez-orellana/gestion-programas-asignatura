@@ -9,7 +9,7 @@ interface ButtonProps {
 export default function Button({ text, onClick }: ButtonProps) {
   return (
     <>
-      <button onClick={onClick} className='button'>{text}</button>
+      <button type="button" onClick={onClick} className='button'>{text}</button>
     </>
   )
 }

@@ -48,7 +48,7 @@ export default function Table({
               <td>{item.version}</td>
               <td>{item.estado}</td>
               <td>
-                <button onClick={() => watch(item.id)}>Ver</button>
+                <i onClick={() => watch(item.id)} className="fas fa-eye"></i>
               </td>
             </tr>
           ))}

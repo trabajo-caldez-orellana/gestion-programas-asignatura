@@ -39,15 +39,53 @@ export default function App() {
     }
   }, [googleAuth])
 
-  useEffect(() => {
-    if (googleAuth) {
-      window.location.replace(googleAuth.authorizationUrl)
-    }
-  }, [googleAuth])
-
   const handleGoogleLogin = () => {
     fetchGoogleAuth()
   }
+
+  // TODO: Poner en otro archivo y crear archivo de constantes
+  // const routes = {
+  //   semestres: {
+  //     path: '/semestres',
+  //     element: <h1>Semestres</h1>
+  //   },
+  //   parametros: {
+  //     path: '/parametros',
+  //     element: <h1>Parametros</h1>
+  //   },
+  //   estandar: {
+  //     path: '/estandar',
+  //     element: <h1>Estandares</h1>
+  //   },
+  //   usuarios: {
+  //     path: '/usuarios',
+  //     element: <h1>Usuarios</h1>
+  //   },
+  //   carrera: {
+  //     path: '/carrera',
+  //     element: <h1>Carrera</h1>
+  //   },
+  //   planEstudio: {
+  //     path: '/plan-estudio',
+  //     element: <h1>Plan de Estudio</h1>
+  //   },
+  //   descriptores: {
+  //     path: '/descriptores',
+  //     element: <h1>Descriptores</h1>
+  //   },
+  //   bloqueCurricular: {
+  //     path: '/bloque-curricular',
+  //     element: <h1>Bloque curricular</h1>
+  //   },
+  //   programaAsignaturas: {
+  //     path: '/programa-asignaturas',
+  //     element: <ProgramasAsignaturas />
+  //   },
+  //   auditoria: {
+  //     path: '/auditoria',
+  //     element: <h1>Auditoria</h1>
+  //   }
+  // }
 
   return (
     <>
@@ -97,5 +135,3 @@ export default function App() {
     </>
   )
 }
-
-
