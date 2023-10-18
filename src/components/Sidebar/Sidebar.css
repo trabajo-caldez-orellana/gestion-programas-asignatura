@@ -1,0 +1,12 @@
+.sidebar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 39px; /* usar la misma que el navbar, agregarla usando un useRef dps*/
+  box-shadow: 0 1px 0px #ff6b6b;
+}
+
+.sidebar-header h1 {
+  color: white;
+  font-family: Arial;
+}
