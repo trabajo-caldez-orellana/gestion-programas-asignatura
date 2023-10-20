@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from backend.common.choices import EstadoAsignatura
 from .asignatura import Asignatura
@@ -24,9 +25,6 @@ class VersionProgramaAsignatura(models.Model):
     semanal_lab_remoto = models.PositiveIntegerField(blank=True, null=True)
     contenidos = models.TextField()
     bibliografia = models.TextField()
-    metodologia = (
-        models.TextField()
-    )  # TODO. es necesario? Porque la asignatura ya tiene metodologia
     recursos = models.TextField()
     evaluacion = models.TextField()
     investigacion_docentes = models.TextField()
@@ -36,6 +34,8 @@ class VersionProgramaAsignatura(models.Model):
     cronograma = models.TextField()
 
     resultados_de_aprendizaje = models.JSONField()
+
+    creado_en = models.DateTimeField(default=timezone.now)
 
     class Meta:
         verbose_name_plural = "Versiones de Programa de Asignatura"
