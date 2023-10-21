@@ -43,7 +43,7 @@ def set_up_tests():
      - Cinco descriptores, dos para cada estandar (uno de cada tipo), y uno compartido
      - Un estandar activo para cada carrera
      - Dos actividades reservadas para cada estandar
-     - Crea un semestre acutal
+     - Crea un semestre acutal, y uno anterior
     """
 
     # Crear dos carreras
@@ -170,15 +170,28 @@ def set_up_tests():
         fecha_inicio=fecha_inicio, fecha_fin=fecha_fin_semestre
     )
 
+    # Crea un semestre anterior
+    fecha_inicio_semestre_anterior = fecha_inicio - timezone.timedelta(days=7 * 4)
+    fecha_fin_semestre_anterior = fecha_inicio - timezone.timedelta(days=1)
+    semestre_anterior = Semestre.objects.create(
+        fecha_inicio=fecha_fin_semestre_anterior, fecha_fin=fecha_fin_semestre_anterior
+    )
+
 
 def crear_programa_de_asignatura(
-    asignatura: Asignatura, semestre: Semestre, carrera: Carrera
+    asignatura: Asignatura,
+    semestre: Semestre,
+    carrera: Carrera,
+    esta_aprobado: bool = True,
 ):
-    datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
-    datos_version_anterior["semestre"] = semestre
-    datos_version_anterior["asignatura"] = asignatura
+    datos_programa = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+    datos_programa["semestre"] = semestre
+    datos_programa["asignatura"] = asignatura
 
-    programa = VersionProgramaAsignatura.objects.create(**datos_version_anterior)
+    if not esta_aprobado:
+        datos_programa["estado"] = EstadoAsignatura.ABIERTO
+
+    programa = VersionProgramaAsignatura.objects.create(**datos_programa)
     estandar_carrera = Estandar.objects.get(carrera=carrera)
 
     # Agrego actividades reservadas

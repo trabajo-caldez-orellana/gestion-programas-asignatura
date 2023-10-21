@@ -1,2 +1,3 @@
 from .version_programa_asignatura import ServicioVersionProgramaAsignatura
 from .descriptor import ServicioDescriptor
+from .semestre import ServicioSemestre

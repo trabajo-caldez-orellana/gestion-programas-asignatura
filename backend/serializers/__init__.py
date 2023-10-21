@@ -1,0 +1,1 @@
+from .version_programa_asignatura import serialiar_datos_programa_asignatura

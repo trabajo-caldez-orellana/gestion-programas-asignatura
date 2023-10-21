@@ -1,1 +1,4 @@
-from .version_programa_asignatura import TestReutilizarUltimoPlan
+from .version_programa_asignatura import (
+    TestReutilizarUltimoPlan,
+    TestObtenerProgramaSemestreActual,
+)

@@ -1,7 +1,8 @@
 import json
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import transaction, models
+
 
 from backend.models import (
     BloqueCurricular,
@@ -43,10 +44,14 @@ from backend.common.mensajes_de_error import (
     MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR,
     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
     MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA,
+    MENSAJE_SOLO_UN_PROGRAMA_POR_SEMESTRE,
 )
+from backend.services.semestre import ServicioSemestre
 
 
 class ServicioVersionProgramaAsignatura:
+    servicio_semestre = ServicioSemestre()
+
     def __asignar_carga_horaria(
         self, bloque: BloqueCurricular, programa: VersionProgramaAsignatura, horas: int
     ) -> CargaBloque:
@@ -286,20 +291,20 @@ class ServicioVersionProgramaAsignatura:
         """
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos y presenta para aprobacion.
         """
-
         if not self.__es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
-        ultimos_programas = VersionProgramaAsignatura.objects.filter(
-            asignatura=asignatura
-        )
-
+        try:
+            semestre_anterior = self.servicio_semestre.obtener_semestre_anterior()
+            ultimos_programas = VersionProgramaAsignatura.objects.filter(
+                asignatura=asignatura, semestre=semestre_anterior
+            )
+        except:
+            raise ValidationError({"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES})
         if not ultimos_programas.exists():
             raise ValidationError({"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES})
 
-        ultimo_programa: VersionProgramaAsignatura = ultimos_programas.latest(
-            "creado_en"
-        )
+        ultimo_programa: VersionProgramaAsignatura = ultimos_programas.first()
 
         if ultimo_programa.estado != EstadoAsignatura.APROBADO:
             raise ValidationError({"asignatura": MENSAJE_VERSION_ANTERIOR_NO_APROBADA})
@@ -333,6 +338,14 @@ class ServicioVersionProgramaAsignatura:
                 {"actividad_reservada": MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA}
             )
 
+        semestre_actual = self.servicio_semestre.obtener_semestre_actual()
+        # Verificar si no existe ya un programa en el semestre actual
+        versiones = VersionProgramaAsignatura.objects.filter(
+            asignatura=asignatura, semestre=semestre_actual
+        )
+        if versiones.exists():
+            raise ValidationError({"__all__": MENSAJE_SOLO_UN_PROGRAMA_POR_SEMESTRE})
+
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
             if self.__validar_datos(
@@ -349,7 +362,7 @@ class ServicioVersionProgramaAsignatura:
             ):
                 nuevo_programa = VersionProgramaAsignatura.objects.create(
                     asignatura=ultimo_programa.asignatura,
-                    semestre=ultimo_programa.semestre,
+                    semestre=semestre_actual,
                     estado=EstadoAsignatura.ABIERTO,
                     semanas_dictado=ultimo_programa.semanas_dictado,
                     semanal_teoria_presencial=ultimo_programa.semanal_teoria_presencial,
@@ -403,3 +416,34 @@ class ServicioVersionProgramaAsignatura:
 
         self.presentar_programa_para_aprobacion(nuevo_programa)
         return nuevo_programa
+
+    def obtener_programa_semestre_actual(
+        self, asignatura: Asignatura, esta_aprobado: bool = False
+    ):
+        """
+        Obtiene el programa del semestre actual. El parametro esta_aprobado es para elegir si solo
+        devuelvo el programa si esta aprobado. Retorna None si no hay programas en el semestre actual.
+        """
+        semestre_actual = self.servicio_semestre.obtener_semestre_actual()
+
+        if esta_aprobado:
+            filtro = models.Q(
+                estado=EstadoAsignatura.APROBADO,
+                semestre=semestre_actual,
+                asignatura=asignatura,
+            )
+        else:
+            filtro = models.Q(semestre=semestre_actual, asignatura=asignatura)
+
+        programas = VersionProgramaAsignatura.objects.filter(filtro)
+
+        if not programas.exists():
+            return None
+
+        return programas.first()
+
+    def crear_nuevo_programa_de_asignatura(self, asignatura: Asignatura):
+        pass
+
+    def modificar_programa_de_asignatura(self, asignatura: Asignatura):
+        pass
