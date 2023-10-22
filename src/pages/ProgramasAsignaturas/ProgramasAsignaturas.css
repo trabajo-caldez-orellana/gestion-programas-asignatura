@@ -79,13 +79,16 @@
   display: flex;
 }
 
+.selector-descritores {
+
+}
 
 @media screen and (min-width: 800px) {
   .carga-horaria-form {
     grid-template-columns: 1fr 1fr;
   }
 
-  .seccion-descriptores-form {
+  .seccion-descriptores-form:last-child:not(#descriptores) {
     grid-template-columns: 1fr 1fr;
   }
 }
