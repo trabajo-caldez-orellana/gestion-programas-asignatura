@@ -1,29 +1,43 @@
 import './Navbar.css'
 import Sidebar from '../Sidebar/Sidebar'
 import Button from '../ui/Button'
+import { Profile } from '../../api/types.ts'
 
 interface NavbarProps {
   isSidebarOpen: boolean
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
+  profile: Profile | undefined
+  handleLogin: () => void
+  handleLogout: () => void
 }
 
-
-export default function Navbar({ isSidebarOpen, setIsSidebarOpen }: NavbarProps) {
-
+export default function Navbar({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  profile,
+  handleLogin,
+  handleLogout
+}: NavbarProps) {
   const handleOpenSidebar = () => {
-    setIsSidebarOpen((prevState) => !prevState);
+    setIsSidebarOpen((prevState) => !prevState)
   }
+
+  // Si tenemos un profile es porque estamos logueados
 
   return (
     <>
       <nav className={`navbar wrapper ${isSidebarOpen ? '' : 'inactive'}`}>
         <div className="section">
           <div className="top_navbar">
-            <div className="hamburger">
-              <a href="#" onClick={handleOpenSidebar}>
-                <i className="fas fa-bars"></i>
-              </a>
-            </div>
+            {profile ? (
+              <div className="hamburger">
+                <a href="#" onClick={handleOpenSidebar}>
+                  <i className="fas fa-bars"></i>
+                </a>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <ul id="navbar-items">
@@ -33,12 +47,27 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }: NavbarProps)
           <li>
             <Button text="Nuevo usuario" />
           </li>
-          <li>
-            <Button text="Iniciar Sesion" />
-          </li>
+          {profile ? (
+            <li>
+              <Button text="Cerrar Sesion" onClick={handleLogout} />
+            </li>
+          ) : (
+            <li>
+              <Button text="Iniciar Sesion" onClick={handleLogin} />
+            </li>
+          )}
         </ul>
         <div className="sidebar">
-          < Sidebar userinfo={{name: 'Gonzalo Orellana', email: 'ore@gmail.com'}}/>
+          {profile ? (
+            <Sidebar
+              userinfo={{
+                name: `${profile.firstName} ${profile.lastName}`,
+                email: profile.email
+              }}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       </nav>
     </>

@@ -22,7 +22,6 @@ export default function App() {
     const state = searchParams.get('state')
 
     if (code && state) {
-      console.log(code, state)
       mutate({ code, state })
     }
   }, [mutate])
@@ -39,8 +38,18 @@ export default function App() {
     }
   }, [googleAuth])
 
+  // Handlers
   const handleGoogleLogin = () => {
     fetchGoogleAuth()
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token') // Remueve el token
+
+    // Redirecciona a la página principal
+    // TODO: Cambiar por la página de login
+    // TODO: Implementar en el backend
+    window.location.href = '/'
   }
 
   // TODO: Poner en otro archivo y crear archivo de constantes
@@ -92,6 +101,9 @@ export default function App() {
       <Navbar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        profile={profile}
+        handleLogin={handleGoogleLogin}
+        handleLogout={handleLogout}
       />
       <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
         <Routes>
@@ -99,13 +111,7 @@ export default function App() {
             path="/"
             element={
               <div className="App">
-                {profile ? (
-                  <h1>Bienvenido {profile.firstName}! :D</h1>
-                ) : (
-                  <button onClick={handleGoogleLogin}>
-                    Iniciar sesion con Google
-                  </button>
-                )}
+                {profile ? <h1>Bienvenido {profile.firstName}! :D</h1> : <></>}
               </div>
             }
           />

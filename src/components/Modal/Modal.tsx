@@ -9,7 +9,6 @@ interface ModalProps {
 
 export default function Modal({ open, children, onClose }: ModalProps) {
   const portalRoot = document.getElementById('portal')
-  console.log(portalRoot);
   if (!open || !portalRoot) return null
 
   return ReactDom.createPortal(
