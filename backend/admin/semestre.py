@@ -3,9 +3,12 @@ from django.http.request import HttpRequest
 
 from backend.models import Rol
 from backend.common.choices import Roles
+from backend.forms import FormSemestre
 
 
 class AdminSemestre(admin.ModelAdmin):
+    form = FormSemestre
+
     def has_permission(self, request):
         user = request.user
         if user.is_superuser:
