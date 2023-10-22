@@ -46,3 +46,18 @@ class Roles(TextChoices):
         "Secretario Academico",
     )
     DOCENTE = "D", "Docente"
+
+
+class ParametrosDeConfiguracion(TextChoices):
+    INICIO_PERIODO_MODIFICACION = (
+        "IPM",
+        "Días previos al inicio del Semestre para Modificar el Programa",
+    )
+    INICIO_PERIODO_VALIDACION = (
+        "IPV",
+        "Días previos al inicio del Semestre para Validar el Programa",
+    )
+    INICIO_PERIODO_CORRECCION = (
+        "IPC",
+        "Días previos al inicio del Semestre para Corregir el Programa",
+    )
