@@ -49,3 +49,6 @@ MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA = (
 )
 MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA = "Es necesario definir una carga horaria."
 MENSAJE_NO_PUEDEN_HABER_VARIOS_SEMESTRES_CON_LA_MISMA_FECHA = "No se puede definir un semestre que este activo al mismo momento que otro. Verifique las fechas."
+MENSAJE_NO_HAY_SEMESTRE_ACTIVO = "No hay un semestre activo."
+MENSAJE_NO_HAY_SEMESTRES_ANTERIORES = "No hay semestres anteriores."
+MENSAJE_NO_HAY_SEMESTRES_FUTUROS = "No hay semestres futuros."
