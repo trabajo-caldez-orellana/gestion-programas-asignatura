@@ -20,7 +20,6 @@ class Semestre(models.Model):
     @property
     def esta_activo(self) -> bool:
         hoy = timezone.now().astimezone().date()
-
         return self.fecha_inicio <= hoy <= self.fecha_fin
 
     def __str__(self):
