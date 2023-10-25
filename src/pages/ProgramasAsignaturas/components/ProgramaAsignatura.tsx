@@ -3,44 +3,12 @@ import { useState } from 'react'
 import CargaHoraria from './CargaHoraria'
 import InformacionAdicional from './InformacionAdicional'
 import SeccionDescriptores from './SeccionDescriptores'
-
-type CargaHorariaType = {
-  cargaHorariaTotal: number
-  semanasDictado: number
-  teoriaPresencial: number
-  practicaPresencial: number
-  teoricoPracticoPresencial: number
-  laboratoriosPresenciales: number
-  teoriaDistancia: number
-  practicaDistancia: number
-  teoricoPracticoDistancia: number
-  laboratorioDistancia: number
-}
-
-type DescriptorType = {
-  resultadosAprendizaje: string[]
-  ejesTransversales: {
-    nombre: string
-    valor: number
-  }[]
-  descriptores: {
-    si: { id: number; nombre: string }[]
-    no: { id: number; nombre: string }[]
-  }
-  actividadesReservadas: string[]
-}
-
-
-
-
-type ProgramaAsignaturaType = {
-  cargaHoraria: CargaHorariaType
-}
+import { ProgramaAsignatura } from '../../../interfaces'
 
 export default function ProgramaAsignatura() {
   //const { id } = useParams()
   const [programaAsignatura, setProgramaAsignatura] =
-    useState<ProgramaAsignaturaType>({
+    useState<ProgramaAsignatura>({
       cargaHoraria: {
         cargaHorariaTotal: 0,
         semanasDictado: 0,
@@ -52,15 +20,56 @@ export default function ProgramaAsignatura() {
         practicaDistancia: 0,
         teoricoPracticoDistancia: 0,
         laboratorioDistancia: 0
+      },
+      descriptores: {
+        resultadosAprendizaje: [''],
+        ejesTransversales: [
+          {
+            nombre: 'Eje 1',
+            valor: 0
+          },
+
+          {
+            nombre: 'Eje 2',
+            valor: 2
+          }
+        ],
+        descriptores: {
+          si: [
+            { id: 1, nombre: 'Descriptor 1' },
+            { id: 2, nombre: 'Descriptor 2' }
+          ],
+          no: [{ id: 3, nombre: 'Descriptor 3' }]
+        },
+        actividadesReservadas: []
+      },
+      informacionAdicional: {
+        fundamentacion: '',
+        contenidos: '',
+        bibliografia: '',
+        metodologiaAplicada: '',
+        recursos: '',
+        evaluacion: '',
+        investigacion: '',
+        extension: ''
       }
     })
 
   return (
     <section className="section-content">
-      <h1>ProgramaAsignatura</h1>
-      <CargaHoraria />
-      <SeccionDescriptores />
-      <InformacionAdicional />
+      <h1>Programa Asignatura</h1>
+      <CargaHoraria
+        programaAsignatura={programaAsignatura}
+        setProgramaAsignatura={setProgramaAsignatura}
+      />
+      <SeccionDescriptores
+        programaAsignatura={programaAsignatura}
+        setProgramaAsignatura={setProgramaAsignatura}
+      />
+      <InformacionAdicional
+        programaAsignatura={programaAsignatura}
+        setProgramaAsignatura={setProgramaAsignatura}
+      />
     </section>
   )
 }

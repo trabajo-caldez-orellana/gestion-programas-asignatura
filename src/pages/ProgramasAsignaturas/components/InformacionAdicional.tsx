@@ -1,24 +1,26 @@
-import { useState } from 'react'
 import { camelCase } from 'lodash'
+import { ProgramaAsignatura } from '../../../interfaces'
 
-export default function InformacionAdicional() {
-  const [formValues, setFormValues] = useState({
-    fundamentacion: '',
-    contenidos: '',
-    bibliografia: '',
-    metodologiaAplicada: '',
-    recursos: '',
-    evaluacion: '',
-    investigacion: '',
-    extension: ''
-  })
+interface InformacionAdicionalProps {
+  programaAsignatura: ProgramaAsignatura
+  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+}
+
+export default function InformacionAdicional({
+  programaAsignatura,
+  setProgramaAsignatura
+}: InformacionAdicionalProps) {
+  const { informacionAdicional } = programaAsignatura
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target
 
-    setFormValues({
-      ...formValues,
-      [camelCase(name)]: value
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      informacionAdicional: {
+        ...programaAsignatura.informacionAdicional,
+        [camelCase(name)]: value
+      }
     })
   }
 
@@ -30,7 +32,7 @@ export default function InformacionAdicional() {
         <textarea
           id="fundamentacion"
           name="fundamentacion"
-          value={formValues.fundamentacion}
+          value={informacionAdicional.fundamentacion}
           onChange={handleChange}
           rows={4}
           cols={50}
@@ -39,7 +41,7 @@ export default function InformacionAdicional() {
         <textarea
           id="contenidos"
           name="contenidos"
-          value={formValues.contenidos}
+          value={informacionAdicional.contenidos}
           onChange={handleChange}
           rows={4}
           cols={50}
@@ -49,7 +51,7 @@ export default function InformacionAdicional() {
         <textarea
           id="bibliografia"
           name="bibliografia"
-          value={formValues.bibliografia}
+          value={informacionAdicional.bibliografia}
           onChange={handleChange}
           rows={4}
           cols={50}
@@ -59,7 +61,7 @@ export default function InformacionAdicional() {
         <textarea
           id="metodologia-aplicada"
           name="metodologia_aplicada"
-          value={formValues.metodologiaAplicada}
+          value={informacionAdicional.metodologiaAplicada}
           onChange={handleChange}
           rows={4}
           cols={50}
@@ -69,7 +71,7 @@ export default function InformacionAdicional() {
         <textarea
           id="recursos"
           name="recursos"
-          value={formValues.recursos}
+          value={informacionAdicional.recursos}
           onChange={handleChange}
           rows={4}
           cols={50}
@@ -79,7 +81,7 @@ export default function InformacionAdicional() {
         <textarea
           id="evaluacion"
           name="evaluacion"
-          value={formValues.evaluacion}
+          value={informacionAdicional.evaluacion}
           onChange={handleChange}
           rows={4}
           cols={50}
@@ -89,7 +91,7 @@ export default function InformacionAdicional() {
         <textarea
           id="investigacion"
           name="investigacion"
-          value={formValues.investigacion}
+          value={informacionAdicional.investigacion}
           onChange={handleChange}
           rows={4}
           cols={50}
@@ -99,7 +101,7 @@ export default function InformacionAdicional() {
         <textarea
           id="extension"
           name="extension"
-          value={formValues.extension}
+          value={informacionAdicional.extension}
           onChange={handleChange}
           rows={4}
           cols={50}

@@ -1,54 +1,34 @@
 import { useState } from 'react'
-import { camelCase } from 'lodash'
 import Button from '../../../components/ui/Button'
 import Modal from '../../../components/Modal/Modal'
+import { ProgramaAsignatura } from '../../../interfaces'
+import camelCase from 'lodash/camelCase'
 
-// Definir type
-type Descriptor = {
-  resultadosAprendizaje: string[]
-  ejesTransversales: {
-    nombre: string
-    valor: number
-  }[]
-  descriptores: {
-    si: { id: number; nombre: string }[]
-    no: { id: number; nombre: string }[]
-  }
-  actividadesReservadas: string[]
+interface SeccionDescriptoresProps {
+  programaAsignatura: ProgramaAsignatura
+  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
 }
 
-export default function SeccionDescriptores() {
+export default function SeccionDescriptores({
+  programaAsignatura,
+  setProgramaAsignatura
+}: SeccionDescriptoresProps) {
   const [modalResultadosAbierto, setModalResultadosAbierto] = useState(false)
   const [modalEjesTransversales, setModalEjesTransversales] = useState(false)
-  const [formValues, setFormValues] = useState<Descriptor>({
-    resultadosAprendizaje: [''],
-    ejesTransversales: [
-      {
-        nombre: 'Eje 1',
-        valor: 0
-      },
 
-      {
-        nombre: 'Eje 2',
-        valor: 2
-      }
-    ],
-    descriptores: {
-      si: [
-        { id: 1, nombre: 'Descriptor 1' },
-        { id: 2, nombre: 'Descriptor 2' }
-      ],
-      no: [{ id: 3, nombre: 'Descriptor 3' }]
-    },
-    actividadesReservadas: []
-  })
+  const { descriptores } = programaAsignatura
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeccionDescriptoresChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = e.target
 
-    setFormValues({
-      ...formValues,
-      [camelCase(name)]: value
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      descriptores: {
+        ...programaAsignatura.descriptores,
+        [camelCase(name)]: value
+      }
     })
   }
 
@@ -58,39 +38,57 @@ export default function SeccionDescriptores() {
   ) => {
     const { value } = e.target
 
-    const resultadosAprendizaje = [...formValues.resultadosAprendizaje]
+    const resultadosAprendizaje = [
+      ...programaAsignatura.descriptores.resultadosAprendizaje
+    ]
     resultadosAprendizaje[index] = value
 
-    setFormValues({
-      ...formValues,
-      resultadosAprendizaje
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      descriptores: {
+        ...programaAsignatura.descriptores,
+        resultadosAprendizaje: resultadosAprendizaje
+      }
     })
   }
 
   const resultadosAprendizajeCount = () => {
     //Contar solo los resultados de aprendizaje que no sean string vacios
-    return formValues.resultadosAprendizaje.filter((item) => item !== '').length
+    return programaAsignatura.descriptores.resultadosAprendizaje.filter(
+      (item) => item !== ''
+    ).length
   }
 
   const aniadirResultadoAprendizaje = () => {
-    setFormValues({
-      ...formValues,
-      resultadosAprendizaje: [...formValues.resultadosAprendizaje, '']
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      descriptores: {
+        ...programaAsignatura.descriptores,
+
+        resultadosAprendizaje: [
+          ...programaAsignatura.descriptores.resultadosAprendizaje,
+          ''
+        ]
+      }
     })
   }
 
   // Al abrir el modal limpiamos los resultados de aprendizaje que son string vacios
   const abrirModalResultados = () => {
-    const resultadosAprendizaje = [...formValues.resultadosAprendizaje]
+    const resultadosAprendizaje = [...descriptores.resultadosAprendizaje]
     const resultadosAprendizajeLimpios = resultadosAprendizaje.filter(
       (item) => item !== ''
     )
     if (resultadosAprendizajeLimpios.length === 0)
       resultadosAprendizajeLimpios.push('')
 
-    setFormValues({
-      ...formValues,
-      resultadosAprendizaje: resultadosAprendizajeLimpios
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      descriptores: {
+        ...programaAsignatura.descriptores,
+
+        resultadosAprendizaje: resultadosAprendizajeLimpios
+      }
     })
     setModalResultadosAbierto(true)
   }
@@ -101,34 +99,44 @@ export default function SeccionDescriptores() {
   ) => {
     const { value } = e.target
 
-    const ejesTransversales = [...formValues.ejesTransversales]
+    const ejesTransversales = [...descriptores.ejesTransversales]
     ejesTransversales[index].valor = parseInt(value)
 
-    setFormValues({
-      ...formValues,
-      ejesTransversales
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      descriptores: {
+        ...programaAsignatura.descriptores,
+
+        ejesTransversales
+      }
     })
   }
 
-
   const handleDescriptorChange = (id: number, tipo: string) => {
-    const descriptores = { ...formValues.descriptores };
-    const sourceArray = tipo === 'si' ? descriptores.si : descriptores.no;
-    const targetArray = tipo === 'si' ? descriptores.no : descriptores.si;
-    
-    const descriptorIndex = sourceArray.findIndex(descriptor => descriptor.id === id);
-  
+    const descriptoresCopy = { ...descriptores.descriptores }
+    const sourceArray =
+      tipo === 'si' ? descriptoresCopy.si : descriptoresCopy.no
+    const targetArray =
+      tipo === 'si' ? descriptoresCopy.no : descriptoresCopy.si
+
+    const descriptorIndex = sourceArray.findIndex(
+      (descriptor) => descriptor.id === id
+    )
+
     if (descriptorIndex !== -1) {
-      const descriptor = sourceArray[descriptorIndex];
+      const descriptor = sourceArray[descriptorIndex]
       // Removemos el descriptor del array de origen y lo agregamos al array de destino
-      sourceArray.splice(descriptorIndex, 1);
-      targetArray.push(descriptor);
+      sourceArray.splice(descriptorIndex, 1)
+      targetArray.push(descriptor)
     }
-  
-    setFormValues({
-      ...formValues,
-      descriptores
-    });
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      descriptores: {
+        ...programaAsignatura.descriptores,
+        descriptores: descriptoresCopy
+      }
+    })
   }
 
   return (
@@ -145,7 +153,7 @@ export default function SeccionDescriptores() {
               id="resultados-aprendizaje"
               name="resultados_aprendizaje"
               value={resultadosAprendizajeCount()}
-              onChange={handleChange}
+              onChange={handleSeccionDescriptoresChange}
             />
             <Button text="+" onClick={abrirModalResultados} />
           </div>
@@ -155,8 +163,8 @@ export default function SeccionDescriptores() {
               type="text"
               id="ejes-transversales"
               name="ejes_transversales"
-              value={formValues.ejesTransversales.length}
-              onChange={handleChange}
+              value={descriptores.ejesTransversales.length}
+              onChange={handleSeccionDescriptoresChange}
             />
             <Button text="+" onClick={() => setModalEjesTransversales(true)} />
           </div>
@@ -166,8 +174,8 @@ export default function SeccionDescriptores() {
               type="text"
               id="actividades-reservadas"
               name="actividades_reservadas"
-              value={formValues.actividadesReservadas.length}
-              onChange={handleChange}
+              value={descriptores.actividadesReservadas.length}
+              onChange={handleSeccionDescriptoresChange}
             />
             <Button text="+" />
           </div>
@@ -177,7 +185,7 @@ export default function SeccionDescriptores() {
             <div className="selector-descriptores-columna">
               <label>Si</label>
 
-              {formValues.descriptores.si.map((descriptor) => (
+              {descriptores.descriptores.si.map((descriptor) => (
                 <p onClick={() => handleDescriptorChange(descriptor.id, 'si')}>
                   {descriptor.nombre}
                 </p>
@@ -185,7 +193,7 @@ export default function SeccionDescriptores() {
             </div>
             <div className="selector-descriptores-columna">
               <label>No</label>
-              {formValues.descriptores.no.map((descriptor) => (
+              {descriptores.descriptores.no.map((descriptor) => (
                 <p onClick={() => handleDescriptorChange(descriptor.id, 'no')}>
                   {descriptor.nombre}
                 </p>
@@ -199,16 +207,16 @@ export default function SeccionDescriptores() {
         modalTitle="Resultados de aprendizaje"
         onClose={() => setModalResultadosAbierto(false)}
       >
-        {formValues.resultadosAprendizaje.map((_, index) => (
+        {descriptores.resultadosAprendizaje.map((_, index) => (
           <>
             {/* {TODO: CREAR COMPONENTE} */}
             <textarea
-              value={formValues.resultadosAprendizaje[index]}
+              value={descriptores.resultadosAprendizaje[index]}
               onChange={(e) => handleResultadosAprendizajeChange(e, index)}
               rows={4}
               cols={50}
             />
-            {index === formValues.resultadosAprendizaje.length - 1 && (
+            {index === descriptores.resultadosAprendizaje.length - 1 && (
               <div className="sumar-text-area">
                 <Button text="+" onClick={aniadirResultadoAprendizaje}></Button>
               </div>
@@ -221,7 +229,7 @@ export default function SeccionDescriptores() {
         modalTitle="Ejes transversales"
         onClose={() => setModalEjesTransversales(false)}
       >
-        {formValues.ejesTransversales.map((eje, index) => (
+        {descriptores.ejesTransversales.map((eje, index) => (
           <>
             <label>{eje.nombre}</label>
             {/* {TODO: CREAR COMPONENTE RADIO BUTTONS} */}
