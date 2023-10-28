@@ -38,12 +38,12 @@ class ServicioSemestre:
     def obtener_semestre_actual(self):
         hoy = timezone.now().astimezone()
 
-        semestre = Semestre.objects.filter(fecha_inicio__lte=hoy, fecha_fin__gte=hoy)
+        semestre = Semestre.objects.filter(fecha_inicio__lte=hoy, fecha_fin__gte=hoy).first()
 
         if not semestre.exists():
             raise ValidationError({"__all__": MENSAJE_NO_HAY_SEMESTRE_ACTIVO})
 
-        return semestre[0]
+        return semestre
 
     def obtener_semestre_anterior(self):
         # Semestres ordenados por fecha fin de menor a mayor
