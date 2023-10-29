@@ -14,6 +14,7 @@ export interface CargaHoraria {
 export interface Descriptor {
   resultadosAprendizaje: string[]
   ejesTransversales: {
+    id: number
     nombre: string
     valor: number
   }[]
@@ -36,6 +37,7 @@ export interface InformacionAdicional {
 }
 
 export interface ProgramaAsignatura {
+  id: number
   cargaHoraria: CargaHoraria
   descriptores: Descriptor
   informacionAdicional: InformacionAdicional

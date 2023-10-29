@@ -9,6 +9,7 @@ export default function ProgramaAsignatura() {
   //const { id } = useParams()
   const [programaAsignatura, setProgramaAsignatura] =
     useState<ProgramaAsignatura>({
+      id: 1,
       cargaHoraria: {
         cargaHorariaTotal: 0,
         semanasDictado: 0,
@@ -25,11 +26,13 @@ export default function ProgramaAsignatura() {
         resultadosAprendizaje: [''],
         ejesTransversales: [
           {
+            id: 1,
             nombre: 'Eje 1',
             valor: 0
           },
 
           {
+            id: 2,
             nombre: 'Eje 2',
             valor: 2
           }
