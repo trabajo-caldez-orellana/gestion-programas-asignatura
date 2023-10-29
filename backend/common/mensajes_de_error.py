@@ -52,3 +52,6 @@ MENSAJE_NO_PUEDEN_HABER_VARIOS_SEMESTRES_CON_LA_MISMA_FECHA = "No se puede defin
 MENSAJE_NO_HAY_SEMESTRE_ACTIVO = "No hay un semestre activo."
 MENSAJE_NO_HAY_SEMESTRES_ANTERIORES = "No hay semestres anteriores."
 MENSAJE_NO_HAY_SEMESTRES_FUTUROS = "No hay semestres futuros."
+MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."
+MENSAJE_NO_FUE_DEFINIDO_PERIODO_VALIDACION = "No se completaron las configuraciones del programa. Debe definir los días para período de validación."
+MENSAJE_NO_FUE_DEFINIDO_PERIODO_CORRECCION = "No se completaron las configuraciones del programa. Debe definir los días para período de corrección."
