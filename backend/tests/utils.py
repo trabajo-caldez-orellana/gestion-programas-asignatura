@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from backend.models import (
     Carrera,
+    Configuracion,
     Estandar,
     PlanDeEstudio,
     Asignatura,
@@ -16,6 +17,7 @@ from backend.common.choices import (
     MetodologiaAsignatura,
     TipoDescriptor,
     EstadoAsignatura,
+    ParametrosDeConfiguracion,
 )
 from backend.common.constantes import MINIMO_RESULTADOS_DE_APRENDIZAJE
 
@@ -206,6 +208,38 @@ def crear_semestres_de_prueba():
     )
 
     return semestre_cerrado, semestre_abierto, semestre_futuro
+
+
+FECHA_DEFAULT_MODIFICACION = 30
+FECHA_DEFAULT_VALIDACION = 20
+FECHA_DEFAULT_CORRECCION = 10
+
+
+def crear_configuraciones_del_prograna():
+    Configuracion.objects.create(
+        nombre=ParametrosDeConfiguracion.INICIO_PERIODO_MODIFICACION,
+        valor=FECHA_DEFAULT_MODIFICACION,
+    )
+
+    Configuracion.objects.create(
+        nombre=ParametrosDeConfiguracion.INICIO_PERIODO_VALIDACION,
+        valor=FECHA_DEFAULT_VALIDACION,
+    )
+
+    Configuracion.objects.create(
+        nombre=ParametrosDeConfiguracion.INICIO_PERIODO_CORRECCION,
+        valor=FECHA_DEFAULT_CORRECCION,
+    )
+
+
+def crear_fecha_y_hora(
+    anio: int, mes: int, dia: int, hora: int = 0, minuto: int = 0, segundo: int = 0
+):
+    return timezone.make_aware(
+        timezone.datetime(
+            year=anio, month=mes, day=dia, hour=hora, minute=minuto, second=segundo
+        )
+    )
 
 
 # VALORES DEFAULT
