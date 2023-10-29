@@ -30,6 +30,48 @@ CARRERA_2 = "Ingenieria Quimica"
 
 
 # FUNCIONES PARA EL SETUP
+FECHA_INICIO_SEMESTRE_CERRADO = timezone.make_aware(
+    timezone.datetime(year=2023, month=1, day=1)
+)
+FECHA_FIN_SEMESTRE_CERRADO = timezone.make_aware(
+    timezone.datetime(year=2023, month=6, day=30)
+)
+FECHA_INICIO_SEMESTRE_ABIERTO = timezone.make_aware(
+    timezone.datetime(year=2023, month=7, day=1)
+)
+FECHA_FIN_SEMESTRE_ABIERTO = timezone.make_aware(
+    timezone.datetime(year=2023, month=12, day=31)
+)
+FECHA_INICIO_SEMESTRE_FUTURO = timezone.make_aware(
+    timezone.datetime(year=2024, month=1, day=1)
+)
+FECHA_FIN_SEMESTRE_FUTURO = timezone.make_aware(
+    timezone.datetime(year=2024, month=6, day=30)
+)
+
+
+def crear_semestres_de_prueba():
+    # Cerrado
+    semestre_cerrado = Semestre.objects.create(
+        fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO.date(),
+        fecha_fin=FECHA_FIN_SEMESTRE_CERRADO.date(),
+    )
+
+    # Activo
+    semestre_abierto = Semestre.objects.create(
+        fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO.date(),
+        fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO.date(),
+    )
+
+    # Siguiente
+    semestre_futuro = Semestre.objects.create(
+        fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO.date(),
+        fecha_fin=FECHA_FIN_SEMESTRE_FUTURO.date(),
+    )
+
+    return semestre_cerrado, semestre_abierto, semestre_futuro
+
+
 def set_up_tests():
     """
     Crea:
@@ -40,8 +82,9 @@ def set_up_tests():
      - Cinco descriptores, dos para cada estandar (uno de cada tipo), y uno compartido
      - Un estandar activo para cada carrera
      - Dos actividades reservadas para cada estandar
-     - Crea un semestre acutal
+     - Crea semestres de prueba (uno abierto, uno cerrado y uno futuro)
     """
+    crear_semestres_de_prueba()
 
     # Crear dos carreras
     carrera_1 = Carrera.objects.create(nombre=CARRERA_1)
@@ -160,54 +203,6 @@ def set_up_tests():
         descripcion="Actividad Reservada 2 Ingenieria Química",
         estandar=estandar_carrera_2,
     )
-
-    # Crea un semestre actual
-    fecha_fin_semestre = fecha_inicio + timezone.timedelta(days=7 * 4)
-    semestre = Semestre.objects.create(
-        fecha_inicio=fecha_inicio, fecha_fin=fecha_fin_semestre
-    )
-
-
-FECHA_INICIO_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=6, day=30)
-)
-FECHA_INICIO_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=7, day=1)
-)
-FECHA_FIN_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=12, day=31)
-)
-FECHA_INICIO_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=6, day=30)
-)
-
-
-def crear_semestres_de_prueba():
-    # Cerrado
-    semestre_cerrado = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_CERRADO.date(),
-    )
-
-    # Activo
-    semestre_abierto = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO.date(),
-    )
-
-    # Siguiente
-    semestre_futuro = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_FUTURO.date(),
-    )
-
-    return semestre_cerrado, semestre_abierto, semestre_futuro
 
 
 FECHA_DEFAULT_MODIFICACION = 30

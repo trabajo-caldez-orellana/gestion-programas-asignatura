@@ -1,7 +1,6 @@
 import json
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 
 from backend.services import ServicioVersionProgramaAsignatura
 from backend.tests.utils import (
@@ -13,12 +12,13 @@ from backend.tests.utils import (
     DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA,
     DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE,
     MENSAJE_SERVICIO_DEBE_FALLAR,
-    MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
+    crear_configuraciones_del_prograna,
+    crear_semestres_de_prueba,
 )
 from backend.models import (
     Asignatura,
     VersionProgramaAsignatura,
-    Semestre,
+    Configuracion,
     ProgramaTieneActividadReservada,
     ProgramaTieneDescriptor,
     CargaBloque,
@@ -40,18 +40,30 @@ from backend.common.mensajes_de_error import (
     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
     MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA,
 )
-from backend.common.choices import EstadoAsignatura, NivelDescriptor, TipoDescriptor
+from backend.common.choices import (
+    EstadoAsignatura,
+    NivelDescriptor,
+    TipoDescriptor,
+    ParametrosDeConfiguracion,
+)
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
     MAXIMO_RESULTADOS_DE_APRENDIZAJE,
 )
 
 
+# TODO. Completar tests cuando esto este terminado
 class TestReutilizarUltimoPlan(TestCase):
     servicio_version_programa_asignatura = ServicioVersionProgramaAsignatura()
 
     def setUp(self):
         set_up_tests()
+        crear_configuraciones_del_prograna()
+        (
+            self.semestre_anterior,
+            self.semestre_actual,
+            self.semestre_siguiente,
+        ) = crear_semestres_de_prueba()
 
         self.asignatura = Asignatura.objects.get(codigo=CODIGO_ASIGNATURA_1)
         self.asignatura_2 = Asignatura.objects.get(codigo=CODIGO_ASIGNATURA_2)
@@ -61,17 +73,7 @@ class TestReutilizarUltimoPlan(TestCase):
     def __crear_version_anterior_con_datos_default(self):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -143,19 +145,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior["asignatura"] = self.asignatura
         datos_version_anterior["estado"] = EstadoAsignatura.PENDIENTE
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         version_anterior_sin_aprobar = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
         )
@@ -175,8 +165,27 @@ class TestReutilizarUltimoPlan(TestCase):
             )
 
     def test_no_es_periodo_de_actualizacion_de_programas(sef):
-        # TODO. Probar cuando este implementado.
-        pass
+        # Cambio las configuraciones para hacer mas corto el periodo de actualizacion.
+        configuracion_modificacion = Configuracion.objects.get(
+            nombre=ParametrosDeConfiguracion.INICIO_PERIODO_MODIFICACION
+        )
+        configuracion_modificacion.valor = 3
+        configuracion_modificacion.full_clean()
+        configuracion_modificacion.save()
+
+        configuracion_validacion = Configuracion.objects.get(
+            nombre=ParametrosDeConfiguracion.INICIO_PERIODO_VALIDACION
+        )
+        configuracion_validacion.valor = 2
+        configuracion_validacion.full_clean()
+        configuracion_validacion.save()
+
+        configuracion_correccion = Configuracion.objects.get(
+            nombre=ParametrosDeConfiguracion.INICIO_PERIODO_CORRECCION
+        )
+        configuracion_correccion.valor = 1
+        configuracion_correccion.full_clean()
+        configuracion_correccion.save()
 
     def test_programa_anterior_no_es_valido_descriptor_de_otra_carrera(self):
         version_anterior = self.__crear_version_anterior_con_datos_default()
@@ -371,17 +380,7 @@ class TestReutilizarUltimoPlan(TestCase):
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
         )
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -457,17 +456,7 @@ class TestReutilizarUltimoPlan(TestCase):
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
         )
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -540,17 +529,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior.pop("semanal_teoria_presencial")
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -579,17 +558,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior.pop("semanal_practica_presencial")
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -618,17 +587,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior.pop("semanal_lab_presencial")
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -657,17 +616,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior.pop("semanal_teorico_practico_presencial")
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -696,17 +645,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior["semanal_teoria_remoto"] = 2
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -735,17 +674,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior["semanal_practica_remoto"] = 2
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -774,17 +703,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior["semanal_lab_remoto"] = 2
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -813,17 +732,7 @@ class TestReutilizarUltimoPlan(TestCase):
         datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
         datos_version_anterior["semanal_teorico_practico_remoto"] = 2
 
-        fecha_inicio_semestre_anterior = (
-            timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
-        )
-        fecha_fin_semestre_anterior = timezone.now().astimezone() - timezone.timedelta(
-            days=1
-        )
-        semestre_anterior = Semestre.objects.create(
-            fecha_inicio=fecha_inicio_semestre_anterior,
-            fecha_fin=fecha_fin_semestre_anterior,
-        )
-        datos_version_anterior["semestre"] = semestre_anterior
+        datos_version_anterior["semestre"] = self.semestre_anterior
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
