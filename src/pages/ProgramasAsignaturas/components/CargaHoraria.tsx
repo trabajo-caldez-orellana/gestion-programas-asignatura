@@ -1,26 +1,26 @@
-import { useState } from 'react'
+import { ProgramaAsignatura } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
 
-export default function CargaHoraria() {
-  const [formValues, setFormValues] = useState({
-    cargaHorariaTotal: 0,
-    semanasDictado: 0,
-    teoriaPresencial: 0,
-    practicaPresencial: 0,
-    teoricoPracticoPresencial: 0,
-    laboratoriosPresenciales: 0,
-    teoriaDistancia: 0,
-    practicaDistancia: 0,
-    teoricoPracticoDistancia: 0,
-    laboratorioDistancia: 0
-  })
+interface CargaHorariaProps {
+  programaAsignatura: ProgramaAsignatura
+  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+}
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+export default function CargaHoraria({
+  programaAsignatura,
+  setProgramaAsignatura
+}: CargaHorariaProps) {
+  const { cargaHoraria } = programaAsignatura
+
+  const handleCargaHorariaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
 
-    setFormValues({
-      ...formValues,
-      [camelCase(name)]: value
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      cargaHoraria: {
+        ...programaAsignatura.cargaHoraria,
+        [camelCase(name)]: value
+      }
     })
   }
 
@@ -29,20 +29,21 @@ export default function CargaHoraria() {
       <h2>Carga Horaria</h2>
       <form className="carga-horaria-form">
         <label htmlFor="carga-horaria-total">Carga Horaria Total</label>
+        {/* TODO: PONER EN UN MAP */}
         <input
           type="text"
           id="carga-horaria-total"
           name="carga_horaria_total"
-          value={formValues.cargaHorariaTotal}
-          onChange={handleChange}
+          value={cargaHoraria.cargaHorariaTotal}
+          onChange={handleCargaHorariaChange}
         />
         <label htmlFor="semanas-dictado">Semanas de dictado</label>
         <input
           type="text"
           id="semanas-dictado"
           name="semanas_dictado"
-          value={formValues.semanasDictado}
-          onChange={handleChange}
+          value={cargaHoraria.semanasDictado}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="teoria-presencial">Teoria presencial</label>
@@ -50,8 +51,8 @@ export default function CargaHoraria() {
           type="text"
           id="teoria-presencial"
           name="teoria_presencial"
-          value={formValues.teoriaPresencial}
-          onChange={handleChange}
+          value={cargaHoraria.teoriaPresencial}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="practica-presencial">Practica presencial</label>
@@ -59,8 +60,8 @@ export default function CargaHoraria() {
           type="text"
           id="practica-presencial"
           name="practica_presencial"
-          value={formValues.practicaPresencial}
-          onChange={handleChange}
+          value={cargaHoraria.practicaPresencial}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="teorico-practico-presencial">
@@ -70,8 +71,8 @@ export default function CargaHoraria() {
           type="text"
           id="teorico-practico-presencial"
           name="teorico_practico_presencial"
-          value={formValues.teoricoPracticoPresencial}
-          onChange={handleChange}
+          value={cargaHoraria.teoricoPracticoPresencial}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="laboratorios-presenciales">
@@ -81,8 +82,8 @@ export default function CargaHoraria() {
           type="text"
           id="laboratorios-presenciales"
           name="laboratorios_presenciales"
-          value={formValues.laboratoriosPresenciales}
-          onChange={handleChange}
+          value={cargaHoraria.laboratoriosPresenciales}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="teoria-distancia">Teoria a distancia</label>
@@ -90,8 +91,8 @@ export default function CargaHoraria() {
           type="text"
           id="teoria-distancia"
           name="teoria_distancia"
-          value={formValues.teoriaDistancia}
-          onChange={handleChange}
+          value={cargaHoraria.teoriaDistancia}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="practica-distancia">Practica a distancia</label>
@@ -99,8 +100,8 @@ export default function CargaHoraria() {
           type="text"
           id="practica-distancia"
           name="practica_distancia"
-          value={formValues.practicaDistancia}
-          onChange={handleChange}
+          value={cargaHoraria.practicaDistancia}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="teorico-practico-distancia">
@@ -110,8 +111,8 @@ export default function CargaHoraria() {
           type="text"
           id="teorico-practico-distancia"
           name="teorico_practico_distancia"
-          value={formValues.teoricoPracticoDistancia}
-          onChange={handleChange}
+          value={cargaHoraria.teoricoPracticoDistancia}
+          onChange={handleCargaHorariaChange}
         />
 
         <label htmlFor="laboratorio-distancia">Laboratorio a distancia</label>
@@ -119,8 +120,8 @@ export default function CargaHoraria() {
           type="text"
           id="laboratorio-distancia"
           name="laboratorio_distancia"
-          value={formValues.laboratorioDistancia}
-          onChange={handleChange}
+          value={cargaHoraria.laboratorioDistancia}
+          onChange={handleCargaHorariaChange}
         />
       </form>
     </section>
