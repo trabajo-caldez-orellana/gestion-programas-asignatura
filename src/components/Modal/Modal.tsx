@@ -1,13 +1,15 @@
 import ReactDom from 'react-dom'
 import './Modal.css'
+import Button from '../ui/Button'
 
 interface ModalProps {
   open: boolean
   children: React.ReactNode
+  modalTitle?: string
   onClose: () => void
 }
 
-export default function Modal({ open, children, onClose }: ModalProps) {
+export default function Modal({ open, children, modalTitle, onClose }: ModalProps) {
   const portalRoot = document.getElementById('portal')
   if (!open || !portalRoot) return null
 
@@ -15,8 +17,9 @@ export default function Modal({ open, children, onClose }: ModalProps) {
     <>
       <div className="overlay" />
       <div className="modal">
-        <button onClick={onClose}>Close Modal</button>
+        <h2>{modalTitle}</h2>
         {children}
+        <Button text="X" onClick={onClose} cssClass='close-modal-button'/>
       </div>
     </>,
     portalRoot

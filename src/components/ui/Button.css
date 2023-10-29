@@ -10,3 +10,16 @@
   cursor: pointer;
   white-space: nowrap;
 }
+
+.close-modal-button {
+  display: flex;
+  direction: row;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.sumar-text-area {
+  display: flex;
+  direction: row;
+  justify-content: center;
+}
