@@ -15,7 +15,6 @@ from backend.models import (
     ProgramaTieneDescriptor,
     ProgramaTieneActividadReservada,
     Semestre,
-    Configuracion,
 )
 from backend.common.choices import (
     NivelDescriptor,
@@ -297,16 +296,15 @@ class ServicioVersionProgramaAsignatura:
         if not self.__es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
-        ultimos_programas = VersionProgramaAsignatura.objects.filter(
-            asignatura=asignatura
-        )
+        semestre_actual = self.servicio_semestre.obtener_semestre_actual()
 
-        if not ultimos_programas.exists():
+        try:
+            ultimo_programa = VersionProgramaAsignatura.objects.get(
+                asignatura=asignatura
+            )
+
+        except VersionProgramaAsignatura.DoesNotExist:
             raise ValidationError({"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES})
-
-        ultimo_programa: VersionProgramaAsignatura = ultimos_programas.latest(
-            "creado_en"
-        )
 
         if ultimo_programa.estado != EstadoAsignatura.APROBADO:
             raise ValidationError({"asignatura": MENSAJE_VERSION_ANTERIOR_NO_APROBADA})

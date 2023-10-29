@@ -2,6 +2,7 @@ import json
 
 from django.utils import timezone
 
+from backend.common.funciones_fecha import obtener_fecha_actual
 from backend.models import (
     Carrera,
     Configuracion,
@@ -30,43 +31,35 @@ CARRERA_2 = "Ingenieria Quimica"
 
 
 # FUNCIONES PARA EL SETUP
-FECHA_INICIO_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=6, day=30)
-)
-FECHA_INICIO_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=7, day=1)
-)
-FECHA_FIN_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=12, day=31)
-)
-FECHA_INICIO_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=6, day=30)
-)
+HOY = obtener_fecha_actual()
+
+FECHA_INICIO_SEMESTRE_CERRADO = HOY - timezone.timedelta(days=180)
+FECHA_FIN_SEMESTRE_CERRADO = HOY - timezone.timedelta(days=1)
+
+FECHA_INICIO_SEMESTRE_ABIERTO = HOY
+FECHA_FIN_SEMESTRE_ABIERTO = HOY + timezone.timedelta(days=180)
+
+FECHA_INICIO_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=181)
+FECHA_FIN_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=361)
 
 
 def crear_semestres_de_prueba():
     # Cerrado
     semestre_cerrado = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_CERRADO.date(),
+        fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO,
+        fecha_fin=FECHA_FIN_SEMESTRE_CERRADO,
     )
 
     # Activo
     semestre_abierto = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO.date(),
+        fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO,
+        fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO,
     )
 
     # Siguiente
     semestre_futuro = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_FUTURO.date(),
+        fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO,
+        fecha_fin=FECHA_FIN_SEMESTRE_FUTURO,
     )
 
     return semestre_cerrado, semestre_abierto, semestre_futuro
@@ -82,10 +75,7 @@ def set_up_tests():
      - Cinco descriptores, dos para cada estandar (uno de cada tipo), y uno compartido
      - Un estandar activo para cada carrera
      - Dos actividades reservadas para cada estandar
-     - Crea semestres de prueba (uno abierto, uno cerrado y uno futuro)
     """
-    crear_semestres_de_prueba()
-
     # Crear dos carreras
     carrera_1 = Carrera.objects.create(nombre=CARRERA_1)
     carrera_2 = Carrera.objects.create(nombre=CARRERA_2)
