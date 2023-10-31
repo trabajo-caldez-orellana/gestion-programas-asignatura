@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from backend.common.mensajes_de_error import MENSAJE_FECHAS_INCORRECTAS
 
@@ -15,6 +16,11 @@ class Semestre(models.Model):
                 violation_error_message=MENSAJE_FECHAS_INCORRECTAS,
             )
         ]
+
+    @property
+    def esta_activo(self) -> bool:
+        hoy = timezone.now().astimezone().date()
+        return self.fecha_inicio <= hoy <= self.fecha_fin
 
     def __str__(self):
         return "Semestre {} - {}".format(self.fecha_inicio, self.fecha_fin)
