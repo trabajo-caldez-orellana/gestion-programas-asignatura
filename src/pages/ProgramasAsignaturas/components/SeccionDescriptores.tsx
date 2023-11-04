@@ -100,7 +100,7 @@ export default function SeccionDescriptores({
     const { value } = e.target
 
     const ejesTransversales = [...descriptores.ejesTransversales]
-    ejesTransversales[index].valor = parseInt(value)
+    ejesTransversales[index].nivel = parseInt(value)
 
     setProgramaAsignatura({
       ...programaAsignatura,
@@ -112,29 +112,18 @@ export default function SeccionDescriptores({
     })
   }
 
-  const handleDescriptorChange = (id: number, tipo: string) => {
-    const descriptoresCopy = { ...descriptores.descriptores }
-    const sourceArray =
-      tipo === 'si' ? descriptoresCopy.si : descriptoresCopy.no
-    const targetArray =
-      tipo === 'si' ? descriptoresCopy.no : descriptoresCopy.si
-
-    const descriptorIndex = sourceArray.findIndex(
-      (descriptor) => descriptor.id === id
-    )
-
-    if (descriptorIndex !== -1) {
-      const descriptor = sourceArray[descriptorIndex]
-      // Removemos el descriptor del array de origen y lo agregamos al array de destino
-      sourceArray.splice(descriptorIndex, 1)
-      targetArray.push(descriptor)
-    }
+  const handleDescriptorChange = (id: number) => {
+    // Toggle the field seleccionado for the descriptor with the given id
+    const descriptores = [...programaAsignatura.descriptores.descriptores]
+    const descriptor = descriptores.find((descriptor) => descriptor.id === id)
+    if (descriptor) descriptor.seleccionado = !descriptor.seleccionado
 
     setProgramaAsignatura({
       ...programaAsignatura,
       descriptores: {
         ...programaAsignatura.descriptores,
-        descriptores: descriptoresCopy
+
+        descriptores
       }
     })
   }
@@ -185,18 +174,22 @@ export default function SeccionDescriptores({
             <div className="selector-descriptores-columna">
               <label>Si</label>
 
-              {descriptores.descriptores.si.map((descriptor) => (
-                <p onClick={() => handleDescriptorChange(descriptor.id, 'si')}>
+              {descriptores.descriptores.map((descriptor) => (
+                descriptor.seleccionado && (
+                <p onClick={() => handleDescriptorChange(descriptor.id)}>
                   {descriptor.nombre}
                 </p>
+                )
               ))}
             </div>
             <div className="selector-descriptores-columna">
               <label>No</label>
-              {descriptores.descriptores.no.map((descriptor) => (
-                <p onClick={() => handleDescriptorChange(descriptor.id, 'no')}>
+              {descriptores.descriptores.map((descriptor) => (
+                !descriptor.seleccionado && (
+                <p onClick={() => handleDescriptorChange(descriptor.id)}>
                   {descriptor.nombre}
                 </p>
+                )
               ))}
             </div>
           </div>
@@ -240,7 +233,7 @@ export default function SeccionDescriptores({
                 name={eje.nombre}
                 value="0"
                 defaultChecked
-                checked={eje.valor === 0}
+                checked={eje.nivel === 0}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
               />
               Nada
@@ -248,7 +241,7 @@ export default function SeccionDescriptores({
                 type="radio"
                 name={eje.nombre}
                 value="1"
-                checked={eje.valor === 1}
+                checked={eje.nivel === 1}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
               />
               Bajo
@@ -256,7 +249,7 @@ export default function SeccionDescriptores({
                 type="radio"
                 name={eje.nombre}
                 value="2"
-                checked={eje.valor === 2}
+                checked={eje.nivel === 2}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
               />
               Medio
@@ -264,7 +257,7 @@ export default function SeccionDescriptores({
                 type="radio"
                 name={eje.nombre}
                 value="3"
-                checked={eje.valor === 3}
+                checked={eje.nivel === 3}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
               />
               Alto

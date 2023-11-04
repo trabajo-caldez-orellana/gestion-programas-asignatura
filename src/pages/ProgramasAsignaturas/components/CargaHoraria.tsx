@@ -28,15 +28,15 @@ export default function CargaHoraria({
     <section className="form-section">
       <h2>Carga Horaria</h2>
       <form className="carga-horaria-form">
-        <label htmlFor="carga-horaria-total">Carga Horaria Total</label>
+        {/* <label htmlFor="carga-horaria-total">Carga Horaria Total</label> */}
         {/* TODO: PONER EN UN MAP */}
-        <input
+        {/* <input
           type="text"
           id="carga-horaria-total"
           name="carga_horaria_total"
           value={cargaHoraria.cargaHorariaTotal}
           onChange={handleCargaHorariaChange}
-        />
+        /> */}
         <label htmlFor="semanas-dictado">Semanas de dictado</label>
         <input
           type="text"
