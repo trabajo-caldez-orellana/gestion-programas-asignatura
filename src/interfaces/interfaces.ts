@@ -1,5 +1,5 @@
 export interface CargaHoraria {
-  cargaHorariaTotal: number
+  // cargaHorariaTotal: number
   semanasDictado: number
   teoriaPresencial: number
   practicaPresencial: number
@@ -16,12 +16,13 @@ export interface Descriptor {
   ejesTransversales: {
     id: number
     nombre: string
-    valor: number
+    nivel: number
   }[]
   descriptores: {
-    si: { id: number; nombre: string }[]
-    no: { id: number; nombre: string }[]
-  }
+    id: number
+    nombre: string
+    seleccionado: boolean
+  }[]
   actividadesReservadas: string[]
 }
 
