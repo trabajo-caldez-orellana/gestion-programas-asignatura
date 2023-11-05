@@ -26,14 +26,11 @@ class ServicioSemestre:
                 }
             )
 
+        semestres_en_la_fecha = Semestre.objects.filter(
+            fecha_inicio__lte=fecha_fin, fecha_fin__gte=fecha_inicio
+        )
         if instance is not None:
-            semestres_en_la_fecha = Semestre.objects.filter(
-                fecha_inicio__lte=fecha_fin, fecha_fin__gte=fecha_inicio
-            )
-        else:
-            semestres_en_la_fecha = Semestre.objects.filter(
-                fecha_inicio__lte=fecha_fin, fecha_fin__gte=fecha_inicio
-            ).exclude(id=instance.id)
+            semestres_en_la_fecha = semestres_en_la_fecha.exclude(id=instance.id)
 
         if semestres_en_la_fecha.exists():
             raise ValidationError(
@@ -50,7 +47,7 @@ class ServicioSemestre:
             fecha_inicio__lte=hoy, fecha_fin__gte=hoy
         ).first()
 
-        if not semestre.exists():
+        if not semestre:
             raise ValidationError({"__all__": MENSAJE_NO_HAY_SEMESTRE_ACTIVO})
 
         return semestre

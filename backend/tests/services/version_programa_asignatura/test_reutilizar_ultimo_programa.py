@@ -238,8 +238,8 @@ class TestReutilizarUltimoPrograna(TestCase):
             self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
         except ValidationError as e:
-            self.assertIn("descriptor", e.message_dict)
-            self.assertIn(MENSAJE_DESCRIPTOR, e.message_dict.get("descriptor"))
+            self.assertIn("descriptores", e.message_dict)
+            self.assertIn(MENSAJE_DESCRIPTOR, e.message_dict.get("descriptores"))
 
     def test_programa_anterior_no_es_valido_eje_de_otra_carrera(self):
         version_anterior = self.__crear_version_anterior_con_datos_default()
@@ -300,8 +300,10 @@ class TestReutilizarUltimoPrograna(TestCase):
             self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
         except ValidationError as e:
-            self.assertIn("eje_transversal", e.message_dict)
-            self.assertIn(MENSAJE_EJE_TRANSVERAL, e.message_dict.get("eje_transversal"))
+            self.assertIn("ejes_transversales", e.message_dict)
+            self.assertIn(
+                MENSAJE_EJE_TRANSVERAL, e.message_dict.get("ejes_transversales")
+            )
 
     def test_programa_anterior_no_es_valido_carga_distinto_bloque(self):
         version_anterior = self.__crear_version_anterior_con_datos_default()
@@ -1007,10 +1009,10 @@ class TestReutilizarUltimoPrograna(TestCase):
             self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
         except ValidationError as e:
-            self.assertIn("actividad_reservada", e.message_dict)
+            self.assertIn("actividades_reservadas", e.message_dict)
             self.assertIn(
                 MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
-                e.message_dict.get("actividad_reservada"),
+                e.message_dict.get("actividades_reservadas"),
             )
 
     def test_programa_anterior_no_tiene_carga_bloque(self):

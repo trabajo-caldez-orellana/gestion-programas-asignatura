@@ -598,7 +598,9 @@ class ServicioVersionProgramaAsignatura:
         )
         if not actividades_reservadas.exists():
             raise ValidationError(
-                {"actividad_reservada": MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA}
+                {
+                    "actividades_reservadas": MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA
+                }
             )
 
         # Asi si alguna falla, que no se guarde nada. Esta bien?

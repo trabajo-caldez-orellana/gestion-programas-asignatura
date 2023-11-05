@@ -165,7 +165,6 @@ class TestCrearNuevoPrograma(TestCase):
                 **parametros
             )
         except ValidationError as e:
-            print(e.message_dict)
             self.assertIn(error, e.message_dict)
             if mensaje_de_error is not None:
                 self.assertIn(mensaje_de_error, e.message_dict[error])
