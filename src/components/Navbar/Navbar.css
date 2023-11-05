@@ -26,7 +26,6 @@
   left: 0;
   width: 225px;
   height: 100%;
-  transition: all 0.5s ease;
 }
 
 .wrapper .sidebar .profile {
@@ -55,7 +54,6 @@
 .wrapper .section {
   width: calc(100% - 225px);
   margin-left: 225px;
-  transition: all 0.5s ease;
 }
 
 .wrapper .section .top_navbar {
