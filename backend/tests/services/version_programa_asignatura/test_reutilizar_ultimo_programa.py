@@ -10,10 +10,9 @@ from backend.tests.utils import (
     CODIGO_ASIGNATURA_2,
     CARRERA_1,
     CARRERA_2,
-    DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA,
+    DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR,
     DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE,
     MENSAJE_SERVICIO_DEBE_FALLAR,
-    MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
 )
 from backend.models import (
     Asignatura,
@@ -47,7 +46,7 @@ from backend.common.constantes import (
 )
 
 
-class TestReutilizarUltimoPlan(TestCase):
+class TestReutilizarUltimoPrograna(TestCase):
     servicio_version_programa_asignatura = ServicioVersionProgramaAsignatura()
 
     def setUp(self):
@@ -59,7 +58,9 @@ class TestReutilizarUltimoPlan(TestCase):
         self.carrera_2 = Carrera.objects.get(nombre=CARRERA_2)
 
     def __crear_version_anterior_con_datos_default(self):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
 
         fecha_inicio_semestre_anterior = (
             timezone.now().astimezone() - timezone.timedelta(days=7 * 4)
@@ -139,7 +140,9 @@ class TestReutilizarUltimoPlan(TestCase):
             )
 
     def test_version_anterior_no_aprobada(self):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["asignatura"] = self.asignatura
         datos_version_anterior["estado"] = EstadoAsignatura.PENDIENTE
 
@@ -365,7 +368,9 @@ class TestReutilizarUltimoPlan(TestCase):
         self,
     ):
         # Primero hago menos resultados que el minimo
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         cantidad_resultados = MINIMO_RESULTADOS_DE_APRENDIZAJE - 1
         datos_version_anterior["resultados_de_aprendizaje"] = json.dumps(
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
@@ -451,7 +456,9 @@ class TestReutilizarUltimoPlan(TestCase):
         self,
     ):
         # Primero hago menos resultados que el minimo
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         cantidad_resultados = MAXIMO_RESULTADOS_DE_APRENDIZAJE + 1
         datos_version_anterior["resultados_de_aprendizaje"] = json.dumps(
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
@@ -537,7 +544,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teoria_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_teoria_presencial")
 
         fecha_inicio_semestre_anterior = (
@@ -576,7 +585,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_practica_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_practica_presencial")
 
         fecha_inicio_semestre_anterior = (
@@ -615,7 +626,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_lab_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_lab_presencial")
 
         fecha_inicio_semestre_anterior = (
@@ -654,7 +667,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teorico_practico_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_teorico_practico_presencial")
 
         fecha_inicio_semestre_anterior = (
@@ -693,7 +708,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teoria_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_teoria_remoto"] = 2
 
         fecha_inicio_semestre_anterior = (
@@ -732,7 +749,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_practica_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_practica_remoto"] = 2
 
         fecha_inicio_semestre_anterior = (
@@ -771,7 +790,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_lab_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_lab_remoto"] = 2
 
         fecha_inicio_semestre_anterior = (
@@ -810,7 +831,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teorico_practico_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_teorico_practico_remoto"] = 2
 
         fecha_inicio_semestre_anterior = (

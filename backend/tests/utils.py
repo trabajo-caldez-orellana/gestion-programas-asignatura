@@ -25,6 +25,15 @@ CODIGO_ASIGNATURA_2 = "15_TER"
 CODIGO_ASIGNATURA_COMPARTIDA = "15_XC1"
 CARRERA_1 = "Ingenieria en Computacion"
 CARRERA_2 = "Ingenieria Quimica"
+NOMBRE_DESCRIPTOR_1 = "Descriptor Ing. Comuntación"
+NOMBRE_DESCRIPTOR_2 = "Descriptor Ing. Química"
+NOMBRE_DESCRIPTOR_COMPARTIDO = "Descriptor compartido"
+NOMBRE_EJE_1 = "Eje Transversal Ing. Comuntación"
+NOMBRE_EJE_2 = "Eje Transversal Ing. Química"
+NOMBRE_ACTIVIDAD_1_CARRERA_1 = "Actividad Reservada 1 Ingenieria En Computacion"
+NOMBRE_ACTIVIDAD_2_CARRERA_1 = "Actividad Reservada 2 Ingenieria En Computacion"
+NOMBRE_ACTIVIDAD_1_CARRERA_2 = "Actividad Reservada 1 Ingenieria Química"
+NOMBRE_ACTIVIDAD_2_CARRERA_2 = "Actividad Reservada 2 Ingenieria Química"
 
 
 # FUNCIONES PARA EL SETUP
@@ -38,7 +47,7 @@ def set_up_tests():
      - Cinco descriptores, dos para cada estandar (uno de cada tipo), y uno compartido
      - Un estandar activo para cada carrera
      - Dos actividades reservadas para cada estandar
-     - Crea un semestre acutal
+     - Crea un semestre acutal y uno futuro
     """
 
     # Crear dos carreras
@@ -101,20 +110,19 @@ def set_up_tests():
 
     # Descriptores
     descriptor_carrera_1 = Descriptor.objects.create(
-        descripcion="Descriptor Ing. Comuntación", tipo=TipoDescriptor.DESCRIPTOR
+        descripcion=NOMBRE_DESCRIPTOR_1, tipo=TipoDescriptor.DESCRIPTOR
     )
     descriptor_carrera_2 = Descriptor.objects.create(
-        descripcion="Descriptor Ing. Química", tipo=TipoDescriptor.DESCRIPTOR
+        descripcion=NOMBRE_DESCRIPTOR_2, tipo=TipoDescriptor.DESCRIPTOR
     )
     eje_carrera_1 = Descriptor.objects.create(
-        descripcion="Eje Transversal Ing. Comuntación",
-        tipo=TipoDescriptor.EJE_TRANSVERSAL,
+        descripcion=NOMBRE_EJE_1, tipo=TipoDescriptor.EJE_TRANSVERSAL
     )
     eje_carrera_2 = Descriptor.objects.create(
-        descripcion="Eje Transversal Ing. Química", tipo=TipoDescriptor.EJE_TRANSVERSAL
+        descripcion=NOMBRE_EJE_2, tipo=TipoDescriptor.EJE_TRANSVERSAL
     )
     descriptor_compartido = Descriptor.objects.create(
-        descripcion="Descriptor compartido", tipo=TipoDescriptor.DESCRIPTOR
+        descripcion=NOMBRE_DESCRIPTOR_COMPARTIDO, tipo=TipoDescriptor.DESCRIPTOR
     )
 
     # Crear dos estándares activos. Para que los tests corran correctamente, los estándares
@@ -143,26 +151,28 @@ def set_up_tests():
 
     # Actividades reservadas
     actividad_1_carrera_1 = ActividadReservada.objects.create(
-        descripcion="Actividad Reservada 1 Ingenieria En Computacion",
+        descripcion=NOMBRE_ACTIVIDAD_1_CARRERA_1,
         estandar=estandar_carrera_1,
     )
     actividad_2_carrera_1 = ActividadReservada.objects.create(
-        descripcion="Actividad Reservada 2 Ingenieria En Computacion",
+        descripcion=NOMBRE_ACTIVIDAD_2_CARRERA_1,
         estandar=estandar_carrera_1,
     )
     actividad_1_carrera_2 = ActividadReservada.objects.create(
-        descripcion="Actividad Reservada 1 Ingenieria Química",
+        descripcion=NOMBRE_ACTIVIDAD_1_CARRERA_2,
         estandar=estandar_carrera_2,
     )
     actividad_2_carrera_2 = ActividadReservada.objects.create(
-        descripcion="Actividad Reservada 2 Ingenieria Química",
+        descripcion=NOMBRE_ACTIVIDAD_2_CARRERA_2,
         estandar=estandar_carrera_2,
     )
 
     # Crea un semestre actual
     fecha_fin_semestre = fecha_inicio + timezone.timedelta(days=7 * 4)
-    semestre = Semestre.objects.create(
-        fecha_inicio=fecha_inicio, fecha_fin=fecha_fin_semestre
+    Semestre.objects.create(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin_semestre)
+    Semestre.objects.create(
+        fecha_inicio=fecha_fin_semestre + timezone.timedelta(days=1),
+        fecha_fin=fecha_fin_semestre + timezone.timedelta(days=1 + 7 * 4),
     )
 
 
@@ -222,7 +232,7 @@ DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE = [
     "Resultado de aprendizaje 10",
 ]
 
-DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA = {
+DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR = {
     "estado": EstadoAsignatura.APROBADO,
     "semanas_dictado": 16,
     "semanal_teoria_presencial": 4,
@@ -242,6 +252,37 @@ DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA = {
         DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:MINIMO_RESULTADOS_DE_APRENDIZAJE]
     ),
 }
+
+DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_CREAR = {
+    "descriptores": [],
+    "actividades_reservadas": [],
+    "ejes_transversales": [],
+    "carga_rtf": 1,
+    "semanal_teoria_presencial": 1,
+    "semanal_practica_presencial": 1,
+    "semanal_teorico_practico_presencial": 1,
+    "semanal_lab_presencial": 1,
+    "semanal_teoria_remoto": 1,
+    "semanal_practica_remoto": 1,
+    "semanal_teorico_practico_remoto": 1,
+    "semanal_lab_remoto": 1,
+    "resultados_de_aprendizaje": [
+        DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:MINIMO_RESULTADOS_DE_APRENDIZAJE]
+    ],
+    "semanas_dictado": 1,
+    "contenidos": "Datos de ejemplo.",
+    "bibliografia": "Datos de ejemplo.",
+    "recursos": "Datos de ejemplo.",
+    "evaluacion": "Datos de ejemplo.",
+    "investigacion_docentes": "Datos de ejemplo.",
+    "investigacion_estudiantes": "Datos de ejemplo.",
+    "extension_docentes": "Datos de ejemplo.",
+    "extension_estudiantes": "Datos de ejemplo.",
+    "cronograma": "Datos de ejemplo.",
+}
+
+VALORES_INVALIDOS = [None, ""]
+
 
 # Mensajes de error para asserts
 MENSAJE_SERVICIO_DEBE_FALLAR = "El servicio debe fallar."
