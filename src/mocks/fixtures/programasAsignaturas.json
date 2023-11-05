@@ -1,46 +1,30 @@
-{
-  "id": 1,
-  "cargaHoraria": {
-    "semanasDictado": 0,
-    "teoriaPresencial": 0,
-    "practicaPresencial": 0,
-    "teoricoPracticoPresencial": 0,
-    "laboratoriosPresenciales": 0,
-    "teoriaDistancia": 0,
-    "practicaDistancia": 0,
-    "teoricoPracticoDistancia": 0,
-    "laboratorioDistancia": 0
+[
+  {
+    "id": 1,
+    "asignatura": "asignatura 1",
+    "carrera": "Carrera 1",
+    "estado": "Item 1",
+    "id_programa": 1,
+    "acciones_posibles": {
+      "ver": true,
+      "editar": true,
+      "reutilizar_ultimo": true,
+      "modificar_ultimo": true,
+      "empezar_nuevo": true
+    }
   },
-  "descriptores": {
-    "resultadosAprendizaje": [""],
-    "ejesTransversales": [
-      {
-        "id": 1,
-        "nombre": "Eje 1",
-        "nivel": 0
-      },
-
-      {
-        "id": 2,
-        "nombre": "Eje 2",
-        "nivel": 2
-      }
-    ],
-    "descriptores": [
-      { "id": 1, "nombre": "Nombre 1", "seleccionado": true },
-      { "id": 2, "nombre": "Nombre 2", "seleccionado": true },
-      { "id": 3, "nombre": "Nombre 3", "seleccionado": false }
-    ],
-    "actividadesReservadas": []
-  },
-  "informacionAdicional": {
-    "fundamentacion": "",
-    "contenidos": "",
-    "bibliografia": "",
-    "metodologiaAplicada": "",
-    "recursos": "",
-    "evaluacion": "",
-    "investigacion": "",
-    "extension": ""
+  {
+    "id": 2,
+    "asignatura": "asignatura 2",
+    "carrera": "Carrera 2",
+    "estado": "Item 2",
+    "id_programa": null,
+    "acciones_posibles": {
+      "ver": true,
+      "editar": true,
+      "reutilizar_ultimo": true,
+      "modificar_ultimo": false,
+      "empezar_nuevo": true
+    }
   }
-}
+]

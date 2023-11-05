@@ -6,10 +6,18 @@ type actions = {
 }
 
 type tableRow = {
-  id: number
+  id: number,
+  asignatura: string
   carrera: string
-  version: string
   estado: string
+  id_programa: number | null
+  acciones_posibles: {
+    ver: boolean
+    editar: boolean
+    reutilizar_ultimo: boolean
+    modificar_ultimo: boolean
+    empezar_nuevo: boolean
+  }
 }
 
 interface TableProps {
@@ -45,10 +53,20 @@ export default function Table({
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.carrera}</td>
-              <td>{item.version}</td>
               <td>{item.estado}</td>
-              <td>
-                <i onClick={() => watch(item.id)} className="fas fa-eye"></i>
+              <td>{item.id_programa}</td>
+              <td id="column-acciones">
+                {
+                  item.acciones_posibles ? (
+                    <>
+                      {item.acciones_posibles.ver ? <i onClick={() => watch(item.id)} className="fas fa-eye"></i> : <></>}
+                      {item.acciones_posibles.editar ? <i className="fas fa-edit"></i> : <></>}
+                      {item.acciones_posibles.reutilizar_ultimo ? <i className="fas fa-redo"></i> : <></>}
+                      {item.acciones_posibles.modificar_ultimo ? <i className="fas fa-edit"></i> : <></>}
+                      {item.acciones_posibles.empezar_nuevo ? <i className="fas fa-plus"></i> : <></>}
+                    </>
+                  ) : <></>
+                }
               </td>
             </tr>
           ))}
