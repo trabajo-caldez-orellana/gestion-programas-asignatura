@@ -44,9 +44,14 @@ from backend.common.mensajes_de_error import (
     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
     MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA,
 )
+from backend.services.semestre import ServicioSemestre
+from backend.services.configuracion import ServicioConfiguracion
 
 
 class ServicioVersionProgramaAsignatura:
+    servicio_semestre = ServicioSemestre()
+    servicio_configuracion = ServicioConfiguracion()
+
     def __asignar_carga_horaria(
         self, bloque: BloqueCurricular, programa: VersionProgramaAsignatura, horas: int
     ) -> CargaBloque:
@@ -154,9 +159,10 @@ class ServicioVersionProgramaAsignatura:
         """
         Retorna verdadero si estamos dentro del periodo para crear nuevos programas, y falso sino.
         """
-
-        # TODO. Hacer este servicio
-        return True
+        return (
+            self.servicio_configuracion.obtener_dias_restantes_inicio_periodo_modificacion()
+            == 0
+        )
 
     def __validar_datos(
         self,
@@ -290,16 +296,15 @@ class ServicioVersionProgramaAsignatura:
         if not self.__es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
-        ultimos_programas = VersionProgramaAsignatura.objects.filter(
-            asignatura=asignatura
-        )
+        semestre_actual = self.servicio_semestre.obtener_semestre_actual()
 
-        if not ultimos_programas.exists():
+        try:
+            ultimo_programa = VersionProgramaAsignatura.objects.get(
+                asignatura=asignatura
+            )
+
+        except VersionProgramaAsignatura.DoesNotExist:
             raise ValidationError({"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES})
-
-        ultimo_programa: VersionProgramaAsignatura = ultimos_programas.latest(
-            "creado_en"
-        )
 
         if ultimo_programa.estado != EstadoAsignatura.APROBADO:
             raise ValidationError({"asignatura": MENSAJE_VERSION_ANTERIOR_NO_APROBADA})

@@ -2,8 +2,10 @@ import json
 
 from django.utils import timezone
 
+from backend.common.funciones_fecha import obtener_fecha_actual
 from backend.models import (
     Carrera,
+    Configuracion,
     Estandar,
     PlanDeEstudio,
     Asignatura,
@@ -16,6 +18,7 @@ from backend.common.choices import (
     MetodologiaAsignatura,
     TipoDescriptor,
     EstadoAsignatura,
+    ParametrosDeConfiguracion,
 )
 from backend.common.constantes import MINIMO_RESULTADOS_DE_APRENDIZAJE
 
@@ -28,6 +31,40 @@ CARRERA_2 = "Ingenieria Quimica"
 
 
 # FUNCIONES PARA EL SETUP
+HOY = obtener_fecha_actual()
+
+FECHA_INICIO_SEMESTRE_CERRADO = HOY - timezone.timedelta(days=180)
+FECHA_FIN_SEMESTRE_CERRADO = HOY - timezone.timedelta(days=1)
+
+FECHA_INICIO_SEMESTRE_ABIERTO = HOY
+FECHA_FIN_SEMESTRE_ABIERTO = HOY + timezone.timedelta(days=180)
+
+FECHA_INICIO_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=181)
+FECHA_FIN_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=361)
+
+
+def crear_semestres_de_prueba():
+    # Cerrado
+    semestre_cerrado = Semestre.objects.create(
+        fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO,
+        fecha_fin=FECHA_FIN_SEMESTRE_CERRADO,
+    )
+
+    # Activo
+    semestre_abierto = Semestre.objects.create(
+        fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO,
+        fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO,
+    )
+
+    # Siguiente
+    semestre_futuro = Semestre.objects.create(
+        fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO,
+        fecha_fin=FECHA_FIN_SEMESTRE_FUTURO,
+    )
+
+    return semestre_cerrado, semestre_abierto, semestre_futuro
+
+
 def set_up_tests():
     """
     Crea:
@@ -38,9 +75,7 @@ def set_up_tests():
      - Cinco descriptores, dos para cada estandar (uno de cada tipo), y uno compartido
      - Un estandar activo para cada carrera
      - Dos actividades reservadas para cada estandar
-     - Crea un semestre acutal
     """
-
     # Crear dos carreras
     carrera_1 = Carrera.objects.create(nombre=CARRERA_1)
     carrera_2 = Carrera.objects.create(nombre=CARRERA_2)
@@ -159,10 +194,36 @@ def set_up_tests():
         estandar=estandar_carrera_2,
     )
 
-    # Crea un semestre actual
-    fecha_fin_semestre = fecha_inicio + timezone.timedelta(days=7 * 4)
-    semestre = Semestre.objects.create(
-        fecha_inicio=fecha_inicio, fecha_fin=fecha_fin_semestre
+
+FECHA_DEFAULT_MODIFICACION = 30
+FECHA_DEFAULT_VALIDACION = 20
+FECHA_DEFAULT_CORRECCION = 10
+
+
+def crear_configuraciones_del_prograna():
+    Configuracion.objects.create(
+        nombre=ParametrosDeConfiguracion.INICIO_PERIODO_MODIFICACION,
+        valor=FECHA_DEFAULT_MODIFICACION,
+    )
+
+    Configuracion.objects.create(
+        nombre=ParametrosDeConfiguracion.INICIO_PERIODO_VALIDACION,
+        valor=FECHA_DEFAULT_VALIDACION,
+    )
+
+    Configuracion.objects.create(
+        nombre=ParametrosDeConfiguracion.INICIO_PERIODO_CORRECCION,
+        valor=FECHA_DEFAULT_CORRECCION,
+    )
+
+
+def crear_fecha_y_hora(
+    anio: int, mes: int, dia: int, hora: int = 0, minuto: int = 0, segundo: int = 0
+):
+    return timezone.make_aware(
+        timezone.datetime(
+            year=anio, month=mes, day=dia, hour=hora, minute=minuto, second=segundo
+        )
     )
 
 

@@ -33,7 +33,7 @@ class TestObtenerSemestreActual(TestCase):
     def test_probar_antes_de_media_noche_en_cambio_de_semestre(self):
         hora_de_referencia = time(hour=23, minute=59, second=59)
         fecha_de_referencia = timezone.make_aware(
-            datetime.combine(FECHA_FIN_SEMESTRE_ABIERTO.date(), hora_de_referencia)
+            datetime.combine(FECHA_FIN_SEMESTRE_ABIERTO, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
             try:
@@ -47,7 +47,7 @@ class TestObtenerSemestreActual(TestCase):
         dia_de_referencia = FECHA_FIN_SEMESTRE_ABIERTO + timezone.timedelta(days=1)
         hora_de_referencia = time(hour=0, minute=0, second=0)
         fecha_de_referencia = timezone.make_aware(
-            datetime.combine(dia_de_referencia.date(), hora_de_referencia)
+            datetime.combine(dia_de_referencia, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
             try:
