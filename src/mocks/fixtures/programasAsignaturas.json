@@ -1,0 +1,46 @@
+{
+  "id": 1,
+  "cargaHoraria": {
+    "semanasDictado": 0,
+    "teoriaPresencial": 0,
+    "practicaPresencial": 0,
+    "teoricoPracticoPresencial": 0,
+    "laboratoriosPresenciales": 0,
+    "teoriaDistancia": 0,
+    "practicaDistancia": 0,
+    "teoricoPracticoDistancia": 0,
+    "laboratorioDistancia": 0
+  },
+  "descriptores": {
+    "resultadosAprendizaje": [""],
+    "ejesTransversales": [
+      {
+        "id": 1,
+        "nombre": "Eje 1",
+        "nivel": 0
+      },
+
+      {
+        "id": 2,
+        "nombre": "Eje 2",
+        "nivel": 2
+      }
+    ],
+    "descriptores": [
+      { "id": 1, "nombre": "Nombre 1", "seleccionado": true },
+      { "id": 2, "nombre": "Nombre 2", "seleccionado": true },
+      { "id": 3, "nombre": "Nombre 3", "seleccionado": false }
+    ],
+    "actividadesReservadas": []
+  },
+  "informacionAdicional": {
+    "fundamentacion": "",
+    "contenidos": "",
+    "bibliografia": "",
+    "metodologiaAplicada": "",
+    "recursos": "",
+    "evaluacion": "",
+    "investigacion": "",
+    "extension": ""
+  }
+}

@@ -13,7 +13,10 @@ from backend.common.mensajes_de_error import (
 
 class ServicioSemestre:
     def validar_semestre(
-        self, fecha_inicio: timezone.datetime.date, fecha_fin: timezone.datetime.date
+        self,
+        fecha_inicio: timezone.datetime.date,
+        fecha_fin: timezone.datetime.date,
+        instance: Semestre | None = None,
     ):
         if fecha_inicio > fecha_fin:
             raise ValidationError(
@@ -27,6 +30,9 @@ class ServicioSemestre:
             fecha_inicio__lte=fecha_fin, fecha_fin__gte=fecha_inicio
         )
 
+        if instance is not None:
+            semestres_en_la_fecha = semestres_en_la_fecha.exclude(instance.id)
+
         if semestres_en_la_fecha.exists():
             raise ValidationError(
                 {
@@ -38,12 +44,14 @@ class ServicioSemestre:
     def obtener_semestre_actual(self):
         hoy = timezone.now().astimezone()
 
-        semestre = Semestre.objects.filter(fecha_inicio__lte=hoy, fecha_fin__gte=hoy)
+        semestre = Semestre.objects.filter(
+            fecha_inicio__lte=hoy, fecha_fin__gte=hoy
+        ).first()
 
-        if not semestre.exists():
+        if not semestre:
             raise ValidationError({"__all__": MENSAJE_NO_HAY_SEMESTRE_ACTIVO})
 
-        return semestre[0]
+        return semestre
 
     def obtener_semestre_anterior(self):
         # Semestres ordenados por fecha fin de menor a mayor

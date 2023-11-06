@@ -17,6 +17,7 @@ class FormSemestre(forms.ModelForm):
         servicio_semestre.validar_semestre(
             fecha_fin=datos_validados.get("fecha_fin"),
             fecha_inicio=datos_validados.get("fecha_inicio"),
+            instance=self.instance,
         )
 
         return datos_validados
