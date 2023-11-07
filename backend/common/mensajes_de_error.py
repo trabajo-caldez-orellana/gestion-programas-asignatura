@@ -69,3 +69,6 @@ MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO = (
 MENSAJE_NIVEL_INVALIDO = "El nivel seleccionado no es un valor valido."
 MENSAJE_CAMPO_ENTERO = "Este campo debe ser un numero entero mayor a cero."
 MENSAJE_CAMPO_NO_NULO = "Este campo no puede ser nulo."
+MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."
+MENSAJE_NO_FUE_DEFINIDO_PERIODO_VALIDACION = "No se completaron las configuraciones del programa. Debe definir los días para período de validación."
+MENSAJE_NO_FUE_DEFINIDO_PERIODO_CORRECCION = "No se completaron las configuraciones del programa. Debe definir los días para período de corrección."

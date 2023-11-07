@@ -33,22 +33,21 @@ class TestObtenerSemestreSiguiente(TestCase):
     def test_hay_dos_semestres_futuros(self):
         # Agrego un semestre futuro mas
         Semestre.objects.create(
-            fecha_inicio=timezone.datetime(year=2024, month=7, day=1),
-            fecha_fin=timezone.datetime(year=2024, month=12, day=31),
+            fecha_inicio=FECHA_FIN_SEMESTRE_FUTURO + timezone.timedelta(days=1),
+            fecha_fin=FECHA_FIN_SEMESTRE_FUTURO + timezone.timedelta(days=181),
         )
 
-        with freeze_time(FECHA_INICIO_SEMESTRE_ABIERTO):
-            try:
-                semestre = self.servicio_semestre.obtener_semestre_siguiente()
-            except Exception as e:
-                self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
+        try:
+            semestre = self.servicio_semestre.obtener_semestre_siguiente()
+        except Exception as e:
+            self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
 
         self.assertEqual(semestre, self.semestre_futuro)
 
     def test_probar_antes_de_media_noche_en_cambio_de_semestre(self):
         hora_de_referencia = time(hour=23, minute=59, second=59)
         fecha_de_referencia = timezone.make_aware(
-            datetime.combine(FECHA_FIN_SEMESTRE_ABIERTO.date(), hora_de_referencia)
+            datetime.combine(FECHA_FIN_SEMESTRE_ABIERTO, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
             try:
@@ -62,7 +61,7 @@ class TestObtenerSemestreSiguiente(TestCase):
         dia_de_referencia = FECHA_INICIO_SEMESTRE_CERRADO + timezone.timedelta(days=1)
         hora_de_referencia = time(hour=0, minute=0, second=0)
         fecha_de_referencia = timezone.make_aware(
-            datetime.combine(dia_de_referencia.date(), hora_de_referencia)
+            datetime.combine(dia_de_referencia, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
             try:
@@ -84,15 +83,16 @@ class TestObtenerSemestreSiguiente(TestCase):
         )
 
     def test_no_hay_semestres_siguientes(self):
-        with freeze_time(FECHA_INICIO_SEMESTRE_FUTURO):
-            with self.assertRaises(ValidationError) as contexto:
-                semestre = self.servicio_semestre.obtener_semestre_siguiente()
+        self.semestre_futuro.delete()
 
-            self.assertIn("__all__", contexto.exception.message_dict)
-            self.assertIn(
-                MENSAJE_NO_HAY_SEMESTRES_FUTUROS,
-                contexto.exception.message_dict["__all__"],
-            )
+        with self.assertRaises(ValidationError) as contexto:
+            semestre = self.servicio_semestre.obtener_semestre_siguiente()
+
+        self.assertIn("__all__", contexto.exception.message_dict)
+        self.assertIn(
+            MENSAJE_NO_HAY_SEMESTRES_FUTUROS,
+            contexto.exception.message_dict["__all__"],
+        )
 
     def test_no_hay_semestre_actual(self):
         fecha_referencia = FECHA_FIN_SEMESTRE_FUTURO + timezone.timedelta(days=7)
