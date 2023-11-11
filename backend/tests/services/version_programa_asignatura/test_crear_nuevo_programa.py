@@ -1,4 +1,6 @@
 import json
+from freezegun import freeze_time
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -12,7 +14,6 @@ from backend.tests.utils import (
     CARRERA_1,
     CARRERA_2,
     DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE,
-    MENSAJE_SERVICIO_DEBE_FALLAR,
     NOMBRE_DESCRIPTOR_1,
     NOMBRE_DESCRIPTOR_2,
     NOMBRE_DESCRIPTOR_COMPARTIDO,
@@ -22,6 +23,11 @@ from backend.tests.utils import (
     NOMBRE_ACTIVIDAD_2_CARRERA_1,
     NOMBRE_ACTIVIDAD_1_CARRERA_2,
     NOMBRE_ACTIVIDAD_2_CARRERA_2,
+    FECHA_DEFAULT_MODIFICACION,
+    FECHA_INICIO_SEMESTRE_FUTURO,
+    crear_configuraciones_del_prograna,
+    crear_semestres_de_prueba,
+    crear_fecha_y_hora,
 )
 from backend.models import (
     Asignatura,
@@ -105,6 +111,8 @@ class TestCrearNuevoPrograma(TestCase):
 
     def setUp(self):
         set_up_tests()
+        crear_configuraciones_del_prograna()
+        crear_semestres_de_prueba()
 
         self.asignatura_1 = Asignatura.objects.get(codigo=CODIGO_ASIGNATURA_1)
         self.asignatura_2 = Asignatura.objects.get(codigo=CODIGO_ASIGNATURA_2)
@@ -177,6 +185,15 @@ class TestCrearNuevoPrograma(TestCase):
         """
         La lista de descriptores que se manda tiene formato incorrecto, o los ID provistos son inexistentes
         """
+        fecha_de_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+        fecha_de_referencia = crear_fecha_y_hora(
+            anio=fecha_de_referencia.year,
+            mes=fecha_de_referencia.month,
+            dia=fecha_de_referencia.day,
+        )
+
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
             "asignatura": self.asignatura_1,
@@ -185,9 +202,10 @@ class TestCrearNuevoPrograma(TestCase):
         }
 
         # No agrega ningun descriptor
-        self._validar_creacion_incorreacta(
-            parametros, "descriptores", MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR
-        )
+        with freeze_time(fecha_de_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "descriptores", MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR
+            )
 
         # Primero formato invalido de descriptores:
         formato_descriptores_invalido = [
@@ -195,15 +213,17 @@ class TestCrearNuevoPrograma(TestCase):
         ]
 
         parametros["descriptores"] = formato_descriptores_invalido
-        self._validar_creacion_incorreacta(
-            parametros, "descriptores", MENSAJE_FORMATO_DESCRIPTORES_INVALIDO
-        )
+        with freeze_time(fecha_de_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "descriptores", MENSAJE_FORMATO_DESCRIPTORES_INVALIDO
+            )
 
         # Id inexistente
         parametros["descriptores"] = [{"id": 100}]
-        self._validar_creacion_incorreacta(
-            parametros, "descriptores", MENSAJE_DESCRIPTOR_INVALIDO
-        )
+        with freeze_time(fecha_de_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "descriptores", MENSAJE_DESCRIPTOR_INVALIDO
+            )
 
     def test_descriptor_de_otra_carrera(self):
         """
@@ -216,10 +236,13 @@ class TestCrearNuevoPrograma(TestCase):
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_2(),
         }
-
-        self._validar_creacion_incorreacta(
-            parametros, "descriptores", MENSAJE_DESCRIPTOR
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "descriptores", MENSAJE_DESCRIPTOR
+            )
 
     def test_actividades_reservadas_invalidas(self):
         """
@@ -232,12 +255,17 @@ class TestCrearNuevoPrograma(TestCase):
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
         }
 
-        # No agrega ninguna actividad reservada
-        self._validar_creacion_incorreacta(
-            parametros,
-            "actividades_reservadas",
-            MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        # No agrega ninguna actividad reservada
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "actividades_reservadas",
+                MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
+            )
 
         arrays_con_formatos_invalidos = [
             [actividad.id for actividad in self.actividades_reservadas_1],
@@ -252,19 +280,24 @@ class TestCrearNuevoPrograma(TestCase):
         for formato_actividades_invalido in arrays_con_formatos_invalidos:
             parametros["actividades_reservadas"] = formato_actividades_invalido
 
-            self._validar_creacion_incorreacta(
-                parametros,
-                "actividades_reservadas",
-                MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "actividades_reservadas",
+                    MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO,
+                )
 
         # Id inexistente
         parametros["actividades_reservadas"] = [
             {"id": 100, "nivel": NivelDescriptor.ALTO}
         ]
-        self._validar_creacion_incorreacta(
-            parametros, "actividades_reservadas", MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA
-        )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "actividades_reservadas",
+                MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA,
+            )
 
     def test_actividad_reservada_de_otra_carrera(self):
         """
@@ -278,9 +311,14 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
-        self._validar_creacion_incorreacta(
-            parametros, "actividades_reservadas", MENSAJE_ACTIVIDAD_RESERVADA
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "actividades_reservadas", MENSAJE_ACTIVIDAD_RESERVADA
+            )
 
     def test_nivel_actividad_reservada_invalido(self):
         parametros = {
@@ -294,18 +332,24 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
-        self._validar_creacion_incorreacta(
-            parametros, "actividades_reservadas", MENSAJE_NIVEL_INVALIDO
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "actividades_reservadas", MENSAJE_NIVEL_INVALIDO
+            )
 
         parametros["actividades_reservadas"] = [
             {"id": actividad.id, "nivel": 10}
             for actividad in self.actividades_reservadas_1
         ]
 
-        self._validar_creacion_incorreacta(
-            parametros, "actividades_reservadas", MENSAJE_NIVEL_INVALIDO
-        )
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "actividades_reservadas", MENSAJE_NIVEL_INVALIDO
+            )
 
     def test_ejes_transversales_invalidos(self):
         """
@@ -318,12 +362,17 @@ class TestCrearNuevoPrograma(TestCase):
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
         }
 
-        # No agrega ningun eje transversal
-        self._validar_creacion_incorreacta(
-            parametros,
-            "ejes_transversales",
-            MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        # No agrega ningun eje transversal
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "ejes_transversales",
+                MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
+            )
 
         arrays_con_formatos_invalidos = [
             [self.eje_transversal_1.id],
@@ -337,17 +386,19 @@ class TestCrearNuevoPrograma(TestCase):
         for formato_actividades_invalido in arrays_con_formatos_invalidos:
             parametros["ejes_transversales"] = formato_actividades_invalido
 
-            self._validar_creacion_incorreacta(
-                parametros,
-                "ejes_transversales",
-                MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "ejes_transversales",
+                    MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
+                )
 
         # Id inexistente
         parametros["ejes_transversales"] = [{"id": 100, "nivel": NivelDescriptor.ALTO}]
-        self._validar_creacion_incorreacta(
-            parametros, "ejes_transversales", MENSAJE_EJE_TRANSVERSAL_INVALIDO
-        )
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "ejes_transversales", MENSAJE_EJE_TRANSVERSAL_INVALIDO
+            )
 
     def test_eje_de_otra_carrera(self):
         """
@@ -361,9 +412,14 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
-        self._validar_creacion_incorreacta(
-            parametros, "ejes_transversales", MENSAJE_EJE_TRANSVERAL
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros, "ejes_transversales", MENSAJE_EJE_TRANSVERAL
+            )
 
     def test_valor_carga_rtf_invalido(self):
         parametros = {
@@ -374,12 +430,17 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["carga_rtf"] = valor
-            self._validar_creacion_incorreacta(
-                parametros, "carga_rtf", MENSAJE_CAMPO_ENTERO
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros, "carga_rtf", MENSAJE_CAMPO_ENTERO
+                )
 
     def test_valor_semanal_teoria_presencial_invalido(self):
         parametros = {
@@ -390,14 +451,19 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanal_teoria_presencial"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_teoria_presencial",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_teoria_presencial",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_semanal_practica_presencial_invalido(self):
         parametros = {
@@ -408,14 +474,20 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
+
         for valor in valores_invalidos:
             parametros["semanal_practica_presencial"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_practica_presencial",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_practica_presencial",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_semanal_teorico_practico_presencial_invalido(self):
         parametros = {
@@ -426,14 +498,19 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanal_teorico_practico_presencial"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_teorico_practico_presencial",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_teorico_practico_presencial",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_semanal_lab_presencial_invalido(self):
         parametros = {
@@ -444,14 +521,19 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanal_lab_presencial"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_lab_presencial",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_lab_presencial",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_semanal_teoria_remoto_invalido(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -469,14 +551,19 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanal_teoria_remoto"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_teoria_remoto",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_teoria_remoto",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_semanal_practica_remoto_invalido(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -494,14 +581,19 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanal_practica_remoto"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_practica_remoto",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_practica_remoto",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_semanal_teorico_practico_remoto_invalido(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -519,14 +611,19 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanal_teorico_practico_remoto"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_teorico_practico_remoto",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_teorico_practico_remoto",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_semanal_lab_remoto_invalido(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -544,14 +641,19 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanal_lab_remoto"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "semanal_lab_remoto",
-                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-            )
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "semanal_lab_remoto",
+                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                )
 
     def test_valor_resultados_de_aprendizaje_invalido(self):
         parametros = {
@@ -562,14 +664,20 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [json.dumps({})]
         for valor in valores_invalidos:
             parametros["resultados_de_aprendizaje"] = valor
-            self._validar_creacion_incorreacta(
-                parametros,
-                "resultados_de_aprendizaje",
-                MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO,
-            )
+
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros,
+                    "resultados_de_aprendizaje",
+                    MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO,
+                )
 
     def test_cantidad_de_resultados_menor_al_minimo(self):
         parametros = {
@@ -584,11 +692,17 @@ class TestCrearNuevoPrograma(TestCase):
                 ]
             ),
         }
-        self._validar_creacion_incorreacta(
-            parametros,
-            "resultados_de_aprendizaje",
-            MENSAJE_CANTIDAD_DE_RESULTADOS,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "resultados_de_aprendizaje",
+                MENSAJE_CANTIDAD_DE_RESULTADOS,
+            )
 
     def test_cantidad_de_resultados_mayor_al_maximo(self):
         parametros = {
@@ -603,11 +717,17 @@ class TestCrearNuevoPrograma(TestCase):
                 ]
             ),
         }
-        self._validar_creacion_incorreacta(
-            parametros,
-            "resultados_de_aprendizaje",
-            MENSAJE_CANTIDAD_DE_RESULTADOS,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "resultados_de_aprendizaje",
+                MENSAJE_CANTIDAD_DE_RESULTADOS,
+            )
 
     def test_valor_semanas_dictado_invalido(self):
         parametros = {
@@ -618,10 +738,15 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS + [-1, 0]
         for valor in valores_invalidos:
             parametros["semanas_dictado"] = valor
-            self._validar_creacion_incorreacta(parametros, "semanas_dictado")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "semanas_dictado")
 
     def test_valor_contenidos_invalido(self):
         parametros = {
@@ -632,10 +757,16 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["contenidos"] = valor
-            self._validar_creacion_incorreacta(parametros, "contenidos")
+
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "contenidos")
 
     def test_valor_bibliografia_invalido(self):
         parametros = {
@@ -646,10 +777,15 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["bibliografia"] = valor
-            self._validar_creacion_incorreacta(parametros, "bibliografia")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "bibliografia")
 
     def test_valor_recursos_invalido(self):
         parametros = {
@@ -660,10 +796,15 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["recursos"] = valor
-            self._validar_creacion_incorreacta(parametros, "recursos")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "recursos")
 
     def test_valor_evaluacion_invalido(self):
         parametros = {
@@ -674,10 +815,15 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["evaluacion"] = valor
-            self._validar_creacion_incorreacta(parametros, "evaluacion")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "evaluacion")
 
     def test_valor_investigacion_docentes_invalido(self):
         parametros = {
@@ -688,10 +834,15 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["investigacion_docentes"] = valor
-            self._validar_creacion_incorreacta(parametros, "investigacion_docentes")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "investigacion_docentes")
 
     def test_valor_investigacion_estudiantes_invalido(self):
         parametros = {
@@ -702,10 +853,17 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["investigacion_estudiantes"] = valor
-            self._validar_creacion_incorreacta(parametros, "investigacion_estudiantes")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(
+                    parametros, "investigacion_estudiantes"
+                )
 
     def test_valor_extension_docentes_invalido(self):
         parametros = {
@@ -716,10 +874,15 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["extension_docentes"] = valor
-            self._validar_creacion_incorreacta(parametros, "extension_docentes")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "extension_docentes")
 
     def test_valor_extension_estudiantes_invalido(self):
         parametros = {
@@ -730,10 +893,15 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["extension_estudiantes"] = valor
-            self._validar_creacion_incorreacta(parametros, "extension_estudiantes")
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "extension_estudiantes")
 
     def test_valor_cronograma_invalido(self):
         parametros = {
@@ -744,10 +912,16 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
         valores_invalidos = VALORES_INVALIDOS
         for valor in valores_invalidos:
             parametros["cronograma"] = valor
-            self._validar_creacion_incorreacta(parametros, "cronograma")
+
+            with freeze_time(fecha_referencia):
+                self._validar_creacion_incorreacta(parametros, "cronograma")
 
     def test_horario_teoria_faltante_para_metodologia_presencial(self):
         parametros = {
@@ -757,12 +931,19 @@ class TestCrearNuevoPrograma(TestCase):
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
-        parametros.pop("semanal_teoria_presencial")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teoria_presencial",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        parametros.pop("semanal_teoria_presencial")
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teoria_presencial",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horario_practica_faltante_para_metodologia_presencial(self):
         parametros = {
@@ -773,11 +954,17 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
         parametros.pop("semanal_practica_presencial")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_practica_presencial",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_practica_presencial",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horario_lab_faltante_para_metodologia_presencial(self):
         parametros = {
@@ -787,12 +974,19 @@ class TestCrearNuevoPrograma(TestCase):
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
-        parametros.pop("semanal_lab_presencial")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_lab_presencial",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        parametros.pop("semanal_lab_presencial")
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_lab_presencial",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horario_teorico_practico_faltante_para_metodologia_presencial(self):
         parametros = {
@@ -802,12 +996,19 @@ class TestCrearNuevoPrograma(TestCase):
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
-        parametros.pop("semanal_teorico_practico_presencial")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teorico_practico_presencial",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        parametros.pop("semanal_teorico_practico_presencial")
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teorico_practico_presencial",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horario_teoria_faltante_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -825,12 +1026,18 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
-        parametros.pop("semanal_teoria_remoto")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teoria_remoto",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        parametros.pop("semanal_teoria_remoto")
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teoria_remoto",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horario_practica_faltante_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -848,12 +1055,18 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
-        parametros.pop("semanal_practica_remoto")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_practica_remoto",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        parametros.pop("semanal_practica_remoto")
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_practica_remoto",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horario_lab_faltante_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -871,12 +1084,18 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
-        parametros.pop("semanal_lab_remoto")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_lab_remoto",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        parametros.pop("semanal_lab_remoto")
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_lab_remoto",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horario_teorico_practico_faltante_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -894,12 +1113,18 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
-        parametros.pop("semanal_teorico_practico_remoto")
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teorico_practico_remoto",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        parametros.pop("semanal_teorico_practico_remoto")
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teorico_practico_remoto",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
 
     def test_horas_examen_faltante(self):
         # TODO. hacer cuando agregue este campo
@@ -914,11 +1139,17 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
             "semanal_teoria_remoto": 1,
         }
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teoria_remoto",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teoria_remoto",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_horario_practica_bloqueado_para_metodologia_presencial(self):
         parametros = {
@@ -929,11 +1160,17 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
             "semanal_practica_remoto": 1,
         }
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_practica_remoto",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_practica_remoto",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_horario_lab_bloqueado_para_metodologia_presencial(self):
         parametros = {
@@ -944,11 +1181,17 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
             "semanal_lab_remoto": 1,
         }
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_lab_remoto",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_lab_remoto",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_horario_teorico_practico_bloqueado_para_metodologia_presencial(self):
         parametros = {
@@ -959,11 +1202,17 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
             "semanal_teorico_practico_remoto": 1,
         }
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teorico_practico_remoto",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teorico_practico_remoto",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_horario_teoria_bloqueado_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -981,11 +1230,16 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teoria_presencial",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teoria_presencial",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_horario_practica_bloqueado_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -1003,11 +1257,16 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_practica_presencial",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_practica_presencial",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_horario_lab_bloqueado_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -1025,11 +1284,16 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 0,
         }
 
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_teorico_practico_presencial",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_teorico_practico_presencial",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_horario_teorico_practico_bloqueado_para_metodologia_virtual(self):
         self.asignatura_1.metodologia = MetodologiaAsignatura.VIRTUAL
@@ -1047,11 +1311,16 @@ class TestCrearNuevoPrograma(TestCase):
             "semanal_lab_presencial": 1,
         }
 
-        self._validar_creacion_incorreacta(
-            parametros,
-            "semanal_lab_presencial",
-            MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "semanal_lab_presencial",
+                MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
+            )
 
     def test_programa_no_tiene_carga_bloque(self):
         parametros = {
@@ -1062,8 +1331,14 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
             "carga_rtf": 0,
         }
-        self._validar_creacion_incorreacta(
-            parametros,
-            "carga_rtf",
-            MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
+
+        with freeze_time(fecha_referencia):
+            self._validar_creacion_incorreacta(
+                parametros,
+                "carga_rtf",
+                MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+            )
