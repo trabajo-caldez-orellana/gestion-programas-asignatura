@@ -203,12 +203,6 @@ def set_up_tests():
         estandar=estandar_carrera_2,
     )
 
-    # Crea un semestre actual
-    fecha_fin_semestre = fecha_inicio + timezone.timedelta(days=7 * 4)
-    Semestre.objects.create(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin_semestre)
-    Semestre.objects.create(
-        fecha_inicio=fecha_fin_semestre + timezone.timedelta(days=1),
-        fecha_fin=fecha_fin_semestre + timezone.timedelta(days=1 + 7 * 4),
 
 FECHA_DEFAULT_MODIFICACION = 30
 FECHA_DEFAULT_VALIDACION = 20
