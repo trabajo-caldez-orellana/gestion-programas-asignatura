@@ -1,5 +1,5 @@
 from .services import (
-    TestReutilizarUltimoPlan,
+    TestReutilizarUltimoPrograna,
     TestObtenerSemestreSiguiente,
     TestObtenerSemestreAnterior,
     TestObtenerSemestreActual,

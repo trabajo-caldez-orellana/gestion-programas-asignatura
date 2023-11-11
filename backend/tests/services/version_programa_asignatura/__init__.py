@@ -1,1 +1,2 @@
-from .test_reutilizar_ultimo_plan import TestReutilizarUltimoPlan
+from .test_reutilizar_ultimo_programa import TestReutilizarUltimoPrograna
+from .test_crear_nuevo_programa import TestCrearNuevoPrograma

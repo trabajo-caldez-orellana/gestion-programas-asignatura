@@ -26,9 +26,9 @@ MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA = (
     "Asignar un valor a este horario es requerido."
 )
 MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA = "No debe asignar un valor a este horario."
-MENSAJE_ACTIVIDAD_RESERVADA = "La actividad reservada seleccionada no pertenece a ninguna de las carreras a las que pertenece la asignatura."
-MENSAJE_DESCRIPTOR = "El descriptor seleccionado no pertenece a ninguna de las carreras a las que pertenece la asignatura."
-MENSAJE_EJE_TRANSVERAL = "El eje transversal seleccionado no pertenece a ninguna de las carreras a las que pertenece la asignatura."
+MENSAJE_ACTIVIDAD_RESERVADA = "Una actividad reservada seleccionada no pertenece a ninguna de las carreras a las que pertenece la asignatura."
+MENSAJE_DESCRIPTOR = "Un descriptor seleccionado no pertenece a ninguna de las carreras a las que pertenece la asignatura."
+MENSAJE_EJE_TRANSVERAL = "Un eje transversal seleccionado no pertenece a ninguna de las carreras a las que pertenece la asignatura."
 MENSAJE_NIVEL_INCORRECTO = "Descriptor solo puede tener nivel 0 o 1."
 MENSAJE_BLOQUE_CURRICUALR = "El bloque curricular seleccionado no coincide con el bloque curricular de la asignatura."
 MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES = (
@@ -52,6 +52,23 @@ MENSAJE_NO_PUEDEN_HABER_VARIOS_SEMESTRES_CON_LA_MISMA_FECHA = "No se puede defin
 MENSAJE_NO_HAY_SEMESTRE_ACTIVO = "No hay un semestre activo."
 MENSAJE_NO_HAY_SEMESTRES_ANTERIORES = "No hay semestres anteriores."
 MENSAJE_NO_HAY_SEMESTRES_FUTUROS = "No hay semestres futuros."
+MENSAJE_DESCRIPTOR_INVALIDO = "Un descriptor seleccionado no es valido."
+MENSAJE_EJE_TRANSVERSAL_INVALIDO = "Un eje transversal seleccionado no es valido."
+MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA = (
+    "Una actividad reservada seleccionada no es valido."
+)
+MENSAJE_FORMATO_DESCRIPTORES_INVALIDO = (
+    "El formato provisto para los descriptores es incorrecto."
+)
+MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO = (
+    "El formato provisto para los ejes transversales es incorrecto."
+)
+MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO = (
+    "El formato provisto para las actividades reservadas es incorrecto."
+)
+MENSAJE_NIVEL_INVALIDO = "El nivel seleccionado no es un valor valido."
+MENSAJE_CAMPO_ENTERO = "Este campo debe ser un numero entero mayor a cero."
+MENSAJE_CAMPO_NO_NULO = "Este campo no puede ser nulo."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_VALIDACION = "No se completaron las configuraciones del programa. Debe definir los días para período de validación."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_CORRECCION = "No se completaron las configuraciones del programa. Debe definir los días para período de corrección."

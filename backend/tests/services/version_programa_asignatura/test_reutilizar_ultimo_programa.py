@@ -12,14 +12,13 @@ from backend.tests.utils import (
     CODIGO_ASIGNATURA_2,
     CARRERA_1,
     CARRERA_2,
-    DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA,
+    DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR,
     DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE,
     MENSAJE_SERVICIO_DEBE_FALLAR,
     MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
     crear_configuraciones_del_prograna,
     crear_semestres_de_prueba,
     FECHA_DEFAULT_MODIFICACION,
-    crear_fecha_y_hora,
 )
 from backend.models import (
     Asignatura,
@@ -59,9 +58,7 @@ from backend.common.constantes import (
 )
 
 
-# TODO. Usar freezegun para tener bien las fechas de los tests!!
-# TODO. Completar tests cuando esto este terminado
-class TestReutilizarUltimoPlan(TestCase):
+class TestReutilizarUltimoPrograna(TestCase):
     servicio_version_programa_asignatura = ServicioVersionProgramaAsignatura()
 
     def setUp(self):
@@ -78,8 +75,10 @@ class TestReutilizarUltimoPlan(TestCase):
         self.carrera = Carrera.objects.get(nombre=CARRERA_1)
         self.carrera_2 = Carrera.objects.get(nombre=CARRERA_2)
 
-    def __crear_version_anterior_con_datos_default(self):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+    def _crear_version_anterior_con_datos_default(self):
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
 
         datos_version_anterior["semestre"] = self.semestre_actual
         datos_version_anterior["asignatura"] = self.asignatura
@@ -89,7 +88,7 @@ class TestReutilizarUltimoPlan(TestCase):
 
         return version_anterior
 
-    def __agregar_descritpores_ejes_carga_y_actividaddes(
+    def _agregar_descritpores_ejes_carga_y_actividaddes(
         self, version_programa: VersionProgramaAsignatura
     ):
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
@@ -155,7 +154,9 @@ class TestReutilizarUltimoPlan(TestCase):
                 )
 
     def test_version_anterior_no_aprobada(self):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["asignatura"] = self.asignatura
         datos_version_anterior["estado"] = EstadoAsignatura.PENDIENTE
 
@@ -207,7 +208,10 @@ class TestReutilizarUltimoPlan(TestCase):
         configuracion_correccion.full_clean()
         configuracion_correccion.save()
 
-        self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
+        self._agregar_descritpores_ejes_carga_y_actividaddes(
+            version_programa=version_anterior
+        )
         with self.assertRaises(ValidationError) as excepcion:
             self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                 self.asignatura
@@ -219,7 +223,7 @@ class TestReutilizarUltimoPlan(TestCase):
         )
 
     def test_programa_anterior_no_es_valido_descriptor_de_otra_carrera(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
 
         # Agrego Actividades reservadas correctas
@@ -281,11 +285,11 @@ class TestReutilizarUltimoPlan(TestCase):
                 self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
             except ValidationError as e:
-                self.assertIn("descriptor", e.message_dict)
-                self.assertIn(MENSAJE_DESCRIPTOR, e.message_dict.get("descriptor"))
+                self.assertIn("descriptores", e.message_dict)
+                self.assertIn(MENSAJE_DESCRIPTOR, e.message_dict.get("descriptores"))
 
     def test_programa_anterior_no_es_valido_eje_de_otra_carrera(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
 
         # Agrego Actividades reservadas correctas
@@ -349,13 +353,13 @@ class TestReutilizarUltimoPlan(TestCase):
                 self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
             except ValidationError as e:
-                self.assertIn("eje_transversal", e.message_dict)
+                self.assertIn("ejes_transversales", e.message_dict)
                 self.assertIn(
-                    MENSAJE_EJE_TRANSVERAL, e.message_dict.get("eje_transversal")
+                    MENSAJE_EJE_TRANSVERAL, e.message_dict.get("ejes_transversales")
                 )
 
     def test_programa_anterior_no_es_valido_carga_distinto_bloque(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
 
         # Agrego Actividades reservadas correctas
@@ -425,7 +429,9 @@ class TestReutilizarUltimoPlan(TestCase):
         self,
     ):
         # Primero hago menos resultados que el minimo
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         cantidad_resultados = MINIMO_RESULTADOS_DE_APRENDIZAJE - 1
         datos_version_anterior["resultados_de_aprendizaje"] = json.dumps(
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
@@ -507,7 +513,9 @@ class TestReutilizarUltimoPlan(TestCase):
         self,
     ):
         # Primero hago menos resultados que el minimo
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         cantidad_resultados = MAXIMO_RESULTADOS_DE_APRENDIZAJE + 1
         datos_version_anterior["resultados_de_aprendizaje"] = json.dumps(
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
@@ -589,7 +597,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teoria_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_teoria_presencial")
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -598,7 +608,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -624,7 +634,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_practica_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_practica_presencial")
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -633,7 +645,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -659,7 +671,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_lab_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_lab_presencial")
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -668,7 +682,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -694,7 +708,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teorico_practico_faltante_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior.pop("semanal_teorico_practico_presencial")
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -703,7 +719,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -729,7 +745,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teoria_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_teoria_remoto"] = 2
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -738,7 +756,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -764,7 +782,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_practica_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_practica_remoto"] = 2
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -773,7 +793,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -799,7 +819,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_lab_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_lab_remoto"] = 2
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -808,7 +830,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -834,7 +856,9 @@ class TestReutilizarUltimoPlan(TestCase):
     def test_programa_anterior_no_es_valido_horario_teorico_practico_bloqueado_para_metodologia(
         self,
     ):
-        datos_version_anterior = {**DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA}
+        datos_version_anterior = {
+            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
+        }
         datos_version_anterior["semanal_teorico_practico_remoto"] = 2
 
         datos_version_anterior["semestre"] = self.semestre_actual
@@ -843,7 +867,7 @@ class TestReutilizarUltimoPlan(TestCase):
             **datos_version_anterior
         )
 
-        self.__agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
+        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -867,7 +891,7 @@ class TestReutilizarUltimoPlan(TestCase):
                 )
 
     def test_programa_anterior_no_tiene_descriptores(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
 
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
         # Agrego actividades reservadas
@@ -922,7 +946,7 @@ class TestReutilizarUltimoPlan(TestCase):
                 )
 
     def test_programa_anterior_no_tiene_ejes_transversales(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
 
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
         # Agrego actividades reservadas
@@ -976,7 +1000,7 @@ class TestReutilizarUltimoPlan(TestCase):
                 )
 
     def test_programa_anterior_no_tiene_actividades_reservadas(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
 
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
 
@@ -1023,14 +1047,14 @@ class TestReutilizarUltimoPlan(TestCase):
                 self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
             except ValidationError as e:
-                self.assertIn("actividad_reservada", e.message_dict)
+                self.assertIn("actividades_reservadas", e.message_dict)
                 self.assertIn(
                     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
-                    e.message_dict.get("actividad_reservada"),
+                    e.message_dict.get("actividades_reservadas"),
                 )
 
     def test_programa_anterior_no_tiene_carga_bloque(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
 
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
         # Agrego actividades reservadas
@@ -1087,7 +1111,7 @@ class TestReutilizarUltimoPlan(TestCase):
                 )
 
     def test_reutiliza_programa_correctamente(self):
-        version_anterior = self.__crear_version_anterior_con_datos_default()
+        version_anterior = self._crear_version_anterior_con_datos_default()
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
 
         # Agrego Actividades reservadas correctas
