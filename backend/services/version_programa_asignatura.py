@@ -425,57 +425,21 @@ class ServicioVersionProgramaAsignatura:
                     version_programa.full_clean()
                     version_programa.save()
                 except (ValueError, IntegrityError) as e:
-                    if "semanal_teoria_presencial" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_teoria_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
-                    if "semanal_practica_presencial" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_practica_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
-                    if "semanal_teorico_practico_presencial" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_teorico_practico_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
-                    if "semanal_lab_presencial" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_lab_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
-                    if "semanal_teoria_remoto" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_teoria_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
-                    if "semanal_lab_remoto" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_lab_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
-                    if "semanal_teorico_practico_remoto" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_teorico_practico_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
-                    if "semanal_practica_remoto" in str(e):
-                        raise ValidationError(
-                            {
-                                "semanal_practica_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-                            }
-                        )
+                    mensajes_de_error = {
+                        "semanal_teoria_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_practica_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_teorico_practico_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_lab_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_teoria_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_practica_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_teorico_practico_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_lab_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanas_dictado": MENSAJE_CAMPO_ENTERO,
+                    }
 
-                    if "semanas_dictado" in str(e):
-                        raise ValidationError({"semanas_dictado": MENSAJE_CAMPO_ENTERO})
+                    for campo, mensaje in mensajes_de_error.items():
+                        if campo in str(e):
+                            raise ValidationError({campo: mensaje})
 
                 for descriptor in instancias_descriptores:
                     self.__asignar_descriptor(
