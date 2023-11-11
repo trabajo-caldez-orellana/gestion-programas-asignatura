@@ -9,7 +9,7 @@
 }
 
 .content-table thead tr {
-  background-color: #f24822;
+  background-color: #4169E1;
   color: #ffffff;
   text-align: left;
   font-weight: bold;
@@ -18,7 +18,7 @@
 .content-table th,
 .content-table td {
   padding: 12px 15px;
-  background-color: #f24822;
+  background-color: #4169E1;
 }
 
 .content-table tbody tr td {
@@ -35,7 +35,7 @@
 }
 
 .content-table tbody tr:last-of-type {
-  border-bottom: 2px solid #f24822;
+  border-bottom: 2px solid #4169E1;
 }
 
 #column-acciones > * {

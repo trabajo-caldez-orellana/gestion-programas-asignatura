@@ -21,7 +21,7 @@
 /* TODO: Refactorizar */
 .carga-horaria-form label {
   display: block;
-  background-color: #ff6b6b;
+  background-color: #4169E1;
   color: white;
   padding: 5px 10px;
   border-radius: 5px 5px 0 0;
@@ -37,7 +37,7 @@
 
 .seccion-descriptores-form label {
   display: block;
-  background-color: #ff6b6b;
+  background-color: #4169E1;
   color: white;
   padding: 5px 10px;
   border-radius: 5px 5px 0 0;
@@ -53,7 +53,7 @@
 
 .informacion-adicional-form label {
   display: block;
-  background-color: #ff6b6b;
+  background-color: #4169E1;
   color: white;
   padding: 5px 10px;
   border-radius: 5px 5px 0 0;

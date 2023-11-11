@@ -1,11 +1,12 @@
 .section-header {
-  background-color: rgb(255, 107, 107);
+  background-color: #4169E1;
 }
 
 .section-header h2 {
   color: white;
   padding: 0.25rem 0rem;
   padding-left: 0.5rem;
+  border-bottom: 1px solid white;
 }
 
 ul.sidebar-section-items {
@@ -16,7 +17,7 @@ ul.sidebar-section-items {
 .sidebar-section-items li {
   width: 100%;
   list-style: none;
-  background-color: rgb(255, 122, 122);
+  background-color: #4169E1;
   padding: 1rem 0rem;
   padding-left: 0.5rem;
   color: white;
