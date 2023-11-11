@@ -4,6 +4,8 @@ import InformacionAdicional from './InformacionAdicional'
 import SeccionDescriptores from './SeccionDescriptores'
 import { ProgramaAsignatura } from '../../../interfaces'
 import useProgramaAsignatura from '../hooks/useProgramaAsignatura'
+import useProgramaAsignaturaMutation from '../hooks/useProgramaAsignaturaMutation'
+import Button from '../../../components/ui/Button'
 
 export default function ProgramaAsignatura() {
   const { id } = useParams()
@@ -11,9 +13,19 @@ export default function ProgramaAsignatura() {
   const { programaAsignatura, setProgramaAsignatura, loading, error } =
     useProgramaAsignatura(id?.toString())
 
-  if (error) return <h1>Error</h1>;
-  
-  if (loading || !programaAsignatura) return <h1>Cargando...</h1>;
+  const {
+    postPrograma,
+    resultPostProgramaAsignatura,
+    errorPostProgramaAsignatura
+  } = useProgramaAsignaturaMutation(programaAsignatura)
+
+  const handlePostPrograma = (isDraft: boolean) => () => {
+    postPrograma(isDraft)
+  }
+
+  if (error) return <h1>Error</h1>
+
+  if (loading || !programaAsignatura) return <h1>Cargando...</h1>
 
   return (
     <section className="section-content">
@@ -30,6 +42,25 @@ export default function ProgramaAsignatura() {
         programaAsignatura={programaAsignatura}
         setProgramaAsignatura={setProgramaAsignatura}
       />
+
+      {
+        errorPostProgramaAsignatura && (
+          <p>Error al guardar el programa asignatura</p>
+        )
+      }
+      {
+        resultPostProgramaAsignatura && (
+          <p>Programa enviado correctamente</p>
+        )
+      }
+
+      <div className="acciones-programa-asignatura">
+        <Button text="Guardar borrador" onClick={handlePostPrograma(true)} />
+        <Button
+          text="Enviar para aprobacion"
+          onClick={handlePostPrograma(false)}
+        />
+      </div>
     </section>
   )
 }
