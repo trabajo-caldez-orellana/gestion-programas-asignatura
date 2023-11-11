@@ -1,15 +1,14 @@
 import { rest } from 'msw'
+import programaAsignaturas from './fixtures/programaAsignaturas.json'
 import programasAsignaturas from './fixtures/programasAsignaturas.json'
 import { HANDLERS } from '../constants/constants'
 
-// TODO: crear un archivo para cada mock response
 const handlers = [
   rest.get(HANDLERS.GET_PROGRAMA_ASIGNATURA_HANDLER, (_, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.delay(1000),
-      ctx.json(programasAsignaturas)
-    )
+    return res(ctx.status(200), ctx.delay(500), ctx.json(programaAsignaturas))
+  }),
+  rest.get(HANDLERS.GET_PROGRAMAS_ASIGNATURAS_HANDLER, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.delay(500), ctx.json(programasAsignaturas))
   })
 ]
 

@@ -37,3 +37,7 @@
 .content-table tbody tr:last-of-type {
   border-bottom: 2px solid #f24822;
 }
+
+#column-acciones > * {
+  margin: 0px 5px;
+}
