@@ -11,13 +11,13 @@ type useProgramaAsignaturaMutationType = {
 const useProgramaAsignatura = (
   programaAsignatura: ProgramaAsignatura | null
 ): useProgramaAsignaturaMutationType => {
-  const [resultPostProgramaAsignatura, setResult] = useState<boolean>(false)
+  const [resultPostProgramaAsignatura, setResultPostProgramaAsignatura] = useState<boolean>(false)
   const [errorPostProgramaAsignatura, setError] = useState<boolean>(false)
 
   const postPrograma = async (isDraft: boolean) => {
     try {
       const response = await postProgramaAsignatura(programaAsignatura, isDraft)
-      setResult(response.success)
+      setResultPostProgramaAsignatura(response.success)
     } catch (err) {
       console.error(err)
       setError(true)

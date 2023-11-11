@@ -1,6 +1,6 @@
 export const RUTAS = {
     GET_PROGRAMA_ASIGNATURA: '/programa-asignaturas',
-    POST_PROGRAMAS_ASIGNATURAS: '/programas-asignatura',
+    POST_PROGRAMAS_ASIGNATURAS: '/programa-asignatura',
     GET_PROGRAMAS_ASIGNATURAS: '/programas-asignaturas/',
 }
 export const HANDLERS = {
