@@ -60,7 +60,7 @@ class ServicioVersionProgramaAsignatura:
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
 
-    def __asignar_carga_horaria(
+    def _asignar_carga_horaria(
         self, bloque: BloqueCurricular, programa: VersionProgramaAsignatura, horas: int
     ) -> CargaBloque:
         """
@@ -85,7 +85,7 @@ class ServicioVersionProgramaAsignatura:
 
         return carga_bloque
 
-    def __asignar_descriptor(
+    def _asignar_descriptor(
         self,
         descriptor: Descriptor,
         programa: VersionProgramaAsignatura,
@@ -133,7 +133,7 @@ class ServicioVersionProgramaAsignatura:
 
         return programa_tiene_descriptor
 
-    def __asignar_actividad_reservada(
+    def _asignar_actividad_reservada(
         self,
         actividad: ActividadReservada,
         programa: VersionProgramaAsignatura,
@@ -177,7 +177,7 @@ class ServicioVersionProgramaAsignatura:
 
         return programa_tiene_actividad_reservada
 
-    def __es_posible_crear_nueva_version_de_programa(self):
+    def _es_posible_crear_nueva_version_de_programa(self):
         """
         Retorna verdadero si estamos dentro del periodo para crear nuevos programas, y falso sino.
         """
@@ -186,7 +186,7 @@ class ServicioVersionProgramaAsignatura:
             == 0
         )
 
-    def __validar_datos(
+    def _validar_datos(
         self,
         asignatura: Asignatura,
         semanal_teoria_presencial: int,
@@ -341,7 +341,7 @@ class ServicioVersionProgramaAsignatura:
         semanal_teorico_practico_remoto: int = 0,
         semanal_lab_remoto: int = 0,
     ):
-        if not self.__es_posible_crear_nueva_version_de_programa():
+        if not self._es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         semestre = self.servicio_semestre.obtener_semestre_siguiente()
@@ -383,7 +383,7 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError({"descriptores": MENSAJE_DESCRIPTOR_INVALIDO})
 
         # Validar datos:
-        if self.__validar_datos(
+        if self._validar_datos(
             asignatura=asignatura,
             semanal_teoria_presencial=semanal_teoria_presencial,
             semanal_lab_presencial=semanal_lab_presencial,
@@ -442,7 +442,7 @@ class ServicioVersionProgramaAsignatura:
                             raise ValidationError({campo: mensaje})
 
                 for descriptor in instancias_descriptores:
-                    self.__asignar_descriptor(
+                    self._asignar_descriptor(
                         descriptor, version_programa, NivelDescriptor.BAJO
                     )
 
@@ -458,7 +458,7 @@ class ServicioVersionProgramaAsignatura:
                         instancia_eje_transversal = Descriptor.objects.get(
                             id=eje["id"], tipo=TipoDescriptor.EJE_TRANSVERSAL
                         )
-                        self.__asignar_descriptor(
+                        self._asignar_descriptor(
                             instancia_eje_transversal, version_programa, eje["nivel"]
                         )
                     except Descriptor.DoesNotExist:
@@ -484,7 +484,7 @@ class ServicioVersionProgramaAsignatura:
                         instancia_actividad_reservada = ActividadReservada.objects.get(
                             id=actividad["id"]
                         )
-                        self.__asignar_actividad_reservada(
+                        self._asignar_actividad_reservada(
                             instancia_actividad_reservada,
                             version_programa,
                             actividad["nivel"],
@@ -503,7 +503,7 @@ class ServicioVersionProgramaAsignatura:
                         )
 
                 # Carga del bloque
-                self.__asignar_carga_horaria(
+                self._asignar_carga_horaria(
                     asignatura.bloque_curricular, version_programa, carga_rtf
                 )
 
@@ -522,7 +522,7 @@ class ServicioVersionProgramaAsignatura:
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
         """
 
-        if not self.__es_posible_crear_nueva_version_de_programa():
+        if not self._es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         semestre_actual = self.servicio_semestre.obtener_semestre_actual()
@@ -571,7 +571,7 @@ class ServicioVersionProgramaAsignatura:
 
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
-            if self.__validar_datos(
+            if self._validar_datos(
                 asignatura=ultimo_programa.asignatura,
                 semanal_teoria_presencial=ultimo_programa.semanal_teoria_presencial,
                 semanal_practica_presencial=ultimo_programa.semanal_practica_presencial,
@@ -609,13 +609,13 @@ class ServicioVersionProgramaAsignatura:
                 )
 
             for descriptor_del_programa in descriptores_del_programa:
-                self.__asignar_descriptor(
+                self._asignar_descriptor(
                     descriptor=descriptor_del_programa.descriptor,
                     programa=nuevo_programa,
                     nivel=descriptor_del_programa.nivel,
                 )
             for actividad_reservada in actividades_reservadas:
-                self.__asignar_actividad_reservada(
+                self._asignar_actividad_reservada(
                     actividad=actividad_reservada.actividad_reservada,
                     programa=nuevo_programa,
                     nivel=actividad_reservada.nivel,
@@ -631,7 +631,7 @@ class ServicioVersionProgramaAsignatura:
                     {"carga_bloque": MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA}
                 )
 
-            self.__asignar_carga_horaria(
+            self._asignar_carga_horaria(
                 bloque=carga_bloque_programa.bloque_curricular,
                 programa=nuevo_programa,
                 horas=carga_bloque_programa.horas,
