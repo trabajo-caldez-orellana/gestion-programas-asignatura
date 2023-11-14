@@ -72,3 +72,6 @@ MENSAJE_CAMPO_NO_NULO = "Este campo no puede ser nulo."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_VALIDACION = "No se completaron las configuraciones del programa. Debe definir los días para período de validación."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_CORRECCION = "No se completaron las configuraciones del programa. Debe definir los días para período de corrección."
+MENSAJE_VERSION_CERRADA_PARA_MODIFICACION = (
+    "No se puede modificar un programa pendiente de aprobación o ya aprobado."
+)
