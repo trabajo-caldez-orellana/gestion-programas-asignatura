@@ -115,10 +115,6 @@ export default function App() {
               </div>
             }
           />
-          <Route path="/semestres" element={<h1>Semestres</h1>} />
-          <Route path="/parametros" element={<h1>Parametros</h1>} />
-          <Route path="/estandar" element={<h1>Estandares</h1>} />
-          <Route path="/usuarios" element={<h1>Usuarios</h1>} />
           <Route path="/carrera" element={<h1>Carrera</h1>} />
           <Route path="/plan-estudio" element={<h1>Plan de Estudio</h1>} />
           <Route path="/descriptores" element={<h1>Descriptores</h1>} />

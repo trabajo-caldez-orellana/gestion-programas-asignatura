@@ -1,3 +1,5 @@
+@import '../../constants/variables.css';
+
 .content-table {
   border-collapse: collapse;
   margin: 25px 0;
@@ -9,8 +11,8 @@
 }
 
 .content-table thead tr {
-  background-color: #f24822;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  color: var(--contrast-color);
   text-align: left;
   font-weight: bold;
 }
@@ -18,11 +20,11 @@
 .content-table th,
 .content-table td {
   padding: 12px 15px;
-  background-color: #f24822;
+  background-color: var(--primary-color);
 }
 
 .content-table tbody tr td {
-  background-color: #ffffff;
+  background-color: var(--contrast-color);
   color: black;
 }
 
@@ -35,7 +37,7 @@
 }
 
 .content-table tbody tr:last-of-type {
-  border-bottom: 2px solid #f24822;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 #column-acciones > * {

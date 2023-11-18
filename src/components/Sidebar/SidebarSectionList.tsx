@@ -12,27 +12,6 @@ export default function SidebarSectionList() {
 
   const sidebarSection: SidebarSection[] = [
     {
-      name: 'Administracion general',
-      sections: [
-        {
-          name: 'Semestres',
-          url: '/semestres'
-        },
-        {
-          name: 'Parametros de Conf.',
-          url: '/parametros'
-        },
-        {
-          name: 'Estandar',
-          url: '/estandar'
-        },
-        {
-          name: 'Usuarios',
-          url: '/usuarios'
-        }
-      ]
-    },
-    {
       name: 'Carrera',
       sections: [
         {
