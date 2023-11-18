@@ -1,6 +1,8 @@
+@import '../../constants/variables.css';
+
 .button {
-  background-color: #4169E1;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--contrast-color);
   border: none;
   padding: 10px 20px;
   text-align: center;

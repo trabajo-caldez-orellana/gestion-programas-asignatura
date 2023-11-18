@@ -1,3 +1,5 @@
+@import '../../constants/variables.css';
+
 /* Damos los estilos grid */
 
 .carga-horaria-form {
@@ -21,8 +23,8 @@
 /* TODO: Refactorizar */
 .carga-horaria-form label {
   display: block;
-  background-color: #4169E1;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--contrast-color);
   padding: 5px 10px;
   border-radius: 5px 5px 0 0;
 }
@@ -30,15 +32,15 @@
 .carga-horaria-form input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--text-area);
   border-radius: 0 0 5px 5px;
   font-size: 16px;
 }
 
 .seccion-descriptores-form label {
   display: block;
-  background-color: #4169E1;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--contrast-color);
   padding: 5px 10px;
   border-radius: 5px 5px 0 0;
 }
@@ -46,15 +48,15 @@
 .seccion-descriptores-form input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--text-area);
   border-radius: 0 0 5px 5px;
   font-size: 16px;
 }
 
 .informacion-adicional-form label {
   display: block;
-  background-color: #4169E1;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--contrast-color);
   padding: 5px 10px;
   border-radius: 5px 5px 0 0;
 }
@@ -62,7 +64,7 @@
 .informacion-adicional-form textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--text-area);
   border-radius: 0 0 5px 5px;
   font-size: 16px;
 }

@@ -1,12 +1,15 @@
+@import '../../constants/variables.css';
+
+
 .section-header {
-  background-color: #4169E1;
+  background-color: var(--primary-color);
 }
 
 .section-header h2 {
-  color: white;
+  color: var(--contrast-color);
   padding: 0.25rem 0rem;
   padding-left: 0.5rem;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid var(--contrast-color);
 }
 
 ul.sidebar-section-items {
@@ -17,10 +20,10 @@ ul.sidebar-section-items {
 .sidebar-section-items li {
   width: 100%;
   list-style: none;
-  background-color: #4169E1;
+  background-color: var(--primary-color);
   padding: 1rem 0rem;
   padding-left: 0.5rem;
-  color: white;
+  color: var(--contrast-color);
 }
 
 .sidebar-section-items li a {

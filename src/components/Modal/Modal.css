@@ -1,3 +1,5 @@
+@import '../../constants/variables.css';
+
 .overlay {
   position: fixed;
   top: 0;
@@ -14,9 +16,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 30%;
-  background-color: #FFFFFF;
+  background-color: var(--contrast-color);
   border-radius: 10px;
-  border: 1px solid #4169E1;
+  border: 1px solid var(--primary-color);
   padding: 1rem;
   z-index: 1000;
   max-height: 40rem;
@@ -25,8 +27,8 @@
 
 .modal h2, .modal label {
   display: block;
-  background-color: #4169E1;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--contrast-color);
   padding: 5px 10px;
   border-radius: 5px 5px 0 0;
   margin-bottom: 1rem;
@@ -35,7 +37,7 @@
 .modal textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--text-area);
   border-radius: 0 0 5px 5px;
   font-size: 16px;
 }
