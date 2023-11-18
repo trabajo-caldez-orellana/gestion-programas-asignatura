@@ -1,16 +1,20 @@
 import { ProgramaAsignatura } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 
 interface CargaHorariaProps {
   programaAsignatura: ProgramaAsignatura
   setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  modoProgramaAsignatura: string
 }
 
 export default function CargaHoraria({
   programaAsignatura,
-  setProgramaAsignatura
+  setProgramaAsignatura,
+  modoProgramaAsignatura
 }: CargaHorariaProps) {
   const { cargaHoraria } = programaAsignatura
+  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
 
   const handleCargaHorariaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -44,6 +48,7 @@ export default function CargaHoraria({
           name="semanas_dictado"
           value={cargaHoraria.semanasDictado}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="teoria-presencial">Teoria presencial</label>
@@ -53,6 +58,7 @@ export default function CargaHoraria({
           name="teoria_presencial"
           value={cargaHoraria.teoriaPresencial}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="practica-presencial">Practica presencial</label>
@@ -62,6 +68,7 @@ export default function CargaHoraria({
           name="practica_presencial"
           value={cargaHoraria.practicaPresencial}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="teorico-practico-presencial">
@@ -73,6 +80,7 @@ export default function CargaHoraria({
           name="teorico_practico_presencial"
           value={cargaHoraria.teoricoPracticoPresencial}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="laboratorios-presenciales">
@@ -84,6 +92,7 @@ export default function CargaHoraria({
           name="laboratorios_presenciales"
           value={cargaHoraria.laboratoriosPresenciales}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="teoria-distancia">Teoria a distancia</label>
@@ -93,6 +102,7 @@ export default function CargaHoraria({
           name="teoria_distancia"
           value={cargaHoraria.teoriaDistancia}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="practica-distancia">Practica a distancia</label>
@@ -102,6 +112,7 @@ export default function CargaHoraria({
           name="practica_distancia"
           value={cargaHoraria.practicaDistancia}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="teorico-practico-distancia">
@@ -113,6 +124,7 @@ export default function CargaHoraria({
           name="teorico_practico_distancia"
           value={cargaHoraria.teoricoPracticoDistancia}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
 
         <label htmlFor="laboratorio-distancia">Laboratorio a distancia</label>
@@ -122,6 +134,7 @@ export default function CargaHoraria({
           name="laboratorio_distancia"
           value={cargaHoraria.laboratorioDistancia}
           onChange={handleCargaHorariaChange}
+          disabled={modoLectura}
         />
       </form>
     </section>

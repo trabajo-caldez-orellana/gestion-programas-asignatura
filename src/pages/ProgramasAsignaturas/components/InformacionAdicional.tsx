@@ -1,16 +1,21 @@
 import { camelCase } from 'lodash'
 import { ProgramaAsignatura } from '../../../interfaces'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 
 interface InformacionAdicionalProps {
   programaAsignatura: ProgramaAsignatura
   setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  modoProgramaAsignatura: string
 }
 
 export default function InformacionAdicional({
   programaAsignatura,
-  setProgramaAsignatura
+  setProgramaAsignatura,
+  modoProgramaAsignatura
 }: InformacionAdicionalProps) {
   const { informacionAdicional } = programaAsignatura
+  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
+
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -36,6 +41,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
         <label htmlFor="contenidos">Contenidos</label>
         <textarea
@@ -45,6 +51,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
 
         <label htmlFor="bibliografia">Bibliografia</label>
@@ -55,6 +62,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
 
         <label htmlFor="metodologia-aplicada">Metodologia aplicada</label>
@@ -65,6 +73,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
 
         <label htmlFor="recursos">Recursos</label>
@@ -75,6 +84,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
 
         <label htmlFor="evaluacion">Evaluacion</label>
@@ -85,6 +95,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
 
         <label htmlFor="investigacion">Investigacion</label>
@@ -95,6 +106,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
 
         <label htmlFor="extension">Extension</label>
@@ -105,6 +117,7 @@ export default function InformacionAdicional({
           onChange={handleChange}
           rows={4}
           cols={50}
+          disabled={modoLectura}
         />
       </form>
     </section>
