@@ -671,4 +671,7 @@ class ServicioVersionProgramaAsignatura:
                         programa=nuevo_programa,
                         nivel=actividad_reservada.nivel,
                     )
-        return nuevo_programa
+
+                return nuevo_programa
+
+        return None

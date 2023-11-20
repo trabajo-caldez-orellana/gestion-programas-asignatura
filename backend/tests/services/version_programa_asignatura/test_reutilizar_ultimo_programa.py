@@ -26,7 +26,6 @@ from backend.models import (
     Configuracion,
     ProgramaTieneActividadReservada,
     ProgramaTieneDescriptor,
-    CargaBloque,
     Carrera,
     Estandar,
     ActividadReservada,
@@ -88,7 +87,7 @@ class TestReutilizarUltimoPrograna(TestCase):
 
         return version_anterior
 
-    def _agregar_descritpores_ejes_carga_y_actividaddes(
+    def _agregar_descritpores_ejes_y_actividaddes(
         self, version_programa: VersionProgramaAsignatura
     ):
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
@@ -124,13 +123,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                 version_programa_asignatura=version_programa,
                 nivel=NivelDescriptor.BAJO,
             )
-
-        # Agrego carga horaria al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_programa,
-            bloque_curricular=self.asignatura.bloque_curricular,
-        )
 
     def test_no_hay_version_anterior_disponible(self):
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -209,7 +201,7 @@ class TestReutilizarUltimoPrograna(TestCase):
         configuracion_correccion.save()
 
         version_anterior = self._crear_version_anterior_con_datos_default()
-        self._agregar_descritpores_ejes_carga_y_actividaddes(
+        self._agregar_descritpores_ejes_y_actividaddes(
             version_programa=version_anterior
         )
         with self.assertRaises(ValidationError) as excepcion:
@@ -236,13 +228,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                 actividad_reservada=actividades_reservadas_carrera.first(),
                 nivel=NivelDescriptor.BAJO,
             )
-        )
-
-        # Agrego carga horaria correcta al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
         )
 
         descriptores_estandar = estandar_carrera.descriptores.all()
@@ -305,13 +290,6 @@ class TestReutilizarUltimoPrograna(TestCase):
             )
         )
 
-        # Agrego carga horaria correcta al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
-        )
-
         descriptores_estandar = estandar_carrera.descriptores.all()
 
         # Agrego descriptores correctos
@@ -358,73 +336,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                     MENSAJE_EJE_TRANSVERAL, e.message_dict.get("ejes_transversales")
                 )
 
-    def test_programa_anterior_no_es_valido_carga_distinto_bloque(self):
-        version_anterior = self._crear_version_anterior_con_datos_default()
-        estandar_carrera = Estandar.objects.get(carrera=self.carrera)
-
-        # Agrego Actividades reservadas correctas
-        actividades_reservadas_carrera = ActividadReservada.objects.filter(
-            estandar=estandar_carrera
-        )
-
-        programa_tiene_actividad_reservada = (
-            ProgramaTieneActividadReservada.objects.create(
-                version_programa_asignatura=version_anterior,
-                actividad_reservada=actividades_reservadas_carrera.first(),
-                nivel=NivelDescriptor.BAJO,
-            )
-        )
-
-        # Agrego descriptores correctos
-        descriptores_carrera = estandar_carrera.descriptores.all()
-        descriptores = descriptores_carrera.filter(tipo=TipoDescriptor.DESCRIPTOR)
-        for descriptor in descriptores:
-            ProgramaTieneDescriptor.objects.create(
-                descriptor=descriptor,
-                version_programa_asignatura=version_anterior,
-                nivel=NivelDescriptor.BAJO,
-            )
-
-        # Agrego ejes transversales correctos
-        ejes_transversales_carrera = estandar_carrera.descriptores.all()
-        ejes_transverales = ejes_transversales_carrera.filter(
-            tipo=TipoDescriptor.EJE_TRANSVERSAL
-        )
-        for eje in ejes_transverales:
-            ProgramaTieneDescriptor.objects.create(
-                descriptor=eje,
-                version_programa_asignatura=version_anterior,
-                nivel=NivelDescriptor.BAJO,
-            )
-
-        # Agrego carga horaria de otro bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura_2.bloque_curricular,
-        )
-
-        # Ahora intento poder crear uno nuevo, deberia fallar:
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        asignatura=self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("bloque_curricular", e.message_dict)
-                self.assertIn(
-                    MENSAJE_BLOQUE_CURRICUALR, e.message_dict.get("bloque_curricular")
-                )
-
     def test_programa_anterior_no_es_valido_cantidad_de_resultados_menor_al_minimo(
         self,
     ):
@@ -456,13 +367,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                 actividad_reservada=actividades_reservadas_carrera.first(),
                 nivel=NivelDescriptor.BAJO,
             )
-        )
-
-        # Agrego carga horaria correcta al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
         )
 
         descriptores_estandar = estandar_carrera.descriptores.all()
@@ -542,13 +446,6 @@ class TestReutilizarUltimoPrograna(TestCase):
             )
         )
 
-        # Agrego carga horaria correcta al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
-        )
-
         descriptores_estandar = estandar_carrera.descriptores.all()
 
         # Agrego descriptores correctos
@@ -594,302 +491,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                     e.message_dict.get("resultados_de_aprendizaje"),
                 )
 
-    def test_programa_anterior_no_es_valido_horario_teoria_faltante_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior.pop("semanal_teoria_presencial")
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_teoria_presencial", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_teoria_presencial"),
-                )
-
-    def test_programa_anterior_no_es_valido_horario_practica_faltante_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior.pop("semanal_practica_presencial")
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_practica_presencial", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_practica_presencial"),
-                )
-
-    def test_programa_anterior_no_es_valido_horario_lab_faltante_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior.pop("semanal_lab_presencial")
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_lab_presencial", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_lab_presencial"),
-                )
-
-    def test_programa_anterior_no_es_valido_horario_teorico_practico_faltante_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior.pop("semanal_teorico_practico_presencial")
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_teorico_practico_presencial", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_teorico_practico_presencial"),
-                )
-
-    def test_programa_anterior_no_es_valido_horario_teoria_bloqueado_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior["semanal_teoria_remoto"] = 2
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_teoria_remoto", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_teoria_remoto"),
-                )
-
-    def test_programa_anterior_no_es_valido_horario_practica_bloqueado_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior["semanal_practica_remoto"] = 2
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_practica_remoto", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_practica_remoto"),
-                )
-
-    def test_programa_anterior_no_es_valido_horario_lab_bloqueado_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior["semanal_lab_remoto"] = 2
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_lab_remoto", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_lab_remoto"),
-                )
-
-    def test_programa_anterior_no_es_valido_horario_teorico_practico_bloqueado_para_metodologia(
-        self,
-    ):
-        datos_version_anterior = {
-            **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
-        }
-        datos_version_anterior["semanal_teorico_practico_remoto"] = 2
-
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
-        version_anterior = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
-
-        self._agregar_descritpores_ejes_carga_y_actividaddes(version_anterior)
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("semanal_teorico_practico_remoto", e.message_dict)
-                self.assertIn(
-                    MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
-                    e.message_dict.get("semanal_teorico_practico_remoto"),
-                )
-
     def test_programa_anterior_no_tiene_descriptores(self):
         version_anterior = self._crear_version_anterior_con_datos_default()
 
@@ -916,13 +517,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                 version_programa_asignatura=version_anterior,
                 nivel=NivelDescriptor.BAJO,
             )
-
-        # Agrego carga horaria al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
-        )
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -971,13 +565,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                 nivel=NivelDescriptor.BAJO,
             )
 
-        # Agrego carga horaria al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
-        )
-
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
             days=FECHA_DEFAULT_MODIFICACION - 1
@@ -1025,13 +612,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                 nivel=NivelDescriptor.BAJO,
             )
 
-        # Agrego carga horaria al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
-        )
-
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
             days=FECHA_DEFAULT_MODIFICACION - 1
@@ -1053,63 +633,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                     e.message_dict.get("actividades_reservadas"),
                 )
 
-    def test_programa_anterior_no_tiene_carga_bloque(self):
-        version_anterior = self._crear_version_anterior_con_datos_default()
-
-        estandar_carrera = Estandar.objects.get(carrera=self.carrera)
-        # Agrego actividades reservadas
-        actividades_reservadas_carrera = ActividadReservada.objects.filter(
-            estandar=estandar_carrera
-        )
-
-        ProgramaTieneActividadReservada.objects.create(
-            version_programa_asignatura=version_anterior,
-            actividad_reservada=actividades_reservadas_carrera.first(),
-            nivel=NivelDescriptor.BAJO,
-        )
-
-        descriptores_carrera = estandar_carrera.descriptores.all()
-        # Agrego ejes transversales
-        ejes_transversales = descriptores_carrera.filter(
-            tipo=TipoDescriptor.EJE_TRANSVERSAL
-        )
-        for eje in ejes_transversales:
-            ProgramaTieneDescriptor.objects.create(
-                descriptor=eje,
-                version_programa_asignatura=version_anterior,
-                nivel=NivelDescriptor.BAJO,
-            )
-
-        # Agrego descriptores
-        descriptores = descriptores_carrera.filter(tipo=TipoDescriptor.DESCRIPTOR)
-        for descriptor in descriptores:
-            ProgramaTieneDescriptor.objects.create(
-                descriptor=descriptor,
-                version_programa_asignatura=version_anterior,
-                nivel=NivelDescriptor.BAJO,
-            )
-
-        # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-
-        with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        self.asignatura
-                    )
-                )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-
-            except ValidationError as e:
-                self.assertIn("carga_bloque", e.message_dict)
-                self.assertIn(
-                    MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA,
-                    e.message_dict.get("carga_bloque"),
-                )
-
     def test_reutiliza_programa_correctamente(self):
         version_anterior = self._crear_version_anterior_con_datos_default()
         estandar_carrera = Estandar.objects.get(carrera=self.carrera)
@@ -1124,13 +647,6 @@ class TestReutilizarUltimoPrograna(TestCase):
                 actividad_reservada=actividades_reservadas_carrera.first(),
                 nivel=NivelDescriptor.BAJO,
             )
-        )
-
-        # Agrego carga horaria correcta al bloque
-        carga_bloque = CargaBloque.objects.create(
-            horas=20,
-            version_programa_asignatura=version_anterior,
-            bloque_curricular=self.asignatura.bloque_curricular,
         )
 
         descriptores_estandar = estandar_carrera.descriptores.all()
