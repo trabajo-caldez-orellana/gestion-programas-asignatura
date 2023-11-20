@@ -51,6 +51,7 @@ from backend.common.mensajes_de_error import (
     MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
     MENSAJE_NIVEL_INVALIDO,
     MENSAJE_CAMPO_ENTERO,
+    MENSAJE_VERSION_CERRADA_PARA_MODIFICACION,
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
@@ -60,7 +61,7 @@ class ServicioVersionProgramaAsignatura:
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
 
-    def __asignar_carga_horaria(
+    def _asignar_carga_horaria(
         self, bloque: BloqueCurricular, programa: VersionProgramaAsignatura, horas: int
     ) -> CargaBloque:
         """
@@ -85,7 +86,15 @@ class ServicioVersionProgramaAsignatura:
 
         return carga_bloque
 
-    def __asignar_descriptor(
+    def _es_nivel_descriptor_valido(
+        self, descriptor: Descriptor, nivel: NivelDescriptor
+    ):
+        if descriptor.tipo == TipoDescriptor.DESCRIPTOR:
+            if nivel == NivelDescriptor.MEDIO or nivel == NivelDescriptor.ALTO:
+                return False
+        return True
+
+    def _asignar_descriptor(
         self,
         descriptor: Descriptor,
         programa: VersionProgramaAsignatura,
@@ -99,9 +108,8 @@ class ServicioVersionProgramaAsignatura:
         errores = {}
 
         # Primero valida el nivel
-        if descriptor.tipo == TipoDescriptor.DESCRIPTOR:
-            if nivel == NivelDescriptor.MEDIO or nivel == NivelDescriptor.ALTO:
-                errores["nivel"] = MENSAJE_NIVEL_INCORRECTO
+        if not self._es_nivel_descriptor_valido(descriptor, nivel):
+            errores["descriptores"] = MENSAJE_NIVEL_INCORRECTO
 
         estandares_descriptor = Estandar.objects.filter(descriptores__in=[descriptor])
         planes_de_estudio_asignatura = PlanDeEstudio.objects.filter(
@@ -133,7 +141,7 @@ class ServicioVersionProgramaAsignatura:
 
         return programa_tiene_descriptor
 
-    def __asignar_actividad_reservada(
+    def _asignar_actividad_reservada(
         self,
         actividad: ActividadReservada,
         programa: VersionProgramaAsignatura,
@@ -177,7 +185,7 @@ class ServicioVersionProgramaAsignatura:
 
         return programa_tiene_actividad_reservada
 
-    def __es_posible_crear_nueva_version_de_programa(self):
+    def _es_posible_crear_nueva_version_de_programa(self):
         """
         Retorna verdadero si estamos dentro del periodo para crear nuevos programas, y falso sino.
         """
@@ -186,7 +194,7 @@ class ServicioVersionProgramaAsignatura:
             == 0
         )
 
-    def __validar_datos(
+    def _validar_datos(
         self,
         asignatura: Asignatura,
         semanal_teoria_presencial: int,
@@ -341,7 +349,7 @@ class ServicioVersionProgramaAsignatura:
         semanal_teorico_practico_remoto: int = 0,
         semanal_lab_remoto: int = 0,
     ):
-        if not self.__es_posible_crear_nueva_version_de_programa():
+        if not self._es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         semestre = self.servicio_semestre.obtener_semestre_siguiente()
@@ -383,7 +391,7 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError({"descriptores": MENSAJE_DESCRIPTOR_INVALIDO})
 
         # Validar datos:
-        if self.__validar_datos(
+        if self._validar_datos(
             asignatura=asignatura,
             semanal_teoria_presencial=semanal_teoria_presencial,
             semanal_lab_presencial=semanal_lab_presencial,
@@ -442,7 +450,7 @@ class ServicioVersionProgramaAsignatura:
                             raise ValidationError({campo: mensaje})
 
                 for descriptor in instancias_descriptores:
-                    self.__asignar_descriptor(
+                    self._asignar_descriptor(
                         descriptor, version_programa, NivelDescriptor.BAJO
                     )
 
@@ -458,7 +466,7 @@ class ServicioVersionProgramaAsignatura:
                         instancia_eje_transversal = Descriptor.objects.get(
                             id=eje["id"], tipo=TipoDescriptor.EJE_TRANSVERSAL
                         )
-                        self.__asignar_descriptor(
+                        self._asignar_descriptor(
                             instancia_eje_transversal, version_programa, eje["nivel"]
                         )
                     except Descriptor.DoesNotExist:
@@ -484,7 +492,7 @@ class ServicioVersionProgramaAsignatura:
                         instancia_actividad_reservada = ActividadReservada.objects.get(
                             id=actividad["id"]
                         )
-                        self.__asignar_actividad_reservada(
+                        self._asignar_actividad_reservada(
                             instancia_actividad_reservada,
                             version_programa,
                             actividad["nivel"],
@@ -503,16 +511,319 @@ class ServicioVersionProgramaAsignatura:
                         )
 
                 # Carga del bloque
-                self.__asignar_carga_horaria(
+                self._asignar_carga_horaria(
                     asignatura.bloque_curricular, version_programa, carga_rtf
                 )
 
             return version_programa
 
     def modificar_version_programa_asignatura(
-        self, version_programa: VersionProgramaAsignatura, **args
+        self,
+        version_programa: VersionProgramaAsignatura,
+        descriptores: list,
+        actividades_reservadas: list,
+        ejes_transversales: list,
+        carga_rtf: int,
+        resultados_de_aprendizaje: json,
+        semanas_dictado: int,
+        contenidos: str,
+        bibliografia: str,
+        recursos: str,
+        evaluacion: str,
+        investigacion_docentes: str,
+        investigacion_estudiantes: str,
+        extension_docentes: str,
+        extension_estudiantes: str,
+        cronograma: str,
+        semanal_teoria_presencial: int = 0,
+        semanal_practica_presencial: int = 0,
+        semanal_teorico_practico_presencial: int = 0,
+        semanal_lab_presencial: int = 0,
+        semanal_teoria_remoto: int = 0,
+        semanal_practica_remoto: int = 0,
+        semanal_teorico_practico_remoto: int = 0,
+        semanal_lab_remoto: int = 0,
     ):
-        pass
+        # Verifica el estado de la version del programa de la asignatura
+
+        if version_programa.estado != EstadoAsignatura.ABIERTO:
+            raise ValidationError(
+                {"__all__": MENSAJE_VERSION_CERRADA_PARA_MODIFICACION}
+            )
+
+        # Deberia ser periodo de modificacion?
+        if not self._es_posible_crear_nueva_version_de_programa():
+            raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
+
+        # Formato descriptores, actividades y ejes transversales:
+        # {
+        #  "id": number,
+        #  "nivel": boolean
+        # }
+
+        mensajes_de_error = {}
+
+        cantidad_descriptores = 0
+        for descriptor in descriptores:
+            try:
+                if descriptor["nivel"]:
+                    cantidad_descriptores += 1
+            except (TypeError, KeyError, ValueError):
+                raise ValidationError(
+                    {"descriptores": MENSAJE_FORMATO_DESCRIPTORES_INVALIDO}
+                )
+
+        if cantidad_descriptores == 0:
+            mensajes_de_error["descriptores"] = MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR
+
+        cantidad_actividades_reservadas = 0
+        for actividad in actividades_reservadas:
+            try:
+                if actividad["nivel"] != NivelDescriptor.NADA:
+                    cantidad_actividades_reservadas += 1
+            except (TypeError, KeyError, ValueError):
+                raise ValidationError(
+                    {
+                        "actividades_reservadas": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
+                    }
+                )
+
+        if cantidad_actividades_reservadas == 0:
+            mensajes_de_error[
+                "actividades_reservadas"
+            ] = MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA
+
+        cantidad_ejes_transversales = 0
+        for eje in ejes_transversales:
+            try:
+                if eje["nivel"] != NivelDescriptor.NADA:
+                    cantidad_ejes_transversales += 1
+            except (TypeError, KeyError, ValueError):
+                raise ValidationError(
+                    {
+                        "ejes_transversales": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
+                    }
+                )
+
+        if cantidad_ejes_transversales == 0:
+            mensajes_de_error[
+                "ejes_transversales"
+            ] = MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL
+
+        if len(mensajes_de_error.keys()) > 0:
+            raise ValidationError(mensajes_de_error)
+
+        # Validar datos:
+        if self._validar_datos(
+            asignatura=version_programa.asignatura,
+            semanal_teoria_presencial=semanal_teoria_presencial,
+            semanal_lab_presencial=semanal_lab_presencial,
+            semanal_lab_remoto=semanal_lab_remoto,
+            semanal_practica_presencial=semanal_practica_presencial,
+            semanal_practica_remoto=semanal_practica_remoto,
+            semanal_teoria_remoto=semanal_teoria_remoto,
+            semanal_teorico_practico_presencial=semanal_teorico_practico_presencial,
+            semanal_teorico_practico_remoto=semanal_teorico_practico_remoto,
+            resultados_de_aprendizaje=resultados_de_aprendizaje,
+        ):
+            with transaction.atomic():
+                # Modifico el programa. Si falla algo, saltara una excepcion
+                try:
+                    version_programa.semanas_dictado = semanas_dictado
+                    version_programa.semanal_teoria_presencial = (
+                        semanal_teoria_presencial
+                    )
+                    version_programa.semanal_practica_presencial = (
+                        semanal_practica_presencial
+                    )
+                    version_programa.semanal_teorico_practico_presencial = (
+                        semanal_teorico_practico_presencial
+                    )
+                    version_programa.semanal_lab_presencial = semanal_lab_presencial
+                    version_programa.semanal_teoria_remoto = semanal_teoria_remoto
+                    version_programa.semanal_practica_remoto = semanal_practica_remoto
+                    version_programa.semanal_teorico_practico_remoto = (
+                        semanal_teorico_practico_remoto
+                    )
+                    version_programa.semanal_lab_remoto = semanal_lab_remoto
+                    version_programa.resultados_de_aprendizaje = (
+                        resultados_de_aprendizaje
+                    )
+                    version_programa.contenidos = contenidos
+                    version_programa.bibliografia = bibliografia
+                    version_programa.recursos = recursos
+                    version_programa.evaluacion = evaluacion
+                    version_programa.investigacion_docentes = investigacion_docentes
+                    version_programa.investigacion_estudiantes = (
+                        investigacion_estudiantes
+                    )
+                    version_programa.extension_docentes = extension_docentes
+                    version_programa.extension_estudiantes = extension_estudiantes
+                    version_programa.cronograma = cronograma
+                    version_programa.full_clean()
+                    version_programa.save()
+                except (ValueError, IntegrityError) as e:
+                    mensajes_de_error = {
+                        "semanal_teoria_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_practica_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_teorico_practico_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_lab_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_teoria_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_practica_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_teorico_practico_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanal_lab_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
+                        "semanas_dictado": MENSAJE_CAMPO_ENTERO,
+                    }
+
+                    for campo, mensaje in mensajes_de_error.items():
+                        if campo in str(e):
+                            raise ValidationError({campo: mensaje})
+
+                # Obtengo todos los descriptores
+                # La lista de descriptores tiene el siguiente formato:
+                # {
+                #   "id": int
+                # }
+                for descriptor in descriptores:
+                    try:
+                        try:
+                            instancia_descriptor = Descriptor.objects.filter(
+                                id=descriptor["id"], tipo=TipoDescriptor.DESCRIPTOR
+                            )
+                        except Descriptor.DoesNotExist:
+                            raise ValidationError(
+                                {"descriptores": MENSAJE_DESCRIPTOR_INVALIDO}
+                            )
+
+                        try:
+                            descriptor_programa = ProgramaTieneDescriptor.objects.get(
+                                descriptor=instancia_descriptor,
+                                version_programa_asignatura=version_programa,
+                            )
+
+                            if not self._es_nivel_descriptor_valido(
+                                instancia_descriptor, descriptor["nivel"]
+                            ):
+                                raise ValidationError(
+                                    {"descriptores": MENSAJE_NIVEL_INCORRECTO}
+                                )
+                            descriptor_programa.nivel = descriptor["nivel"]
+                            descriptor_programa.full_clean()
+                            descriptor_programa.save()
+                        except ProgramaTieneDescriptor.DoesNotExist:
+                            self._asignar_descriptor(
+                                instancia_descriptor,
+                                version_programa,
+                                descriptor["nivel"],
+                            )
+                    except (TypeError, KeyError):
+                        raise ValidationError(
+                            {"descriptores": MENSAJE_FORMATO_DESCRIPTORES_INVALIDO}
+                        )
+
+                # Obtengo todos los ejes transversales
+                # La lista de ejes transversales tiene el siguiente formato:
+                # {
+                #   "id": int,
+                #   "nivel": int
+                # }
+
+                for eje in ejes_transversales:
+                    try:
+                        try:
+                            instancia_eje_transversal = Descriptor.objects.get(
+                                id=eje["id"]
+                            )
+                        except Descriptor.DoesNotExist:
+                            raise ValidationError(
+                                {"ejes_transversales": MENSAJE_EJE_TRANSVERSAL_INVALIDO}
+                            )
+
+                        try:
+                            eje_transversal_programa = (
+                                ProgramaTieneDescriptor.objects.get(
+                                    descriptor=instancia_descriptor,
+                                    version_programa_asignatura=version_programa,
+                                )
+                            )
+
+                            eje_transversal_programa.nivel = eje["nivel"]
+                            eje_transversal_programa.full_clean()
+                            eje_transversal_programa.save()
+                        except ProgramaTieneDescriptor.DoesNotExist:
+                            self._asignar_descriptor(
+                                instancia_eje_transversal,
+                                version_programa,
+                                eje["nivel"],
+                            )
+
+                    except (TypeError, KeyError, ValueError):
+                        raise ValidationError(
+                            {
+                                "ejes_transversales": MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO
+                            }
+                        )
+
+                # Obtengo todas las actividades reservadas
+                # La lista de actividades reservadas tiene el siguiente formato:
+                # {
+                #   "id": int,
+                #   "nivel": int
+                # }
+
+                for actividad in actividades_reservadas:
+                    try:
+                        try:
+                            instancia_actividad_reservada = (
+                                ActividadReservada.objects.get(id=actividad["id"])
+                            )
+                        except ActividadReservada.DoesNotExist:
+                            raise ValidationError(
+                                {
+                                    "actividades_reservadas": MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA
+                                }
+                            )
+
+                        try:
+                            actividad_reservada_programa = (
+                                ProgramaTieneActividadReservada.objects.get(
+                                    version_programa_asignatura=version_programa,
+                                    actividad_reservada=instancia_actividad_reservada,
+                                )
+                            )
+
+                            actividad_reservada_programa.nivel = actividad["nivel"]
+                            actividad_reservada_programa.full_clean()
+                            actividad_reservada_programa.save()
+                        except ProgramaTieneActividadReservada.DoesNotExist:
+                            self._asignar_actividad_reservada(
+                                instancia_actividad_reservada,
+                                version_programa,
+                                actividad["nivel"],
+                            )
+                    except (TypeError, KeyError, ValueError):
+                        raise ValidationError(
+                            {
+                                "actividades_reservadas": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
+                            }
+                        )
+
+                # Busca la carga horaria ya asignada:
+                try:
+                    carga = CargaBloque.objects.get(
+                        version_programa_asignatura=version_programa
+                    )
+                    carga.horas = carga_rtf
+                    carga.full_clean()
+                    carga.save()
+                except CargaBloque.DoesNotExist:
+                    self._asignar_carga_horaria(
+                        version_programa.asignatura.bloque_curricular,
+                        version_programa,
+                        carga_rtf,
+                    )
+
+            return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
         pass
@@ -522,7 +833,7 @@ class ServicioVersionProgramaAsignatura:
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
         """
 
-        if not self.__es_posible_crear_nueva_version_de_programa():
+        if not self._es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         semestre_actual = self.servicio_semestre.obtener_semestre_actual()
@@ -571,7 +882,7 @@ class ServicioVersionProgramaAsignatura:
 
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
-            if self.__validar_datos(
+            if self._validar_datos(
                 asignatura=ultimo_programa.asignatura,
                 semanal_teoria_presencial=ultimo_programa.semanal_teoria_presencial,
                 semanal_practica_presencial=ultimo_programa.semanal_practica_presencial,
@@ -609,13 +920,13 @@ class ServicioVersionProgramaAsignatura:
                 )
 
             for descriptor_del_programa in descriptores_del_programa:
-                self.__asignar_descriptor(
+                self._asignar_descriptor(
                     descriptor=descriptor_del_programa.descriptor,
                     programa=nuevo_programa,
                     nivel=descriptor_del_programa.nivel,
                 )
             for actividad_reservada in actividades_reservadas:
-                self.__asignar_actividad_reservada(
+                self._asignar_actividad_reservada(
                     actividad=actividad_reservada.actividad_reservada,
                     programa=nuevo_programa,
                     nivel=actividad_reservada.nivel,
@@ -631,7 +942,7 @@ class ServicioVersionProgramaAsignatura:
                     {"carga_bloque": MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA}
                 )
 
-            self.__asignar_carga_horaria(
+            self._asignar_carga_horaria(
                 bloque=carga_bloque_programa.bloque_curricular,
                 programa=nuevo_programa,
                 horas=carga_bloque_programa.horas,
