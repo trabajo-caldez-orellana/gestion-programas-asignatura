@@ -5,3 +5,9 @@ from .semestre import (
     TestObtenerSemestreAnterior,
     TestObtenerSemestreSiguiente,
 )
+from .configuracion import (
+    TestObtenerDiasRestantesInicioPeriodoModificacion,
+    TestObtenerDiasRestantesInicioPeriodoCorreccion,
+    TestObtenerDiasRestantesInicioPeriodoValidacion,
+    TestObtenerDiasRestantesInicioSiguienteSemestre,
+)

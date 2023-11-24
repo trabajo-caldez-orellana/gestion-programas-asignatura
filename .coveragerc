@@ -1,0 +1,20 @@
+[run]
+branch = True
+source = backend/
+omit = 
+  backend/asgi.py
+  backend/wsgi.py
+  backend/celery.py
+  backend/settings/*
+  backend/tests/utils.py
+  backend/admin/*
+  backend/forms/*
+  backend/strategy.py
+  backend/tests/*
+
+[report]
+fail_under = 95
+show_missing = True
+skip_covered = True
+exclude_also =
+    def __str__
