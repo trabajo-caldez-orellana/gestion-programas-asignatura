@@ -15,6 +15,14 @@ from backend.common.mensajes_de_error import (
 )
 
 
+class ManagerRol(models.Manager):
+    def create(self, **kwargs):
+        rol = self.model(**kwargs)
+        rol.full_clean()
+        rol.save()
+        return rol
+
+
 class Rol(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     carrera = models.ForeignKey(
@@ -27,6 +35,8 @@ class Rol(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.rol, self.usuario)
+
+    objects = ManagerRol()
 
     class Meta:
         verbose_name_plural = "Roles"
@@ -56,5 +66,5 @@ class Rol(models.Model):
                     "carrera"
                 ] = MENSAJE_SECRETARIO_SELECCIONA_ASIGNATURA_O_CARRERA
 
-        if error_message.keys:
+        if error_message.keys:  # pragma: no branch
             raise ValidationError(error_message)
