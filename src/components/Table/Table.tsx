@@ -1,4 +1,5 @@
 import './Table.css'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 
 type actions = {
   watch: boolean
@@ -24,16 +25,14 @@ interface TableProps {
   tableColumns: string[]
   tableData: tableRow[]
   acciones?: actions
-  watch: (id: number) => void
-  newPrograma: (id: number) => void
+  verPrograma: (id: number, modoPrograma: string) => void
 }
 
 export default function Table({
   tableColumns,
   tableData,
   acciones,
-  watch,
-  newPrograma
+  verPrograma
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
   if (acciones) {
@@ -62,7 +61,9 @@ export default function Table({
                   <>
                     {item.acciones_posibles.ver ? (
                       <i
-                        onClick={() => watch(item.id)}
+                        onClick={() =>
+                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.VER)
+                        }
                         className="fas fa-eye"
                         title="Ver programa"
                       ></i>
@@ -70,7 +71,13 @@ export default function Table({
                       <></>
                     )}
                     {item.acciones_posibles.editar ? (
-                      <i className="fas fa-edit" title="Editar programa"></i>
+                      <i
+                        onClick={() =>
+                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.EDITAR)
+                        }
+                        className="fas fa-edit"
+                        title="Editar programa"
+                      ></i>
                     ) : (
                       <></>
                     )}
@@ -92,7 +99,9 @@ export default function Table({
                     )}
                     {item.acciones_posibles.empezar_nuevo ? (
                       <i
-                        onClick={() => newPrograma(item.id)}
+                        onClick={() =>
+                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.NUEVO)
+                        }
                         className="fas fa-plus"
                         title="Nuevo programa"
                       ></i>

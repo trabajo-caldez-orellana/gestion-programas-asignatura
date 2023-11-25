@@ -11,7 +11,8 @@ export const HANDLERS = {
 
 export const MODOS_PROGRAMA_ASIGNATURA = {
   VER: 'VER',
-  NUEVO: 'NUEVO'
+  NUEVO: 'NUEVO',
+  EDITAR: 'EDITAR'
 }
 
 export const NUEVO_PROGRAMA_ASIGNATURA = {
