@@ -25,7 +25,8 @@
   overflow-y: auto;
 }
 
-.modal h2, .modal label {
+.modal h2,
+.modal label {
   display: block;
   background-color: var(--primary-color);
   color: var(--contrast-color);

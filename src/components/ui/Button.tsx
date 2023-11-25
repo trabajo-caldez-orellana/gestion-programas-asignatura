@@ -8,13 +8,24 @@ interface ButtonProps {
   disabled?: boolean
 }
 
-export default function Button({ text, onClick, cssClass, disabled }: ButtonProps) {
-
-  const buttonClass = `button ${cssClass || ''}`;
+export default function Button({
+  text,
+  onClick,
+  cssClass,
+  disabled
+}: ButtonProps) {
+  const buttonClass = `button ${cssClass || ''}`
 
   return (
     <>
-      <button type="button" onClick={onClick} className={buttonClass} disabled={disabled}>{text}</button>
+      <button
+        type="button"
+        onClick={onClick}
+        className={buttonClass}
+        disabled={disabled}
+      >
+        {text}
+      </button>
     </>
   )
 }

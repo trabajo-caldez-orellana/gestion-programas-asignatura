@@ -9,7 +9,12 @@ interface ModalProps {
   onClose: () => void
 }
 
-export default function Modal({ open, children, modalTitle, onClose }: ModalProps) {
+export default function Modal({
+  open,
+  children,
+  modalTitle,
+  onClose
+}: ModalProps) {
   const portalRoot = document.getElementById('portal')
   if (!open || !portalRoot) return null
 
@@ -19,7 +24,7 @@ export default function Modal({ open, children, modalTitle, onClose }: ModalProp
       <div className="modal">
         <h2>{modalTitle}</h2>
         {children}
-        <Button text="X" onClick={onClose} cssClass='close-modal-button'/>
+        <Button text="X" onClick={onClose} cssClass="close-modal-button" />
       </div>
     </>,
     portalRoot

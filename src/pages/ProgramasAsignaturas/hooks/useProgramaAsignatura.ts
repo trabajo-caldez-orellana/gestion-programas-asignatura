@@ -6,7 +6,6 @@ import {
   NUEVO_PROGRAMA_ASIGNATURA
 } from '../../../constants/constants'
 
-
 type useProgramaAsignaturaType = {
   programaAsignatura: ProgramaAsignatura | null
   setProgramaAsignatura: React.Dispatch<
