@@ -18,7 +18,6 @@ from backend.models import (
     Asignatura,
     AuditoriaEstadoVersionPrograma,
     BloqueCurricular,
-    CargaBloque,
     Carrera,
     Configuracion,
     Descriptor,

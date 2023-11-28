@@ -4,8 +4,6 @@ from django.core.exceptions import ValidationError
 from django.db import transaction, IntegrityError
 
 from backend.models import (
-    BloqueCurricular,
-    CargaBloque,
     VersionProgramaAsignatura,
     Asignatura,
     Descriptor,
@@ -14,11 +12,9 @@ from backend.models import (
     Estandar,
     ProgramaTieneDescriptor,
     ProgramaTieneActividadReservada,
-    Semestre,
 )
 from backend.common.choices import (
     NivelDescriptor,
-    MetodologiaAsignatura,
     TipoDescriptor,
     EstadoAsignatura,
 )
@@ -30,19 +26,15 @@ from backend.common.mensajes_de_error import (
     MENSAJE_EJE_TRANSVERAL,
     MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO,
     MENSAJE_CANTIDAD_DE_RESULTADOS,
-    MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
     MENSAJE_ACTIVIDAD_RESERVADA,
     MENSAJE_NIVEL_INCORRECTO,
     MENSAJE_DESCRIPTOR,
-    MENSAJE_BLOQUE_CURRICUALR,
     MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES,
     MENSAJE_PROGRAMAS_CERRADOS,
-    MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
     MENSAJE_VERSION_ANTERIOR_NO_APROBADA,
     MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
     MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR,
     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
-    MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA,
     MENSAJE_DESCRIPTOR_INVALIDO,
     MENSAJE_EJE_TRANSVERSAL_INVALIDO,
     MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA,
@@ -50,7 +42,6 @@ from backend.common.mensajes_de_error import (
     MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO,
     MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
     MENSAJE_NIVEL_INVALIDO,
-    MENSAJE_CAMPO_ENTERO,
     MENSAJE_VERSION_CERRADA_PARA_MODIFICACION,
 )
 from backend.services.semestre import ServicioSemestre
@@ -58,33 +49,13 @@ from backend.services.configuracion import ServicioConfiguracion
 
 
 class ServicioVersionProgramaAsignatura:
+    """
+    Todos los servicios relacionados a la creacion, modificacion, y seguimiento de los Programas
+    de asignatura
+    """
+
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
-
-    def _asignar_carga_horaria(
-        self, bloque: BloqueCurricular, programa: VersionProgramaAsignatura, horas: int
-    ) -> CargaBloque:
-        """
-        Asigna a una version de programa una carga horaria para un determinado bloque curricular.
-        Verifica que la asignatura relacionada al programa tenga el mismo bloque curricular que el referenciado.
-
-        Tira ValidationError cuando falla la validacion, con codigos de error: "bloque", "programa", "carga"
-        """
-
-        if programa.asignatura.bloque_curricular != bloque:
-            raise ValidationError({"bloque_curricular": MENSAJE_BLOQUE_CURRICUALR})
-
-        try:
-            carga_bloque = CargaBloque.objects.create(
-                horas=horas,
-                version_programa_asignatura=programa,
-                bloque_curricular=bloque,
-            )
-        except (IntegrityError, ValueError) as e:
-            if "horas" in str(e):
-                raise ValidationError({"carga_rtf": MENSAJE_CAMPO_ENTERO})
-
-        return carga_bloque
 
     def _es_nivel_descriptor_valido(
         self, descriptor: Descriptor, nivel: NivelDescriptor
@@ -181,7 +152,7 @@ class ServicioVersionProgramaAsignatura:
             if "nivel" in str(e):
                 raise ValidationError(
                     {"actividades_reservadas": MENSAJE_NIVEL_INVALIDO}
-                )
+                ) from e
 
         return programa_tiene_actividad_reservada
 
@@ -194,31 +165,20 @@ class ServicioVersionProgramaAsignatura:
             == 0
         )
 
-    def _validar_datos(
+    def _validar_resultados_de_aprendizaje(
         self,
-        asignatura: Asignatura,
-        semanal_teoria_presencial: int,
-        semanal_practica_presencial: int,
-        semanal_teorico_practico_presencial: int,
-        semanal_lab_presencial: int,
-        semanal_teoria_remoto: int,
-        semanal_practica_remoto: int,
-        semanal_teorico_practico_remoto: int,
-        semanal_lab_remoto: int,
         resultados_de_aprendizaje: json,
     ) -> bool:
         """
         Valida los datos del programa de la asignatura para ver si cumple con las reglas del negocio
         """
-        errores = {}
-
         # Valida los resultados de aprendizaje: Formato correcto, cantidad correcta.
         try:
             resultados = json.loads(resultados_de_aprendizaje)
-        except (TypeError, json.JSONDecodeError):
+        except (TypeError, json.JSONDecodeError) as exc:
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO}
-            )
+            ) from exc
 
         if not isinstance(resultados, list):
             raise ValidationError(
@@ -229,98 +189,9 @@ class ServicioVersionProgramaAsignatura:
             len(resultados) < MINIMO_RESULTADOS_DE_APRENDIZAJE
             or len(resultados) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
         ):
-            errores["resultados_de_aprendizaje"] = MENSAJE_CANTIDAD_DE_RESULTADOS
-
-        # Valida los horarios dependiendo la metodologia de la asignatura.
-        if (
-            asignatura.metodologia == MetodologiaAsignatura.PRESENCIAL
-            or asignatura.metodologia == MetodologiaAsignatura.HIBRIDO
-        ):
-            if semanal_teoria_presencial is None:
-                errores[
-                    "semanal_teoria_presencial"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-            if semanal_practica_presencial is None:
-                errores[
-                    "semanal_practica_presencial"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-            if semanal_teorico_practico_presencial is None:
-                errores[
-                    "semanal_teorico_practico_presencial"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-            if semanal_lab_presencial is None:
-                errores[
-                    "semanal_lab_presencial"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-
-            if semanal_teoria_remoto is not None and semanal_teoria_remoto != 0:
-                errores[
-                    "semanal_teoria_remoto"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-            if semanal_practica_remoto is not None and semanal_practica_remoto != 0:
-                errores[
-                    "semanal_practica_remoto"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-            if (
-                semanal_teorico_practico_remoto is not None
-                and semanal_teorico_practico_remoto != 0
-            ):
-                errores[
-                    "semanal_teorico_practico_remoto"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-            if semanal_lab_remoto is not None and semanal_lab_remoto != 0:
-                errores[
-                    "semanal_lab_remoto"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-
-        if (
-            asignatura.metodologia == MetodologiaAsignatura.VIRTUAL
-            or asignatura.metodologia == MetodologiaAsignatura.HIBRIDO
-        ):
-            if semanal_teoria_remoto is None:
-                errores[
-                    "semanal_teoria_remoto"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-            if semanal_practica_remoto is None:
-                errores[
-                    "semanal_practica_remoto"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-            if semanal_teorico_practico_remoto is None:
-                errores[
-                    "semanal_teorico_practico_remoto"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-            if semanal_lab_remoto is None:
-                errores[
-                    "semanal_lab_remoto"
-                ] = MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA
-
-            if semanal_teoria_presencial is not None and semanal_teoria_presencial != 0:
-                errores[
-                    "semanal_teoria_presencial"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-            if (
-                semanal_practica_presencial is not None
-                and semanal_practica_presencial != 0
-            ):
-                errores[
-                    "semanal_practica_presencial"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-            if (
-                semanal_teorico_practico_presencial is not None
-                and semanal_teorico_practico_presencial != 0
-            ):
-                errores[
-                    "semanal_teorico_practico_presencial"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-            if semanal_lab_presencial is not None and semanal_lab_presencial != 0:
-                errores[
-                    "semanal_lab_presencial"
-                ] = MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA
-
-        if len(errores.keys()) > 0:
-            raise ValidationError(errores)
-
-        return True
+            raise ValidationError(
+                {"resultados_de_aprendizaje": MENSAJE_CANTIDAD_DE_RESULTADOS}
+            )
 
     def crear_nueva_version_programa_asignatura(
         self,
@@ -328,9 +199,7 @@ class ServicioVersionProgramaAsignatura:
         descriptores: list,  # Solo los ID de los descriptores, porque es si o no.
         actividades_reservadas: list,
         ejes_transversales: list,
-        carga_rtf: int,
         resultados_de_aprendizaje: json,
-        semanas_dictado: int,
         contenidos: str,
         bibliografia: str,
         recursos: str,
@@ -340,15 +209,11 @@ class ServicioVersionProgramaAsignatura:
         extension_docentes: str,
         extension_estudiantes: str,
         cronograma: str,
-        semanal_teoria_presencial: int = 0,
-        semanal_practica_presencial: int = 0,
-        semanal_teorico_practico_presencial: int = 0,
-        semanal_lab_presencial: int = 0,
-        semanal_teoria_remoto: int = 0,
-        semanal_practica_remoto: int = 0,
-        semanal_teorico_practico_remoto: int = 0,
-        semanal_lab_remoto: int = 0,
     ):
+        """
+        Crea una nueva version de un programa de asignatura para el semestre que viene!
+        """
+
         if not self._es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
@@ -378,10 +243,10 @@ class ServicioVersionProgramaAsignatura:
         # Creo una lista de los id de los descriptores asi hago un bulk filter.
         try:
             id_descriptores = [descriptor["id"] for descriptor in descriptores]
-        except (TypeError, KeyError):
+        except (TypeError, KeyError) as exc:
             raise ValidationError(
                 {"descriptores": MENSAJE_FORMATO_DESCRIPTORES_INVALIDO}
-            )
+            ) from exc
 
         instancias_descriptores = Descriptor.objects.filter(
             id__in=id_descriptores, tipo=TipoDescriptor.DESCRIPTOR
@@ -391,63 +256,28 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError({"descriptores": MENSAJE_DESCRIPTOR_INVALIDO})
 
         # Validar datos:
-        if self._validar_datos(
-            asignatura=asignatura,
-            semanal_teoria_presencial=semanal_teoria_presencial,
-            semanal_lab_presencial=semanal_lab_presencial,
-            semanal_lab_remoto=semanal_lab_remoto,
-            semanal_practica_presencial=semanal_practica_presencial,
-            semanal_practica_remoto=semanal_practica_remoto,
-            semanal_teoria_remoto=semanal_teoria_remoto,
-            semanal_teorico_practico_presencial=semanal_teorico_practico_presencial,
-            semanal_teorico_practico_remoto=semanal_teorico_practico_remoto,
+        if self._validar_resultados_de_aprendizaje(
             resultados_de_aprendizaje=resultados_de_aprendizaje,
         ):
             with transaction.atomic():
                 # Creo un programa. Si falla algo, saltara una excepcion
-                try:
-                    version_programa = VersionProgramaAsignatura(
-                        estado=EstadoAsignatura.ABIERTO,
-                        asignatura=asignatura,
-                        semestre=semestre,
-                        semanas_dictado=semanas_dictado,
-                        semanal_teoria_presencial=semanal_teoria_presencial,
-                        semanal_practica_presencial=semanal_practica_presencial,
-                        semanal_teorico_practico_presencial=semanal_teorico_practico_presencial,
-                        semanal_lab_presencial=semanal_lab_presencial,
-                        semanal_teoria_remoto=semanal_teoria_remoto,
-                        semanal_practica_remoto=semanal_practica_remoto,
-                        semanal_teorico_practico_remoto=semanal_teorico_practico_remoto,
-                        semanal_lab_remoto=semanal_lab_remoto,
-                        resultados_de_aprendizaje=resultados_de_aprendizaje,
-                        contenidos=contenidos,
-                        bibliografia=bibliografia,
-                        recursos=recursos,
-                        evaluacion=evaluacion,
-                        investigacion_docentes=investigacion_docentes,
-                        investigacion_estudiantes=investigacion_estudiantes,
-                        extension_docentes=extension_docentes,
-                        extension_estudiantes=extension_estudiantes,
-                        cronograma=cronograma,
-                    )
-                    version_programa.full_clean()
-                    version_programa.save()
-                except (ValueError, IntegrityError) as e:
-                    mensajes_de_error = {
-                        "semanal_teoria_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_practica_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_teorico_practico_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_lab_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_teoria_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_practica_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_teorico_practico_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_lab_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanas_dictado": MENSAJE_CAMPO_ENTERO,
-                    }
-
-                    for campo, mensaje in mensajes_de_error.items():
-                        if campo in str(e):
-                            raise ValidationError({campo: mensaje})
+                version_programa = VersionProgramaAsignatura(
+                    estado=EstadoAsignatura.ABIERTO,
+                    asignatura=asignatura,
+                    semestre=semestre,
+                    resultados_de_aprendizaje=resultados_de_aprendizaje,
+                    contenidos=contenidos,
+                    bibliografia=bibliografia,
+                    recursos=recursos,
+                    evaluacion=evaluacion,
+                    investigacion_docentes=investigacion_docentes,
+                    investigacion_estudiantes=investigacion_estudiantes,
+                    extension_docentes=extension_docentes,
+                    extension_estudiantes=extension_estudiantes,
+                    cronograma=cronograma,
+                )
+                version_programa.full_clean()
+                version_programa.save()
 
                 for descriptor in instancias_descriptores:
                     self._asignar_descriptor(
@@ -469,16 +299,16 @@ class ServicioVersionProgramaAsignatura:
                         self._asignar_descriptor(
                             instancia_eje_transversal, version_programa, eje["nivel"]
                         )
-                    except Descriptor.DoesNotExist:
+                    except Descriptor.DoesNotExist as exc:
                         raise ValidationError(
                             {"ejes_transversales": MENSAJE_EJE_TRANSVERSAL_INVALIDO}
-                        )
-                    except (TypeError, KeyError, ValueError):
+                        ) from exc
+                    except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
                             {
                                 "ejes_transversales": MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO
                             }
-                        )
+                        ) from exc
 
                 # Obtengo todas las actividades reservadas
                 # La lista de actividades reservadas tiene el siguiente formato:
@@ -497,23 +327,18 @@ class ServicioVersionProgramaAsignatura:
                             version_programa,
                             actividad["nivel"],
                         )
-                    except ActividadReservada.DoesNotExist:
+                    except ActividadReservada.DoesNotExist as exc:
                         raise ValidationError(
                             {
                                 "actividades_reservadas": MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA
                             }
-                        )
-                    except (TypeError, KeyError, ValueError):
+                        ) from exc
+                    except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
                             {
                                 "actividades_reservadas": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
                             }
-                        )
-
-                # Carga del bloque
-                self._asignar_carga_horaria(
-                    asignatura.bloque_curricular, version_programa, carga_rtf
-                )
+                        ) from exc
 
             return version_programa
 
@@ -523,9 +348,7 @@ class ServicioVersionProgramaAsignatura:
         descriptores: list,
         actividades_reservadas: list,
         ejes_transversales: list,
-        carga_rtf: int,
         resultados_de_aprendizaje: json,
-        semanas_dictado: int,
         contenidos: str,
         bibliografia: str,
         recursos: str,
@@ -535,15 +358,11 @@ class ServicioVersionProgramaAsignatura:
         extension_docentes: str,
         extension_estudiantes: str,
         cronograma: str,
-        semanal_teoria_presencial: int = 0,
-        semanal_practica_presencial: int = 0,
-        semanal_teorico_practico_presencial: int = 0,
-        semanal_lab_presencial: int = 0,
-        semanal_teoria_remoto: int = 0,
-        semanal_practica_remoto: int = 0,
-        semanal_teorico_practico_remoto: int = 0,
-        semanal_lab_remoto: int = 0,
     ):
+        """
+        Modifica la version de un programa de asignatura para el semestre que viene!
+        Verifica que sea periodo de modificacion de programas
+        """
         # Verifica el estado de la version del programa de la asignatura
 
         if version_programa.estado != EstadoAsignatura.ABIERTO:
@@ -568,10 +387,10 @@ class ServicioVersionProgramaAsignatura:
             try:
                 if descriptor["nivel"]:
                     cantidad_descriptores += 1
-            except (TypeError, KeyError, ValueError):
+            except (TypeError, KeyError, ValueError) as exc:
                 raise ValidationError(
                     {"descriptores": MENSAJE_FORMATO_DESCRIPTORES_INVALIDO}
-                )
+                ) from exc
 
         if cantidad_descriptores == 0:
             mensajes_de_error["descriptores"] = MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR
@@ -581,12 +400,12 @@ class ServicioVersionProgramaAsignatura:
             try:
                 if actividad["nivel"] != NivelDescriptor.NADA:
                     cantidad_actividades_reservadas += 1
-            except (TypeError, KeyError, ValueError):
+            except (TypeError, KeyError, ValueError) as exc:
                 raise ValidationError(
                     {
                         "actividades_reservadas": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
                     }
-                )
+                ) from exc
 
         if cantidad_actividades_reservadas == 0:
             mensajes_de_error[
@@ -598,12 +417,12 @@ class ServicioVersionProgramaAsignatura:
             try:
                 if eje["nivel"] != NivelDescriptor.NADA:
                     cantidad_ejes_transversales += 1
-            except (TypeError, KeyError, ValueError):
+            except (TypeError, KeyError, ValueError) as exc:
                 raise ValidationError(
                     {
                         "ejes_transversales": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
                     }
-                )
+                ) from exc
 
         if cantidad_ejes_transversales == 0:
             mensajes_de_error[
@@ -614,70 +433,24 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError(mensajes_de_error)
 
         # Validar datos:
-        if self._validar_datos(
-            asignatura=version_programa.asignatura,
-            semanal_teoria_presencial=semanal_teoria_presencial,
-            semanal_lab_presencial=semanal_lab_presencial,
-            semanal_lab_remoto=semanal_lab_remoto,
-            semanal_practica_presencial=semanal_practica_presencial,
-            semanal_practica_remoto=semanal_practica_remoto,
-            semanal_teoria_remoto=semanal_teoria_remoto,
-            semanal_teorico_practico_presencial=semanal_teorico_practico_presencial,
-            semanal_teorico_practico_remoto=semanal_teorico_practico_remoto,
+        if self._validar_resultados_de_aprendizaje(
             resultados_de_aprendizaje=resultados_de_aprendizaje,
         ):
             with transaction.atomic():
                 # Modifico el programa. Si falla algo, saltara una excepcion
-                try:
-                    version_programa.semanas_dictado = semanas_dictado
-                    version_programa.semanal_teoria_presencial = (
-                        semanal_teoria_presencial
-                    )
-                    version_programa.semanal_practica_presencial = (
-                        semanal_practica_presencial
-                    )
-                    version_programa.semanal_teorico_practico_presencial = (
-                        semanal_teorico_practico_presencial
-                    )
-                    version_programa.semanal_lab_presencial = semanal_lab_presencial
-                    version_programa.semanal_teoria_remoto = semanal_teoria_remoto
-                    version_programa.semanal_practica_remoto = semanal_practica_remoto
-                    version_programa.semanal_teorico_practico_remoto = (
-                        semanal_teorico_practico_remoto
-                    )
-                    version_programa.semanal_lab_remoto = semanal_lab_remoto
-                    version_programa.resultados_de_aprendizaje = (
-                        resultados_de_aprendizaje
-                    )
-                    version_programa.contenidos = contenidos
-                    version_programa.bibliografia = bibliografia
-                    version_programa.recursos = recursos
-                    version_programa.evaluacion = evaluacion
-                    version_programa.investigacion_docentes = investigacion_docentes
-                    version_programa.investigacion_estudiantes = (
-                        investigacion_estudiantes
-                    )
-                    version_programa.extension_docentes = extension_docentes
-                    version_programa.extension_estudiantes = extension_estudiantes
-                    version_programa.cronograma = cronograma
-                    version_programa.full_clean()
-                    version_programa.save()
-                except (ValueError, IntegrityError) as e:
-                    mensajes_de_error = {
-                        "semanal_teoria_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_practica_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_teorico_practico_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_lab_presencial": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_teoria_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_practica_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_teorico_practico_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanal_lab_remoto": MENSAJE_HORARIO_REQUERIDO_PARA_METODOLOGIA,
-                        "semanas_dictado": MENSAJE_CAMPO_ENTERO,
-                    }
 
-                    for campo, mensaje in mensajes_de_error.items():
-                        if campo in str(e):
-                            raise ValidationError({campo: mensaje})
+                version_programa.resultados_de_aprendizaje = resultados_de_aprendizaje
+                version_programa.contenidos = contenidos
+                version_programa.bibliografia = bibliografia
+                version_programa.recursos = recursos
+                version_programa.evaluacion = evaluacion
+                version_programa.investigacion_docentes = investigacion_docentes
+                version_programa.investigacion_estudiantes = investigacion_estudiantes
+                version_programa.extension_docentes = extension_docentes
+                version_programa.extension_estudiantes = extension_estudiantes
+                version_programa.cronograma = cronograma
+                version_programa.full_clean()
+                version_programa.save()
 
                 # Obtengo todos los descriptores
                 # La lista de descriptores tiene el siguiente formato:
@@ -690,10 +463,10 @@ class ServicioVersionProgramaAsignatura:
                             instancia_descriptor = Descriptor.objects.filter(
                                 id=descriptor["id"], tipo=TipoDescriptor.DESCRIPTOR
                             )
-                        except Descriptor.DoesNotExist:
+                        except Descriptor.DoesNotExist as exc:
                             raise ValidationError(
                                 {"descriptores": MENSAJE_DESCRIPTOR_INVALIDO}
-                            )
+                            ) from exc
 
                         try:
                             descriptor_programa = ProgramaTieneDescriptor.objects.get(
@@ -716,10 +489,10 @@ class ServicioVersionProgramaAsignatura:
                                 version_programa,
                                 descriptor["nivel"],
                             )
-                    except (TypeError, KeyError):
+                    except (TypeError, KeyError) as exc:
                         raise ValidationError(
                             {"descriptores": MENSAJE_FORMATO_DESCRIPTORES_INVALIDO}
-                        )
+                        ) from exc
 
                 # Obtengo todos los ejes transversales
                 # La lista de ejes transversales tiene el siguiente formato:
@@ -734,10 +507,10 @@ class ServicioVersionProgramaAsignatura:
                             instancia_eje_transversal = Descriptor.objects.get(
                                 id=eje["id"]
                             )
-                        except Descriptor.DoesNotExist:
+                        except Descriptor.DoesNotExist as exc:
                             raise ValidationError(
                                 {"ejes_transversales": MENSAJE_EJE_TRANSVERSAL_INVALIDO}
-                            )
+                            ) from exc
 
                         try:
                             eje_transversal_programa = (
@@ -757,12 +530,12 @@ class ServicioVersionProgramaAsignatura:
                                 eje["nivel"],
                             )
 
-                    except (TypeError, KeyError, ValueError):
+                    except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
                             {
                                 "ejes_transversales": MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO
                             }
-                        )
+                        ) from exc
 
                 # Obtengo todas las actividades reservadas
                 # La lista de actividades reservadas tiene el siguiente formato:
@@ -777,12 +550,12 @@ class ServicioVersionProgramaAsignatura:
                             instancia_actividad_reservada = (
                                 ActividadReservada.objects.get(id=actividad["id"])
                             )
-                        except ActividadReservada.DoesNotExist:
+                        except ActividadReservada.DoesNotExist as exc:
                             raise ValidationError(
                                 {
                                     "actividades_reservadas": MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA
                                 }
-                            )
+                            ) from exc
 
                         try:
                             actividad_reservada_programa = (
@@ -801,27 +574,12 @@ class ServicioVersionProgramaAsignatura:
                                 version_programa,
                                 actividad["nivel"],
                             )
-                    except (TypeError, KeyError, ValueError):
+                    except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
                             {
                                 "actividades_reservadas": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
                             }
-                        )
-
-                # Busca la carga horaria ya asignada:
-                try:
-                    carga = CargaBloque.objects.get(
-                        version_programa_asignatura=version_programa
-                    )
-                    carga.horas = carga_rtf
-                    carga.full_clean()
-                    carga.save()
-                except CargaBloque.DoesNotExist:
-                    self._asignar_carga_horaria(
-                        version_programa.asignatura.bloque_curricular,
-                        version_programa,
-                        carga_rtf,
-                    )
+                        ) from exc
 
             return version_programa
 
@@ -836,15 +594,15 @@ class ServicioVersionProgramaAsignatura:
         if not self._es_posible_crear_nueva_version_de_programa():
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
-        semestre_actual = self.servicio_semestre.obtener_semestre_actual()
-
         try:
             ultimo_programa = VersionProgramaAsignatura.objects.get(
                 asignatura=asignatura
             )
 
-        except VersionProgramaAsignatura.DoesNotExist:
-            raise ValidationError({"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES})
+        except VersionProgramaAsignatura.DoesNotExist as e:
+            raise ValidationError(
+                {"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES}
+            ) from e
 
         if ultimo_programa.estado != EstadoAsignatura.APROBADO:
             raise ValidationError({"asignatura": MENSAJE_VERSION_ANTERIOR_NO_APROBADA})
@@ -882,31 +640,13 @@ class ServicioVersionProgramaAsignatura:
 
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
-            if self._validar_datos(
-                asignatura=ultimo_programa.asignatura,
-                semanal_teoria_presencial=ultimo_programa.semanal_teoria_presencial,
-                semanal_practica_presencial=ultimo_programa.semanal_practica_presencial,
-                semanal_teorico_practico_presencial=ultimo_programa.semanal_teorico_practico_presencial,
-                semanal_lab_presencial=ultimo_programa.semanal_lab_presencial,
-                semanal_teoria_remoto=ultimo_programa.semanal_teoria_remoto,
-                semanal_practica_remoto=ultimo_programa.semanal_practica_remoto,
-                semanal_teorico_practico_remoto=ultimo_programa.semanal_teorico_practico_remoto,
-                semanal_lab_remoto=ultimo_programa.semanal_lab_remoto,
+            if self._validar_resultados_de_aprendizaje(
                 resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
             ):
                 nuevo_programa = VersionProgramaAsignatura.objects.create(
                     asignatura=ultimo_programa.asignatura,
                     semestre=ultimo_programa.semestre,
                     estado=EstadoAsignatura.ABIERTO,
-                    semanas_dictado=ultimo_programa.semanas_dictado,
-                    semanal_teoria_presencial=ultimo_programa.semanal_teoria_presencial,
-                    semanal_practica_presencial=ultimo_programa.semanal_practica_presencial,
-                    semanal_teorico_practico_presencial=ultimo_programa.semanal_teorico_practico_presencial,
-                    semanal_lab_presencial=ultimo_programa.semanal_lab_presencial,
-                    semanal_teoria_remoto=ultimo_programa.semanal_teoria_remoto,
-                    semanal_practica_remoto=ultimo_programa.semanal_practica_remoto,
-                    semanal_teorico_practico_remoto=ultimo_programa.semanal_teorico_practico_remoto,
-                    semanal_lab_remoto=ultimo_programa.semanal_lab_remoto,
                     contenidos=ultimo_programa.contenidos,
                     bibliografia=ultimo_programa.bibliografia,
                     recursos=ultimo_programa.recursos,
@@ -919,33 +659,19 @@ class ServicioVersionProgramaAsignatura:
                     resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
                 )
 
-            for descriptor_del_programa in descriptores_del_programa:
-                self._asignar_descriptor(
-                    descriptor=descriptor_del_programa.descriptor,
-                    programa=nuevo_programa,
-                    nivel=descriptor_del_programa.nivel,
-                )
-            for actividad_reservada in actividades_reservadas:
-                self._asignar_actividad_reservada(
-                    actividad=actividad_reservada.actividad_reservada,
-                    programa=nuevo_programa,
-                    nivel=actividad_reservada.nivel,
-                )
+                for descriptor_del_programa in descriptores_del_programa:
+                    self._asignar_descriptor(
+                        descriptor=descriptor_del_programa.descriptor,
+                        programa=nuevo_programa,
+                        nivel=descriptor_del_programa.nivel,
+                    )
+                for actividad_reservada in actividades_reservadas:
+                    self._asignar_actividad_reservada(
+                        actividad=actividad_reservada.actividad_reservada,
+                        programa=nuevo_programa,
+                        nivel=actividad_reservada.nivel,
+                    )
 
-            try:
-                carga_bloque_programa = CargaBloque.objects.get(
-                    version_programa_asignatura=ultimo_programa
-                )
+                return nuevo_programa
 
-            except CargaBloque.DoesNotExist:
-                raise ValidationError(
-                    {"carga_bloque": MENSAJE_PROGRAMA_DEBE_TENER_CARGA_HORARIA}
-                )
-
-            self._asignar_carga_horaria(
-                bloque=carga_bloque_programa.bloque_curricular,
-                programa=nuevo_programa,
-                horas=carga_bloque_programa.horas,
-            )
-
-        return nuevo_programa
+        return None

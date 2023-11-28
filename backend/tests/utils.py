@@ -102,26 +102,21 @@ def set_up_tests():
     )
 
     # Creo las asignaturas
-    asignatura_carrera_1 = Asignatura.objects.create(
-        denominacion="Sistemas con Micro",
-        codigo=CODIGO_ASIGNATURA_1,
-        metodologia=MetodologiaAsignatura.PRESENCIAL,
-        bloque_curricular=bloque_curricular_1,
-    )
+    datos_default_asignatura = {**DATOS_DEFAULT_ASIGNATURA}
+    datos_default_asignatura["denominacion"] = "Sistemas con Micro"
+    datos_default_asignatura["codigo"] = CODIGO_ASIGNATURA_1
+    datos_default_asignatura["bloque_curricular"] = bloque_curricular_1
+    asignatura_carrera_1 = Asignatura.objects.create(**datos_default_asignatura)
 
-    asignatura_carrera_2 = Asignatura.objects.create(
-        denominacion="Termodinamica",
-        codigo=CODIGO_ASIGNATURA_2,
-        metodologia=MetodologiaAsignatura.PRESENCIAL,
-        bloque_curricular=bloque_curricular_2,
-    )
+    datos_default_asignatura["denominacion"] = "Termodinamica"
+    datos_default_asignatura["codigo"] = CODIGO_ASIGNATURA_2
+    datos_default_asignatura["bloque_curricular"] = bloque_curricular_2
+    asignatura_carrera_2 = Asignatura.objects.create(**datos_default_asignatura)
 
-    asignatura_compartida = Asignatura.objects.create(
-        denominacion="Calculo I",
-        codigo=CODIGO_ASIGNATURA_COMPARTIDA,
-        metodologia=MetodologiaAsignatura.PRESENCIAL,
-        bloque_curricular=bloque_curricular_1,
-    )
+    datos_default_asignatura["denominacion"] = "Calculo I"
+    datos_default_asignatura["codigo"] = CODIGO_ASIGNATURA_COMPARTIDA
+    datos_default_asignatura["bloque_curricular"] = bloque_curricular_1
+    asignatura_compartida = Asignatura.objects.create(**datos_default_asignatura)
 
     # Crea dos planes de estudio activos, uno para carrera
     plan_carrera_1 = PlanDeEstudio.objects.create(
@@ -294,11 +289,6 @@ DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE = [
 
 DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR = {
     "estado": EstadoAsignatura.APROBADO,
-    "semanas_dictado": 16,
-    "semanal_teoria_presencial": 4,
-    "semanal_practica_presencial": 4,
-    "semanal_teorico_practico_presencial": 0,
-    "semanal_lab_presencial": 0,
     "contenidos": "CONTENIDO DE EJEMPLO",
     "bibliografia": "BIBLIOGRAFIA DE EJEMPLO",
     "recursos": "RECURSOS DE EJEMPLO",
@@ -317,15 +307,6 @@ DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_CREAR = {
     "descriptores": [],
     "actividades_reservadas": [],
     "ejes_transversales": [],
-    "carga_rtf": 1,
-    "semanal_teoria_presencial": 1,
-    "semanal_practica_presencial": 1,
-    "semanal_teorico_practico_presencial": 1,
-    "semanal_lab_presencial": 1,
-    "semanal_teoria_remoto": 1,
-    "semanal_practica_remoto": 1,
-    "semanal_teorico_practico_remoto": 1,
-    "semanal_lab_remoto": 1,
     "resultados_de_aprendizaje": [
         DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:MINIMO_RESULTADOS_DE_APRENDIZAJE]
     ],
@@ -339,6 +320,23 @@ DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_CREAR = {
     "extension_docentes": "Datos de ejemplo.",
     "extension_estudiantes": "Datos de ejemplo.",
     "cronograma": "Datos de ejemplo.",
+}
+
+DATOS_DEFAULT_ASIGNATURA = {
+    "denominacion": "Sistemas con Micro",
+    "codigo": "15_XXX",
+    "metodologia": MetodologiaAsignatura.PRESENCIAL,
+    "bloque_curricular": "",
+    "carga_rtf": 2,
+    "semanas_dictado": 16,
+    "semanal_teoria_presencial": 1,
+    "semanal_practica_presencial": 1,
+    "semanal_teorico_practico_presencial": 1,
+    "semanal_lab_presencial": 1,
+    "semanal_teoria_remoto": 0,
+    "semanal_practica_remoto": 0,
+    "semanal_teorico_practico_remoto": 0,
+    "semanal_lab_remoto": 0,
 }
 
 VALORES_INVALIDOS = [None, ""]
