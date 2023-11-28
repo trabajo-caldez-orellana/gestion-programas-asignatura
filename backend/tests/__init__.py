@@ -9,4 +9,3 @@ from .services import (
     TestObtenerDiasRestantesInicioPeriodoCorreccion,
     TestObtenerDiasRestantesInicioPeriodoModificacion,
 )
-from .models import TestAsignatura

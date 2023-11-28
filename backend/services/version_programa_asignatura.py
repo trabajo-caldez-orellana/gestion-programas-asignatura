@@ -61,15 +61,16 @@ class ServicioVersionProgramaAsignatura:
         self, descriptor: Descriptor, nivel: NivelDescriptor
     ):
         if descriptor.tipo == TipoDescriptor.DESCRIPTOR:
-            if nivel == NivelDescriptor.MEDIO or nivel == NivelDescriptor.ALTO:
+            if nivel != NivelDescriptor.BAJO and nivel != NivelDescriptor.NADA:
                 return False
         return True
 
-    def _asignar_descriptor(
+    def _asignar_o_modificar_descriptor_prograna(
         self,
         descriptor: Descriptor,
         programa: VersionProgramaAsignatura,
         nivel: NivelDescriptor,
+        asignacion: ProgramaTieneDescriptor = None,
     ) -> ProgramaTieneDescriptor:
         """
         Asigna descriptor para un cierto programa de asignatura. Verifica que el descriptor seleccionado
@@ -106,17 +107,36 @@ class ServicioVersionProgramaAsignatura:
         if len(errores.keys()) > 0:
             raise ValidationError(errores)
 
-        programa_tiene_descriptor = ProgramaTieneDescriptor.objects.create(
-            descriptor=descriptor, version_programa_asignatura=programa, nivel=nivel
-        )
-
+        try:
+            if asignacion is None:
+                programa_tiene_descriptor = ProgramaTieneDescriptor.objects.create(
+                    descriptor=descriptor,
+                    version_programa_asignatura=programa,
+                    nivel=nivel,
+                )
+            else:
+                asignacion.nivel = nivel
+                asignacion.full_clean()
+                asignacion.save()
+                programa_tiene_descriptor = asignacion
+        except (ValueError, ValidationError) as e:
+            if "nivel" in str(e):
+                if descriptor.tipo == TipoDescriptor.DESCRIPTOR:
+                    raise ValidationError(
+                        {"descriptores": MENSAJE_NIVEL_INVALIDO}
+                    ) from e
+                else:
+                    raise ValidationError(
+                        {"ejes_transversales": MENSAJE_NIVEL_INVALIDO}
+                    ) from e
         return programa_tiene_descriptor
 
-    def _asignar_actividad_reservada(
+    def _asignar_o_modificar_nivel_actividad_reservada(
         self,
         actividad: ActividadReservada,
         programa: VersionProgramaAsignatura,
         nivel: NivelDescriptor,
+        asignacion: ProgramaTieneActividadReservada = None,
     ) -> ProgramaTieneActividadReservada:
         """
         Asigna una actividad reservada para cierto programa de asignatura. Verifica que la actividad seleccionada
@@ -141,14 +161,20 @@ class ServicioVersionProgramaAsignatura:
             )
 
         try:
-            programa_tiene_actividad_reservada = (
-                ProgramaTieneActividadReservada.objects.create(
-                    version_programa_asignatura=programa,
-                    actividad_reservada=actividad,
-                    nivel=nivel,
+            if asignacion is None:
+                programa_tiene_actividad_reservada = (
+                    ProgramaTieneActividadReservada.objects.create(
+                        version_programa_asignatura=programa,
+                        actividad_reservada=actividad,
+                        nivel=nivel,
+                    )
                 )
-            )
-        except ValueError as e:
+            else:
+                asignacion.nivel = nivel
+                asignacion.full_clean()
+                asignacion.save()
+
+        except (ValueError, ValidationError) as e:
             if "nivel" in str(e):
                 raise ValidationError(
                     {"actividades_reservadas": MENSAJE_NIVEL_INVALIDO}
@@ -192,6 +218,8 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_CANTIDAD_DE_RESULTADOS}
             )
+
+        return True
 
     def crear_nueva_version_programa_asignatura(
         self,
@@ -280,7 +308,7 @@ class ServicioVersionProgramaAsignatura:
                 version_programa.save()
 
                 for descriptor in instancias_descriptores:
-                    self._asignar_descriptor(
+                    self._asignar_o_modificar_descriptor_prograna(
                         descriptor, version_programa, NivelDescriptor.BAJO
                     )
 
@@ -296,7 +324,7 @@ class ServicioVersionProgramaAsignatura:
                         instancia_eje_transversal = Descriptor.objects.get(
                             id=eje["id"], tipo=TipoDescriptor.EJE_TRANSVERSAL
                         )
-                        self._asignar_descriptor(
+                        self._asignar_o_modificar_descriptor_prograna(
                             instancia_eje_transversal, version_programa, eje["nivel"]
                         )
                     except Descriptor.DoesNotExist as exc:
@@ -322,7 +350,7 @@ class ServicioVersionProgramaAsignatura:
                         instancia_actividad_reservada = ActividadReservada.objects.get(
                             id=actividad["id"]
                         )
-                        self._asignar_actividad_reservada(
+                        self._asignar_o_modificar_nivel_actividad_reservada(
                             instancia_actividad_reservada,
                             version_programa,
                             actividad["nivel"],
@@ -419,9 +447,7 @@ class ServicioVersionProgramaAsignatura:
                     cantidad_ejes_transversales += 1
             except (TypeError, KeyError, ValueError) as exc:
                 raise ValidationError(
-                    {
-                        "ejes_transversales": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
-                    }
+                    {"ejes_transversales": MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO}
                 ) from exc
 
         if cantidad_ejes_transversales == 0:
@@ -460,7 +486,7 @@ class ServicioVersionProgramaAsignatura:
                 for descriptor in descriptores:
                     try:
                         try:
-                            instancia_descriptor = Descriptor.objects.filter(
+                            instancia_descriptor = Descriptor.objects.get(
                                 id=descriptor["id"], tipo=TipoDescriptor.DESCRIPTOR
                             )
                         except Descriptor.DoesNotExist as exc:
@@ -468,27 +494,27 @@ class ServicioVersionProgramaAsignatura:
                                 {"descriptores": MENSAJE_DESCRIPTOR_INVALIDO}
                             ) from exc
 
-                        try:
-                            descriptor_programa = ProgramaTieneDescriptor.objects.get(
-                                descriptor=instancia_descriptor,
-                                version_programa_asignatura=version_programa,
-                            )
+                        descriptor_programa = ProgramaTieneDescriptor.objects.filter(
+                            descriptor=instancia_descriptor,
+                            version_programa_asignatura=version_programa,
+                        )
 
-                            if not self._es_nivel_descriptor_valido(
-                                instancia_descriptor, descriptor["nivel"]
-                            ):
-                                raise ValidationError(
-                                    {"descriptores": MENSAJE_NIVEL_INCORRECTO}
-                                )
-                            descriptor_programa.nivel = descriptor["nivel"]
-                            descriptor_programa.full_clean()
-                            descriptor_programa.save()
-                        except ProgramaTieneDescriptor.DoesNotExist:
-                            self._asignar_descriptor(
+                        if not descriptor_programa.exists():
+                            self._asignar_o_modificar_descriptor_prograna(
                                 instancia_descriptor,
                                 version_programa,
                                 descriptor["nivel"],
                             )
+
+                        else:
+                            instancia = descriptor_programa.first()
+                            self._asignar_o_modificar_descriptor_prograna(
+                                instancia_descriptor,
+                                version_programa,
+                                descriptor["nivel"],
+                                instancia,
+                            )
+
                     except (TypeError, KeyError) as exc:
                         raise ValidationError(
                             {"descriptores": MENSAJE_FORMATO_DESCRIPTORES_INVALIDO}
@@ -520,11 +546,14 @@ class ServicioVersionProgramaAsignatura:
                                 )
                             )
 
-                            eje_transversal_programa.nivel = eje["nivel"]
-                            eje_transversal_programa.full_clean()
-                            eje_transversal_programa.save()
+                            self._asignar_o_modificar_descriptor_prograna(
+                                instancia_eje_transversal,
+                                version_programa,
+                                eje["nivel"],
+                                eje_transversal_programa,
+                            )
                         except ProgramaTieneDescriptor.DoesNotExist:
-                            self._asignar_descriptor(
+                            self._asignar_o_modificar_descriptor_prograna(
                                 instancia_eje_transversal,
                                 version_programa,
                                 eje["nivel"],
@@ -565,11 +594,14 @@ class ServicioVersionProgramaAsignatura:
                                 )
                             )
 
-                            actividad_reservada_programa.nivel = actividad["nivel"]
-                            actividad_reservada_programa.full_clean()
-                            actividad_reservada_programa.save()
+                            self._asignar_o_modificar_nivel_actividad_reservada(
+                                instancia_actividad_reservada,
+                                version_programa,
+                                actividad["nivel"],
+                                actividad_reservada_programa,
+                            )
                         except ProgramaTieneActividadReservada.DoesNotExist:
-                            self._asignar_actividad_reservada(
+                            self._asignar_o_modificar_nivel_actividad_reservada(
                                 instancia_actividad_reservada,
                                 version_programa,
                                 actividad["nivel"],
@@ -660,13 +692,13 @@ class ServicioVersionProgramaAsignatura:
                 )
 
                 for descriptor_del_programa in descriptores_del_programa:
-                    self._asignar_descriptor(
+                    self._asignar_o_modificar_descriptor_prograna(
                         descriptor=descriptor_del_programa.descriptor,
                         programa=nuevo_programa,
                         nivel=descriptor_del_programa.nivel,
                     )
                 for actividad_reservada in actividades_reservadas:
-                    self._asignar_actividad_reservada(
+                    self._asignar_o_modificar_nivel_actividad_reservada(
                         actividad=actividad_reservada.actividad_reservada,
                         programa=nuevo_programa,
                         nivel=actividad_reservada.nivel,

@@ -35,7 +35,7 @@ MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES = (
     "La asignatura seleccionada todavia no tiene programas de asignatura."
 )
 MENSAJE_PROGRAMAS_CERRADOS = (
-    "No es posible crear nuevas versiones de Programas de Asignatura actualmente."
+    "No es posible crear o modificar versiones de Programas de Asignatura actualmente."
 )
 MENSAJE_VERSION_ANTERIOR_NO_APROBADA = "La version anterior a la que se quiere acceder no fue aprobadda todavia, por lo que no se puede realizar una copia."
 MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR = (
@@ -69,6 +69,7 @@ MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO = (
 MENSAJE_NIVEL_INVALIDO = "El nivel seleccionado no es un valor valido."
 MENSAJE_CAMPO_ENTERO = "Este campo debe ser un numero entero mayor a cero."
 MENSAJE_CAMPO_NO_NULO = "Este campo no puede ser nulo."
+MENSAJE_CAMPO_EN_BLANCO = "Este campo no puede estar en blanco."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_VALIDACION = "No se completaron las configuraciones del programa. Debe definir los días para período de validación."
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_CORRECCION = "No se completaron las configuraciones del programa. Debe definir los días para período de corrección."
