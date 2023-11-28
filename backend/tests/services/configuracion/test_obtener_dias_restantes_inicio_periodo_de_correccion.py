@@ -108,6 +108,31 @@ class TestObtenerDiasRestantesInicioPeriodoCorreccion(TestCase):
 
             self.assertEqual(dias_restantes, 0)
 
+    def test_periodo_de_modificacion_iniciado_hace_un_dia(self):
+        crear_configuraciones_del_prograna()
+        (
+            semestre_anterior,
+            semestre_actual,
+            semestre_siguiente,
+        ) = crear_semestres_de_prueba()
+
+        dia_anterior_inicio_periodo = (
+            semestre_siguiente.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_CORRECCION - 1)
+        )
+        fecha_referencia = crear_fecha_y_hora(
+            anio=dia_anterior_inicio_periodo.year,
+            mes=dia_anterior_inicio_periodo.month,
+            dia=dia_anterior_inicio_periodo.day,
+        )
+
+        with freeze_time(fecha_referencia):
+            dias_restantes = (
+                self.servicio_configuracion.obtener_dias_restantes_inicio_periodo_de_correccion()
+            )
+
+            self.assertEqual(dias_restantes, 0)
+
     def test_no_hay_semestres_creados(self):
         crear_configuraciones_del_prograna()
 

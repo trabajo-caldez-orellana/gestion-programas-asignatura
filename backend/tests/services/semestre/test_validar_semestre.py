@@ -109,3 +109,15 @@ class TestValidarSemestre(TestCase):
             MENSAJE_FECHAS_INCORRECTAS,
             context.exception.message_dict.get("fecha_fin"),
         )
+
+    def test_validar_fecha_de_semestre_ya_existente(self):
+        semestre = Semestre(
+            fecha_inicio=timezone.datetime(day=1, month=7, year=2023),
+            fecha_fin=timezone.datetime(day=31, month=12, year=2023),
+        )
+
+        self.servicio_semestre.validar_semestre(
+            fecha_inicio=timezone.datetime(day=1, month=7, year=2023),
+            fecha_fin=timezone.datetime(day=31, month=12, year=2023),
+            instance=semestre,
+        )

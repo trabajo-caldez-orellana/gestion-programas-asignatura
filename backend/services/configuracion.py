@@ -58,7 +58,9 @@ class ServicioConfiguracion:
             self.obtener_dias_restantes_inicio_siguiente_semestre()
         )
 
-        if dias_restantes_inicio_semestre_siguiente < dias_antes_periodo_validacion:
+        if (
+            dias_restantes_inicio_semestre_siguiente < dias_antes_periodo_validacion
+        ):  # pragma: no branch
             return 0
         else:
             return (

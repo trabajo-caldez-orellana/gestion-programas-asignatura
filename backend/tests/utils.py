@@ -25,7 +25,7 @@ from backend.common.constantes import MINIMO_RESULTADOS_DE_APRENDIZAJE
 
 CODIGO_ASIGNATURA_1 = "15_SIM"
 CODIGO_ASIGNATURA_2 = "15_TER"
-CODIGO_ASIGNATURA_COMPARTIDA = "15_XC1"
+CODIGO_ASIGNATURA_COMPARTIDA = "15_XCI"
 CARRERA_1 = "Ingenieria en Computacion"
 CARRERA_2 = "Ingenieria Quimica"
 NOMBRE_DESCRIPTOR_1 = "Descriptor Ing. Comuntación"

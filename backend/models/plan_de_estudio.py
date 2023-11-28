@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from .asignatura import Asignatura
 from backend.common.mensajes_de_error import MENSAJE_FECHAS_INCORRECTAS
+from backend.common.funciones_fecha import obtener_fecha_actual
 
 
 class ManagerPlanDeEstudio(models.Manager):
@@ -24,11 +25,11 @@ class PlanDeEstudio(models.Model):
     asignaturas = models.ManyToManyField(Asignatura)
 
     @property
-    def esta_activo(self):
-        return (
-            self.fecha_fin is not None
-            or self.fecha_fin >= timezone.now().astimezone().date()
-        )
+    def esta_activo(self) -> bool:
+        if self.fecha_fin is not None:
+            return self.fecha_inicio <= obtener_fecha_actual() <= self.fecha_fin
+
+        return self.fecha_inicio <= obtener_fecha_actual()
 
     class Meta:
         verbose_name_plural = "Planes de Estudio"

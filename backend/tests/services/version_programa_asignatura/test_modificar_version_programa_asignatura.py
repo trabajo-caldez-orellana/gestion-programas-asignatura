@@ -34,6 +34,7 @@ from backend.models import (
     Descriptor,
     Carrera,
     ActividadReservada,
+    VersionProgramaAsignatura,
 )
 from backend.common.mensajes_de_error import (
     MENSAJE_DESCRIPTOR,
@@ -51,6 +52,10 @@ from backend.common.mensajes_de_error import (
     MENSAJE_EJE_TRANSVERSAL_INVALIDO,
     MENSAJE_NIVEL_INVALIDO,
     MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO,
+    MENSAJE_CAMPO_NO_NULO,
+    MENSAJE_CAMPO_EN_BLANCO,
+    MENSAJE_PROGRAMAS_CERRADOS,
+    MENSAJE_NIVEL_INCORRECTO,
 )
 from backend.common.choices import NivelDescriptor, TipoDescriptor
 from backend.common.constantes import (
@@ -78,7 +83,7 @@ PROGRAMA_FORMATO_DEFAULT = {
 }
 
 
-class TestCrearNuevoPrograma(TestCase):
+class TestModificarPrograma(TestCase):
     servicio_version_programa_asignatura = ServicioVersionProgramaAsignatura()
 
     def setUp(self):
@@ -116,10 +121,16 @@ class TestCrearNuevoPrograma(TestCase):
         )
 
     def _crear_lista_descriptores_asignatura_1(self):
-        return [{"id": descriptor.id} for descriptor in self.descriptores_1]
+        return [
+            {"id": descriptor.id, "nivel": NivelDescriptor.BAJO}
+            for descriptor in self.descriptores_1
+        ]
 
     def _crear_lista_descriptores_asignatura_2(self):
-        return [{"id": descriptor.id} for descriptor in self.descriptores_2]
+        return [
+            {"id": descriptor.id, "nivel": NivelDescriptor.BAJO}
+            for descriptor in self.descriptores_2
+        ]
 
     def _crear_lista_eje_transversal_asignatura_1(self):
         return [{"id": self.eje_transversal_1.id, "nivel": NivelDescriptor.ALTO}]
@@ -139,19 +150,18 @@ class TestCrearNuevoPrograma(TestCase):
             for actividad in self.actividades_reservadas_2
         ]
 
-    def _validar_creacion_incorreacta(self, parametros, error, mensaje_de_error=None):
+    def _validar_modificacion_incorreacta(self, parametros, error, mensaje_de_error):
         try:
-            self.servicio_version_programa_asignatura.crear_nueva_version_programa_asignatura(
+            self.servicio_version_programa_asignatura.modificar_version_programa_asignatura(
                 **parametros
             )
         except ValidationError as e:
             self.assertIn(error, e.message_dict)
-            if mensaje_de_error is not None:
-                self.assertIn(mensaje_de_error, e.message_dict[error])
+            self.assertIn(mensaje_de_error, e.message_dict[error])
 
-    def test_no_es_periodo_de_actualizacion_de_programas(self):
+    def _crear_programa_de_asignatura(self) -> VersionProgramaAsignatura:
         fecha_de_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION + 1
+            days=FECHA_DEFAULT_MODIFICACION - 1
         )
         fecha_de_referencia = crear_fecha_y_hora(
             anio=fecha_de_referencia.year,
@@ -167,7 +177,34 @@ class TestCrearNuevoPrograma(TestCase):
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
 
-        self._validar_creacion_incorreacta(parametros, "__all__")
+        with freeze_time(fecha_de_referencia):
+            version_programa = self.servicio_version_programa_asignatura.crear_nueva_version_programa_asignatura(
+                **parametros
+            )
+
+        return version_programa
+
+    def test_no_es_periodo_de_actualizacion_de_programas(self):
+        fecha_de_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION + 1
+        )
+        fecha_de_referencia = crear_fecha_y_hora(
+            anio=fecha_de_referencia.year,
+            mes=fecha_de_referencia.month,
+            dia=fecha_de_referencia.day,
+        )
+
+        parametros = {
+            **PROGRAMA_FORMATO_DEFAULT,
+            "version_programa": self._crear_programa_de_asignatura(),
+            "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
+            "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
+            "descriptores": self._crear_lista_descriptores_asignatura_1(),
+        }
+
+        self._validar_modificacion_incorreacta(
+            parametros, "__all__", MENSAJE_PROGRAMAS_CERRADOS
+        )
 
     def test_descriptores_invalidos(self):
         """
@@ -184,16 +221,33 @@ class TestCrearNuevoPrograma(TestCase):
 
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
         }
 
         # No agrega ningun descriptor
         with freeze_time(fecha_de_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "descriptores", MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR
             )
+
+        arrays_con_formatos_invalidos = [
+            [self.eje_transversal_1.id],
+            [{"id": self.eje_transversal_1.id}],
+            [{"valor": NivelDescriptor.ALTO}],
+            [{"id": self.eje_transversal_1.id}],
+        ]
+
+        for formato_actividades_invalido in arrays_con_formatos_invalidos:
+            parametros["descriptores"] = formato_actividades_invalido
+
+            with freeze_time(fecha_de_referencia):
+                self._validar_modificacion_incorreacta(
+                    parametros,
+                    "descriptores",
+                    MENSAJE_FORMATO_DESCRIPTORES_INVALIDO,
+                )
 
         # Primero formato invalido de descriptores:
         formato_descriptores_invalido = [
@@ -202,14 +256,14 @@ class TestCrearNuevoPrograma(TestCase):
 
         parametros["descriptores"] = formato_descriptores_invalido
         with freeze_time(fecha_de_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "descriptores", MENSAJE_FORMATO_DESCRIPTORES_INVALIDO
             )
 
         # Id inexistente
-        parametros["descriptores"] = [{"id": 100}]
+        parametros["descriptores"] = [{"id": 100, "nivel": NivelDescriptor.BAJO}]
         with freeze_time(fecha_de_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "descriptores", MENSAJE_DESCRIPTOR_INVALIDO
             )
 
@@ -219,7 +273,7 @@ class TestCrearNuevoPrograma(TestCase):
         """
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_2(),
@@ -228,7 +282,7 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "descriptores", MENSAJE_DESCRIPTOR
             )
 
@@ -238,7 +292,7 @@ class TestCrearNuevoPrograma(TestCase):
         """
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
         }
@@ -249,7 +303,7 @@ class TestCrearNuevoPrograma(TestCase):
 
         # No agrega ninguna actividad reservada
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros,
                 "actividades_reservadas",
                 MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
@@ -269,7 +323,7 @@ class TestCrearNuevoPrograma(TestCase):
             parametros["actividades_reservadas"] = formato_actividades_invalido
 
             with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(
+                self._validar_modificacion_incorreacta(
                     parametros,
                     "actividades_reservadas",
                     MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO,
@@ -281,7 +335,7 @@ class TestCrearNuevoPrograma(TestCase):
         ]
 
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros,
                 "actividades_reservadas",
                 MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA,
@@ -293,7 +347,7 @@ class TestCrearNuevoPrograma(TestCase):
         """
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_2(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -304,14 +358,14 @@ class TestCrearNuevoPrograma(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "actividades_reservadas", MENSAJE_ACTIVIDAD_RESERVADA
             )
 
     def test_nivel_actividad_reservada_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": [
                 {"id": actividad.id, "nivel": "invalid"}
                 for actividad in self.actividades_reservadas_1
@@ -325,7 +379,7 @@ class TestCrearNuevoPrograma(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "actividades_reservadas", MENSAJE_NIVEL_INVALIDO
             )
 
@@ -335,7 +389,7 @@ class TestCrearNuevoPrograma(TestCase):
         ]
 
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "actividades_reservadas", MENSAJE_NIVEL_INVALIDO
             )
 
@@ -345,7 +399,7 @@ class TestCrearNuevoPrograma(TestCase):
         """
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
         }
@@ -356,7 +410,7 @@ class TestCrearNuevoPrograma(TestCase):
 
         # No agrega ningun eje transversal
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros,
                 "ejes_transversales",
                 MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
@@ -373,7 +427,7 @@ class TestCrearNuevoPrograma(TestCase):
             parametros["ejes_transversales"] = formato_actividades_invalido
 
             with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(
+                self._validar_modificacion_incorreacta(
                     parametros,
                     "ejes_transversales",
                     MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
@@ -388,7 +442,7 @@ class TestCrearNuevoPrograma(TestCase):
             parametros["ejes_transversales"] = formato_actividades_invalido
 
             with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(
+                self._validar_modificacion_incorreacta(
                     parametros,
                     "ejes_transversales",
                     MENSAJE_NIVEL_INVALIDO,
@@ -397,7 +451,7 @@ class TestCrearNuevoPrograma(TestCase):
         # Id inexistente
         parametros["ejes_transversales"] = [{"id": 100, "nivel": NivelDescriptor.ALTO}]
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "ejes_transversales", MENSAJE_EJE_TRANSVERSAL_INVALIDO
             )
 
@@ -407,7 +461,7 @@ class TestCrearNuevoPrograma(TestCase):
         """
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_2(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -418,14 +472,14 @@ class TestCrearNuevoPrograma(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros, "ejes_transversales", MENSAJE_EJE_TRANSVERAL
             )
 
     def test_valor_resultados_de_aprendizaje_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -440,7 +494,7 @@ class TestCrearNuevoPrograma(TestCase):
             parametros["resultados_de_aprendizaje"] = valor
 
             with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(
+                self._validar_modificacion_incorreacta(
                     parametros,
                     "resultados_de_aprendizaje",
                     MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO,
@@ -449,7 +503,7 @@ class TestCrearNuevoPrograma(TestCase):
     def test_cantidad_de_resultados_menor_al_minimo(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -465,7 +519,7 @@ class TestCrearNuevoPrograma(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros,
                 "resultados_de_aprendizaje",
                 MENSAJE_CANTIDAD_DE_RESULTADOS,
@@ -474,7 +528,7 @@ class TestCrearNuevoPrograma(TestCase):
     def test_cantidad_de_resultados_mayor_al_maximo(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -490,7 +544,7 @@ class TestCrearNuevoPrograma(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            self._validar_creacion_incorreacta(
+            self._validar_modificacion_incorreacta(
                 parametros,
                 "resultados_de_aprendizaje",
                 MENSAJE_CANTIDAD_DE_RESULTADOS,
@@ -499,7 +553,7 @@ class TestCrearNuevoPrograma(TestCase):
     def test_valor_contenidos_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -509,17 +563,21 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["contenidos"] = valor
+        with freeze_time(fecha_referencia):
+            parametros["contenidos"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "contenidos", MENSAJE_CAMPO_NO_NULO
+            )
 
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "contenidos")
+            parametros["contenidos"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "contenidos", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_bibliografia_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -529,16 +587,21 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["bibliografia"] = valor
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "bibliografia")
+        with freeze_time(fecha_referencia):
+            parametros["bibliografia"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "bibliografia", MENSAJE_CAMPO_NO_NULO
+            )
+
+            parametros["bibliografia"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "bibliografia", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_recursos_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -548,16 +611,21 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["recursos"] = valor
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "recursos")
+        with freeze_time(fecha_referencia):
+            parametros["recursos"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "recursos", MENSAJE_CAMPO_NO_NULO
+            )
+
+            parametros["recursos"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "recursos", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_evaluacion_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -567,16 +635,21 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["evaluacion"] = valor
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "evaluacion")
+        with freeze_time(fecha_referencia):
+            parametros["evaluacion"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "evaluacion", MENSAJE_CAMPO_NO_NULO
+            )
+
+            parametros["evaluacion"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "evaluacion", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_investigacion_docentes_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -586,16 +659,21 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["investigacion_docentes"] = valor
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "investigacion_docentes")
+        with freeze_time(fecha_referencia):
+            parametros["investigacion_docentes"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "investigacion_docentes", MENSAJE_CAMPO_NO_NULO
+            )
+
+            parametros["investigacion_docentes"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "investigacion_docentes", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_investigacion_estudiantes_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -605,18 +683,21 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["investigacion_estudiantes"] = valor
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(
-                    parametros, "investigacion_estudiantes"
-                )
+        with freeze_time(fecha_referencia):
+            parametros["investigacion_estudiantes"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "investigacion_estudiantes", MENSAJE_CAMPO_NO_NULO
+            )
+
+            parametros["investigacion_estudiantes"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "investigacion_estudiantes", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_extension_docentes_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -626,17 +707,22 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["extension_docentes"] = valor
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "extension_docentes")
+        with freeze_time(fecha_referencia):
+            parametros["extension_docentes"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "extension_docentes", MENSAJE_CAMPO_NO_NULO
+            )
+
+            parametros["extension_docentes"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "extension_docentes", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_extension_estudiantes_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
+            "version_programa": self._crear_programa_de_asignatura(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
         }
@@ -645,16 +731,21 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["extension_estudiantes"] = valor
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "extension_estudiantes")
+        with freeze_time(fecha_referencia):
+            parametros["extension_estudiantes"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "extension_estudiantes", MENSAJE_CAMPO_NO_NULO
+            )
+
+            parametros["extension_estudiantes"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "extension_estudiantes", MENSAJE_CAMPO_EN_BLANCO
+            )
 
     def test_valor_cronograma_invalido(self):
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
+            "version_programa": self._crear_programa_de_asignatura(),
             "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
             "descriptores": self._crear_lista_descriptores_asignatura_1(),
@@ -664,32 +755,43 @@ class TestCrearNuevoPrograma(TestCase):
             days=FECHA_DEFAULT_MODIFICACION - 1
         )
 
-        valores_invalidos = VALORES_INVALIDOS
-        for valor in valores_invalidos:
-            parametros["cronograma"] = valor
+        with freeze_time(fecha_referencia):
+            parametros["cronograma"] = None
+            self._validar_modificacion_incorreacta(
+                parametros, "cronograma", MENSAJE_CAMPO_NO_NULO
+            )
 
-            with freeze_time(fecha_referencia):
-                self._validar_creacion_incorreacta(parametros, "cronograma")
+            parametros["cronograma"] = ""
+            self._validar_modificacion_incorreacta(
+                parametros, "cronograma", MENSAJE_CAMPO_EN_BLANCO
+            )
 
-    def test_crear_programa_correctamente(self):
-        fecha_de_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
-        )
-        fecha_de_referencia = crear_fecha_y_hora(
-            anio=fecha_de_referencia.year,
-            mes=fecha_de_referencia.month,
-            dia=fecha_de_referencia.day,
-        )
-
+    def test_asignar_nivel_invalido_a_descriptor(self):
+        """
+        La lista de descriptores que se manda tiene algun nivel incorrecto para el descriptor
+        """
         parametros = {
             **PROGRAMA_FORMATO_DEFAULT,
-            "asignatura": self.asignatura_1,
-            "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
+            "version_programa": self._crear_programa_de_asignatura(),
             "ejes_transversales": self._crear_lista_eje_transversal_asignatura_1(),
-            "descriptores": self._crear_lista_descriptores_asignatura_1(),
+            "actividades_reservadas": self._crear_lista_actividades_reservadas_asignatura_1(),
         }
 
-        with freeze_time(fecha_de_referencia):
-            self.servicio_version_programa_asignatura.crear_nueva_version_programa_asignatura(
-                **parametros
-            )
+        fecha_referencia = FECHA_INICIO_SEMESTRE_FUTURO - timezone.timedelta(
+            days=FECHA_DEFAULT_MODIFICACION - 1
+        )
+
+        arrays_con_niveles_invalidos = [
+            [{"id": self.descriptores_1[0].id, "nivel": NivelDescriptor.MEDIO}],
+            [{"id": self.descriptores_1[0].id, "nivel": NivelDescriptor.ALTO}],
+        ]
+
+        for formato_descriptores_invalido in arrays_con_niveles_invalidos:
+            parametros["descriptores"] = formato_descriptores_invalido
+
+            with freeze_time(fecha_referencia):
+                self._validar_modificacion_incorreacta(
+                    parametros,
+                    "descriptores",
+                    MENSAJE_NIVEL_INCORRECTO,
+                )

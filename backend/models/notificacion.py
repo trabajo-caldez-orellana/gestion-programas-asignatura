@@ -3,12 +3,13 @@ from django.utils import timezone
 
 from .usuario import Usuario
 from backend.common.choices import TipoNotificacion
+from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
 
 
 class Notificacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     tipo = models.CharField(max_length=2, choices=TipoNotificacion.choices)
-    creada = models.DateTimeField(default=timezone.now)
+    creada = models.DateTimeField(default=obtener_fecha_y_hora_actual)
     leida = models.DateTimeField(blank=True, null=True)
     mensaje = models.CharField(max_length=255, blank=True, null=True)
 

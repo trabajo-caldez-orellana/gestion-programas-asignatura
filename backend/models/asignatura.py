@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 from django.db import models
 from django.core.validators import MinLengthValidator
@@ -12,6 +13,14 @@ from backend.common.mensajes_de_error import (
     MENSAJE_HORARIO_BLOQUEADO_PARA_METODOLOGIA,
 )
 from .bloque_curricular import BloqueCurricular
+
+
+class ManagerAsignatura(models.Manager):
+    def create(self, **kwargs: Any) -> Any:
+        asignatura = self.model(**kwargs)
+        asignatura.full_clean()
+        asignatura.save()
+        return asignatura
 
 
 class Asignatura(models.Model):
@@ -35,6 +44,8 @@ class Asignatura(models.Model):
     semanal_teorico_practico_remoto = models.PositiveIntegerField(blank=True, null=True)
     semanal_lab_remoto = models.PositiveIntegerField(blank=True, null=True)
     carga_rtf = models.PositiveIntegerField()
+
+    objects = ManagerAsignatura()
 
     @property
     def horas_semanales_clases(self) -> int:
