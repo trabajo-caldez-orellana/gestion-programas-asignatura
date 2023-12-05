@@ -5,7 +5,7 @@ from django.db import models
 from django.core.validators import MinLengthValidator
 from django.core.exceptions import ValidationError
 
-from backend.common.choices import MetodologiaAsignatura
+from backend.common.choices import MetodologiaAsignatura, Semestres
 from backend.common.regular_expressions import CODIGO_ASIGANTURA_REGEXP
 from backend.common.mensajes_de_error import (
     CODIGO_ASIGNATURA_INCORRECTO,
@@ -44,6 +44,11 @@ class Asignatura(models.Model):
     semanal_teorico_practico_remoto = models.PositiveIntegerField(blank=True, null=True)
     semanal_lab_remoto = models.PositiveIntegerField(blank=True, null=True)
     carga_rtf = models.PositiveIntegerField()
+
+    # Si es null, la materia se dicta ambos cuatrimestres
+    semestre_dictado = models.CharField(
+        max_length=2, choices=Semestres.choices, blank=True, null=True
+    )
 
     objects = ManagerAsignatura()
 

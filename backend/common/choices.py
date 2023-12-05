@@ -6,6 +6,11 @@ class TipoDescriptor(TextChoices):
     DESCRIPTOR = "D", "Descriptor"
 
 
+class Semestres(TextChoices):
+    PRIMER = ("PS", "Primer Semestre")
+    SEGUNDO = ("SS", "Segundo Semestre")
+
+
 class MetodologiaAsignatura(TextChoices):
     PRESENCIAL = ("P", "Presencial")
     VIRTUAL = ("V", "Virtual")
