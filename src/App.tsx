@@ -7,6 +7,7 @@ import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/Programa
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
+import { listarProgramasPendientes } from './api'
 
 export default function App() {
   // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
@@ -26,9 +27,18 @@ export default function App() {
     }
   }, [mutate])
 
+  const obtenerProgramas = async () => {
+    const respuesta = await listarProgramasPendientes()
+    return respuesta
+  }
+
+  useEffect(() => {
+    console.log(obtenerProgramas())
+  })
+
   useEffect(() => {
     if (isSuccess) {
-      fetchProfile()
+      // fetchProfile()
     }
   }, [isSuccess, fetchProfile])
 

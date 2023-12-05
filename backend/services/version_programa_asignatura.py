@@ -1,7 +1,8 @@
 import json
 
 from django.core.exceptions import ValidationError
-from django.db import transaction, IntegrityError
+from django.db import transaction
+from django.db.models import QuerySet
 
 from backend.models import (
     VersionProgramaAsignatura,
@@ -12,11 +13,13 @@ from backend.models import (
     Estandar,
     ProgramaTieneDescriptor,
     ProgramaTieneActividadReservada,
+    Rol,
 )
 from backend.common.choices import (
     NivelDescriptor,
     TipoDescriptor,
     EstadoAsignatura,
+    Roles,
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -173,6 +176,7 @@ class ServicioVersionProgramaAsignatura:
                 asignacion.nivel = nivel
                 asignacion.full_clean()
                 asignacion.save()
+                programa_tiene_actividad_reservada = asignacion
 
         except (ValueError, ValidationError) as e:
             if "nivel" in str(e):
@@ -707,3 +711,25 @@ class ServicioVersionProgramaAsignatura:
                 return nuevo_programa
 
         return None
+
+    def listar_tareas_pendientes_roles(self, roles: QuerySet[Rol]):
+        tareas_pendientes = []
+        for rol in roles:
+            tareas_pendientes = +self._listar_tareas_pendientes_para_rol(rol)
+
+        return tareas_pendientes
+
+    def _listar_tareas_pendientes_para_rol(self, rol: Rol) -> list:
+        semestre_siguente = self.servicio_semestre.obtener_semestre_siguiente()
+
+        if rol.rol == Roles.DOCENTE:
+            return []
+
+        if rol.rol == Roles.TITULAR_CATEDRA:
+            return []
+
+        if rol.rol == Roles.SECRETARIO:
+            return []
+
+        if rol.rol == Roles.DIRECTOR_CARRERA:
+            return []

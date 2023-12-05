@@ -17,9 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from backend.views import ListarProgramasPendientesAPI
+
+urls_programas = [
+    path("pendientes/", ListarProgramasPendientesAPI.as_view()),
+]
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
     path("auth/", include("djoser.social.urls")),
+    path("api/programas/", include(urls_programas)),
 ]
