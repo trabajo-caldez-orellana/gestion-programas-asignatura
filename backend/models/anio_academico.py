@@ -9,6 +9,8 @@ class AnioAcademico(models.Model):
     fecha_fin = models.DateField()
 
     class Meta:
+        verbose_name_plural = "Años académicos"
+        verbose_name = "Año académico"
         constraints = [
             models.CheckConstraint(
                 name="backend_anio_academico_fecha_fin_posterior_a_fecha_inicio",

@@ -13,12 +13,14 @@ from backend.models import (
     ActividadReservada,
     Descriptor,
     Semestre,
+    AnioAcademico,
 )
 from backend.common.choices import (
     MetodologiaAsignatura,
     TipoDescriptor,
     EstadoAsignatura,
     ParametrosDeConfiguracion,
+    Semestres,
 )
 from backend.common.constantes import MINIMO_RESULTADOS_DE_APRENDIZAJE
 
@@ -51,24 +53,66 @@ FECHA_FIN_SEMESTRE_ABIERTO = HOY + timezone.timedelta(days=180)
 FECHA_INICIO_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=181)
 FECHA_FIN_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=361)
 
+FECHA_INICIO_ANIO_CERRADO = HOY - timezone.timedelta(days=365)
+FECHA_FIN_ANIO_CERRADO = HOY - timezone.timedelta(days=1)
+
+FECHA_INICIO_ANIO_ABIERTO = HOY
+FECHA_FIN_ANIO_ABIERTO = HOY + timezone.timedelta(days=361)
+
+FECHA_INICIO_ANIO_FUTURO = HOY + timezone.timedelta(days=362)
+FECHA_FIN_ANIO_FUTURO = HOY + timezone.timedelta(days=730)
+
+
+def crear_anios_de_prueba():
+    anio_cerrado = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_CERRADO, fecha_fin=FECHA_FIN_ANIO_CERRADO
+    )
+
+    # Anio academico actual
+    anio_actual = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_ABIERTO, fecha_fin=FECHA_FIN_ANIO_ABIERTO
+    )
+
+    # Siguiente
+    anio_futuro = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_FUTURO,
+        fecha_fin=FECHA_FIN_ANIO_FUTURO,
+    )
+
+    return anio_cerrado, anio_actual, anio_futuro
+
 
 def crear_semestres_de_prueba():
-    # Cerrado
+    # Cerrado, ira al anio lectivo anterior
+    anio_cerrado = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_CERRADO, fecha_fin=FECHA_FIN_ANIO_CERRADO
+    )
     semestre_cerrado = Semestre.objects.create(
         fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO,
         fecha_fin=FECHA_FIN_SEMESTRE_CERRADO,
+        anio_academico=anio_cerrado,
+        semestre=Semestres.SEGUNDO,
+    )
+
+    # Anio academico actual
+    anio_actual = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_ABIERTO, fecha_fin=FECHA_FIN_ANIO_ABIERTO
     )
 
     # Activo
     semestre_abierto = Semestre.objects.create(
         fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO,
         fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO,
+        anio_academico=anio_actual,
+        semestre=Semestres.PRIMER,
     )
 
     # Siguiente
     semestre_futuro = Semestre.objects.create(
         fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO,
         fecha_fin=FECHA_FIN_SEMESTRE_FUTURO,
+        anio_academico=anio_actual,
+        semestre=Semestres.SEGUNDO,
     )
 
     return semestre_cerrado, semestre_abierto, semestre_futuro

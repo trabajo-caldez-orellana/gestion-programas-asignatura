@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
-from backend.models import Semestre, AnioAcademico
+from backend.models import AnioAcademico
 from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
 from backend.common.mensajes_de_error import (
     MENSAJE_NO_PUEDEN_HABER_VARIOS_ANIOS_ACADEMICOS_CON_LA_MISMA_FECHA,
@@ -57,7 +57,7 @@ class ServicioAnioAcademico:
 
     def obtener_anio_academico_anterior(self) -> AnioAcademico:
         # Anios academicos ordenados por fecha fin de menor a mayor
-        anios_academicos = Semestre.objects.all().order_by("fecha_inicio")
+        anios_academicos = AnioAcademico.objects.all().order_by("fecha_inicio")
 
         indice_anio_actual = None
         for indice in range(len(anios_academicos)):
@@ -70,7 +70,7 @@ class ServicioAnioAcademico:
 
     def obtener_anio_academico_siguiente(self) -> AnioAcademico:
         # Anios academicos ordenados por fecha fin de mayor a menor
-        anios_academicos = Semestre.objects.all().order_by("-fecha_inicio")
+        anios_academicos = AnioAcademico.objects.all().order_by("-fecha_inicio")
 
         indice_anio_actual = None
         for indice in range(len(anios_academicos)):
