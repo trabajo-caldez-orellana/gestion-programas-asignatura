@@ -25,8 +25,10 @@ interface TableProps {
   tableColumns: string[]
   tableData: tableRow[]
   acciones?: actions
-  verPrograma: (id: number, modoPrograma: string) => void
+  verPrograma: (id: number, modoPrograma: ModosProgramaAsignatura) => void
 }
+
+type ModosProgramaAsignatura = keyof typeof MODOS_PROGRAMA_ASIGNATURA;
 
 export default function Table({
   tableColumns,
@@ -52,8 +54,8 @@ export default function Table({
         <tbody>
           {tableData.map((item) => (
             <tr key={item.id}>
-              <td>{item.id}</td>
               <td>{item.carrera}</td>
+              <td>{item.asignatura}</td>
               <td>{item.estado}</td>
               <td>{item.id_programa}</td>
               <td id="column-acciones">
@@ -62,7 +64,7 @@ export default function Table({
                     {item.acciones_posibles.ver ? (
                       <i
                         onClick={() =>
-                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.VER)
+                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.VER as ModosProgramaAsignatura)
                         }
                         className="fas fa-eye"
                         title="Ver programa"
@@ -73,7 +75,7 @@ export default function Table({
                     {item.acciones_posibles.editar ? (
                       <i
                         onClick={() =>
-                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.EDITAR)
+                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.EDITAR as ModosProgramaAsignatura)
                         }
                         className="fas fa-edit"
                         title="Editar programa"
@@ -100,7 +102,7 @@ export default function Table({
                     {item.acciones_posibles.empezar_nuevo ? (
                       <i
                         onClick={() =>
-                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.NUEVO)
+                          verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.NUEVO as ModosProgramaAsignatura)
                         }
                         className="fas fa-plus"
                         title="Nuevo programa"

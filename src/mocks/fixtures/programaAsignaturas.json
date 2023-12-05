@@ -1,29 +1,37 @@
 {
   "id": 1,
   "cargaHoraria": {
-    "semanasDictado": 0,
-    "teoriaPresencial": 0,
-    "practicaPresencial": 0,
-    "teoricoPracticoPresencial": 0,
-    "laboratoriosPresenciales": 0,
+    "semanasDictado": 16,
+    "teoriaPresencial": 20,
+    "practicaPresencial": 20,
+    "teoricoPracticoPresencial": 10,
+    "laboratoriosPresenciales": 10,
     "teoriaDistancia": 0,
     "practicaDistancia": 0,
-    "teoricoPracticoDistancia": 0,
-    "laboratorioDistancia": 0
+    "teoricoPracticoDistancia": 5,
+    "laboratorioDistancia": 5
   },
   "descriptores": {
-    "resultadosAprendizaje": [""],
+    "resultadosAprendizaje": [
+      "Resolucion de limites",
+      "Derivar funciones complejas",
+      "Identificar indeterminaciones"
+    ],
     "ejesTransversales": [
       {
         "id": 1,
-        "nombre": "Eje 1",
+        "nombre": "Trabajo en equipo",
         "nivel": 0
       },
-
       {
         "id": 2,
-        "nombre": "Eje 2",
+        "nombre": "Pensamiento crítico",
         "nivel": 2
+      },
+      {
+        "id": 3,
+        "nombre": "Programacion orientada a objetos",
+        "nivel": 3
       }
     ],
     "descriptores": [
@@ -35,8 +43,8 @@
   },
   "informacionAdicional": {
     "fundamentacion": "",
-    "contenidos": "",
-    "bibliografia": "",
+    "contenidos": "Limites, continuidad, derivadas, aplicaciones de la derivada, integrales, aplicaciones de la integral.",
+    "bibliografia": "Cálculo de una variable: Trascendentes tempranas de James Stewart. Autor: James Stewart Editorial: Cengage Learning. Cálculo: Una variable de Ron Larson y Bruce H. Edwards. Autores: Ron Larson, Bruce H. Edwards Editorial: McGraw-Hill. Cálculo de Tom M. Apostol, volumen 1. Autor: Tom M. Apostol Editorial: Wiley. Cálculo de Michael Spivak. Autor: Michael Spivak Editorial: Publish or Perish.",
     "metodologiaAplicada": "",
     "recursos": "",
     "evaluacion": "",

@@ -1,6 +1,9 @@
 import { ProgramaAsignatura } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
-import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
+import {
+  MODOS_PROGRAMA_ASIGNATURA,
+  CAMPOS_CARGA_HORARIA
+} from '../../../constants/constants'
 
 interface CargaHorariaProps {
   programaAsignatura: ProgramaAsignatura
@@ -28,114 +31,24 @@ export default function CargaHoraria({
     })
   }
 
+  // Los campos se obtienen desde la constante CAMPOS_CARGA_HORARIA
   return (
     <section className="form-section">
-      <h2>Carga Horaria</h2>
+      <h2 className="header">Carga Horaria</h2>
       <form className="carga-horaria-form">
-        {/* <label htmlFor="carga-horaria-total">Carga Horaria Total</label> */}
-        {/* TODO: PONER EN UN MAP */}
-        {/* <input
-          type="text"
-          id="carga-horaria-total"
-          name="carga_horaria_total"
-          value={cargaHoraria.cargaHorariaTotal}
-          onChange={handleCargaHorariaChange}
-        /> */}
-        <label htmlFor="semanas-dictado">Semanas de dictado</label>
-        <input
-          type="text"
-          id="semanas-dictado"
-          name="semanas_dictado"
-          value={cargaHoraria.semanasDictado}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="teoria-presencial">Teoria presencial</label>
-        <input
-          type="text"
-          id="teoria-presencial"
-          name="teoria_presencial"
-          value={cargaHoraria.teoriaPresencial}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="practica-presencial">Practica presencial</label>
-        <input
-          type="text"
-          id="practica-presencial"
-          name="practica_presencial"
-          value={cargaHoraria.practicaPresencial}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="teorico-practico-presencial">
-          Teorico-practico presencial
-        </label>
-        <input
-          type="text"
-          id="teorico-practico-presencial"
-          name="teorico_practico_presencial"
-          value={cargaHoraria.teoricoPracticoPresencial}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="laboratorios-presenciales">
-          Laboratorios presenciales
-        </label>
-        <input
-          type="text"
-          id="laboratorios-presenciales"
-          name="laboratorios_presenciales"
-          value={cargaHoraria.laboratoriosPresenciales}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="teoria-distancia">Teoria a distancia</label>
-        <input
-          type="text"
-          id="teoria-distancia"
-          name="teoria_distancia"
-          value={cargaHoraria.teoriaDistancia}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="practica-distancia">Practica a distancia</label>
-        <input
-          type="text"
-          id="practica-distancia"
-          name="practica_distancia"
-          value={cargaHoraria.practicaDistancia}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="teorico-practico-distancia">
-          Teorico-practico a distancia
-        </label>
-        <input
-          type="text"
-          id="teorico-practico-distancia"
-          name="teorico_practico_distancia"
-          value={cargaHoraria.teoricoPracticoDistancia}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
-
-        <label htmlFor="laboratorio-distancia">Laboratorio a distancia</label>
-        <input
-          type="text"
-          id="laboratorio-distancia"
-          name="laboratorio_distancia"
-          value={cargaHoraria.laboratorioDistancia}
-          onChange={handleCargaHorariaChange}
-          disabled={modoLectura}
-        />
+        {CAMPOS_CARGA_HORARIA.map((config) => (
+          <>
+            <label htmlFor={config.id}>{config.label}</label>
+            <input
+              type="text"
+              id={config.id}
+              name={config.name}
+              value={cargaHoraria[camelCase(config.name)]}
+              onChange={handleCargaHorariaChange}
+              disabled={modoLectura}
+            />
+          </>
+        ))}
       </form>
     </section>
   )

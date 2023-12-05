@@ -136,7 +136,7 @@ export default function SeccionDescriptores({
   return (
     <>
       <section className="form-section">
-        <h2>Informacion Especifica</h2>
+        <h2 className="header">Informacion Especifica</h2>
         <form className="seccion-descriptores-form">
           <label htmlFor="resultados-aprendizaje">
             Resultados de aprendizaje
