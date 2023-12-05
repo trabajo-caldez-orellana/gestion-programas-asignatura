@@ -3,4 +3,4 @@ import { setupWorker } from 'msw'
 
 const worker = setupWorker(...handlers)
 
-export default worker;
+export default worker

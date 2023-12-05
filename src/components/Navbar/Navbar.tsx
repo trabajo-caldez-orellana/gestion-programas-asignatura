@@ -44,9 +44,6 @@ export default function Navbar({
           <li>
             <Button text="Notificaciones" />
           </li>
-          <li>
-            <Button text="Nuevo usuario" />
-          </li>
           {profile ? (
             <li>
               <Button text="Cerrar Sesion" onClick={handleLogout} />

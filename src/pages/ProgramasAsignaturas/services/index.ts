@@ -23,10 +23,13 @@ export const postProgramaAsignatura = async (
   programaAsignatura: ProgramaAsignatura | null,
   isDraft: boolean
 ) => {
-  const response = await axios.post(`${RUTAS.POST_PROGRAMAS_ASIGNATURAS}/${programaAsignatura?.id}`, {
-    programaAsignatura,
-    isDraft
-  })
+  const response = await axios.post(
+    `${RUTAS.POST_PROGRAMAS_ASIGNATURAS}/${programaAsignatura?.id}`,
+    {
+      programaAsignatura,
+      isDraft
+    }
+  )
 
   return response.data
 }

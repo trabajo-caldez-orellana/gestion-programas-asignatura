@@ -1,9 +1,9 @@
 [
   {
     "id": 1,
-    "asignatura": "asignatura 1",
-    "carrera": "Carrera 1",
-    "estado": "Item 1",
+    "asignatura": "Calculo I",
+    "carrera": "Ing en computacion",
+    "estado": "Pendiente",
     "id_programa": 1,
     "acciones_posibles": {
       "ver": true,
@@ -15,9 +15,37 @@
   },
   {
     "id": 2,
-    "asignatura": "asignatura 2",
-    "carrera": "Carrera 2",
-    "estado": "Item 2",
+    "asignatura": "Algebra 2",
+    "carrera": "Ing quimica",
+    "estado": "Revision",
+    "id_programa": null,
+    "acciones_posibles": {
+      "ver": true,
+      "editar": true,
+      "reutilizar_ultimo": true,
+      "modificar_ultimo": false,
+      "empezar_nuevo": true
+    }
+  },
+  {
+    "id": 3,
+    "asignatura": "Calculo III",
+    "carrera": "Ing en computacion",
+    "estado": "Pendiente",
+    "id_programa": 1,
+    "acciones_posibles": {
+      "ver": true,
+      "editar": true,
+      "reutilizar_ultimo": true,
+      "modificar_ultimo": true,
+      "empezar_nuevo": true
+    }
+  },
+  {
+    "id": 4,
+    "asignatura": "Programacion I",
+    "carrera": "Ing en computacion",
+    "estado": "Revision",
     "id_programa": null,
     "acciones_posibles": {
       "ver": true,
