@@ -295,28 +295,6 @@ FECHA_FIN_SEMESTRE_FUTURO = timezone.make_aware(
 )
 
 
-def crear_semestres_de_prueba():
-    # Cerrado
-    semestre_cerrado = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_CERRADO.date(),
-    )
-
-    # Activo
-    semestre_abierto = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO.date(),
-    )
-
-    # Siguiente
-    semestre_futuro = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_FUTURO.date(),
-    )
-
-    return semestre_cerrado, semestre_abierto, semestre_futuro
-
-
 # VALORES DEFAULT
 DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE = [
     "Resultado de aprendizaje 1",

@@ -12,7 +12,6 @@ from backend.tests.utils import (
     MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
     crear_semestres_de_prueba,
     FECHA_FIN_SEMESTRE_ABIERTO,
-    FECHA_FIN_SEMESTRE_CERRADO,
     FECHA_FIN_SEMESTRE_FUTURO,
 )
 
