@@ -1,11 +1,9 @@
 from freezegun import freeze_time
-from datetime import time, datetime
 
 from django.test import TestCase
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
-from backend.common.funciones_fecha import obtener_fecha_actual
 from backend.common.mensajes_de_error import MENSAJE_NO_HAY_SEMESTRES_ANTERIORES
 from backend.services import ServicioSemestre
 from backend.common.choices import Semestres
