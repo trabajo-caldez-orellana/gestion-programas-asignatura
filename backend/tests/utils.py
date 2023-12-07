@@ -275,26 +275,6 @@ def crear_fecha_y_hora(
     )
 
 
-FECHA_INICIO_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=6, day=30)
-)
-FECHA_INICIO_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=7, day=1)
-)
-FECHA_FIN_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=12, day=31)
-)
-FECHA_INICIO_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=6, day=30)
-)
-
-
 # VALORES DEFAULT
 DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE = [
     "Resultado de aprendizaje 1",
