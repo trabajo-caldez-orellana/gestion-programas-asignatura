@@ -11,7 +11,6 @@ from backend.services import ServicioSemestre
 from backend.common.choices import Semestres
 from backend.models import Semestre
 from backend.tests.utils import (
-    MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
     crear_anios_de_prueba,
     crear_fecha_y_hora,
     FECHA_INICIO_ANIO_FUTURO,
