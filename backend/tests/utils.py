@@ -342,10 +342,3 @@ DATOS_DEFAULT_ASIGNATURA = {
 }
 
 VALORES_INVALIDOS = [None, ""]
-
-
-# Mensajes de error para asserts
-MENSAJE_SERVICIO_DEBE_FALLAR = "El servicio debe fallar."
-MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE = (
-    "El servicio debe funcionar correctamente sin excepciones"
-)

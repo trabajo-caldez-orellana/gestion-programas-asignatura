@@ -9,7 +9,6 @@ from backend.common.mensajes_de_error import MENSAJE_NO_HAY_SEMESTRE_ACTIVO
 from backend.services import ServicioSemestre
 from backend.models import Semestre
 from backend.tests.utils import (
-    MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
     crear_semestres_de_prueba,
     FECHA_FIN_SEMESTRE_ABIERTO,
     FECHA_FIN_SEMESTRE_FUTURO,
@@ -32,11 +31,7 @@ class TestObtenerSemestreActual(TestCase):
             datetime.combine(FECHA_FIN_SEMESTRE_ABIERTO, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
-            try:
-                semestre = self.servicio_semestre.obtener_semestre_actual()
-            except Exception as e:
-                self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
-
+            semestre = self.servicio_semestre.obtener_semestre_actual()
         self.assertEqual(semestre, self.semestre_actual)
 
     def test_probar_despues_de_media_noche_en_cambio_de_semestre(self):
@@ -46,10 +41,7 @@ class TestObtenerSemestreActual(TestCase):
             datetime.combine(dia_de_referencia, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
-            try:
-                semestre = self.servicio_semestre.obtener_semestre_actual()
-            except Exception as e:
-                self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
+            semestre = self.servicio_semestre.obtener_semestre_actual()
         self.assertEqual(semestre, self.semestre_futuro)
 
     def test_no_se_crearon_semestres(self):

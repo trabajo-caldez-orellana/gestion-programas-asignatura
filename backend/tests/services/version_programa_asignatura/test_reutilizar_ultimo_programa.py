@@ -14,8 +14,6 @@ from backend.tests.utils import (
     CARRERA_2,
     DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR,
     DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE,
-    MENSAJE_SERVICIO_DEBE_FALLAR,
-    MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
     crear_configuraciones_del_prograna,
     crear_semestres_de_prueba,
     FECHA_DEFAULT_MODIFICACION,
@@ -126,20 +124,16 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        asignatura=self.asignatura
-                    )
+            with self.assertRaises(ValidationError) as context:
+                self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                    asignatura=self.asignatura
                 )
 
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-            except ValidationError as e:
-                self.assertIn("asignatura", e.message_dict)
-                self.assertIn(
-                    MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES,
-                    e.message_dict.get("asignatura"),
-                )
+            self.assertIn("asignatura", context.exception.message_dict)
+            self.assertIn(
+                MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES,
+                context.exception.message_dict.get("asignatura"),
+            )
 
     def test_version_anterior_no_aprobada(self):
         datos_version_anterior = {
@@ -149,9 +143,7 @@ class TestReutilizarUltimoPrograna(TestCase):
         datos_version_anterior["estado"] = EstadoAsignatura.PENDIENTE
 
         datos_version_anterior["semestre"] = self.semestre_actual
-        version_anterior_sin_aprobar = VersionProgramaAsignatura.objects.create(
-            **datos_version_anterior
-        )
+        VersionProgramaAsignatura.objects.create(**datos_version_anterior)
 
         # Ahora intento reutilizar la version anterior
         fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
@@ -159,19 +151,17 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         asignatura=self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-            except ValidationError as e:
-                self.assertIn("asignatura", e.message_dict)
-                self.assertIn(
-                    MENSAJE_VERSION_ANTERIOR_NO_APROBADA,
-                    e.message_dict.get("asignatura"),
-                )
+            self.assertIn("asignatura", context.exception.message_dict)
+            self.assertIn(
+                MENSAJE_VERSION_ANTERIOR_NO_APROBADA,
+                context.exception.message_dict.get("asignatura"),
+            )
 
     def test_no_es_periodo_de_actualizacion_de_programas(self):
         # Cambio las configuraciones para hacer mas corto el periodo de actualizacion.
@@ -257,17 +247,17 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         asignatura=self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
-            except ValidationError as e:
-                self.assertIn("descriptores", e.message_dict)
-                self.assertIn(MENSAJE_DESCRIPTOR, e.message_dict.get("descriptores"))
+            self.assertIn("descriptores", context.exception.message_dict)
+            self.assertIn(
+                MENSAJE_DESCRIPTOR, context.exception.message_dict.get("descriptores")
+            )
 
     def test_programa_anterior_no_es_valido_eje_de_otra_carrera(self):
         version_anterior = self._crear_version_anterior_con_datos_default()
@@ -318,19 +308,18 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         asignatura=self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
-            except ValidationError as e:
-                self.assertIn("ejes_transversales", e.message_dict)
-                self.assertIn(
-                    MENSAJE_EJE_TRANSVERAL, e.message_dict.get("ejes_transversales")
-                )
+            self.assertIn("ejes_transversales", context.exception.message_dict)
+            self.assertIn(
+                MENSAJE_EJE_TRANSVERAL,
+                context.exception.message_dict.get("ejes_transversales"),
+            )
 
     def test_programa_anterior_no_es_valido_cantidad_de_resultados_menor_al_minimo(
         self,
@@ -395,19 +384,18 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         asignatura=self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
-            except ValidationError as e:
-                self.assertIn("resultados_de_aprendizaje", e.message_dict)
-                self.assertIn(
-                    MENSAJE_CANTIDAD_DE_RESULTADOS,
-                    e.message_dict.get("resultados_de_aprendizaje"),
-                )
+
+            self.assertIn("resultados_de_aprendizaje", context.exception.message_dict)
+            self.assertIn(
+                MENSAJE_CANTIDAD_DE_RESULTADOS,
+                context.exception.message_dict.get("resultados_de_aprendizaje"),
+            )
 
     def test_programa_anterior_no_es_valido_cantidad_de_resultados_mayor_al_maximo(
         self,
@@ -472,20 +460,18 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         asignatura=self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
-            except ValidationError as e:
-                self.assertIn("resultados_de_aprendizaje", e.message_dict)
-                self.assertIn(
-                    MENSAJE_CANTIDAD_DE_RESULTADOS,
-                    e.message_dict.get("resultados_de_aprendizaje"),
-                )
+            self.assertIn("resultados_de_aprendizaje", context.exception.message_dict)
+            self.assertIn(
+                MENSAJE_CANTIDAD_DE_RESULTADOS,
+                context.exception.message_dict.get("resultados_de_aprendizaje"),
+            )
 
     def test_programa_anterior_no_tiene_descriptores(self):
         version_anterior = self._crear_version_anterior_con_datos_default()
@@ -520,19 +506,17 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
-            except ValidationError as e:
-                self.assertIn("descriptor", e.message_dict)
+                self.assertIn("descriptor", context.exception.message_dict)
                 self.assertIn(
                     MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR,
-                    e.message_dict.get("descriptor"),
+                    context.exception.message_dict.get("descriptor"),
                 )
 
     def test_programa_anterior_no_tiene_ejes_transversales(self):
@@ -567,19 +551,17 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
-            except ValidationError as e:
-                self.assertIn("eje_transversal", e.message_dict)
+                self.assertIn("eje_transversal", context.exception.message_dict)
                 self.assertIn(
                     MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
-                    e.message_dict.get("eje_transversal"),
+                    context.exception.message_dict.get("eje_transversal"),
                 )
 
     def test_programa_anterior_no_tiene_actividades_reservadas(self):
@@ -614,19 +596,17 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
+            with self.assertRaises(ValidationError) as context:
                 version_nueva = (
                     self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
                         self.asignatura
                     )
                 )
-                self.assertIsNone(version_nueva, MENSAJE_SERVICIO_DEBE_FALLAR)
 
-            except ValidationError as e:
-                self.assertIn("actividades_reservadas", e.message_dict)
+                self.assertIn("actividades_reservadas", context.exception.message_dict)
                 self.assertIn(
                     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
-                    e.message_dict.get("actividades_reservadas"),
+                    context.exception.message_dict.get("actividades_reservadas"),
                 )
 
     def test_reutiliza_programa_correctamente(self):
@@ -674,12 +654,8 @@ class TestReutilizarUltimoPrograna(TestCase):
         )
 
         with freeze_time(fecha_referencia):
-            try:
-                version_nueva = (
-                    self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
-                        asignatura=self.asignatura
-                    )
+            version_nueva = (
+                self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                    asignatura=self.asignatura
                 )
-
-            except ValidationError as e:
-                self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
+            )

@@ -9,7 +9,6 @@ from backend.common.mensajes_de_error import MENSAJE_NO_HAY_ANIO_ACTIVO
 from backend.services import ServicioAnioAcademico
 from backend.models import AnioAcademico
 from backend.tests.utils import (
-    MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE,
     crear_anios_de_prueba,
     FECHA_FIN_ANIO_ABIERTO,
     FECHA_FIN_ANIO_FUTURO,
@@ -32,11 +31,7 @@ class TestObtenerAnioAcademicoActual(TestCase):
             datetime.combine(FECHA_FIN_ANIO_ABIERTO, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
-            try:
-                anio = self.servicio_anio_academico.obtener_anio_academico_actual()
-            except Exception as e:
-                self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
-
+            anio = self.servicio_anio_academico.obtener_anio_academico_actual()
         self.assertEqual(anio, self.anio_actual)
 
     def test_probar_despues_de_media_noche_en_cambio_de_anio(self):
@@ -46,10 +41,7 @@ class TestObtenerAnioAcademicoActual(TestCase):
             datetime.combine(dia_de_referencia, hora_de_referencia)
         )
         with freeze_time(fecha_de_referencia):
-            try:
-                anio = self.servicio_anio_academico.obtener_anio_academico_actual()
-            except Exception as e:
-                self.fail(MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE)
+            anio = self.servicio_anio_academico.obtener_anio_academico_actual()
         self.assertEqual(anio, self.anio_futuro)
 
     def test_no_se_crearon_anios(self):
