@@ -186,10 +186,14 @@ class ServicioVersionProgramaAsignatura:
         """
         Retorna verdadero si estamos dentro del periodo para crear nuevos programas, y falso sino.
         """
-        return (
-            self.servicio_configuracion.obtener_dias_restantes_inicio_periodo_modificacion()
-            == 0
-        )
+
+        try:
+            return (
+                self.servicio_configuracion.obtener_dias_restantes_inicio_periodo_modificacion()
+                == 0
+            )
+        except ValidationError:
+            return False
 
     def _validar_resultados_de_aprendizaje(
         self,
