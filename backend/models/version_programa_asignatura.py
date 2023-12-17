@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 from backend.common.choices import EstadoAsignatura
 from backend.common.funciones_fecha import obtener_fecha_y_hora_actual

@@ -88,6 +88,12 @@ MENSAJE_NO_HAY_SEMESTRES_FUTUROS = "No hay semestres futuros."
 MENSAJE_NO_HAY_ANIO_ACTIVO = "No hay un año académico activo."
 MENSAJE_NO_HAY_ANIOS_ANTERIORES = "No hay años académicos anteriores."
 MENSAJE_NO_HAY_ANIOS_FUTUROS = "No hay años académicos futuros."
+MENSAJE_TIPO_SEMESTRE_REPETIDO = (
+    "No puede haber dos semestres del mismo tipo para un año académico."
+)
+MENSAJE_SEGUNDO_SEMESTRE_DESPUES_DEL_PRIMERO = (
+    "Un semestre del primer semestre debe tener fecha antes de uno del segundo semeste."
+)
 
 # Mensajes relacionados a parametros de configuracion
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."
