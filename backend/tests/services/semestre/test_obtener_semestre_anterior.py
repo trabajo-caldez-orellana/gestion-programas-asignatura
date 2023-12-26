@@ -163,3 +163,108 @@ class TestObtenerSemestreAnterior(TestCase):
                     MENSAJE_NO_HAY_SEMESTRES_ANTERIORES,
                     contexto.exception.message_dict["__all__"],
                 )
+
+    def test_obtener_primer_semestre_anterior(self):
+        # Primero pruebo cuando el semestre actual es del primer semestre
+        fecha_de_referencia = crear_fecha_y_hora(
+            FECHA_INICIO_ANIO_ABIERTO.year,
+            FECHA_INICIO_ANIO_ABIERTO.month,
+            FECHA_INICIO_ANIO_ABIERTO.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            semestre = self.servicio_semestre.obtener_semestre_anterior(
+                Semestres.PRIMER
+            )
+            self.assertEqual(semestre, self.primer_semestre_anio_cerrado)
+
+        # Despues pruebo cuando el semestre actual es del segundo semestre
+        ultimo_dia_anio_abierto = FECHA_FIN_ANIO_ABIERTO - timezone.timedelta(days=1)
+        fecha_de_referencia = crear_fecha_y_hora(
+            ultimo_dia_anio_abierto.year,
+            ultimo_dia_anio_abierto.month,
+            ultimo_dia_anio_abierto.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            semestre = self.servicio_semestre.obtener_semestre_anterior(
+                Semestres.PRIMER
+            )
+            self.assertEqual(semestre, self.primer_semestre_anio_abierto)
+
+    def test_obtener_segundo_semestre_anterior(self):
+        # Primero pruebo cuando el semestre actual es del primer semestre
+        fecha_de_referencia = crear_fecha_y_hora(
+            FECHA_INICIO_ANIO_ABIERTO.year,
+            FECHA_INICIO_ANIO_ABIERTO.month,
+            FECHA_INICIO_ANIO_ABIERTO.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            semestre = self.servicio_semestre.obtener_semestre_anterior(
+                Semestres.SEGUNDO
+            )
+            self.assertEqual(semestre, self.segundo_semestre_anio_cerrado)
+
+        # Despues pruebo cuando el semestre actual es del segundo semestre
+        ultimo_dia_anio_abierto = FECHA_FIN_ANIO_ABIERTO - timezone.timedelta(days=1)
+        fecha_de_referencia = crear_fecha_y_hora(
+            ultimo_dia_anio_abierto.year,
+            ultimo_dia_anio_abierto.month,
+            ultimo_dia_anio_abierto.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            semestre = self.servicio_semestre.obtener_semestre_anterior(
+                Semestres.SEGUNDO
+            )
+            self.assertEqual(semestre, self.segundo_semestre_anio_cerrado)
+
+    def test_no_hay_primer_semestre_anterior(self):
+        fecha_de_referencia = crear_fecha_y_hora(
+            FECHA_INICIO_ANIO_CERRADO.year,
+            FECHA_INICIO_ANIO_CERRADO.month,
+            FECHA_INICIO_ANIO_CERRADO.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            with self.assertRaises(ValidationError) as context:
+                self.servicio_semestre.obtener_semestre_anterior(Semestres.PRIMER)
+
+        self.assertIn(
+            MENSAJE_NO_HAY_SEMESTRES_ANTERIORES,
+            context.exception.message_dict["__all__"],
+        )
+
+    def test_no_hay_segundo_semestre_anterior(self):
+        ultimo_dia_anio_cerrado = FECHA_FIN_ANIO_CERRADO - timezone.timedelta(days=1)
+        fecha_de_referencia = crear_fecha_y_hora(
+            ultimo_dia_anio_cerrado.year,
+            ultimo_dia_anio_cerrado.month,
+            ultimo_dia_anio_cerrado.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            with self.assertRaises(ValidationError) as context:
+                self.servicio_semestre.obtener_semestre_anterior(Semestres.SEGUNDO)
+
+        self.assertIn(
+            MENSAJE_NO_HAY_SEMESTRES_ANTERIORES,
+            context.exception.message_dict["__all__"],
+        )
+
+        ultimo_dia_anio_cerrado = FECHA_FIN_ANIO_CERRADO - timezone.timedelta(days=1)
+        fecha_de_referencia = crear_fecha_y_hora(
+            ultimo_dia_anio_cerrado.year,
+            ultimo_dia_anio_cerrado.month,
+            ultimo_dia_anio_cerrado.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            with self.assertRaises(ValidationError) as context:
+                self.servicio_semestre.obtener_semestre_anterior(Semestres.SEGUNDO)
+
+        self.assertIn(
+            MENSAJE_NO_HAY_SEMESTRES_ANTERIORES,
+            context.exception.message_dict["__all__"],
+        )

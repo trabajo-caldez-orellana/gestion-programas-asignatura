@@ -120,7 +120,7 @@ class ServicioSemestre:
 
         return semestre
 
-    def obtener_semestre_anterior(self):
+    def obtener_semestre_anterior(self, tipo_semestre: Semestres = None):
         # Semestres ordenados por fecha fin de menor a mayor
         semestres = Semestre.objects.all().order_by("fecha_inicio")
 
@@ -131,9 +131,16 @@ class ServicioSemestre:
 
         if indice_semestre_actual == 0 or indice_semestre_actual is None:
             raise ValidationError({"__all__": MENSAJE_NO_HAY_SEMESTRES_ANTERIORES})
-        return semestres[indice_semestre_actual - 1]
 
-    def obtener_semestre_siguiente(self) -> Semestre:
+        semestre_actual = semestres[indice_semestre_actual]
+        if tipo_semestre is None or tipo_semestre != semestre_actual.semestre:
+            return semestres[indice_semestre_actual - 1]
+        else:
+            if indice_semestre_actual == 1:
+                raise ValidationError({"__all__": MENSAJE_NO_HAY_SEMESTRES_ANTERIORES})
+            return semestres[indice_semestre_actual - 2]
+
+    def obtener_semestre_siguiente(self, tipo_semestre: Semestres = None) -> Semestre:
         # Semestres ordenados por fecha fin de mayor a menorr
         semestres = Semestre.objects.all().order_by("-fecha_inicio")
 
@@ -144,4 +151,11 @@ class ServicioSemestre:
 
         if indice_semestre_actual == 0 or indice_semestre_actual is None:
             raise ValidationError({"__all__": MENSAJE_NO_HAY_SEMESTRES_FUTUROS})
-        return semestres[indice_semestre_actual - 1]
+
+        semestre_actual = semestres[indice_semestre_actual]
+        if tipo_semestre is None or tipo_semestre != semestre_actual.semestre:
+            return semestres[indice_semestre_actual - 1]
+        else:
+            if indice_semestre_actual == 1:
+                raise ValidationError({"__all__": MENSAJE_NO_HAY_SEMESTRES_FUTUROS})
+            return semestres[indice_semestre_actual - 2]
