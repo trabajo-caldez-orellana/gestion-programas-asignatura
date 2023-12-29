@@ -15,8 +15,15 @@ from backend.tests.utils import (
     DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR,
     DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE,
     crear_configuraciones_del_prograna,
-    crear_semestres_de_prueba,
+    crear_anios_de_prueba,
+    crear_fecha_y_hora,
     FECHA_DEFAULT_MODIFICACION,
+    FECHA_INICIO_ANIO_ABIERTO,
+    FECHA_FIN_ANIO_ABIERTO,
+    FECHA_FIN_ANIO_CERRADO,
+    FECHA_FIN_ANIO_FUTURO,
+    FECHA_INICIO_ANIO_CERRADO,
+    FECHA_INICIO_ANIO_FUTURO,
 )
 from backend.models import (
     Asignatura,
@@ -27,6 +34,7 @@ from backend.models import (
     Carrera,
     Estandar,
     ActividadReservada,
+    Semestre,
 )
 from backend.common.mensajes_de_error import (
     MENSAJE_DESCRIPTOR,
@@ -44,6 +52,7 @@ from backend.common.choices import (
     NivelDescriptor,
     TipoDescriptor,
     ParametrosDeConfiguracion,
+    Semestres,
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -55,26 +64,92 @@ class TestReutilizarUltimoPrograna(TestCase):
     servicio_version_programa_asignatura = ServicioVersionProgramaAsignatura()
 
     def setUp(self):
-        set_up_tests()
-        crear_configuraciones_del_prograna()
         (
-            self.semestre_actual,
-            self.semestre_actual,
-            self.semestre_siguiente,
-        ) = crear_semestres_de_prueba()
+            self.anio_cerrado,
+            self.anio_actual,
+            self.anio_futuro,
+        ) = crear_anios_de_prueba()
+
+        # Creo dos semestres por anio. Anio Cerrado:
+        dias_anio = FECHA_FIN_ANIO_CERRADO - FECHA_INICIO_ANIO_CERRADO
+        self.primer_semestre_anio_cerrado = Semestre.objects.create(
+            fecha_inicio=FECHA_INICIO_ANIO_CERRADO,
+            fecha_fin=(
+                FECHA_INICIO_ANIO_CERRADO + timezone.timedelta(dias_anio.days / 2)
+            ),
+            semestre=Semestres.PRIMER,
+            anio_academico=self.anio_cerrado,
+        )
+        self.segundo_semestre_anio_cerrado = Semestre.objects.create(
+            fecha_inicio=(
+                FECHA_INICIO_ANIO_CERRADO + timezone.timedelta(dias_anio.days / 2 + 1)
+            ),
+            fecha_fin=FECHA_FIN_ANIO_CERRADO,
+            semestre=Semestres.SEGUNDO,
+            anio_academico=self.anio_cerrado,
+        )
+
+        # Creo dos semestres por anio. Anio abierto:
+        dias_anio = FECHA_FIN_ANIO_ABIERTO - FECHA_INICIO_ANIO_ABIERTO
+        self.primer_semestre_anio_abierto = Semestre.objects.create(
+            fecha_inicio=FECHA_INICIO_ANIO_ABIERTO,
+            fecha_fin=(
+                FECHA_INICIO_ANIO_ABIERTO + timezone.timedelta(dias_anio.days / 2)
+            ),
+            semestre=Semestres.PRIMER,
+            anio_academico=self.anio_actual,
+        )
+        self.segundo_semestre_anio_abierto = Semestre.objects.create(
+            fecha_inicio=(
+                FECHA_INICIO_ANIO_ABIERTO + timezone.timedelta(dias_anio.days / 2 + 1)
+            ),
+            fecha_fin=FECHA_FIN_ANIO_ABIERTO,
+            semestre=Semestres.SEGUNDO,
+            anio_academico=self.anio_actual,
+        )
+
+        # Creo dos semestres por anio. Anio futuro:
+        dias_anio = FECHA_FIN_ANIO_FUTURO - FECHA_INICIO_ANIO_FUTURO
+        self.primer_semestre_anio_futuro = Semestre.objects.create(
+            fecha_inicio=FECHA_INICIO_ANIO_FUTURO,
+            fecha_fin=FECHA_INICIO_ANIO_FUTURO + timezone.timedelta(dias_anio.days / 2),
+            semestre=Semestres.PRIMER,
+            anio_academico=self.anio_futuro,
+        )
+        self.segundo_semestre_anio_futuro = Semestre.objects.create(
+            fecha_inicio=FECHA_INICIO_ANIO_FUTURO
+            + timezone.timedelta(dias_anio.days / 2 + 1),
+            fecha_fin=FECHA_FIN_ANIO_FUTURO,
+            semestre=Semestres.SEGUNDO,
+            anio_academico=self.anio_futuro,
+        )
+        crear_configuraciones_del_prograna()
+        set_up_tests()
 
         self.asignatura = Asignatura.objects.get(codigo=CODIGO_ASIGNATURA_1)
         self.asignatura_2 = Asignatura.objects.get(codigo=CODIGO_ASIGNATURA_2)
         self.carrera = Carrera.objects.get(nombre=CARRERA_1)
         self.carrera_2 = Carrera.objects.get(nombre=CARRERA_2)
 
-    def _crear_version_anterior_con_datos_default(self):
+    def _crear_version_anterior_con_datos_default(
+        self, semestre: Semestre = None, asignatura: Asignatura = None
+    ):
+        if semestre is None:
+            semestre_para_version = self.primer_semestre_anio_abierto
+        else:
+            semestre_para_version = semestre
+
+        if asignatura is None:
+            asignatura_para_version = self.asignatura
+        else:
+            asignatura_para_version = asignatura
+
         datos_version_anterior = {
             **DATOS_DEFAULT_VERSION_PROGRAMA_ASIGNATURA_PARA_REUTILIZAR
         }
 
-        datos_version_anterior["semestre"] = self.semestre_actual
-        datos_version_anterior["asignatura"] = self.asignatura
+        datos_version_anterior["semestre"] = semestre_para_version
+        datos_version_anterior["asignatura"] = asignatura_para_version
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
         )
@@ -119,8 +194,9 @@ class TestReutilizarUltimoPrograna(TestCase):
             )
 
     def test_no_hay_version_anterior_disponible(self):
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -142,12 +218,13 @@ class TestReutilizarUltimoPrograna(TestCase):
         datos_version_anterior["asignatura"] = self.asignatura
         datos_version_anterior["estado"] = EstadoAsignatura.PENDIENTE
 
-        datos_version_anterior["semestre"] = self.semestre_actual
+        datos_version_anterior["semestre"] = self.primer_semestre_anio_abierto
         VersionProgramaAsignatura.objects.create(**datos_version_anterior)
 
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -242,8 +319,9 @@ class TestReutilizarUltimoPrograna(TestCase):
 
         # Ahora intento poder crear uno nuevo, deberia fallar:
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -303,8 +381,9 @@ class TestReutilizarUltimoPrograna(TestCase):
 
         # Ahora intento poder crear uno nuevo, deberia fallar:
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -333,7 +412,7 @@ class TestReutilizarUltimoPrograna(TestCase):
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
         )
 
-        datos_version_anterior["semestre"] = self.semestre_actual
+        datos_version_anterior["semestre"] = self.primer_semestre_anio_abierto
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -379,8 +458,9 @@ class TestReutilizarUltimoPrograna(TestCase):
 
         # Ahora intento poder crear uno nuevo, deberia fallar:
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -409,7 +489,7 @@ class TestReutilizarUltimoPrograna(TestCase):
             DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE[:cantidad_resultados]
         )
 
-        datos_version_anterior["semestre"] = self.semestre_actual
+        datos_version_anterior["semestre"] = self.primer_semestre_anio_abierto
         datos_version_anterior["asignatura"] = self.asignatura
         version_anterior = VersionProgramaAsignatura.objects.create(
             **datos_version_anterior
@@ -455,8 +535,9 @@ class TestReutilizarUltimoPrograna(TestCase):
 
         # Ahora intento poder crear uno nuevo, deberia fallar:
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -501,8 +582,9 @@ class TestReutilizarUltimoPrograna(TestCase):
             )
 
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -546,8 +628,9 @@ class TestReutilizarUltimoPrograna(TestCase):
             )
 
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -591,8 +674,9 @@ class TestReutilizarUltimoPrograna(TestCase):
             )
 
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -649,8 +733,9 @@ class TestReutilizarUltimoPrograna(TestCase):
 
         # Ahora intento poder crear uno nuevo, deberia fallar:
         # Ahora intento reutilizar la version anterior
-        fecha_referencia = self.semestre_siguiente.fecha_inicio - timezone.timedelta(
-            days=FECHA_DEFAULT_MODIFICACION - 1
+        fecha_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=FECHA_DEFAULT_MODIFICACION - 1)
         )
 
         with freeze_time(fecha_referencia):
@@ -659,3 +744,105 @@ class TestReutilizarUltimoPrograna(TestCase):
                     asignatura=self.asignatura
                 )
             )
+
+    def test_no_es_periodo_de_actualizacion_de_programas_programa_primer_semestre(self):
+        self.asignatura.semestre_dictado = Semestres.PRIMER
+        self.asignatura.full_clean()
+        self.asignatura.save()
+
+        # Sera período de actualización del segundo semestre, pero la materia es del primer semestre
+        self._crear_version_anterior_con_datos_default(
+            self.primer_semestre_anio_cerrado, self.asignatura
+        )
+        fecha_de_referencia = (
+            self.segundo_semestre_anio_abierto.fecha_inicio
+            - timezone.timedelta(days=10)
+        )
+        fecha_de_referencia = crear_fecha_y_hora(
+            fecha_de_referencia.year, fecha_de_referencia.month, fecha_de_referencia.day
+        )
+
+        with freeze_time(fecha_de_referencia):
+            with self.assertRaises(ValidationError) as context:
+                self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                    self.asignatura
+                )
+
+        self.assertIn(
+            MENSAJE_PROGRAMAS_CERRADOS, context.exception.message_dict["__all__"]
+        )
+
+    def test_no_es_periodo_de_actualizacion_de_programas_programa_segundo_semestre(
+        self,
+    ):
+        self.asignatura.semestre_dictado = Semestres.SEGUNDO
+        self.asignatura.full_clean()
+        self.asignatura.save()
+
+        # Sera período de actualización del primer semestre, pero la materia es del segundo semestre
+        self._crear_version_anterior_con_datos_default(
+            self.segundo_semestre_anio_cerrado, self.asignatura
+        )
+        fecha_de_referencia = (
+            self.primer_semestre_anio_futuro.fecha_inicio - timezone.timedelta(days=10)
+        )
+        fecha_de_referencia = crear_fecha_y_hora(
+            fecha_de_referencia.year, fecha_de_referencia.month, fecha_de_referencia.day
+        )
+
+        with freeze_time(fecha_de_referencia):
+            with self.assertRaises(ValidationError) as context:
+                self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                    self.asignatura
+                )
+
+        self.assertIn(
+            MENSAJE_PROGRAMAS_CERRADOS, context.exception.message_dict["__all__"]
+        )
+
+    def test_reutiliza_programa_correctamente_materia_primer_semestre(self):
+        self.asignatura.semestre_dictado = Semestres.PRIMER
+        self.asignatura.full_clean()
+        self.asignatura.save()
+
+        version_anterior = self._crear_version_anterior_con_datos_default(
+            self.primer_semestre_anio_cerrado, self.asignatura
+        )
+        self._agregar_descritpores_ejes_y_actividaddes(version_anterior)
+
+        fecha_de_referencia = (
+            self.primer_semestre_anio_futuro.fecha_inicio - timezone.timedelta(days=10)
+        )
+        fecha_de_referencia = crear_fecha_y_hora(
+            fecha_de_referencia.year, fecha_de_referencia.month, fecha_de_referencia.day
+        )
+
+        with freeze_time(fecha_de_referencia):
+            programa = self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                self.asignatura
+            )
+        self.assertEqual(programa.semestre, self.primer_semestre_anio_futuro)
+
+    def test_reutiliza_programa_correctamente_materia_segundo_semestre(self):
+        # Primero estando en el primer semestre
+        self.asignatura.semestre_dictado = Semestres.SEGUNDO
+        self.asignatura.full_clean()
+        self.asignatura.save()
+
+        version_anterior = self._crear_version_anterior_con_datos_default(
+            self.segundo_semestre_anio_cerrado, self.asignatura
+        )
+        self._agregar_descritpores_ejes_y_actividaddes(version_anterior)
+
+        fecha_de_referencia = (
+            self.segundo_semestre_anio_futuro.fecha_inicio - timezone.timedelta(days=10)
+        )
+        fecha_de_referencia = crear_fecha_y_hora(
+            fecha_de_referencia.year, fecha_de_referencia.month, fecha_de_referencia.day
+        )
+
+        with freeze_time(fecha_de_referencia):
+            programa = self.servicio_version_programa_asignatura.reutilizar_ultimo_plan(
+                self.asignatura
+            )
+        self.assertEqual(programa.semestre, self.segundo_semestre_anio_futuro)

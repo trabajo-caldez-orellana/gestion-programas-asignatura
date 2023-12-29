@@ -83,6 +83,9 @@ def crear_anios_de_prueba():
 
 
 def crear_semestres_de_prueba():
+    """
+    El semestre actual es de primer semestre, el anterior es del segundo y el futuro es del segundo
+    """
     # Cerrado, ira al anio lectivo anterior
     anio_cerrado = AnioAcademico.objects.create(
         fecha_inicio=FECHA_INICIO_ANIO_CERRADO, fecha_fin=FECHA_FIN_ANIO_CERRADO
@@ -128,7 +131,6 @@ def set_up_tests():
      - Cinco descriptores, dos para cada estandar (uno de cada tipo), y uno compartido
      - Un estandar activo para cada carrera
      - Dos actividades reservadas para cada estandar
-     - Crea un semestre acutal y uno futuro
     """
     # Crear dos carreras
     carrera_1 = Carrera.objects.create(nombre=CARRERA_1)

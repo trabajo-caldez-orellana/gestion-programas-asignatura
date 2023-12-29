@@ -25,6 +25,7 @@ from backend.tests.utils import (
     NOMBRE_ACTIVIDAD_2_CARRERA_2,
     FECHA_DEFAULT_MODIFICACION,
     FECHA_INICIO_SEMESTRE_FUTURO,
+    FECHA_INICIO_SEMESTRE_ABIERTO,
     crear_configuraciones_del_prograna,
     crear_semestres_de_prueba,
     crear_fecha_y_hora,
@@ -57,7 +58,7 @@ from backend.common.mensajes_de_error import (
     MENSAJE_PROGRAMAS_CERRADOS,
     MENSAJE_NIVEL_INCORRECTO,
 )
-from backend.common.choices import NivelDescriptor, TipoDescriptor
+from backend.common.choices import NivelDescriptor, TipoDescriptor, Semestres
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
     MAXIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -205,6 +206,30 @@ class TestModificarPrograma(TestCase):
         self._validar_modificacion_incorreacta(
             parametros, "__all__", MENSAJE_PROGRAMAS_CERRADOS
         )
+
+        # Ahora no es posible porque la materia es de primer cuatrimestre y el siguiente
+        # semestre es el segundo
+        self.asignatura_1.semestre_dictado = Semestres.PRIMER
+        self.asignatura_1.full_clean()
+        self.asignatura_1.save()
+
+        self._validar_modificacion_incorreacta(
+            parametros, "__all__", MENSAJE_PROGRAMAS_CERRADOS
+        )
+
+        # Ahora no es posible porque la materia es de segundo cuatrimestre y el siguiente
+        # semestre es el primero
+        fecha_de_referencia = FECHA_INICIO_SEMESTRE_ABIERTO - timezone.timedelta(days=1)
+        fecha_de_referencia = crear_fecha_y_hora(
+            anio=fecha_de_referencia.year,
+            mes=fecha_de_referencia.month,
+            dia=fecha_de_referencia.day,
+        )
+
+        with freeze_time(fecha_de_referencia):
+            self._validar_modificacion_incorreacta(
+                parametros, "__all__", MENSAJE_PROGRAMAS_CERRADOS
+            )
 
     def test_descriptores_invalidos(self):
         """

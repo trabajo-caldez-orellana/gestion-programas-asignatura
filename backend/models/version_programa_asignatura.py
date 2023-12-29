@@ -29,4 +29,4 @@ class VersionProgramaAsignatura(models.Model):
         verbose_name_plural = "Versiones de Programa de Asignatura"
 
     def __str__(self):
-        return self.asignatura + "-" + self.semestre
+        return f"{self.asignatura}-{self.semestre}"
