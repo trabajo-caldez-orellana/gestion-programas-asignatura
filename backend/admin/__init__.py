@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .user import UserAdmin
+from .anio_academico import AdminAnioAcademico
 from .actividad_reservada import AdminActividadReservada
 from .asignatura import AdminAsignatura
 from .auditoria_version_programa import AdminAuditoriaEstadoVersionPrograma
@@ -15,6 +16,7 @@ from .semestre import AdminSemestre
 from .version_programa_asignatura import AdminVersionProgramaAsignatura
 
 from backend.models import (
+    AnioAcademico,
     Asignatura,
     AuditoriaEstadoVersionPrograma,
     BloqueCurricular,
@@ -30,6 +32,7 @@ from backend.models import (
     ActividadReservada,
 )
 
+admin.site.register(AnioAcademico, AdminAnioAcademico)
 admin.site.register(Usuario, UserAdmin)
 admin.site.register(ActividadReservada, AdminActividadReservada)
 admin.site.register(Asignatura, AdminAsignatura)

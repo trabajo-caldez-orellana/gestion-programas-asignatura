@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { getGoogleAuthLink } from "../api";
+import { useQuery } from '@tanstack/react-query'
+import { getGoogleAuthLink } from '../api'
 
 const useGoogleAuthLink = () =>
   useQuery({
-    queryKey: ["google_oauth"],
+    queryKey: ['google_oauth'],
     queryFn: getGoogleAuthLink,
     cacheTime: 0,
-    enabled: false,
-  });
+    enabled: false
+  })
 
-export default useGoogleAuthLink;
+export default useGoogleAuthLink

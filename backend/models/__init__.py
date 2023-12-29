@@ -1,3 +1,4 @@
+from .anio_academico import AnioAcademico
 from .carrera import Carrera
 from .plan_de_estudio import PlanDeEstudio
 from .descriptor import Descriptor

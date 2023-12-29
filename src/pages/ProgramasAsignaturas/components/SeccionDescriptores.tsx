@@ -3,20 +3,24 @@ import Button from '../../../components/ui/Button'
 import Modal from '../../../components/Modal/Modal'
 import { ProgramaAsignatura } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 
 interface SeccionDescriptoresProps {
   programaAsignatura: ProgramaAsignatura
   setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  modoProgramaAsignatura: string
 }
 
 export default function SeccionDescriptores({
   programaAsignatura,
-  setProgramaAsignatura
+  setProgramaAsignatura,
+  modoProgramaAsignatura
 }: SeccionDescriptoresProps) {
   const [modalResultadosAbierto, setModalResultadosAbierto] = useState(false)
   const [modalEjesTransversales, setModalEjesTransversales] = useState(false)
 
   const { descriptores } = programaAsignatura
+  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
 
   const handleSeccionDescriptoresChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -114,6 +118,7 @@ export default function SeccionDescriptores({
 
   const handleDescriptorChange = (id: number) => {
     // Toggle the field seleccionado for the descriptor with the given id
+    if (modoLectura) return
     const descriptores = [...programaAsignatura.descriptores.descriptores]
     const descriptor = descriptores.find((descriptor) => descriptor.id === id)
     if (descriptor) descriptor.seleccionado = !descriptor.seleccionado
@@ -131,7 +136,7 @@ export default function SeccionDescriptores({
   return (
     <>
       <section className="form-section">
-        <h2>Informacion Especifica</h2>
+        <h2 className="header">Informacion Especifica</h2>
         <form className="seccion-descriptores-form">
           <label htmlFor="resultados-aprendizaje">
             Resultados de aprendizaje
@@ -143,6 +148,7 @@ export default function SeccionDescriptores({
               name="resultados_aprendizaje"
               value={resultadosAprendizajeCount()}
               onChange={handleSeccionDescriptoresChange}
+              disabled={modoLectura}
             />
             <Button text="+" onClick={abrirModalResultados} />
           </div>
@@ -154,6 +160,7 @@ export default function SeccionDescriptores({
               name="ejes_transversales"
               value={descriptores.ejesTransversales.length}
               onChange={handleSeccionDescriptoresChange}
+              disabled={modoLectura}
             />
             <Button text="+" onClick={() => setModalEjesTransversales(true)} />
           </div>
@@ -165,6 +172,7 @@ export default function SeccionDescriptores({
               name="actividades_reservadas"
               value={descriptores.actividadesReservadas.length}
               onChange={handleSeccionDescriptoresChange}
+              disabled={modoLectura}
             />
             <Button text="+" />
           </div>
@@ -174,23 +182,25 @@ export default function SeccionDescriptores({
             <div className="selector-descriptores-columna">
               <label>Si</label>
 
-              {descriptores.descriptores.map((descriptor) => (
-                descriptor.seleccionado && (
-                <p onClick={() => handleDescriptorChange(descriptor.id)}>
-                  {descriptor.nombre}
-                </p>
-                )
-              ))}
+              {descriptores.descriptores.map(
+                (descriptor) =>
+                  descriptor.seleccionado && (
+                    <p onClick={() => handleDescriptorChange(descriptor.id)}>
+                      {descriptor.nombre}
+                    </p>
+                  )
+              )}
             </div>
             <div className="selector-descriptores-columna">
               <label>No</label>
-              {descriptores.descriptores.map((descriptor) => (
-                !descriptor.seleccionado && (
-                <p onClick={() => handleDescriptorChange(descriptor.id)}>
-                  {descriptor.nombre}
-                </p>
-                )
-              ))}
+              {descriptores.descriptores.map(
+                (descriptor) =>
+                  !descriptor.seleccionado && (
+                    <p onClick={() => handleDescriptorChange(descriptor.id)}>
+                      {descriptor.nombre}
+                    </p>
+                  )
+              )}
             </div>
           </div>
         </form>
@@ -208,10 +218,15 @@ export default function SeccionDescriptores({
               onChange={(e) => handleResultadosAprendizajeChange(e, index)}
               rows={4}
               cols={50}
+              disabled={modoLectura}
             />
             {index === descriptores.resultadosAprendizaje.length - 1 && (
               <div className="sumar-text-area">
-                <Button text="+" onClick={aniadirResultadoAprendizaje}></Button>
+                <Button
+                  text="+"
+                  onClick={aniadirResultadoAprendizaje}
+                  disabled={modoLectura}
+                ></Button>
               </div>
             )}
           </>
@@ -235,6 +250,7 @@ export default function SeccionDescriptores({
                 defaultChecked
                 checked={eje.nivel === 0}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
+                disabled={modoLectura}
               />
               Nada
               <input
@@ -243,6 +259,7 @@ export default function SeccionDescriptores({
                 value="1"
                 checked={eje.nivel === 1}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
+                disabled={modoLectura}
               />
               Bajo
               <input
@@ -251,6 +268,7 @@ export default function SeccionDescriptores({
                 value="2"
                 checked={eje.nivel === 2}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
+                disabled={modoLectura}
               />
               Medio
               <input
@@ -259,6 +277,7 @@ export default function SeccionDescriptores({
                 value="3"
                 checked={eje.nivel === 3}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
+                disabled={modoLectura}
               />
               Alto
             </div>

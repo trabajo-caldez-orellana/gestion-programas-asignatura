@@ -13,12 +13,14 @@ from backend.models import (
     ActividadReservada,
     Descriptor,
     Semestre,
+    AnioAcademico,
 )
 from backend.common.choices import (
     MetodologiaAsignatura,
     TipoDescriptor,
     EstadoAsignatura,
     ParametrosDeConfiguracion,
+    Semestres,
 )
 from backend.common.constantes import MINIMO_RESULTADOS_DE_APRENDIZAJE
 
@@ -51,24 +53,69 @@ FECHA_FIN_SEMESTRE_ABIERTO = HOY + timezone.timedelta(days=180)
 FECHA_INICIO_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=181)
 FECHA_FIN_SEMESTRE_FUTURO = HOY + timezone.timedelta(days=361)
 
+FECHA_INICIO_ANIO_CERRADO = HOY - timezone.timedelta(days=365)
+FECHA_FIN_ANIO_CERRADO = HOY - timezone.timedelta(days=1)
+
+FECHA_INICIO_ANIO_ABIERTO = HOY
+FECHA_FIN_ANIO_ABIERTO = HOY + timezone.timedelta(days=361)
+
+FECHA_INICIO_ANIO_FUTURO = HOY + timezone.timedelta(days=362)
+FECHA_FIN_ANIO_FUTURO = HOY + timezone.timedelta(days=730)
+
+
+def crear_anios_de_prueba():
+    anio_cerrado = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_CERRADO, fecha_fin=FECHA_FIN_ANIO_CERRADO
+    )
+
+    # Anio academico actual
+    anio_actual = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_ABIERTO, fecha_fin=FECHA_FIN_ANIO_ABIERTO
+    )
+
+    # Siguiente
+    anio_futuro = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_FUTURO,
+        fecha_fin=FECHA_FIN_ANIO_FUTURO,
+    )
+
+    return anio_cerrado, anio_actual, anio_futuro
+
 
 def crear_semestres_de_prueba():
-    # Cerrado
+    """
+    El semestre actual es de primer semestre, el anterior es del segundo y el futuro es del segundo
+    """
+    # Cerrado, ira al anio lectivo anterior
+    anio_cerrado = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_CERRADO, fecha_fin=FECHA_FIN_ANIO_CERRADO
+    )
     semestre_cerrado = Semestre.objects.create(
         fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO,
         fecha_fin=FECHA_FIN_SEMESTRE_CERRADO,
+        anio_academico=anio_cerrado,
+        semestre=Semestres.SEGUNDO,
+    )
+
+    # Anio academico actual
+    anio_actual = AnioAcademico.objects.create(
+        fecha_inicio=FECHA_INICIO_ANIO_ABIERTO, fecha_fin=FECHA_FIN_ANIO_ABIERTO
     )
 
     # Activo
     semestre_abierto = Semestre.objects.create(
         fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO,
         fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO,
+        anio_academico=anio_actual,
+        semestre=Semestres.PRIMER,
     )
 
     # Siguiente
     semestre_futuro = Semestre.objects.create(
         fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO,
         fecha_fin=FECHA_FIN_SEMESTRE_FUTURO,
+        anio_academico=anio_actual,
+        semestre=Semestres.SEGUNDO,
     )
 
     return semestre_cerrado, semestre_abierto, semestre_futuro
@@ -84,7 +131,6 @@ def set_up_tests():
      - Cinco descriptores, dos para cada estandar (uno de cada tipo), y uno compartido
      - Un estandar activo para cada carrera
      - Dos actividades reservadas para cada estandar
-     - Crea un semestre acutal y uno futuro
     """
     # Crear dos carreras
     carrera_1 = Carrera.objects.create(nombre=CARRERA_1)
@@ -231,48 +277,6 @@ def crear_fecha_y_hora(
     )
 
 
-FECHA_INICIO_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_CERRADO = timezone.make_aware(
-    timezone.datetime(year=2023, month=6, day=30)
-)
-FECHA_INICIO_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=7, day=1)
-)
-FECHA_FIN_SEMESTRE_ABIERTO = timezone.make_aware(
-    timezone.datetime(year=2023, month=12, day=31)
-)
-FECHA_INICIO_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=1, day=1)
-)
-FECHA_FIN_SEMESTRE_FUTURO = timezone.make_aware(
-    timezone.datetime(year=2024, month=6, day=30)
-)
-
-
-def crear_semestres_de_prueba():
-    # Cerrado
-    semestre_cerrado = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_CERRADO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_CERRADO.date(),
-    )
-
-    # Activo
-    semestre_abierto = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_ABIERTO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_ABIERTO.date(),
-    )
-
-    # Siguiente
-    semestre_futuro = Semestre.objects.create(
-        fecha_inicio=FECHA_INICIO_SEMESTRE_FUTURO.date(),
-        fecha_fin=FECHA_FIN_SEMESTRE_FUTURO.date(),
-    )
-
-    return semestre_cerrado, semestre_abierto, semestre_futuro
-
-
 # VALORES DEFAULT
 DATOS_DEFAULT_RESULTADOS_DE_APRENDIZAJE = [
     "Resultado de aprendizaje 1",
@@ -340,10 +344,3 @@ DATOS_DEFAULT_ASIGNATURA = {
 }
 
 VALORES_INVALIDOS = [None, ""]
-
-
-# Mensajes de error para asserts
-MENSAJE_SERVICIO_DEBE_FALLAR = "El servicio debe fallar."
-MENSAJE_SERVICIO_DEBE_FUNCIONAR_CORRECTAMENTE = (
-    "El servicio debe funcionar correctamente sin excepciones"
-)

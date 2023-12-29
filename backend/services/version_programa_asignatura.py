@@ -20,6 +20,7 @@ from backend.common.choices import (
     TipoDescriptor,
     EstadoAsignatura,
     Roles,
+    Semestres,
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -177,7 +178,6 @@ class ServicioVersionProgramaAsignatura:
                 asignacion.full_clean()
                 asignacion.save()
                 programa_tiene_actividad_reservada = asignacion
-
         except (ValueError, ValidationError) as e:
             if "nivel" in str(e):
                 raise ValidationError(
@@ -186,14 +186,22 @@ class ServicioVersionProgramaAsignatura:
 
         return programa_tiene_actividad_reservada
 
-    def _es_posible_crear_nueva_version_de_programa(self):
+    def _es_posible_crear_nueva_version_de_programa(
+        self, semestre_asignatura: Semestres
+    ):
         """
         Retorna verdadero si estamos dentro del periodo para crear nuevos programas, y falso sino.
         """
-        return (
-            self.servicio_configuracion.obtener_dias_restantes_inicio_periodo_modificacion()
-            == 0
-        )
+
+        try:
+            return (
+                self.servicio_configuracion.obtener_dias_restantes_inicio_periodo_modificacion(
+                    semestre_asignatura
+                )
+                == 0
+            )
+        except ValidationError:
+            return False
 
     def _validar_resultados_de_aprendizaje(
         self,
@@ -246,7 +254,9 @@ class ServicioVersionProgramaAsignatura:
         Crea una nueva version de un programa de asignatura para el semestre que viene!
         """
 
-        if not self._es_posible_crear_nueva_version_de_programa():
+        if not self._es_posible_crear_nueva_version_de_programa(
+            asignatura.semestre_dictado
+        ):
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         semestre = self.servicio_semestre.obtener_semestre_siguiente()
@@ -403,7 +413,9 @@ class ServicioVersionProgramaAsignatura:
             )
 
         # Deberia ser periodo de modificacion?
-        if not self._es_posible_crear_nueva_version_de_programa():
+        if not self._es_posible_crear_nueva_version_de_programa(
+            version_programa.asignatura.semestre_dictado
+        ):
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         # Formato descriptores, actividades y ejes transversales:
@@ -627,7 +639,9 @@ class ServicioVersionProgramaAsignatura:
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
         """
 
-        if not self._es_posible_crear_nueva_version_de_programa():
+        if not self._es_posible_crear_nueva_version_de_programa(
+            asignatura.semestre_dictado
+        ):
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         try:
@@ -681,7 +695,9 @@ class ServicioVersionProgramaAsignatura:
             ):
                 nuevo_programa = VersionProgramaAsignatura.objects.create(
                     asignatura=ultimo_programa.asignatura,
-                    semestre=ultimo_programa.semestre,
+                    semestre=self.servicio_semestre.obtener_semestre_siguiente(
+                        asignatura.semestre_dictado
+                    ),
                     estado=EstadoAsignatura.ABIERTO,
                     contenidos=ultimo_programa.contenidos,
                     bibliografia=ultimo_programa.bibliografia,

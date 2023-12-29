@@ -11,7 +11,8 @@ type useProgramaAsignaturaMutationType = {
 const useProgramaAsignatura = (
   programaAsignatura: ProgramaAsignatura | null
 ): useProgramaAsignaturaMutationType => {
-  const [resultPostProgramaAsignatura, setResultPostProgramaAsignatura] = useState<boolean>(false)
+  const [resultPostProgramaAsignatura, setResultPostProgramaAsignatura] =
+    useState<boolean>(false)
   const [errorPostProgramaAsignatura, setError] = useState<boolean>(false)
 
   const postPrograma = async (isDraft: boolean) => {

@@ -9,6 +9,8 @@ export interface CargaHoraria {
   practicaDistancia: number
   teoricoPracticoDistancia: number
   laboratorioDistancia: number
+  // Index signature
+  [key: string]: string | number
 }
 
 export interface Descriptor {
@@ -35,6 +37,8 @@ export interface InformacionAdicional {
   evaluacion: string
   investigacion: string
   extension: string
+  // Index signature
+  [key: string]: string | number
 }
 
 export interface ProgramaAsignatura {

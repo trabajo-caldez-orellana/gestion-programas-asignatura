@@ -1,16 +1,23 @@
 import { camelCase } from 'lodash'
 import { ProgramaAsignatura } from '../../../interfaces'
+import {
+  MODOS_PROGRAMA_ASIGNATURA,
+  CAMPOS_INFORMACION_ADICIONAL
+} from '../../../constants/constants'
 
 interface InformacionAdicionalProps {
   programaAsignatura: ProgramaAsignatura
   setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  modoProgramaAsignatura: string
 }
 
 export default function InformacionAdicional({
   programaAsignatura,
-  setProgramaAsignatura
+  setProgramaAsignatura,
+  modoProgramaAsignatura
 }: InformacionAdicionalProps) {
   const { informacionAdicional } = programaAsignatura
+  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -24,88 +31,25 @@ export default function InformacionAdicional({
     })
   }
 
+  // Los campos se obtienen desde la constante CAMPOS_INFORMACION_ADICIONAL
   return (
     <section className="form-section">
-      <h2>Carga Horaria</h2>
+      <h2 className="header">Informacion Adicional</h2>
       <form className="informacion-adicional-form">
-        <label htmlFor="fundamentacion">Fundamentacion</label>
-        <textarea
-          id="fundamentacion"
-          name="fundamentacion"
-          value={informacionAdicional.fundamentacion}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
-        <label htmlFor="contenidos">Contenidos</label>
-        <textarea
-          id="contenidos"
-          name="contenidos"
-          value={informacionAdicional.contenidos}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
-
-        <label htmlFor="bibliografia">Bibliografia</label>
-        <textarea
-          id="bibliografia"
-          name="bibliografia"
-          value={informacionAdicional.bibliografia}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
-
-        <label htmlFor="metodologia-aplicada">Metodologia aplicada</label>
-        <textarea
-          id="metodologia-aplicada"
-          name="metodologia_aplicada"
-          value={informacionAdicional.metodologiaAplicada}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
-
-        <label htmlFor="recursos">Recursos</label>
-        <textarea
-          id="recursos"
-          name="recursos"
-          value={informacionAdicional.recursos}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
-
-        <label htmlFor="evaluacion">Evaluacion</label>
-        <textarea
-          id="evaluacion"
-          name="evaluacion"
-          value={informacionAdicional.evaluacion}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
-
-        <label htmlFor="investigacion">Investigacion</label>
-        <textarea
-          id="investigacion"
-          name="investigacion"
-          value={informacionAdicional.investigacion}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
-
-        <label htmlFor="extension">Extension</label>
-        <textarea
-          id="extension"
-          name="extension"
-          value={informacionAdicional.extension}
-          onChange={handleChange}
-          rows={4}
-          cols={50}
-        />
+        {CAMPOS_INFORMACION_ADICIONAL.map((config) => (
+          <>
+            <label htmlFor={config.id}>{config.label}</label>
+            <textarea
+              id={config.id}
+              name={config.name}
+              value={informacionAdicional[camelCase(config.name)]}
+              onChange={handleChange}
+              rows={4}
+              cols={50}
+              disabled={modoLectura}
+            />
+          </>
+        ))}
       </form>
     </section>
   )

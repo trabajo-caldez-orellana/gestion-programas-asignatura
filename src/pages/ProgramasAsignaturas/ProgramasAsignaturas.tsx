@@ -15,8 +15,8 @@ export default function ProgramasAsignaturas() {
     'Acciones'
   ]
 
-  const watch = (id: number) => {
-    navigate(`/programa-asignaturas/${id}`)
+  const verPrograma = (id: number, modoPrograma: string) => {
+    navigate(`/programa-asignaturas/${id}`, { state: { modo: modoPrograma } })
   }
 
   if (error) return <h1>Error</h1>
@@ -28,7 +28,7 @@ export default function ProgramasAsignaturas() {
       <Table
         tableColumns={tableColumns}
         tableData={programasAsignaturas}
-        watch={watch}
+        verPrograma={verPrograma}
       />
     </section>
   )
