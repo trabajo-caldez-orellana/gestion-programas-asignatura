@@ -1,57 +1,14 @@
 import './SidebarSectionList.css'
 import { Link } from 'react-router-dom'
+import { SIDEBAR_SECTIONS } from '../../constants/constants'
 
 export default function SidebarSectionList() {
-  type SidebarSection = {
-    name: string
-    sections: {
-      name: string
-      url: string
-    }[]
-  }
-
-  const sidebarSection: SidebarSection[] = [
-    {
-      name: 'Carrera',
-      sections: [
-        {
-          name: 'Carrera',
-          url: '/carrera'
-        },
-        {
-          name: 'Plan de Estudio',
-          url: '/plan-estudio'
-        },
-        {
-          name: 'Descriptores',
-          url: '/descriptores'
-        }
-      ]
-    },
-    {
-      name: 'Asignaturas',
-      sections: [
-        {
-          name: 'Bloque curricular',
-          url: '/bloque-curricular'
-        },
-        {
-          name: 'Programa de asignaturas',
-          url: '/programa-asignaturas'
-        },
-        {
-          name: 'Auditoria',
-          url: '/auditoria'
-        }
-      ]
-    }
-  ]
 
   // TODO: Excluir si no tienen permisos
 
   return (
     <>
-      {sidebarSection.map((section) => {
+      {SIDEBAR_SECTIONS.map((section) => {
         return (
           <section>
             <section className="section-header">

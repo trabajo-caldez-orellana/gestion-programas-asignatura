@@ -15,7 +15,7 @@ export default function ProgramasAsignaturas() {
     'Acciones'
   ]
 
-  const verPrograma = (id: number, modoPrograma: string) => {
+  const verPrograma = (id: number | string, modoPrograma: string) => {
     navigate(`/programa-asignaturas/${id}`, { state: { modo: modoPrograma } })
   }
 

@@ -3,6 +3,7 @@ import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
 import ProgramasAsignaturas from './pages/ProgramasAsignaturas'
+import ProgramasVigentes from './pages/ProgramasVigentes'
 import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
@@ -106,6 +107,7 @@ export default function App() {
         handleLogout={handleLogout}
       />
       <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
+        {/* TODO: Crear componente rutas */}
         <Routes>
           <Route
             path="/"
@@ -126,6 +128,7 @@ export default function App() {
             path="/programa-asignaturas"
             element={<ProgramasAsignaturas />}
           />
+          <Route path="/programas-vigentes" element={<ProgramasVigentes />} />
           <Route
             path="/programa-asignaturas/:id"
             element={<ProgramaAsignatura />}
