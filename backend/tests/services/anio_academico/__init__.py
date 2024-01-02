@@ -1,0 +1,4 @@
+from .test_obtener_anio_actual import TestObtenerAnioAcademicoActual
+from .test_obtener_anio_siguiente import TestObtenerAnioAcademicoSiguiente
+from .test_obtener_anio_anterior import TestObtenerAnioAcademicoAnterior
+from .test_validar_anio import TestValidarAnioAcademico
