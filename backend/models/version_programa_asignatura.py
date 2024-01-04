@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 from backend.common.choices import EstadoAsignatura
 from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
@@ -30,5 +29,4 @@ class VersionProgramaAsignatura(models.Model):
         verbose_name_plural = "Versiones de Programa de Asignatura"
 
     def __str__(self):
-        # Arreglar esto
-        return self.asignatura.denominacion
+        return f"{self.asignatura}-{self.semestre}"
