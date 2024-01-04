@@ -1,6 +1,7 @@
 import useProgramasVigentes from './hooks/useProgramasVigentes'
 import TableProgramasVigentes from './components/TableProgramasVigentes'
 import { useNavigate } from 'react-router-dom'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 
 export default function ProgramasVigentes() {
   const navigate = useNavigate()
@@ -16,7 +17,8 @@ export default function ProgramasVigentes() {
   console.log(programasVigentes)
 
   const verPrograma = (id: number | string, modoPrograma: string) => {
-    navigate(`/programa-asignaturas/${id}`, { state: { modo: modoPrograma } })
+    if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
+      navigate(`/programa-asignaturas/${id}`)
   }
   return (
     <section className="section-content">

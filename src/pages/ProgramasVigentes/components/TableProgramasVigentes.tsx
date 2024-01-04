@@ -67,18 +67,6 @@ export default function Table({
                         title="Ver programa"
                       ></i>
                     ) : null}
-                    {item.acciones_posibles.modificar_programa ? (
-                      <i
-                        onClick={() =>
-                          verPrograma(
-                            item.id,
-                            MODOS_PROGRAMA_ASIGNATURA.EDITAR as ModosProgramaAsignatura
-                          )
-                        }
-                        className="fas fa-edit"
-                        title="Editar programa"
-                      ></i>
-                    ) : null}
                     {item.acciones_posibles.imprimir ? (
                       <i
                         //   TODO: Agregar onclick xd
