@@ -51,6 +51,7 @@ from backend.common.mensajes_de_error import (
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
+from backend.services.plan_de_estudio import ServicioPlanDeEstudio
 from backend.serializers import SerializerAsignatura
 
 
@@ -62,6 +63,7 @@ class ServicioVersionProgramaAsignatura:
 
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
+    servicio_planes = ServicioPlanDeEstudio()
 
     def _es_nivel_descriptor_valido(
         self, descriptor: Descriptor, nivel: NivelDescriptor
@@ -811,9 +813,24 @@ class ServicioVersionProgramaAsignatura:
             )
 
         if rol.rol == Roles.DIRECTOR_CARRERA:
-            # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los estandares.
+            # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.
+            planes = self.servicio_planes.obtener_planes_activos_de_carrera(rol.carrera)
+            id_planes = [plan.id for plan in planes]
+            asignaturas = Asignatura.objects.filter(plandeestudio__id__in=id_planes)
+            id_asignaturas = [asignatura.id for asignatura in asignaturas]
 
-            return []
+            versiones = VersionProgramaAsignatura.objects.filter(
+                asignatura_id__in=id_asignaturas,
+                semestre=semestre_siguente,
+                estado=EstadoAsignatura.PENDIENTE,
+            )
+
+            return [
+                self._crear_objeto_para_lista_de_tareas_pendientes(
+                    version.asignatura, version
+                )
+                for version in versiones
+            ]
 
         if rol.rol == Roles.SECRETARIO:
             return []
