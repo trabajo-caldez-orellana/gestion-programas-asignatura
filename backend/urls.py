@@ -17,9 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from backend.views import ObtenerFiltrosHistorial
+
+historial_patterns = [
+    path("", ObtenerFiltrosHistorial.as_view()),
+]
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
     path("auth/", include("djoser.social.urls")),
+    path("api/historial/", include(historial_patterns)),
 ]
