@@ -16,7 +16,7 @@ export default function ProgramasAsignaturas() {
     'Acciones'
   ]
 
-  const verPrograma = (id: number | string, modoPrograma: string) => {
+  const verPrograma = (id: number | null, modoPrograma: string) => {
     const rutaBase = `/programa-asignaturas`
 
     switch (modoPrograma) {

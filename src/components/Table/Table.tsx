@@ -2,7 +2,7 @@ import './Table.css'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 
 type tableRow = {
-  id: number | string
+  id: number | null
   asignatura: {
     id: number,
     nombre: string,
@@ -23,11 +23,12 @@ type tableRow = {
 interface TableProps {
   tableColumns: string[]
   tableData: tableRow[]
-  verPrograma: (id: number | string, modoPrograma: ModosProgramaAsignatura) => void
+  verPrograma: (id: number | null, modoPrograma: ModosProgramaAsignatura) => void
 }
 
 type ModosProgramaAsignatura = keyof typeof MODOS_PROGRAMA_ASIGNATURA;
 
+// TODO: Esta tabla va a ser borrada dado que no se usara esta vista
 export default function Table({
   tableColumns,
   tableData,
