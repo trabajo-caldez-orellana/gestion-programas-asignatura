@@ -1,4 +1,4 @@
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import CargaHoraria from './CargaHoraria'
 import InformacionAdicional from './InformacionAdicional'
 import SeccionDescriptores from './SeccionDescriptores'
@@ -8,11 +8,8 @@ import useProgramaAsignaturaMutation from '../hooks/useProgramaAsignaturaMutatio
 import BotonesProgramaAsignatura from './BotonesProgramaAsignatura'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 
-export default function ProgramaAsignatura() {
+export default function ProgramaAsignatura({ modo }: { modo: string }) {
   const { id } = useParams()
-
-  // Con useLocation obtengo el modo que le paso desde ProgramasAsignaturas.tsx
-  const location = useLocation()
 
   // Este hook se encarga de hacer el get del programaAsignatura
   const {
@@ -21,9 +18,9 @@ export default function ProgramaAsignatura() {
     modoProgramaAsignatura,
     loading,
     error
-  } = useProgramaAsignatura(id?.toString(), location?.state?.modo)
+  } = useProgramaAsignatura(id?.toString(), modo)
 
-  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
+  const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
 
   // Este hook se encarga de hacer el post del programaAsignatura
   const {

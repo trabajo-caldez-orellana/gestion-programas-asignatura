@@ -1,45 +1,40 @@
 import './Table.css'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 
-type actions = {
-  watch: boolean
-  print: boolean
-}
-
 type tableRow = {
-  id: number
-  asignatura: string
+  id: number | null
+  asignatura: {
+    id: number,
+    nombre: string,
+  }
   carrera: string
   estado: string
-  id_programa: number | null
+  id_programa: number | string | null 
   acciones_posibles: {
-    ver: boolean
-    editar: boolean
+    ver_programa: boolean
+    modificar_programa: boolean
     reutilizar_ultimo: boolean
     modificar_ultimo: boolean
-    empezar_nuevo: boolean
+    nuevo: boolean
   }
+  accion_requerida: string | null
 }
 
 interface TableProps {
   tableColumns: string[]
   tableData: tableRow[]
-  acciones?: actions
-  verPrograma: (id: number, modoPrograma: ModosProgramaAsignatura) => void
+  verPrograma: (id: number | null, modoPrograma: ModosProgramaAsignatura) => void
 }
 
 type ModosProgramaAsignatura = keyof typeof MODOS_PROGRAMA_ASIGNATURA;
 
+// TODO: Esta tabla va a ser borrada dado que no se usara esta vista
 export default function Table({
   tableColumns,
   tableData,
-  acciones,
   verPrograma
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
-  if (acciones) {
-    tableColumns.push('Acciones')
-  }
 
   return (
     <article>
@@ -55,13 +50,13 @@ export default function Table({
           {tableData.map((item) => (
             <tr key={item.id}>
               <td>{item.carrera}</td>
-              <td>{item.asignatura}</td>
+              <td>{item.asignatura.nombre}</td>
               <td>{item.estado}</td>
               <td>{item.id_programa}</td>
               <td id="column-acciones">
                 {item.acciones_posibles ? (
                   <>
-                    {item.acciones_posibles.ver ? (
+                    {item.acciones_posibles.ver_programa ? (
                       <i
                         onClick={() =>
                           verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.VER as ModosProgramaAsignatura)
@@ -72,7 +67,7 @@ export default function Table({
                     ) : (
                       <></>
                     )}
-                    {item.acciones_posibles.editar ? (
+                    {item.acciones_posibles.modificar_programa ? (
                       <i
                         onClick={() =>
                           verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.EDITAR as ModosProgramaAsignatura)
@@ -99,7 +94,7 @@ export default function Table({
                     ) : (
                       <></>
                     )}
-                    {item.acciones_posibles.empezar_nuevo ? (
+                    {item.acciones_posibles.nuevo ? (
                       <i
                         onClick={() =>
                           verPrograma(item.id, MODOS_PROGRAMA_ASIGNATURA.NUEVO as ModosProgramaAsignatura)

@@ -3,11 +3,13 @@ import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
 import { ProgramasAsignaturas, TareasPendientes } from './pages'
+import ProgramasVigentes from './pages/ProgramasVigentes'
 import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
 import { listarProgramasPendientes } from './api'
+import { MODOS_PROGRAMA_ASIGNATURA } from './constants/constants'
 
 export default function App() {
   // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
@@ -116,6 +118,7 @@ export default function App() {
         handleLogout={handleLogout}
       />
       <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
+        {/* TODO: Crear componente rutas */}
         <Routes>
           <Route
             path="/"
@@ -132,13 +135,28 @@ export default function App() {
             path="/bloque-curricular"
             element={<h1>Bloque curricular</h1>}
           />
+          <Route path="/programas-vigentes" element={<ProgramasVigentes />} />
           <Route
             path="/programa-asignaturas"
             element={<ProgramasAsignaturas />}
           />
           <Route
             path="/programa-asignaturas/:id"
-            element={<ProgramaAsignatura />}
+            element={
+              <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.VER} />
+            }
+          />
+          <Route
+            path="/programa-asignaturas/editar/:id"
+            element={
+              <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.EDITAR} />
+            }
+          />
+          <Route
+            path="/programa-asignaturas/nuevo/:id"
+            element={
+              <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.NUEVO} />
+            }
           />
           <Route path="/tareas-pendientes" element={<TareasPendientes />} />
           <Route path="/auditoria" element={<h1>Auditoria</h1>} />

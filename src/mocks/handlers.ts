@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import programaAsignaturas from './fixtures/programaAsignaturas.json'
 import programasAsignaturas from './fixtures/programasAsignaturas.json'
+import ProgramasVigentes from './fixtures/programasVigentes.json'
 import { HANDLERS } from '../constants/constants'
 
 const handlers = [
@@ -12,7 +13,10 @@ const handlers = [
   }),
   rest.get(HANDLERS.GET_PROGRAMAS_ASIGNATURAS_HANDLER, (_, res, ctx) => {
     return res(ctx.status(200), ctx.delay(500), ctx.json(programasAsignaturas))
-  })
+  }),
+  rest.get(HANDLERS.GET_PROGRAMAS_VIGENTES_HANDLER, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.delay(500), ctx.json(ProgramasVigentes))
+  }),
 ]
 
 export default handlers

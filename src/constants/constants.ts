@@ -2,12 +2,14 @@ export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/programa-asignaturas',
   POST_PROGRAMAS_ASIGNATURAS: '/programa-asignatura',
   GET_PROGRAMAS_ASIGNATURAS: '/programas-asignaturas/',
-  GET_TAREAS_PENDIENTES: '/api/programas/pendientes/'
+  GET_TAREAS_PENDIENTES: '/api/programas/pendientes/',
+  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
   POST_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignatura/:id',
-  GET_PROGRAMAS_ASIGNATURAS_HANDLER: '/programas-asignaturas/'
+  GET_PROGRAMAS_ASIGNATURAS_HANDLER: '/programas-asignaturas/',
+  GET_PROGRAMAS_VIGENTES_HANDLER: '/api/programas/vigentes/'
 }
 
 export const MODOS_PROGRAMA_ASIGNATURA = {
@@ -151,5 +153,54 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     label: 'Extensión',
     id: 'extension',
     name: 'extension'
+  }
+]
+
+type SidebarSection = {
+  name: string
+  sections: {
+    name: string
+    url: string
+  }[]
+}
+
+export const SIDEBAR_SECTIONS: SidebarSection[] = [
+  {
+    name: 'Carrera',
+    sections: [
+      {
+        name: 'Carrera',
+        url: '/carrera'
+      },
+      {
+        name: 'Plan de Estudio',
+        url: '/plan-estudio'
+      },
+      {
+        name: 'Descriptores',
+        url: '/descriptores'
+      }
+    ]
+  },
+  {
+    name: 'Asignaturas',
+    sections: [
+      {
+        name: 'Bloque curricular',
+        url: '/bloque-curricular'
+      },
+      {
+        name: 'Programa de asignaturas',
+        url: '/programa-asignaturas'
+      },
+      {
+        name: 'Auditoria',
+        url: '/auditoria'
+      },
+      {
+        name: 'Programas vigentes',
+        url: '/programas-vigentes'
+      }
+    ]
   }
 ]

@@ -5,69 +5,70 @@
       "id": 1,
       "nombre": "Calculo I"
     },
-    "carrera": "Ing en computacion",
-    "estado": "Pendiente",
+    "estado": "Aprobado",
     "id_programa": 1,
     "acciones_posibles": {
       "ver_programa": true,
-      "modificar_programa": true,
-      "reutilizar_ultimo": true,
-      "modificar_ultimo": true,
-      "nuevo": true
+      "modificar_programa": false,
+      "reutilizar_ultimo": false,
+      "modificar_ultimo": false,
+      "nuevo": false,
+      "imprimir": true
     },
     "accion_requerida": null
   },
   {
     "id": 2,
     "asignatura": {
-      "id": 1,
+      "id": 2,
       "nombre": "Algebra 2"
     },
-    "carrera": "Ing quimica",
-    "estado": "Revision",
+    "estado": "Aprobado",
     "id_programa": null,
     "acciones_posibles": {
       "ver_programa": true,
-      "modificar_programa": true,
-      "reutilizar_ultimo": true,
+      "modificar_programa": false,
+      "reutilizar_ultimo": false,
       "modificar_ultimo": false,
-      "nuevo": true
+      "nuevo": false,
+      "imprimir": true
     },
     "accion_requerida": null
   },
   {
     "id": 3,
     "asignatura": {
-      "id": 1,
+      "id": 3,
       "nombre": "Calculo III"
     },
-    "carrera": "Ing en computacion",
-    "estado": "Pendiente",
+
+    "estado": "Aprobado",
     "id_programa": 1,
     "acciones_posibles": {
       "ver_programa": true,
-      "modificar_programa": true,
-      "reutilizar_ultimo": true,
-      "modificar_ultimo": true,
-      "nuevo": true
+      "modificar_programa": false,
+      "reutilizar_ultimo": false,
+      "modificar_ultimo": false,
+      "nuevo": false,
+      "imprimir": true
     },
     "accion_requerida": null
   },
   {
     "id": 4,
     "asignatura": {
-      "id": 1,
+      "id": 4,
       "nombre": "Programacion I"
     },
-    "carrera": "Ing en computacion",
-    "estado": "Revision",
+    "estado": "Aprobado",
     "id_programa": null,
     "acciones_posibles": {
       "ver_programa": true,
-      "modificar_programa": true,
-      "reutilizar_ultimo": true,
+      "modificar_programa": false,
+      "reutilizar_ultimo": false,
       "modificar_ultimo": false,
-      "nuevo": true
+      "nuevo": false,
+      "imprimir": true
     },
     "accion_requerida": null
   }

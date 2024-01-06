@@ -1,0 +1,29 @@
+@import '../../constants/variables.css';
+
+#filter-container {
+  width: 100%;
+  border: 2px solid var(--primary-color);
+  padding: 10px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.filter-group select {
+  width: 30%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+#buscar-btn {
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
