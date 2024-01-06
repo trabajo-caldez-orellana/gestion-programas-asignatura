@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
-import ProgramasAsignaturas from './pages/ProgramasAsignaturas'
+import { ProgramasAsignaturas, TareasPendientes } from './pages'
 import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
@@ -140,6 +140,7 @@ export default function App() {
             path="/programa-asignaturas/:id"
             element={<ProgramaAsignatura />}
           />
+          <Route path="/tareas-pendientes" element={<TareasPendientes />} />
           <Route path="/auditoria" element={<h1>Auditoria</h1>} />
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>

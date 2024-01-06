@@ -1,7 +1,8 @@
 export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/programa-asignaturas',
   POST_PROGRAMAS_ASIGNATURAS: '/programa-asignatura',
-  GET_PROGRAMAS_ASIGNATURAS: '/programas-asignaturas/'
+  GET_PROGRAMAS_ASIGNATURAS: '/programas-asignaturas/',
+  GET_TAREAS_PENDIENTES: '/api/programas/pendientes/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
@@ -15,6 +16,7 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
   EDITAR: 'EDITAR'
 }
 
+// TODO. Esto se usa?
 export const NUEVO_PROGRAMA_ASIGNATURA = {
   id: 1,
   cargaHoraria: {
@@ -149,5 +151,5 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     label: 'Extensión',
     id: 'extension',
     name: 'extension'
-  },
+  }
 ]
