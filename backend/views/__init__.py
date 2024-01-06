@@ -1,1 +1,2 @@
+from .programas_de_asignatura import ListarProgramasVigentesAPI
 from .historial.filtros_historial import ObtenerFiltrosHistorial

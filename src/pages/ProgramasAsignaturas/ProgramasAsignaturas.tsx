@@ -2,6 +2,7 @@ import Table from '../../components/Table/Table'
 import { useNavigate } from 'react-router-dom'
 import './ProgramasAsignaturas.css'
 import useProgramasAsignaturas from './hooks/useProgramasAsignaturas'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 
 export default function ProgramasAsignaturas() {
   const navigate = useNavigate()
@@ -15,8 +16,21 @@ export default function ProgramasAsignaturas() {
     'Acciones'
   ]
 
-  const verPrograma = (id: number, modoPrograma: string) => {
-    navigate(`/programa-asignaturas/${id}`, { state: { modo: modoPrograma } })
+  const verPrograma = (id: number | null, modoPrograma: string) => {
+    const rutaBase = `/programa-asignaturas`
+
+    switch (modoPrograma) {
+      case MODOS_PROGRAMA_ASIGNATURA.VER:
+        navigate(`${rutaBase}/${id}`)
+        break
+      case MODOS_PROGRAMA_ASIGNATURA.EDITAR:
+        navigate(`${rutaBase}/editar/${id}`)
+        break
+      case MODOS_PROGRAMA_ASIGNATURA.NUEVO:
+        navigate(`${rutaBase}/nuevo/${id}`)
+        break
+      default:
+    }
   }
 
   if (error) return <h1>Error</h1>

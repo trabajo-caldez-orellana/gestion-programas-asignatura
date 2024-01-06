@@ -38,7 +38,6 @@ class AdminVersionProgramaAsignatura(admin.ModelAdmin):
                 "fields": [
                     "contenidos",
                     "bibliografia",
-                    "metodologia",
                     "recursos",
                     "evaluacion",
                     "cronograma",
