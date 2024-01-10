@@ -1,1 +1,2 @@
 from .listar_tareas_pendientes import ListarProgramasPendientesAPI
+from .listar_programas_vigentes import ListarProgramasVigentesAPI

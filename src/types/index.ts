@@ -1,1 +1,1 @@
-export type { ProgramasAsignaturas } from './types'
+export type { ProgramasAsignaturas, ProgramasVigentes } from './types'
