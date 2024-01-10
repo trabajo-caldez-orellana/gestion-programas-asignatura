@@ -13,8 +13,9 @@ export default function TareasPendientes() {
   if (loading) return <h1>Cargando...</h1>
 
   return (
-    <section className="section-content">
+    <div className="section-content">
+      <h1 className="header">Tareas Pendientes</h1>
       <Tabla datos={tareasPendientes} />
-    </section>
+    </div>
   )
 }

@@ -1,11 +1,11 @@
-import axios from 'axios'
+import { client } from '../../../utils/axiosClient'
 
 import { RUTAS } from '../../../constants/constants'
 import { TareaPendiente } from 'interfaces/interfaces'
 
 interface DatosAsignaturaTareaPendienteAPI {
   id: number
-  nombre: string
+  denominacion: string
 }
 
 interface AccionesPosiblesInterfaceAPI {
@@ -30,7 +30,7 @@ const parserTareasPendientes = (
     return {
       asignatura: {
         id: tarea.asignatura.id,
-        nombre: tarea.asignatura.nombre
+        nombre: tarea.asignatura.denominacion
       },
       idPrograma: tarea.id_programa,
       accionRequerida: tarea.accion_requerida,
@@ -46,7 +46,7 @@ const parserTareasPendientes = (
 }
 
 export const getTareasPendientes = async (): Promise<TareaPendiente[]> => {
-  const response = await axios.get(`${RUTAS.GET_TAREAS_PENDIENTES}`)
+  const response = await client.get(`${RUTAS.GET_TAREAS_PENDIENTES}`)
 
-  return parserTareasPendientes(response.data)
+  return parserTareasPendientes(response.data.data)
 }

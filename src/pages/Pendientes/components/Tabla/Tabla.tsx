@@ -15,6 +15,10 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
     'ACCIONES POSIBLES'
   ]
 
+  const handleVerPrograma = (id: number | null) => {
+    console.log('Ver programa numero ', id)
+  }
+
   return (
     <article>
       <table className="content-table">
@@ -31,38 +35,27 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
               <td>{item.asignatura.nombre}</td>
               <td>{item.accionRequerida}</td>
               <td id="column-acciones">
-                Acciones posibles
-                {/* {item.acciones_posibles ? (
+                {item.accionesPosibles ? (
                   <>
-                    {item.acciones_posibles.ver ? (
+                    {item.accionesPosibles.verPrograma ? (
                       <i
-                        onClick={() =>
-                          verPrograma(
-                            item.id,
-                            MODOS_PROGRAMA_ASIGNATURA.VER as ModosProgramaAsignatura
-                          )
-                        }
+                        onClick={() => handleVerPrograma(item.idPrograma)}
                         className="fas fa-eye"
                         title="Ver programa"
                       ></i>
                     ) : (
                       <></>
                     )}
-                    {item.acciones_posibles.editar ? (
+                    {item.accionesPosibles.modificarPrograma ? (
                       <i
-                        onClick={() =>
-                          verPrograma(
-                            item.id,
-                            MODOS_PROGRAMA_ASIGNATURA.EDITAR as ModosProgramaAsignatura
-                          )
-                        }
+                        onClick={() => handleVerPrograma(item.idPrograma)}
                         className="fas fa-edit"
                         title="Editar programa"
                       ></i>
                     ) : (
                       <></>
                     )}
-                    {item.acciones_posibles.reutilizar_ultimo ? (
+                    {item.accionesPosibles.reutilizarUltimo ? (
                       <i
                         className="fas fa-redo"
                         title="Usar ultimo programa"
@@ -70,7 +63,7 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                     ) : (
                       <></>
                     )}
-                    {item.acciones_posibles.modificar_ultimo ? (
+                    {item.accionesPosibles.modificarUltimo ? (
                       <i
                         className="fas fa-sync"
                         title="Modificar ultimo program"
@@ -78,14 +71,9 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                     ) : (
                       <></>
                     )}
-                    {item.acciones_posibles.empezar_nuevo ? (
+                    {item.accionesPosibles.nuevo ? (
                       <i
-                        onClick={() =>
-                          verPrograma(
-                            item.id,
-                            MODOS_PROGRAMA_ASIGNATURA.NUEVO as ModosProgramaAsignatura
-                          )
-                        }
+                        onClick={() => handleVerPrograma(item.idPrograma)}
                         className="fas fa-plus"
                         title="Nuevo programa"
                       ></i>
@@ -95,7 +83,7 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                   </>
                 ) : (
                   <></>
-                )} */}
+                )}
               </td>
             </tr>
           ))}

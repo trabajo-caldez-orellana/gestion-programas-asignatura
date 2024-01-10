@@ -14,23 +14,23 @@ const useTareasPendientes = (): useTareasPendientesType => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
 
+  // TODO. Hacer error dependiendo del codigo de error para mostrar mensajes personalizados en la pagina.
+
   useEffect(() => {
-    console.log('AAAAGH')
     const fetchData = async () => {
       try {
         const response = await getTareasPendientes()
-        console.log(response)
         setTareasPendientes(response)
 
+        setError(false)
         setLoading(false)
       } catch (err) {
-        console.error(err)
         setError(true)
+        setLoading(false)
       }
     }
     fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  })
+  }, [])
 
   return {
     tareasPendientes: tareasPendientes,

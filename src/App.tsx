@@ -8,7 +8,6 @@ import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/Programa
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
-import { listarProgramasPendientes } from './api'
 import { MODOS_PROGRAMA_ASIGNATURA } from './constants/constants'
 
 export default function App() {
@@ -28,15 +27,6 @@ export default function App() {
       mutate({ code, state })
     }
   }, [mutate])
-
-  const obtenerProgramas = async () => {
-    const respuesta = await listarProgramasPendientes()
-    return respuesta
-  }
-
-  useEffect(() => {
-    console.log(obtenerProgramas())
-  })
 
   useEffect(() => {
     if (isSuccess) {
