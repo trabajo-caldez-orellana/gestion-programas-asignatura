@@ -699,9 +699,7 @@ class ServicioVersionProgramaAsignatura:
             ):
                 nuevo_programa = VersionProgramaAsignatura.objects.create(
                     asignatura=ultimo_programa.asignatura,
-                    semestre=self.servicio_semestre.obtener_semestre_siguiente(
-                        asignatura.semestre_dictado
-                    ),
+                    semestre=self.servicio_semestre.obtener_semestre_siguiente(),
                     estado=EstadoAsignatura.ABIERTO,
                     contenidos=ultimo_programa.contenidos,
                     bibliografia=ultimo_programa.bibliografia,
@@ -734,12 +732,8 @@ class ServicioVersionProgramaAsignatura:
 
     def listar_tareas_pendientes_roles(self, roles: QuerySet[Rol]):
         tareas_pendientes = []
-        if self._es_posible_crear_nueva_version_de_programa():
-            for rol in roles:
-                tareas_pendientes += self._listar_tareas_pendientes_para_rol(rol)
-        else:
-            return []
-
+        for rol in roles:
+            tareas_pendientes += self._listar_tareas_pendientes_para_rol(rol)
         return tareas_pendientes
 
     def _crear_objeto_para_lista_de_tareas_pendientes(
@@ -749,17 +743,24 @@ class ServicioVersionProgramaAsignatura:
     ) -> dict:
         se_puede_usar_ultimo = version_programa is None
 
-        if asignatura.semestre_dictado is None:
-            semestre_para_reutilizar = self.servicio_semestre.obtener_semestre_actual()
-        else:
-            semestre_para_reutilizar = self.servicio_semestre.obtener_semestre_anterior(
-                asignatura.semestre_dictado
-            )
+        try:
+            if asignatura.semestre_dictado is None:
+                semestre_para_reutilizar = (
+                    self.servicio_semestre.obtener_semestre_actual()
+                )
+            else:
+                semestre_para_reutilizar = (
+                    self.servicio_semestre.obtener_semestre_anterior(
+                        asignatura.semestre_dictado
+                    )
+                )
 
-        if se_puede_usar_ultimo:
-            se_puede_usar_ultimo = VersionProgramaAsignatura.objects.filter(
-                semestre=semestre_para_reutilizar, asignatura=asignatura
-            ).exists()
+            if se_puede_usar_ultimo:
+                se_puede_usar_ultimo = VersionProgramaAsignatura.objects.filter(
+                    semestre=semestre_para_reutilizar, asignatura=asignatura
+                ).exists()
+        except ValidationError as e:
+            pass
 
         se_puede_modificar = (
             version_programa is not None
@@ -804,13 +805,15 @@ class ServicioVersionProgramaAsignatura:
                     estado=EstadoAsignatura.ABIERTO,
                 )
             except VersionProgramaAsignatura.DoesNotExist:
-                return self._crear_objeto_para_lista_de_tareas_pendientes(
-                    rol.asignatura
-                )
+                return [
+                    self._crear_objeto_para_lista_de_tareas_pendientes(rol.asignatura)
+                ]
 
-            return self._crear_objeto_para_lista_de_tareas_pendientes(
-                rol.asignatura, version
-            )
+            return [
+                self._crear_objeto_para_lista_de_tareas_pendientes(
+                    rol.asignatura, version
+                )
+            ]
 
         if rol.rol == Roles.DIRECTOR_CARRERA:
             # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.
