@@ -1,7 +1,9 @@
 import json
+from typing import Optional
 
 from django.core.exceptions import ValidationError
-from django.db import transaction, IntegrityError
+from django.db import transaction
+from django.db.models import QuerySet
 
 from backend.models import (
     VersionProgramaAsignatura,
@@ -12,11 +14,13 @@ from backend.models import (
     Estandar,
     ProgramaTieneDescriptor,
     ProgramaTieneActividadReservada,
+    Rol,
 )
 from backend.common.choices import (
     NivelDescriptor,
     TipoDescriptor,
     EstadoAsignatura,
+    Roles,
     Semestres,
 )
 from backend.common.constantes import (
@@ -47,6 +51,8 @@ from backend.common.mensajes_de_error import (
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
+from backend.services.plan_de_estudio import ServicioPlanDeEstudio
+from backend.serializers import SerializerAsignatura
 
 
 class ServicioVersionProgramaAsignatura:
@@ -57,6 +63,7 @@ class ServicioVersionProgramaAsignatura:
 
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
+    servicio_planes = ServicioPlanDeEstudio()
 
     def _es_nivel_descriptor_valido(
         self, descriptor: Descriptor, nivel: NivelDescriptor
@@ -724,3 +731,106 @@ class ServicioVersionProgramaAsignatura:
                 return nuevo_programa
 
         return None
+
+    def listar_tareas_pendientes_roles(self, roles: QuerySet[Rol]):
+        tareas_pendientes = []
+        if self._es_posible_crear_nueva_version_de_programa():
+            for rol in roles:
+                tareas_pendientes += self._listar_tareas_pendientes_para_rol(rol)
+        else:
+            return []
+
+        return tareas_pendientes
+
+    def _crear_objeto_para_lista_de_tareas_pendientes(
+        self,
+        asignatura: Asignatura,
+        version_programa: Optional[VersionProgramaAsignatura] = None,
+    ) -> dict:
+        se_puede_usar_ultimo = version_programa is None
+
+        if asignatura.semestre_dictado is None:
+            semestre_para_reutilizar = self.servicio_semestre.obtener_semestre_actual()
+        else:
+            semestre_para_reutilizar = self.servicio_semestre.obtener_semestre_anterior(
+                asignatura.semestre_dictado
+            )
+
+        if se_puede_usar_ultimo:
+            se_puede_usar_ultimo = VersionProgramaAsignatura.objects.filter(
+                semestre=semestre_para_reutilizar, asignatura=asignatura
+            ).exists()
+
+        se_puede_modificar = (
+            version_programa is not None
+            and version_programa.estado == EstadoAsignatura.ABIERTO
+        )
+
+        if version_programa is None:
+            accion = "Crear nueva versión de Programa de Asignatura."
+        elif version_programa.estado == EstadoAsignatura.ABIERTO:
+            accion = "Presentar Programa de Asignatura."
+        else:
+            accion = "Revisar Programa de Asignatura."
+
+        return {
+            "asignatura": SerializerAsignatura(asignatura).data,
+            "id_programa": version_programa.id
+            if version_programa is not None
+            else None,
+            "accion_requerida": accion,
+            "acciones_posibles": {
+                "ver_programa": version_programa is not None,
+                "modificar_programa": se_puede_modificar,
+                "reutilizar_ultimo": se_puede_usar_ultimo,
+                "modificar_ultimo": se_puede_usar_ultimo,
+                "nuevo": version_programa is None,
+            },
+        }
+
+    def _listar_tareas_pendientes_para_rol(self, rol: Rol) -> list:
+        semestre_siguente = self.servicio_semestre.obtener_semestre_siguiente()
+
+        if rol.rol == Roles.DOCENTE or rol.rol == Roles.TITULAR_CATEDRA:
+            if not self._es_posible_crear_nueva_version_de_programa(
+                rol.asignatura.semestre_dictado
+            ):
+                return []
+
+            try:
+                version = VersionProgramaAsignatura.objects.get(
+                    semestre=semestre_siguente,
+                    asignatura=rol.asignatura,
+                    estado=EstadoAsignatura.ABIERTO,
+                )
+            except VersionProgramaAsignatura.DoesNotExist:
+                return self._crear_objeto_para_lista_de_tareas_pendientes(
+                    rol.asignatura
+                )
+
+            return self._crear_objeto_para_lista_de_tareas_pendientes(
+                rol.asignatura, version
+            )
+
+        if rol.rol == Roles.DIRECTOR_CARRERA:
+            # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.
+            planes = self.servicio_planes.obtener_planes_activos_de_carrera(rol.carrera)
+            id_planes = [plan.id for plan in planes]
+            asignaturas = Asignatura.objects.filter(plandeestudio__id__in=id_planes)
+            id_asignaturas = [asignatura.id for asignatura in asignaturas]
+
+            versiones = VersionProgramaAsignatura.objects.filter(
+                asignatura_id__in=id_asignaturas,
+                semestre=semestre_siguente,
+                estado=EstadoAsignatura.PENDIENTE,
+            )
+
+            return [
+                self._crear_objeto_para_lista_de_tareas_pendientes(
+                    version.asignatura, version
+                )
+                for version in versiones
+            ]
+
+        if rol.rol == Roles.SECRETARIO:
+            return []

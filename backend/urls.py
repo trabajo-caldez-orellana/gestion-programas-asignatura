@@ -17,11 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from backend.views import ListarProgramasVigentesAPI, ObtenerFiltrosHistorial
+from backend.views import (
+    ListarProgramasVigentesAPI,
+    ObtenerFiltrosHistorial,
+    ListarProgramasPendientesAPI,
+)
 
 urls_programas = [
+    path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
-
+]
 
 historial_patterns = [
     path("", ObtenerFiltrosHistorial.as_view()),

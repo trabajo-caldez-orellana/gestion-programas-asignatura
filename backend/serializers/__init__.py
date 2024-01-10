@@ -1,1 +1,2 @@
+from .asignatura import SerializerAsignatura
 from .programas_vigentes import ProgramasVigentesSerializer

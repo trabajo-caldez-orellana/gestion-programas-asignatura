@@ -102,3 +102,9 @@ MENSAJE_NO_FUE_DEFINIDO_PERIODO_CORRECCION = "No se completaron las configuracio
 MENSAJE_VERSION_CERRADA_PARA_MODIFICACION = (
     "No se puede modificar un programa pendiente de aprobación o ya aprobado."
 )
+
+
+# MENSAJES DE PERMISOS
+MENSAJE_PERMISO_PROGRAMAS_PENDIENTES = (
+    "No tiene permiso para accceder a programas pendientes."
+)
