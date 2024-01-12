@@ -21,9 +21,11 @@ from backend.views import (
     ListarProgramasVigentesAPI,
     ObtenerFiltrosHistorial,
     ListarProgramasPendientesAPI,
+    InformacionProgramaAPI,
 )
 
 urls_programas = [
+    path("<:id>/", InformacionProgramaAPI.as_view()),
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
 ]
