@@ -1,8 +1,8 @@
 export const RUTAS = {
-  GET_PROGRAMA_ASIGNATURA: '/programa-asignaturas',
-  POST_PROGRAMAS_ASIGNATURAS: '/programa-asignatura',
-  GET_PROGRAMAS_ASIGNATURAS: '/programas-asignaturas/',
-  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
+  GET_PROGRAMA_ASIGNATURA: '/api/programas/',
+  POST_PROGRAMAS_ASIGNATURAS: '/api/programa/',
+  GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
+  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
@@ -151,7 +151,7 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     label: 'Extensión',
     id: 'extension',
     name: 'extension'
-  },
+  }
 ]
 
 type SidebarSection = {

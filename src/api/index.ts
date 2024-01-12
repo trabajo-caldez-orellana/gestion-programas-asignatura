@@ -55,8 +55,3 @@ export const getProfile = async () => {
   const response = await client.get<Profile>('/auth/users/me/')
   return response.data
 }
-
-export const listarProgramasPendientes = async () => {
-  const response = await client.get('/api/programas/pendientes  /')
-  return response.data
-}

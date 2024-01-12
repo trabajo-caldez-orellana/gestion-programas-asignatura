@@ -42,9 +42,12 @@ const useProgramaAsignatura = (
 
   useEffect(() => {
     const fetchData = async (modo: string | null) => {
+      // TODO. SI el programa es nuevo, hacer un pedido distinto
+      // Para las distintas opciones de descriptires
       try {
         const response = await getProgramaAsignatura(id)
 
+        console.log(response)
         // Si el programa es nuevo debemos volver sus propiedades a su estado inicial
         if (modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO) {
           response.cargaHoraria = NUEVO_PROGRAMA_ASIGNATURA.cargaHoraria
