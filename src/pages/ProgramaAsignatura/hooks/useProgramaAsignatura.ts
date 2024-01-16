@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ProgramaAsignatura } from '../../../interfaces'
+import { ProgramaAsignatura } from 'interfaces'
 import { getProgramaAsignatura } from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,

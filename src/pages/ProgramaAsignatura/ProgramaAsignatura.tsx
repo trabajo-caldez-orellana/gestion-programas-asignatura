@@ -1,12 +1,15 @@
 import { useParams } from 'react-router-dom'
-import CargaHoraria from './CargaHoraria'
-import InformacionAdicional from './InformacionAdicional'
-import SeccionDescriptores from './SeccionDescriptores'
-import { ProgramaAsignatura } from '../../../interfaces'
-import useProgramaAsignatura from '../hooks/useProgramaAsignatura'
-import useProgramaAsignaturaMutation from '../hooks/useProgramaAsignaturaMutation'
-import BotonesProgramaAsignatura from './BotonesProgramaAsignatura'
-import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
+
+import {
+  CargaHoraria,
+  InformacionAdicional,
+  SeccionDescriptores,
+  BotonesProgramaAsignatura
+} from './components'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
+import { ProgramaAsignatura } from '../../interfaces'
+import useProgramaAsignatura from './hooks/useProgramaAsignatura'
+import useProgramaAsignaturaMutation from './hooks/useProgramaAsignaturaMutation'
 
 export default function ProgramaAsignatura({ modo }: { modo: string }) {
   const { id } = useParams()

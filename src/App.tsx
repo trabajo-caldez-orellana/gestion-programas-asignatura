@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import './App.css'
-import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
-import ProgramasAsignaturas from './pages/ProgramasAsignaturas'
-import ProgramasVigentes from './pages/ProgramasVigentes'
-import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
+import './App.css'
+
+import { Navbar } from './components'
+import { ProgramasVigentes, ProgramaAsignatura, Historial } from './pages'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
@@ -82,10 +81,8 @@ export default function App() {
             element={<h1>Bloque curricular</h1>}
           />
           <Route path="/programas-vigentes" element={<ProgramasVigentes />} />
-          <Route
-            path="/programa-asignaturas"
-            element={<ProgramasAsignaturas />}
-          />
+          <Route path="/programa-asignaturas" element={<Historial />} />
+
           <Route
             path="/programa-asignaturas/:id"
             element={

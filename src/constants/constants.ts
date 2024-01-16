@@ -188,16 +188,16 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         url: '/bloque-curricular'
       },
       {
-        name: 'Programa de asignaturas',
-        url: '/programa-asignaturas'
-      },
-      {
         name: 'Auditoria',
         url: '/auditoria'
       },
       {
         name: 'Programas vigentes',
         url: '/programas-vigentes'
+      },
+      {
+        name: 'Historial',
+        url: '/programas-asignatura'
       }
     ]
   }
