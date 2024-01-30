@@ -20,7 +20,7 @@ export default function TableHistorial({
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
 
-  if (!tableData) {
+  if (!tableData || tableData.length === 0) {
     return <h1>No hay datos</h1>
   }
 
