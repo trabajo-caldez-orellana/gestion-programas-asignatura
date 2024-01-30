@@ -1,34 +1,39 @@
-import { useState, useEffect } from 'react'
-import { ProgramasVigentes } from '../../../types'
-import { getHistorial } from '../services'
+import { useState } from 'react'
+import { ProgramasHistorial, selectedFiltrosType } from '../../../types'
+import { getSearchHistorial } from '../services'
 
 type useHistorialType = {
-  programasVigentes: ProgramasVigentes | null
+  searchHistorialProgramas: (
+    selectedFiltros: selectedFiltrosType | null
+  ) => void
   loading: boolean
   error: boolean
 }
 
-const useHistorial = (): useHistorialType => {
-  const [programasVigentes, setProgramasVigentes] =
-    useState<ProgramasVigentes | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+type Props = {
+  setProgramasHistorial: React.Dispatch<
+    React.SetStateAction<ProgramasHistorial | null>
+  >
+}
+
+const useHistorial = ({ setProgramasHistorial }: Props): useHistorialType => {
+  const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getHistorial()
-        setProgramasVigentes(response)
-        setLoading(false)
-      } catch (err) {
-        console.error(err)
-        setError(true)
-      }
+  const searchHistorialProgramas = async (
+    selectedFiltros: selectedFiltrosType | null
+  ) => {
+    try {
+      const response = await getSearchHistorial(selectedFiltros)
+      setProgramasHistorial(response)
+      setLoading(false)
+    } catch (err) {
+      console.error(err)
+      setError(true)
     }
-    fetchData()
-  }, [])
+  }
 
-  return { programasVigentes, loading, error }
+  return { searchHistorialProgramas, loading, error }
 }
 
 export default useHistorial

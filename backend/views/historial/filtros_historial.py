@@ -12,23 +12,37 @@ class ObtenerFiltrosHistorial(APIView):
         anios_lectivos = AnioAcademico.objects.all().order_by("fecha_inicio")
 
         return Response(
-            {
-                "data": {
-                    "carreras": [
+            [
+                {
+                    "tipo": "carrera",
+                    "nombre": "Carreras",
+                    "opciones": [
                         {"id": carrera.id, "nombre": carrera.nombre}
                         for carrera in carreras
                     ],
-                    "semestres": [
+                },
+                {
+                    "tipo": "semestre",
+                    "nombre": "Semestres",
+                    "opciones": [
                         {"id": semestre.id, "nombre": str(semestre)}
                         for semestre in semestres
                     ],
-                    "asignaturas": [
+                },
+                {
+                    "tipo": "asignatura",
+                    "nombre": "Asignaturas",
+                    "opciones": [
                         {"id": asignatura.id, "nombre": asignatura.denominacion}
                         for asignatura in asignaturas
                     ],
-                    "anios_lectivos": [
+                },
+                {
+                    "tipo": "anio_lectivo",
+                    "nombre": "Años lectivos",
+                    "opciones": [
                         {"id": anio.id, "nombre": str(anio)} for anio in anios_lectivos
                     ],
-                }
-            }
+                },
+            ]
         )

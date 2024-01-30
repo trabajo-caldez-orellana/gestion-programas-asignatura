@@ -1,19 +1,33 @@
+import { useState } from 'react'
 import useHistorial from './hooks/useHistorial'
+import useFiltros from './hooks/useFiltros'
 import TableHistorial from './components/TableHistorial'
 import { useNavigate } from 'react-router-dom'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import Filtros from './components/Filtros'
+import { ProgramasHistorial } from '../../types'
 
 export default function Historial() {
   const navigate = useNavigate()
+  const [programasHistorial, setProgramasHistorial] =
+    useState<ProgramasHistorial | null>(null)
 
-  const { programasVigentes, loading, error } = useHistorial()
+  const {
+    filtros,
+    selectedFiltros,
+    setSelectedFiltros,
+    loadingFiltros,
+    errorFiltros
+  } = useFiltros()
+
+  const { searchHistorialProgramas, loading, error } = useHistorial({ setProgramasHistorial })
 
   const tableColumns = ['Asignatura', 'Estado', 'Acciones']
 
-  if (error) return <h1>Error</h1>
+  if (error || errorFiltros) return <h1>Error</h1>
 
-  if (loading || !programasVigentes) return <h1>Cargando...</h1>
+  if (loading || loadingFiltros || !filtros)
+    return <h1>Cargando...</h1>
 
   const verPrograma = (id: number | null, modoPrograma: string) => {
     if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
@@ -22,10 +36,15 @@ export default function Historial() {
 
   return (
     <section className="section-content">
-      <Filtros />
+      <Filtros
+        filtros={filtros}
+        setSelectedFiltros={setSelectedFiltros}
+        searchHistorialProgramas={searchHistorialProgramas}
+        selectedFiltros={selectedFiltros}
+      />
       <TableHistorial
         tableColumns={tableColumns}
-        tableData={programasVigentes}
+        tableData={programasHistorial}
         verPrograma={verPrograma}
       />
     </section>

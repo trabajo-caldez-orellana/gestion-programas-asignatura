@@ -24,6 +24,7 @@ from backend.views import (
     InformacionProgramaAPI,
     InformacionModificacionProgramaAPI,
     InformacionNuevoProgramaAPI,
+    ObtenerProgramasHistorial,
 )
 
 programas_patterns = [
@@ -39,8 +40,12 @@ programas_patterns = [
     path("editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
 ]
 
-historial_patterns = [
+historial_filtros_patterns = [
     path("", ObtenerFiltrosHistorial.as_view()),
+]
+
+historial_patterns = [
+    path("", ObtenerProgramasHistorial.as_view()),
 ]
 
 urlpatterns = [
@@ -49,5 +54,6 @@ urlpatterns = [
     path("auth/", include("djoser.urls.authtoken")),
     path("auth/", include("djoser.social.urls")),
     path("api/programas/", include(programas_patterns)),
+    path("api/filtros/", include(historial_filtros_patterns)),
     path("api/historial/", include(historial_patterns)),
 ]

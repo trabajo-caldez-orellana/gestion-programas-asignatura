@@ -4,7 +4,7 @@ import { tableRowProgramasVigentes } from 'props/props'
 
 interface TableProps {
   tableColumns: string[]
-  tableData: tableRowProgramasVigentes[]
+  tableData: tableRowProgramasVigentes[] | null
   verPrograma: (
     id: number | null,
     modoPrograma: ModosProgramaAsignatura
@@ -19,6 +19,10 @@ export default function TableHistorial({
   verPrograma
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
+
+  if (!tableData) {
+    return <h1>No hay datos</h1>
+  }
 
   return (
     <article>

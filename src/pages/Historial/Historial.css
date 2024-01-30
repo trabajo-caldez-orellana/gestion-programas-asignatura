@@ -1,15 +1,28 @@
 @import '../../constants/variables.css';
 
+#filter-components-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
 #filter-container {
   width: 100%;
   border: 2px solid var(--primary-color);
   padding: 10px;
   box-sizing: border-box;
   margin-bottom: 20px;
+  min-width: 70rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .filter-group {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
 }
