@@ -23,7 +23,7 @@ from backend.views import (
     ListarProgramasPendientesAPI,
 )
 
-urls_programas = [
+programas_patterns = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
 ]
@@ -37,6 +37,6 @@ urlpatterns = [
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
     path("auth/", include("djoser.social.urls")),
-    path("api/programas/", include(urls_programas)),
+    path("api/programas/", include(programas_patterns)),
     path("api/historial/", include(historial_patterns)),
 ]

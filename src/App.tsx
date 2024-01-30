@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
-import ProgramasAsignaturas from './pages/ProgramasAsignaturas'
+import { ProgramasAsignaturas, TareasPendientes } from './pages'
 import ProgramasVigentes from './pages/ProgramasVigentes'
 import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
-import { listarProgramasPendientes } from './api'
 import { MODOS_PROGRAMA_ASIGNATURA } from './constants/constants'
 
 export default function App() {
@@ -28,15 +27,6 @@ export default function App() {
       mutate({ code, state })
     }
   }, [mutate])
-
-  const obtenerProgramas = async () => {
-    const respuesta = await listarProgramasPendientes()
-    return respuesta
-  }
-
-  useEffect(() => {
-    console.log(obtenerProgramas())
-  })
 
   useEffect(() => {
     if (isSuccess) {
@@ -158,6 +148,7 @@ export default function App() {
               <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.NUEVO} />
             }
           />
+          <Route path="/tareas-pendientes" element={<TareasPendientes />} />
           <Route path="/auditoria" element={<h1>Auditoria</h1>} />
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>

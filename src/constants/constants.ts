@@ -2,7 +2,8 @@ export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/programa-asignaturas',
   POST_PROGRAMAS_ASIGNATURAS: '/programa-asignatura',
   GET_PROGRAMAS_ASIGNATURAS: '/programas-asignaturas/',
-  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
+  GET_TAREAS_PENDIENTES: '/api/programas/pendientes/',
+  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
@@ -17,6 +18,7 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
   EDITAR: 'EDITAR'
 }
 
+// TODO. Esto se usa?
 export const NUEVO_PROGRAMA_ASIGNATURA = {
   id: 1,
   cargaHoraria: {
@@ -151,12 +153,14 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     label: 'Extensión',
     id: 'extension',
     name: 'extension'
-  },
+  }
 ]
 
 type SidebarSection = {
+  id: number
   name: string
   sections: {
+    id: number
     name: string
     url: string
   }[]
@@ -164,40 +168,54 @@ type SidebarSection = {
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
+    id: 1,
     name: 'Carrera',
     sections: [
       {
+        id: 1,
         name: 'Carrera',
         url: '/carrera'
       },
       {
+        id: 2,
         name: 'Plan de Estudio',
         url: '/plan-estudio'
       },
       {
+        id: 3,
         name: 'Descriptores',
         url: '/descriptores'
       }
     ]
   },
   {
+    id: 2,
     name: 'Asignaturas',
     sections: [
       {
+        id: 1,
         name: 'Bloque curricular',
         url: '/bloque-curricular'
       },
       {
+        id: 2,
         name: 'Programa de asignaturas',
         url: '/programa-asignaturas'
       },
       {
+        id: 3,
         name: 'Auditoria',
         url: '/auditoria'
       },
       {
+        id: 4,
         name: 'Programas vigentes',
         url: '/programas-vigentes'
+      },
+      {
+        id: 5,
+        name: 'Tareas Pendientes',
+        url: '/tareas-pendientes'
       }
     ]
   }

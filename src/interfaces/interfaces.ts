@@ -47,3 +47,23 @@ export interface ProgramaAsignatura {
   descriptores: Descriptor
   informacionAdicional: InformacionAdicional
 }
+
+export interface DatosAsignaturaTareaPendiente {
+  id: number
+  nombre: string
+}
+
+export interface AccionesPosiblesInterface {
+  verPrograma: boolean
+  modificarPrograma: boolean
+  reutilizarUltimo: boolean
+  modificarUltimo: boolean
+  nuevo: boolean
+}
+
+export interface TareaPendiente {
+  asignatura: DatosAsignaturaTareaPendiente
+  idPrograma: number | null
+  accionRequerida: string
+  accionesPosibles: AccionesPosiblesInterface
+}
