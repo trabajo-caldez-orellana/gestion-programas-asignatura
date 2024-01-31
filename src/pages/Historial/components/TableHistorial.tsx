@@ -38,7 +38,6 @@ export default function TableHistorial({
           {tableData.map((item) => (
             <tr key={item.id}>
               <td>{item.asignatura.nombre}</td>
-              <td>{item.estado}</td>
               <td id="column-acciones">
                 {item.acciones_posibles ? (
                   <>

@@ -22,7 +22,7 @@ export default function Historial() {
 
   const { searchHistorialProgramas, loading, error } = useHistorial({ setProgramasHistorial })
 
-  const tableColumns = ['Asignatura', 'Estado', 'Acciones']
+  const tableColumns = ['Asignatura', 'Acciones']
 
   if (error || errorFiltros) return <h1>Error</h1>
 

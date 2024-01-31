@@ -3,8 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.http import Http404
 
-from backend.models import VersionProgramaAsignatura, PlanDeEstudio, Asignatura
-from backend.services import ServicioSemestre
+from backend.models import VersionProgramaAsignatura, PlanDeEstudio
 from backend.common.choices import EstadoAsignatura
 from backend.serializers import ProgramasVigentesSerializer
 
@@ -49,6 +48,7 @@ class ObtenerProgramasHistorial(APIView):
             semestre_id=semestre_id,
             asignatura_id=asignatura_id,
             semestre__anio_academico_id=anio_lectivo_id,
+            estado=EstadoAsignatura.APROBADO,
         )
         serializer = ProgramasVigentesSerializer()
         data = serializer.to_representation(programas_historial)
