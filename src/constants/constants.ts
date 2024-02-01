@@ -1,3 +1,5 @@
+import { ProgramaAsignatura } from 'interfaces'
+
 export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/api/programas/',
   POST_PROGRAMAS_ASIGNATURAS: '/api/programa/',
@@ -17,14 +19,14 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
   EDITAR: 'EDITAR'
 }
 
-export const NUEVO_PROGRAMA_ASIGNATURA = {
+export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignatura = {
   id: 1,
   cargaHoraria: {
     semanasDictado: 0,
     teoriaPresencial: 0,
     practicaPresencial: 0,
     teoricoPracticoPresencial: 0,
-    laboratoriosPresenciales: 0,
+    laboratorioPresencial: 0,
     teoriaDistancia: 0,
     practicaDistancia: 0,
     teoricoPracticoDistancia: 0,
@@ -46,8 +48,10 @@ export const NUEVO_PROGRAMA_ASIGNATURA = {
     metodologiaAplicada: '',
     recursos: '',
     evaluacion: '',
-    investigacion: '',
-    extension: ''
+    investigacionDocentes: '',
+    investigacionEstudiantes: '',
+    extensionEstudiantes: '',
+    extensionDocentes: ''
   }
 }
 

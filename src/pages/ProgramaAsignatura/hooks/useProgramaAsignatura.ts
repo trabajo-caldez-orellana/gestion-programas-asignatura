@@ -17,7 +17,7 @@ type useProgramaAsignaturaType = {
 }
 
 const useProgramaAsignatura = (
-  id: string | undefined,
+  id: string = '',
   modo: string | null
 ): useProgramaAsignaturaType => {
   const [programaAsignatura, setProgramaAsignatura] =
@@ -42,29 +42,22 @@ const useProgramaAsignatura = (
 
   useEffect(() => {
     const fetchData = async (modo: string | null) => {
-      // TODO. SI el programa es nuevo, hacer un pedido distinto
-      // Para las distintas opciones de descriptires
-      try {
-        const response = await getProgramaAsignatura(id)
-
-        console.log(response)
-        // Si el programa es nuevo debemos volver sus propiedades a su estado inicial
-        if (modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO) {
-          response.cargaHoraria = NUEVO_PROGRAMA_ASIGNATURA.cargaHoraria
-          response.informacionAdicional =
-            NUEVO_PROGRAMA_ASIGNATURA.informacionAdicional
-          response.descriptores.descriptores.forEach((descriptor) => {
-            descriptor.seleccionado = false
-          })
-          response.descriptores.ejesTransversales.forEach((eje) => {
-            eje.nivel = 0
-          })
-        }
-        setProgramaAsignatura(response)
+      if (modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO) {
+        // TODO. Cuando es nuevo programa, deberia traer datos de los descriptores posibles y eso!!!
+        setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
         setLoading(false)
-      } catch (err) {
-        console.error(err)
-        setError(true)
+      } else {
+        try {
+          const response = await getProgramaAsignatura(id)
+          if (response.status === 200 && response.data) {
+            setProgramaAsignatura(response.data)
+          } else {
+            setError(true)
+          }
+          setLoading(false)
+        } catch (err) {
+          setError(true)
+        }
       }
     }
 

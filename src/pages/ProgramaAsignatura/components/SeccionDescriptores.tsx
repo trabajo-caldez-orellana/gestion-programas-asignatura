@@ -58,9 +58,10 @@ export default function SeccionDescriptores({
 
   const resultadosAprendizajeCount = () => {
     //Contar solo los resultados de aprendizaje que no sean string vacios
-    return programaAsignatura.descriptores.resultadosAprendizaje.filter(
-      (item) => item !== ''
-    ).length
+    const resultadosAprendizaje =
+      programaAsignatura.descriptores.resultadosAprendizaje || []
+
+    return resultadosAprendizaje.filter((item) => item !== '').length || 0
   }
 
   const aniadirResultadoAprendizaje = () => {
@@ -79,7 +80,8 @@ export default function SeccionDescriptores({
 
   // Al abrir el modal limpiamos los resultados de aprendizaje que son string vacios
   const abrirModalResultados = () => {
-    const resultadosAprendizaje = [...descriptores.resultadosAprendizaje]
+    const resultadosAprendizaje: string[] =
+      descriptores.resultadosAprendizaje || []
     const resultadosAprendizajeLimpios = resultadosAprendizaje.filter(
       (item) => item !== ''
     )

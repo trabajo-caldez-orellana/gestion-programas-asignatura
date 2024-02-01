@@ -8,19 +8,28 @@ from backend.models import (
     ProgramaTieneActividadReservada,
     ProgramaTieneDescriptor,
 )
-from backend.common.choices import TipoDescriptor
+from backend.common.choices import TipoDescriptor, NivelDescriptor
 
 
 class SerializerProgramaTieneDescriptor(serializers.Serializer):
     id = serializers.IntegerField(source="descriptor_id")
-    nivel = serializers.IntegerField()
+    seleccionado = serializers.SerializerMethodField()
     nombre = serializers.CharField(source="descriptor__descripcion")
+
+    def get_seleccionado(self, obj):
+        return obj["nivel"] != NivelDescriptor.NADA
 
 
 class SerializerProgramaTieneActividadReservada(serializers.Serializer):
     id = serializers.IntegerField(source="actividad_reservada_id")
     nivel = serializers.IntegerField()
     nombre = serializers.CharField(source="actividad_reservada__descripcion")
+
+
+class SerializerProgramaTieneEjeTransversal(serializers.Serializer):
+    id = serializers.IntegerField(source="descriptor_id")
+    nivel = serializers.IntegerField()
+    nombre = serializers.CharField(source="descriptor__descripcion")
 
 
 # TODO. Modificar para que sea solo lectura
@@ -57,10 +66,11 @@ def serializer_programa_asignatura(
 
     # El array con el nivel
     descriptores_del_programa = ProgramaTieneDescriptor.objects.filter(
-        version_programa_asignatura=programa
+        version_programa_asignatura=programa, descriptor__tipo=TipoDescriptor.DESCRIPTOR
     ).values("descriptor_id", "descriptor__descripcion", "nivel")
     ejes_transversales_del_programa = ProgramaTieneDescriptor.objects.filter(
-        version_programa_asignatura=programa
+        version_programa_asignatura=programa,
+        descriptor__tipo=TipoDescriptor.EJE_TRANSVERSAL,
     ).values("descriptor_id", "descriptor__descripcion", "nivel")
     actividades_reservadas_del_programa = (
         ProgramaTieneActividadReservada.objects.filter(
@@ -72,7 +82,7 @@ def serializer_programa_asignatura(
         descriptores_del_programa = SerializerProgramaTieneDescriptor(
             descriptores_del_programa, many=True
         ).data
-        ejes_transversales_del_programa = SerializerProgramaTieneDescriptor(
+        ejes_transversales_del_programa = SerializerProgramaTieneEjeTransversal(
             ejes_transversales_del_programa, many=True
         ).data
         actividades_reservadas_del_programa = SerializerProgramaTieneActividadReservada(
