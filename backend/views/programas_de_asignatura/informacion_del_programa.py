@@ -20,10 +20,9 @@ class InformacionProgramaAPI(APIView):
 
     def get(self, request, id_programa):
         """
-        Obtiene informacion de un programa
+        Obtiene informacion de un programa, modo solo lectura
         """
         servicio_rol = ServicioRoles()
-
         roles = servicio_rol.obtener_roles_usuario(request.user)
 
         try:
@@ -35,7 +34,7 @@ class InformacionProgramaAPI(APIView):
             )
 
         if programa.estado == EstadoAsignatura.APROBADO:
-            data = serializer_programa_asignatura(programa)
+            data = serializer_programa_asignatura(programa, True)
             return Response({"data": data})
 
         tiene_permiso_de_ver_programa = False
@@ -63,5 +62,5 @@ class InformacionProgramaAPI(APIView):
                 status=HTTP_401_UNAUTHORIZED,
             )
 
-        data = serializer_programa_asignatura(programa)
+        data = serializer_programa_asignatura(programa, True)
         return Response({"data": data})

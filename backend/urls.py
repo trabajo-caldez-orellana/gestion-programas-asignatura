@@ -25,9 +25,9 @@ from backend.views import (
 )
 
 urls_programas = [
-    path("<id_programa>/", InformacionProgramaAPI.as_view()),
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
+    path("<id_programa>/", InformacionProgramaAPI.as_view()),
 ]
 
 historial_patterns = [
