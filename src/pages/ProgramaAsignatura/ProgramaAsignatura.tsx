@@ -10,6 +10,7 @@ import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import { ProgramaAsignatura } from '../../interfaces'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
 import useProgramaAsignaturaMutation from './hooks/useProgramaAsignaturaMutation'
+import './ProgramaAsignatura.css'
 
 export default function ProgramaAsignatura({ modo }: { modo: string }) {
   const { id } = useParams()
