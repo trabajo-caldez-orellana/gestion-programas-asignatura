@@ -8,6 +8,7 @@ import { RUTAS } from '../../../constants/constants'
 const parserProgramaAsignatura = (
   programa: ProgramaAsignaturaAPIBody
 ): ProgramaAsignatura => {
+  console.log('API BODY', programa.descriptores)
   return {
     id: programa.id,
     cargaHoraria: {
@@ -24,7 +25,7 @@ const parserProgramaAsignatura = (
       semanasDictado: programa.carga_horaria.semanas_dictado
     },
     descriptores: {
-      resultadosAprendizaje: programa.descriptores.resultados_aprendizaje,
+      resultadosAprendizaje: programa.descriptores.resultados_de_aprendizaje,
       ejesTransversales: programa.descriptores.ejes_transversales,
       descriptores: programa.descriptores.descriptores,
       actividadesReservadas: programa.descriptores.actividades_reservadas

@@ -68,7 +68,7 @@ export interface ProgramaAsignaturaAPIBody {
     laboratorio_distancia: number
   }
   descriptores: {
-    resultados_aprendizaje: string[]
+    resultados_de_aprendizaje: string[]
     ejes_transversales: {
       id: number
       nombre: string
