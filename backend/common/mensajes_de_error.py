@@ -109,4 +109,4 @@ MENSAJE_VERSION_CERRADA_PARA_MODIFICACION = (
 MENSAJE_PERMISO_PROGRAMAS_PENDIENTES = (
     "No tiene permiso para accceder a programas pendientes."
 )
-MENSAJE_PERMISO_PROGRAMA = "No tiene permiso para acceder a este Programa aun."
+MENSAJE_PERMISO_PROGRAMA = "No tiene permiso para acceder a este Programa."

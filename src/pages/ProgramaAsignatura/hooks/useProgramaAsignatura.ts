@@ -14,7 +14,11 @@ type useProgramaAsignaturaType = {
   modoProgramaAsignatura: string
   loading: boolean
   error: boolean
+  mensajeDeError: string
 }
+
+const MENSAJE_ERROR_INESPERADO =
+  'Algo inesperado ha ocurrido. Intente nuevamente más tarde.'
 
 const useProgramaAsignatura = (
   id: string = '',
@@ -28,6 +32,7 @@ const useProgramaAsignatura = (
   )
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
+  const [mensajeDeError, setMensajeDeError] = useState<string>('')
 
   useEffect(
     () => {
@@ -51,12 +56,14 @@ const useProgramaAsignatura = (
           const response = await getProgramaAsignatura(id)
           if (response.status === 200 && response.data) {
             setProgramaAsignatura(response.data)
-          } else {
+          } else if (response.status !== 200 && response.error) {
             setError(true)
+            setMensajeDeError(response.error || MENSAJE_ERROR_INESPERADO)
           }
           setLoading(false)
         } catch (err) {
           setError(true)
+          setMensajeDeError(MENSAJE_ERROR_INESPERADO)
         }
       }
     }
@@ -70,7 +77,8 @@ const useProgramaAsignatura = (
     setProgramaAsignatura,
     modoProgramaAsignatura,
     loading,
-    error
+    error,
+    mensajeDeError
   }
 }
 

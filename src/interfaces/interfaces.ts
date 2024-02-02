@@ -98,3 +98,7 @@ export interface ProgramaAsignaturaAPIBody {
     extension_estudiantes: string
   }
 }
+
+export interface ObtenerProgramaAsignaturaAPIErrorBody {
+  error: string
+}

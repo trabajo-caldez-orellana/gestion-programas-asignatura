@@ -29,7 +29,7 @@ class InformacionProgramaAPI(APIView):
             programa = VersionProgramaAsignatura.objects.get(id=id_programa)
         except VersionProgramaAsignatura.DoesNotExist:
             return Response(
-                {"error": {"__all__": MENSAJE_ID_INEXISTENTE}},
+                {"error": MENSAJE_ID_INEXISTENTE},
                 status=HTTP_400_BAD_REQUEST,
             )
 
@@ -58,7 +58,7 @@ class InformacionProgramaAPI(APIView):
 
         if not tiene_permiso_de_ver_programa:
             return Response(
-                {"error": {"__all__": MENSAJE_PERMISO_PROGRAMA}},
+                {"error": MENSAJE_PERMISO_PROGRAMA},
                 status=HTTP_401_UNAUTHORIZED,
             )
 

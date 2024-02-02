@@ -1,7 +1,8 @@
 import { client } from '../../../utils/axiosClient'
 import {
   ProgramaAsignatura,
-  ProgramaAsignaturaAPIBody
+  ProgramaAsignaturaAPIBody,
+  ObtenerProgramaAsignaturaAPIErrorBody
 } from '../../../interfaces/interfaces'
 import { RUTAS } from '../../../constants/constants'
 
@@ -47,6 +48,12 @@ const parserProgramaAsignatura = (
   }
 }
 
+const parserErrores = (
+  error: ObtenerProgramaAsignaturaAPIErrorBody
+): string => {
+  return error.error
+}
+
 interface BodyInterface {
   data: ProgramaAsignaturaAPIBody
 }
@@ -62,11 +69,9 @@ export const getProgramaAsignatura = async (id: string) => {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.log(err)
     return {
       status: err.response.status,
-      // TODO. Parse error too!
-      error: err.response.data
+      error: parserErrores(err.response.data)
     }
   }
 }

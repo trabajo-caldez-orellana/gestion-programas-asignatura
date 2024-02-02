@@ -21,7 +21,8 @@ export default function ProgramaAsignatura({ modo }: { modo: string }) {
     setProgramaAsignatura,
     modoProgramaAsignatura,
     loading,
-    error
+    error,
+    mensajeDeError
   } = useProgramaAsignatura(id?.toString(), modo)
 
   const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
@@ -37,7 +38,13 @@ export default function ProgramaAsignatura({ modo }: { modo: string }) {
     postPrograma(isDraft)
   }
 
-  if (error) return <h1>Error</h1>
+  if (error)
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>{mensajeDeError}</p>
+      </div>
+    )
 
   if (loading || !programaAsignatura) return <h1>Cargando...</h1>
 
