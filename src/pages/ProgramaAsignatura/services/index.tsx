@@ -8,7 +8,6 @@ import { RUTAS } from '../../../constants/constants'
 const parserProgramaAsignatura = (
   programa: ProgramaAsignaturaAPIBody
 ): ProgramaAsignatura => {
-  console.log('API BODY', programa.descriptores)
   return {
     id: programa.id,
     cargaHoraria: {
