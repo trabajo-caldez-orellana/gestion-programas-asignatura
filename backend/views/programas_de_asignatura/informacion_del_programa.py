@@ -5,7 +5,6 @@ from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 
 from backend.models import VersionProgramaAsignatura
 from backend.services import ServicioRoles
-from backend.common.choices import EstadoAsignatura, Roles
 from backend.serializers import serializer_programa_asignatura
 from backend.common.mensajes_de_error import (
     MENSAJE_ID_INEXISTENTE,
@@ -23,8 +22,6 @@ class InformacionProgramaAPI(APIView):
         Obtiene informacion de un programa, modo solo lectura
         """
         servicio_rol = ServicioRoles()
-        roles = servicio_rol.obtener_roles_usuario(request.user)
-
         try:
             programa = VersionProgramaAsignatura.objects.get(id=id_programa)
         except VersionProgramaAsignatura.DoesNotExist:
@@ -33,34 +30,13 @@ class InformacionProgramaAPI(APIView):
                 status=HTTP_400_BAD_REQUEST,
             )
 
-        if programa.estado == EstadoAsignatura.APROBADO:
+        if servicio_rol.usuario_tiene_permiso_para_acceder_a_programa(
+            usuario=request.user, programa=programa
+        ):
             data = serializer_programa_asignatura(programa, True)
             return Response({"data": data})
 
-        tiene_permiso_de_ver_programa = False
-        for rol in roles:
-            if rol.rol == Roles.SECRETARIO:
-                tiene_permiso_de_ver_programa = tiene_permiso_de_ver_programa | True
-
-            if rol.rol == Roles.DIRECTOR_CARRERA:
-                # Verifica que la carrera tenga esa asignatura!
-                planes_relacionados = programa.asignatura.plan_de_estudio_set.all()
-                planes = planes_relacionados.filter(carrera=rol.carrera)
-
-                tiene_permiso_de_ver_programa = (
-                    tiene_permiso_de_ver_programa | planes.exist()
-                )
-
-            else:
-                tiene_permiso_de_ver_programa = tiene_permiso_de_ver_programa | (
-                    rol.asignatura == programa.asignatura
-                )
-
-        if not tiene_permiso_de_ver_programa:
-            return Response(
-                {"error": MENSAJE_PERMISO_PROGRAMA},
-                status=HTTP_401_UNAUTHORIZED,
-            )
-
-        data = serializer_programa_asignatura(programa, True)
-        return Response({"data": data})
+        return Response(
+            {"error": MENSAJE_PERMISO_PROGRAMA},
+            status=HTTP_401_UNAUTHORIZED,
+        )
