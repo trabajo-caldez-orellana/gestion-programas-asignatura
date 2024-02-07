@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { ProgramaAsignatura } from 'interfaces'
 import {
   getProgramaAsignatura,
-  getInformacionParaModificacion
+  getInformacionParaModificacion,
+  getInformacionNuevoPrograma
 } from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
@@ -52,6 +53,28 @@ const useProgramaAsignatura = (
     const fetchData = async (modo: string | null) => {
       if (modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO) {
         // TODO. Cuando es nuevo programa, deberia traer datos de los descriptores posibles y eso!!!
+        const datosNuevoPrograma = NUEVO_PROGRAMA_ASIGNATURA
+
+        try {
+          const response = await getInformacionNuevoPrograma(id)
+          if (response.status === 200 && response.data) {
+            datosNuevoPrograma.descriptores = {
+              ...NUEVO_PROGRAMA_ASIGNATURA.descriptores,
+              actividadesReservadas: response.data?.actividadesReservadas,
+              ejesTransversales: response.data?.ejesTransversales,
+              descriptores: response.data?.descriptores
+            }
+            setProgramaAsignatura(datosNuevoPrograma)
+          } else if (response.status !== 200 && response.error) {
+            setError(true)
+            setMensajeDeError(response.error || MENSAJE_ERROR_INESPERADO)
+          }
+          setLoading(false)
+        } catch (err) {
+          setError(true)
+          setMensajeDeError(MENSAJE_ERROR_INESPERADO)
+        }
+
         setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
         setLoading(false)
       } else if (modo === MODOS_PROGRAMA_ASIGNATURA.VER) {
@@ -68,7 +91,7 @@ const useProgramaAsignatura = (
           setError(true)
           setMensajeDeError(MENSAJE_ERROR_INESPERADO)
         }
-      } else {
+      } else if (modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR) {
         try {
           const response = await getInformacionParaModificacion(id)
           if (response.status === 200 && response.data) {
@@ -82,6 +105,9 @@ const useProgramaAsignatura = (
           setError(true)
           setMensajeDeError(MENSAJE_ERROR_INESPERADO)
         }
+      } else {
+        // TODO. agregar api para editar a partir del ultimo ultimo
+        setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
       }
     }
 

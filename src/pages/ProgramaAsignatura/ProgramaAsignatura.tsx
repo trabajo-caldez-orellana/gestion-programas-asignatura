@@ -13,6 +13,7 @@ import useProgramaAsignaturaMutation from './hooks/useProgramaAsignaturaMutation
 import './ProgramaAsignatura.css'
 
 export default function ProgramaAsignatura({ modo }: { modo: string }) {
+  // EN el caso de ser modo = NUEVO o EDITAR_ULTIMO, este id corresponderia a la asignatura a la que estamos entrando!!
   const { id } = useParams()
 
   // Este hook se encarga de hacer el get del programaAsignatura
