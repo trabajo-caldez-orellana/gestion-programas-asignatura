@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { ProgramaAsignatura } from 'interfaces'
-import { getProgramaAsignatura } from '../services'
+import {
+  getProgramaAsignatura,
+  getInformacionParaModificacion
+} from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
   NUEVO_PROGRAMA_ASIGNATURA
@@ -51,9 +54,23 @@ const useProgramaAsignatura = (
         // TODO. Cuando es nuevo programa, deberia traer datos de los descriptores posibles y eso!!!
         setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
         setLoading(false)
-      } else {
+      } else if (modo === MODOS_PROGRAMA_ASIGNATURA.VER) {
         try {
           const response = await getProgramaAsignatura(id)
+          if (response.status === 200 && response.data) {
+            setProgramaAsignatura(response.data)
+          } else if (response.status !== 200 && response.error) {
+            setError(true)
+            setMensajeDeError(response.error || MENSAJE_ERROR_INESPERADO)
+          }
+          setLoading(false)
+        } catch (err) {
+          setError(true)
+          setMensajeDeError(MENSAJE_ERROR_INESPERADO)
+        }
+      } else {
+        try {
+          const response = await getInformacionParaModificacion(id)
           if (response.status === 200 && response.data) {
             setProgramaAsignatura(response.data)
           } else if (response.status !== 200 && response.error) {

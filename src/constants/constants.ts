@@ -4,7 +4,8 @@ export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/api/programas/',
   POST_PROGRAMAS_ASIGNATURAS: '/api/programa/',
   GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
-  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/'
+  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
+  GET_PROGRAMA_PARA_MODIFICAR: '/api/programas/informacion_modificion/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
