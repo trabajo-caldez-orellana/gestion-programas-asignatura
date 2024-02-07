@@ -35,6 +35,8 @@ urls_programas = [
         InformacionModificacionProgramaAPI.as_view(),
     ),
     path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    # TODO. Crear una API nueva para editar el ultimo!!
+    path("editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
 ]
 
 historial_patterns = [
