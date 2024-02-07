@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 
-from backend.models import Usuario, Rol, VersionProgramaAsignatura
+from backend.models import Usuario, Rol, VersionProgramaAsignatura, Asignatura
 from backend.common.choices import EstadoAsignatura, Roles
 
 
@@ -9,6 +9,17 @@ class ServicioRoles:
         roles = Rol.objects.filter(usuario=usuario)
 
         return roles
+
+    def usuario_tiene_permiso_para_crear_programa(
+        self, usuario: Usuario, asignatura: Asignatura
+    ) -> bool:
+        roles = self.obtener_roles_usuario(usuario)
+
+        for rol in roles:
+            if (rol.rol == Roles.DOCENTE or rol.rol == Roles.TITULAR_CATEDRA) and rol.asignatura == asignatura:
+                return True
+        
+        return False
 
     def usuario_tiene_permiso_para_acceder_a_programa(
         self, usuario: Usuario, programa: VersionProgramaAsignatura

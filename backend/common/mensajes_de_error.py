@@ -78,7 +78,7 @@ MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA = (
 MENSAJE_SEMESTRE_DEBE_PERTENECER_A_ANIO_LECTIVO = (
     "Las fechas del semestre deben estar dentro del anio lectivo seleccionado."
 )
-MENSAJE_ID_INEXISTENTE = "El ID provisto no pertenece a ningun programa de asignatura."
+MENSAJE_ID_INEXISTENTE = "El ID provisto no es valido."
 MENSAJE_PROGRAMA_APROBADO = "No es posible modificar un programa que ya fue aprobado."
 
 # Mensajes relacionados a semestres y anios lectivos
