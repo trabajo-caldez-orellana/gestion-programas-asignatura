@@ -78,6 +78,7 @@ MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA = (
 MENSAJE_SEMESTRE_DEBE_PERTENECER_A_ANIO_LECTIVO = (
     "Las fechas del semestre deben estar dentro del anio lectivo seleccionado."
 )
+MENSAJE_PROGRAMA_YA_EXISTENTE = "Ya fue creado un programa para la asignatura para el semestre siguiente."
 
 # Mensajes relacionados a semestres y anios lectivos
 MENSAJE_NO_PUEDEN_HABER_VARIOS_SEMESTRES_CON_LA_MISMA_FECHA = "No se puede definir un semestre que este activo al mismo momento que otro. Verifique las fechas."
