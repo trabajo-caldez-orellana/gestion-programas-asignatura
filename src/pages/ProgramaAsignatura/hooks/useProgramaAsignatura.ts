@@ -3,7 +3,8 @@ import { ProgramaAsignatura } from 'interfaces'
 import {
   getProgramaAsignatura,
   getInformacionParaModificacion,
-  getInformacionNuevoPrograma
+  getInformacionNuevoPrograma,
+  getInformacionModificarAPartirUltimo
 } from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
@@ -106,8 +107,19 @@ const useProgramaAsignatura = (
           setMensajeDeError(MENSAJE_ERROR_INESPERADO)
         }
       } else {
-        // TODO. agregar api para editar a partir del ultimo ultimo
-        setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
+        try {
+          const response = await getInformacionModificarAPartirUltimo(id)
+          if (response.status === 200 && response.data) {
+            setProgramaAsignatura(response.data)
+          } else if (response.status !== 200 && response.error) {
+            setError(true)
+            setMensajeDeError(response.error || MENSAJE_ERROR_INESPERADO)
+          }
+          setLoading(false)
+        } catch (err) {
+          setError(true)
+          setMensajeDeError(MENSAJE_ERROR_INESPERADO)
+        }
       }
     }
 

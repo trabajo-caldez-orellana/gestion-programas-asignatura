@@ -5,9 +5,12 @@ export const RUTAS = {
   POST_PROGRAMAS_ASIGNATURAS: '/api/programa/',
   GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
   GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
-  GET_PROGRAMA_PARA_MODIFICAR: '/api/programas/informacion_modificion/',
-  GET_DATOS_PARA_NUEVO_PROGRAMA: '/api/programas/nuevo/'
+  GET_PROGRAMA_PARA_MODIFICAR: '/api/informacion-formularios/editar/',
+  GET_DATOS_PARA_NUEVO_PROGRAMA: '/api/informacion-formularios/nuevo/',
+  GET_DATOS_PARA_REUTILIZAR_ULTIMO_PROGRAMA:
+    '/api/informacion-formularios/editar_ultimo/'
 }
+
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
   POST_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignatura/:id',
