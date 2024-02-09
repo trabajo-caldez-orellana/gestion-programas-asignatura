@@ -15,6 +15,7 @@ from backend.models import (
     ProgramaTieneDescriptor,
     ProgramaTieneActividadReservada,
     Rol,
+    Semestre
 )
 from backend.common.choices import (
     NivelDescriptor,
@@ -48,6 +49,8 @@ from backend.common.mensajes_de_error import (
     MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
     MENSAJE_NIVEL_INVALIDO,
     MENSAJE_VERSION_CERRADA_PARA_MODIFICACION,
+    MENSAJE_PROGRAMA_YA_EXISTENTE
+    
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
@@ -237,6 +240,11 @@ class ServicioVersionProgramaAsignatura:
 
         return True
 
+    def _el_programa_ya_existe(self, asignatura: Asignatura, semestre: Semestre) -> bool:
+        programas_count = VersionProgramaAsignatura.objects.filter(asignatura_id=asignatura.id, semestre_id=semestre.id).count()
+        return count > 0
+
+
     def crear_nueva_version_programa_asignatura(
         self,
         asignatura: Asignatura,
@@ -264,6 +272,10 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         semestre = self.servicio_semestre.obtener_semestre_siguiente()
+
+        if not self._el_programa_ya_existe():
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
+
 
         mensajes_de_error = {}
         if len(descriptores) == 0:
@@ -647,6 +659,10 @@ class ServicioVersionProgramaAsignatura:
             asignatura.semestre_dictado
         ):
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
+
+
+        if not self._el_programa_ya_existe():
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
         try:
             ultimo_programa = VersionProgramaAsignatura.objects.get(
