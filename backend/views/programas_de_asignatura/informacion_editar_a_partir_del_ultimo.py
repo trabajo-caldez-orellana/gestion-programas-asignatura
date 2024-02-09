@@ -13,6 +13,39 @@ from backend.common.mensajes_de_error import (
 )
 
 
+PROGRAMA_VACIO = {
+        "id": -1,
+        "carga_horaria": {
+            "semanas_dictado": "",
+            "teoria_presencial": "",
+            "practica_presencial": "",
+            "teorico_practico_presencial": "",
+            "laboratorio_presencial": "",
+            "teoria_distancia": "",
+            "practica_distancia": "",
+            "teorico_practico_distancia": "",
+            "laboratorio_distancia": "",
+        },
+        "descriptores": {
+            "resultados_de_aprendizaje": [],
+            "ejes_transversales": [],
+            "descriptores": [],
+            "actividades_reservadas": [],
+        },
+        "informacion_adicional": {
+            "fundamentacion": "",
+            "contenidos": "",
+            "bibliografia": "",
+            "metodologia_aplicada": "",
+            "recursos": "",
+            "evaluacion": "",
+            "investigacion_docentes": "",
+            "investigacion_estudiantes": "",
+            "extension_docentes": "",
+            "extension_estudiantes": "",
+        },
+    }
+
 class InformacionEditarProgramaAPartirDelUltimoAPI(APIView):
     permission_classes = [
         IsAuthenticated,
@@ -44,7 +77,9 @@ class InformacionEditarProgramaAPartirDelUltimoAPI(APIView):
           except VersionProgramaAsignatura.DoesNotExist:
               # en vez de fallar, va a generar datos para crear desde cero
             data = servicio_programa.obtener_datos_para_nuevo_programa(asignatura)
-            return Response({"data": data})
+            programa_vacio = {**PROGRAMA_VACIO}
+            programa_vacio["descriptores"] = data
+            return Response({"data": programa_vacio})
         
         return Response(
             {"error": MENSAJE_PERMISO_PROGRAMA},
