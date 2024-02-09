@@ -24,19 +24,22 @@ from backend.views import (
     InformacionProgramaAPI,
     InformacionModificacionProgramaAPI,
     InformacionNuevoProgramaAPI,
+    InformacionEditarProgramaAPartirDelUltimoAPI
 )
 
 urls_programas = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),
+]
+
+formularios_patterns = [
     path(
-        "informacion_modificion/<id_programa>/",
-        InformacionModificacionProgramaAPI.as_view(),
-    ),
+            "editar/<id_programa>/",
+            InformacionModificacionProgramaAPI.as_view(),
+        ),
     path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
-    # TODO. Crear una API nueva para editar el ultimo!!
-    path("editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
 ]
 
 historial_patterns = [
@@ -50,4 +53,5 @@ urlpatterns = [
     path("auth/", include("djoser.social.urls")),
     path("api/programas/", include(urls_programas)),
     path("api/historial/", include(historial_patterns)),
+    path("api/informacion-formularios/", include(formularios_patterns))
 ]
