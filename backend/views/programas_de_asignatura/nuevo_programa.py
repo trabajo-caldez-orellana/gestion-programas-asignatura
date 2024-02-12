@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from django.core.exceptions import ValidationError
 
-from backend.models import VersionProgramaAsignatura, Asignatura
+from backend.models import Asignatura
 from backend.serializers import serializer_programa_asignatura
 from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura
 from backend.common.mensajes_de_error import (
