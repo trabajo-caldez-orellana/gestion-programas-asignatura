@@ -23,7 +23,7 @@ class SerializadorEjesyActividades(serializers.Serializer):
     nivel = serializers.IntegerField()
     id = serializers.CharField()
 
-class InformacionProgramaAPI(APIView):
+class ModificarProgramaAPI(APIView):
     permission_classes = [
         IsAuthenticated,
     ]

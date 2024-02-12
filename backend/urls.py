@@ -24,6 +24,7 @@ from backend.views import (
     InformacionProgramaAPI,
     InformacionModificacionProgramaAPI,
     InformacionNuevoProgramaAPI,
+    ModificarProgramaAPI
 )
 
 programas_patterns = [
@@ -34,9 +35,10 @@ programas_patterns = [
         "informacion_modificion/<id_programa>/",
         InformacionModificacionProgramaAPI.as_view(),
     ),
-    path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    path("informacion_nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     # TODO. Crear una API nueva para editar el ultimo!!
-    path("editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    path("informacion_editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    path("modificar-programa/<id-programa>/", ModificarProgramaAPI.as_view())
 ]
 
 historial_patterns = [
