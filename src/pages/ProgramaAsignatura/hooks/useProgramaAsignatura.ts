@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ProgramaAsignatura } from 'interfaces'
+import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import {
   getProgramaAsignatura,
   getInformacionParaModificacion,
@@ -11,9 +11,9 @@ import {
 } from '../../../constants/constants'
 
 type useProgramaAsignaturaType = {
-  programaAsignatura: ProgramaAsignatura | null
+  programaAsignatura: ProgramaAsignaturaInterface | null
   setProgramaAsignatura: React.Dispatch<
-    React.SetStateAction<ProgramaAsignatura | null>
+    React.SetStateAction<ProgramaAsignaturaInterface | null>
   >
   modoProgramaAsignatura: string
   loading: boolean
@@ -29,7 +29,7 @@ const useProgramaAsignatura = (
   modo: string | null
 ): useProgramaAsignaturaType => {
   const [programaAsignatura, setProgramaAsignatura] =
-    useState<ProgramaAsignatura | null>(null)
+    useState<ProgramaAsignaturaInterface | null>(null)
   // Persistimos el modo, por defecto es VER
   const [modoProgramaAsignatura, setModoProgramaAsignatura] = useState<string>(
     MODOS_PROGRAMA_ASIGNATURA.VER

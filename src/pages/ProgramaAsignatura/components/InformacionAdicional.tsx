@@ -1,13 +1,15 @@
 import { camelCase } from 'lodash'
-import { ProgramaAsignatura } from '../../../interfaces'
+import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
   CAMPOS_INFORMACION_ADICIONAL
 } from '../../../constants/constants'
 
 interface InformacionAdicionalProps {
-  programaAsignatura: ProgramaAsignatura
-  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  programaAsignatura: ProgramaAsignaturaInterface
+  setProgramaAsignatura: (
+    programaAsignatura: ProgramaAsignaturaInterface
+  ) => void
   modoProgramaAsignatura: string
 }
 

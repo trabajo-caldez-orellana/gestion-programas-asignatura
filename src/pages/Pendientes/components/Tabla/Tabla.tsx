@@ -7,8 +7,6 @@ interface PropiedadesTablaPendientes {
 }
 
 export default function Tabla({ datos }: PropiedadesTablaPendientes) {
-  // Si acciones no es null entonces renderizamos esa columna
-
   const columnasTablaPendientes = [
     'ASIGNATURA',
     'TAREA PENDIENTE',

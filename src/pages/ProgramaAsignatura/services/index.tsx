@@ -1,6 +1,6 @@
 import { client } from '../../../utils/axiosClient'
 import {
-  ProgramaAsignatura,
+  ProgramaAsignaturaInterface,
   ProgramaAsignaturaAPIBody,
   ObtenerProgramaAsignaturaAPIErrorBody,
   NuevoProgramaAPIBody,
@@ -10,7 +10,7 @@ import { RUTAS } from '../../../constants/constants'
 
 const parserProgramaAsignatura = (
   programa: ProgramaAsignaturaAPIBody
-): ProgramaAsignatura => {
+): ProgramaAsignaturaInterface => {
   return {
     id: programa.id,
     cargaHoraria: {
@@ -131,7 +131,7 @@ export const getInformacionParaModificacion = async (id: string) => {
 
 // TODO. Esto creo que se va a eliminar proximamente....
 export const postProgramaAsignatura = async (
-  programaAsignatura: ProgramaAsignatura | null,
+  programaAsignatura: ProgramaAsignaturaInterface | null,
   isDraft: boolean
 ) => {
   const response = await client.post(

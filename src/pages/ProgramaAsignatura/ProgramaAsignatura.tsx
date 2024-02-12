@@ -7,12 +7,11 @@ import {
   BotonesProgramaAsignatura
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
-import { ProgramaAsignatura } from '../../interfaces'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
 import useProgramaAsignaturaMutation from './hooks/useProgramaAsignaturaMutation'
 import './ProgramaAsignatura.css'
 
-export default function ProgramaAsignatura({ modo }: { modo: string }) {
+const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
   // EN el caso de ser modo = NUEVO o EDITAR_ULTIMO, este id corresponderia a la asignatura a la que estamos entrando!!
   const { id } = useParams()
 
@@ -76,3 +75,5 @@ export default function ProgramaAsignatura({ modo }: { modo: string }) {
     </section>
   )
 }
+
+export default ProgramaAsignatura

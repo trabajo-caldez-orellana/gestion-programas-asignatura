@@ -1,4 +1,4 @@
-import { ProgramaAsignatura } from '../../../interfaces'
+import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
@@ -6,8 +6,10 @@ import {
 } from '../../../constants/constants'
 
 interface CargaHorariaProps {
-  programaAsignatura: ProgramaAsignatura
-  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  programaAsignatura: ProgramaAsignaturaInterface
+  setProgramaAsignatura: (
+    programaAsignatura: ProgramaAsignaturaInterface
+  ) => void
   modoProgramaAsignatura: string
 }
 

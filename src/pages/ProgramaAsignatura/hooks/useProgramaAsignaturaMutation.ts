@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ProgramaAsignatura } from '../../../interfaces'
+import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import { postProgramaAsignatura } from '../services'
 
 type useProgramaAsignaturaMutationType = {
@@ -9,7 +9,7 @@ type useProgramaAsignaturaMutationType = {
 }
 
 const useProgramaAsignatura = (
-  programaAsignatura: ProgramaAsignatura | null
+  programaAsignatura: ProgramaAsignaturaInterface | null
 ): useProgramaAsignaturaMutationType => {
   const [resultPostProgramaAsignatura, setResultPostProgramaAsignatura] =
     useState<boolean>(false)

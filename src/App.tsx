@@ -3,16 +3,10 @@ import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
 import { Navbar } from './components'
-import {
-  Historial,
-  TareasPendientes,
-  ProgramaAsignatura,
-  ProgramasVigentes
-} from './pages'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
-import { MODOS_PROGRAMA_ASIGNATURA } from './constants/constants'
+import { PAGINAS } from './constants/constants'
 
 export default function App() {
   // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
@@ -70,44 +64,19 @@ export default function App() {
       <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
         {/* TODO: Crear componente rutas */}
         <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="App">
-                {profile ? <h1>Bienvenido {profile.firstName}! :D</h1> : <></>}
-              </div>
-            }
-          />
-          <Route path="/carrera" element={<h1>Carrera</h1>} />
-          <Route path="/plan-estudio" element={<h1>Plan de Estudio</h1>} />
-          <Route path="/descriptores" element={<h1>Descriptores</h1>} />
-          <Route
-            path="/bloque-curricular"
-            element={<h1>Bloque curricular</h1>}
-          />
-          <Route path="/programas-vigentes" element={<ProgramasVigentes />} />
-          <Route path="/programa-asignaturas" element={<Historial />} />
-
-          <Route
-            path="/programa-asignaturas/:id"
-            element={
-              <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.VER} />
-            }
-          />
-          <Route
-            path="/programa-asignaturas/editar/:id"
-            element={
-              <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.EDITAR} />
-            }
-          />
-          <Route
-            path="/programa-asignaturas/nuevo/:id"
-            element={
-              <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.NUEVO} />
-            }
-          />
-          <Route path="/tareas-pendientes" element={<TareasPendientes />} />
-          <Route path="/auditoria" element={<h1>Auditoria</h1>} />
+          {PAGINAS.map((pagina) => (
+            <Route
+              key={pagina.key}
+              path={pagina.path}
+              element={
+                pagina.modo ? (
+                  <pagina.component modo={pagina.modo} />
+                ) : (
+                  <pagina.component />
+                )
+              }
+            />
+          ))}
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>
       </main>
