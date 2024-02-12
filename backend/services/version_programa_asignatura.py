@@ -439,7 +439,7 @@ class ServicioVersionProgramaAsignatura:
         # Formato descriptores, actividades y ejes transversales:
         # {
         #  "id": number,
-        #  "nivel": boolean
+        #  "seleccionado": boolean
         # }
 
         mensajes_de_error = {}
@@ -447,7 +447,7 @@ class ServicioVersionProgramaAsignatura:
         cantidad_descriptores = 0
         for descriptor in descriptores:
             try:
-                if descriptor["nivel"]:
+                if descriptor["seleccionado"]:
                     cantidad_descriptores += 1
             except (TypeError, KeyError, ValueError) as exc:
                 raise ValidationError(
@@ -516,6 +516,7 @@ class ServicioVersionProgramaAsignatura:
                 # La lista de descriptores tiene el siguiente formato:
                 # {
                 #   "id": int
+                #   "seleccionado": boolean
                 # }
                 for descriptor in descriptores:
                     try:
@@ -534,18 +535,19 @@ class ServicioVersionProgramaAsignatura:
                         )
 
                         if not descriptor_programa.exists():
-                            self._asignar_o_modificar_descriptor_prograna(
-                                instancia_descriptor,
-                                version_programa,
-                                descriptor["nivel"],
-                            )
+                            if descriptor["seleccionado"]:
+                                self._asignar_o_modificar_descriptor_prograna(
+                                    instancia_descriptor,
+                                    version_programa,
+                                    NivelDescriptor.MEDIO,
+                                )
 
                         else:
                             instancia = descriptor_programa.first()
                             self._asignar_o_modificar_descriptor_prograna(
                                 instancia_descriptor,
                                 version_programa,
-                                descriptor["nivel"],
+                                NivelDescriptor.MEDIO if descriptor["seleccionado"] else NivelDescriptor.NADA,
                                 instancia,
                             )
 
@@ -587,11 +589,12 @@ class ServicioVersionProgramaAsignatura:
                                 eje_transversal_programa,
                             )
                         except ProgramaTieneDescriptor.DoesNotExist:
-                            self._asignar_o_modificar_descriptor_prograna(
-                                instancia_eje_transversal,
-                                version_programa,
-                                eje["nivel"],
-                            )
+                            if eje["nivel"] != NivelDescriptor.NADA:
+                                self._asignar_o_modificar_descriptor_prograna(
+                                    instancia_eje_transversal,
+                                    version_programa,
+                                    eje["nivel"],
+                                )
 
                     except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
@@ -635,10 +638,11 @@ class ServicioVersionProgramaAsignatura:
                                 actividad_reservada_programa,
                             )
                         except ProgramaTieneActividadReservada.DoesNotExist:
-                            self._asignar_o_modificar_nivel_actividad_reservada(
-                                instancia_actividad_reservada,
-                                version_programa,
-                                actividad["nivel"],
+                            if actividad["nivel"] != NivelDescriptor.NADA:
+                                self._asignar_o_modificar_nivel_actividad_reservada(
+                                    instancia_actividad_reservada,
+                                    version_programa,
+                                    actividad["nivel"],
                             )
                     except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
