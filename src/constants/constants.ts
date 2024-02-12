@@ -6,7 +6,8 @@ export const RUTAS = {
   GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
   GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
   GET_PROGRAMA_PARA_MODIFICAR: '/api/programas/informacion_modificion/',
-  GET_DATOS_PARA_NUEVO_PROGRAMA: '/api/programas/nuevo/'
+  GET_DATOS_PARA_NUEVO_PROGRAMA: '/api/programas/nuevo/',
+  GET_TAREAS_PENDIENTES: '/api/programas/pendientes/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
@@ -162,8 +163,10 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
 ]
 
 type SidebarSection = {
+  id: number
   name: string
   sections: {
+    id: number
     name: string
     url: string
   }[]
@@ -171,40 +174,59 @@ type SidebarSection = {
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
+    id: 1,
     name: 'Carrera',
     sections: [
       {
+        id: 1,
         name: 'Carrera',
         url: '/carrera'
       },
       {
+        id: 2,
         name: 'Plan de Estudio',
         url: '/plan-estudio'
       },
       {
+        id: 3,
         name: 'Descriptores',
         url: '/descriptores'
       }
     ]
   },
   {
+    id: 2,
     name: 'Asignaturas',
     sections: [
       {
+        id: 1,
         name: 'Bloque curricular',
         url: '/bloque-curricular'
       },
       {
+        id: 2,
+        name: 'Programa de asignaturas',
+        url: '/programa-asignaturas'
+      },
+      {
+        id: 3,
         name: 'Auditoria',
         url: '/auditoria'
       },
       {
+        id: 4,
         name: 'Programas vigentes',
         url: '/programas-vigentes'
       },
       {
+        id: 5,
         name: 'Historial',
         url: '/programas-asignatura'
+      },
+      {
+        id: 6,
+        name: 'Tareas Pendientes',
+        url: '/tareas-pendientes'
       }
     ]
   }

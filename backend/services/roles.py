@@ -7,7 +7,6 @@ from backend.common.choices import EstadoAsignatura, Roles
 class ServicioRoles:
     def obtener_roles_usuario(self, usuario: Usuario) -> QuerySet[Rol]:
         roles = Rol.objects.filter(usuario=usuario)
-
         return roles
 
     def usuario_tiene_permiso_para_crear_programa(
