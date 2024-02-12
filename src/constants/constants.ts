@@ -219,11 +219,6 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         url: '/programas-vigentes'
       },
       {
-        id: 5,
-        name: 'Historial',
-        url: '/programas-asignatura'
-      },
-      {
         id: 6,
         name: 'Tareas Pendientes',
         url: '/tareas-pendientes'
