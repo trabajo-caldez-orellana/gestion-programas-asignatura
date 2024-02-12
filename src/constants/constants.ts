@@ -4,7 +4,9 @@ export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/api/programas/',
   POST_PROGRAMAS_ASIGNATURAS: '/api/programa/',
   GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
-  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/'
+  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
+  GET_PROGRAMA_PARA_MODIFICAR: '/api/programas/informacion_modificion/',
+  GET_DATOS_PARA_NUEVO_PROGRAMA: '/api/programas/nuevo/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
@@ -16,7 +18,8 @@ export const HANDLERS = {
 export const MODOS_PROGRAMA_ASIGNATURA = {
   VER: 'VER',
   NUEVO: 'NUEVO',
-  EDITAR: 'EDITAR'
+  EDITAR: 'EDITAR',
+  EDITAR_ULTIMO: 'EDITAR_ULTIMO'
 }
 
 export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignatura = {

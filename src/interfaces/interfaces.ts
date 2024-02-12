@@ -54,6 +54,24 @@ export interface ProgramaAsignatura {
   informacionAdicional: InformacionAdicional
 }
 
+export interface NuevoPrograma {
+  ejesTransversales: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
+  descriptores: {
+    id: number
+    nombre: string
+    seleccionado: boolean
+  }[]
+  actividadesReservadas: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
+}
+
 export interface ProgramaAsignaturaAPIBody {
   id: number
   carga_horaria: {
@@ -97,6 +115,24 @@ export interface ProgramaAsignaturaAPIBody {
     extension_docentes: string
     extension_estudiantes: string
   }
+}
+
+export interface NuevoProgramaAPIBody {
+  ejes_transversales: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
+  descriptores: {
+    id: number
+    nombre: string
+    seleccionado: boolean
+  }[]
+  actividades_reservadas: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
 }
 
 export interface ObtenerProgramaAsignaturaAPIErrorBody {

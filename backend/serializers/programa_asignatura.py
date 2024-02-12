@@ -59,26 +59,96 @@ def serializer_programa_asignatura(
                 tipo=TipoDescriptor.DESCRIPTOR
             ):
                 descriptores_disponibles_para_modificar_programa.add(descriptor)
-            for eje in estandar.descriptores.filter(
+            for actividad in estandar.descriptores.filter(
                 tipo=TipoDescriptor.EJE_TRANSVERSAL
             ):
-                ejes_transversales_disponibles_para_modificar_programa.add(eje)
+                ejes_transversales_disponibles_para_modificar_programa.add(actividad)
 
-    # El array con el nivel
-    descriptores_del_programa = ProgramaTieneDescriptor.objects.filter(
-        version_programa_asignatura=programa, descriptor__tipo=TipoDescriptor.DESCRIPTOR
-    ).values("descriptor_id", "descriptor__descripcion", "nivel")
-    ejes_transversales_del_programa = ProgramaTieneDescriptor.objects.filter(
-        version_programa_asignatura=programa,
-        descriptor__tipo=TipoDescriptor.EJE_TRANSVERSAL,
-    ).values("descriptor_id", "descriptor__descripcion", "nivel")
-    actividades_reservadas_del_programa = (
-        ProgramaTieneActividadReservada.objects.filter(
-            version_programa_asignatura=programa
-        )
-    ).values("actividad_reservada_id", "actividad_reservada__descripcion", "nivel")
+        descriptores_del_programa = []
+        ejes_transversales_del_programa = []
+        actividades_reservadas_del_programa = []
+        
+        for descriptor in descriptores_disponibles_para_modificar_programa:
+            try: 
+                descriptor_del_programa = ProgramaTieneDescriptor.objects.get(
+                    version_programa_asignatura_id=programa.id,
+                    descriptor_id=descriptor.id
+                )
+                descriptores_del_programa.append(
+                    {
+                        "id": descriptor_del_programa.descriptor_id,
+                        "nombre": descriptor_del_programa.descriptor.descripcion,
+                        "seleccionado": descriptor_del_programa.nivel != NivelDescriptor.NADA
+                    }
+                )
+            except ProgramaTieneDescriptor.DoesNotExist:
+                descriptores_del_programa.append(
+                    {
+                        "id": descriptor.id,
+                        "nombre": descriptor.descripcion,
+                        "seleccionado": False
+                    }
+                )
 
-    if solo_lectura:
+        for eje in ejes_transversales_disponibles_para_modificar_programa:
+            try: 
+                eje_del_programa = ProgramaTieneDescriptor.objects.get(
+                    version_programa_asignatura_id=programa.id,
+                    descriptor_id=eje.id
+                )
+                ejes_transversales_del_programa.append(
+                    {
+                        "id": eje_del_programa.descriptor_id,
+                        "nombre": eje_del_programa.descriptor.descripcion,
+                        "nivel": eje_del_programa.nivel
+                    }
+                )
+            except ProgramaTieneDescriptor.DoesNotExist:
+                ejes_transversales_del_programa.append(
+                    {
+                        "id": eje.id,
+                        "nombre": eje.descripcion,
+                        "nivel": NivelDescriptor.NADA
+                    }
+                )
+        
+        for actividad in actividades_reservadas_disponibles_pera_modificar_programa:
+            try: 
+                actividad_del_programa = ProgramaTieneActividadReservada.objects.get(
+                    version_programa_asignatura_id=programa.id,
+                    actividad_reservada_id=actividad.id
+                )
+                actividades_reservadas_del_programa.append(
+                    {
+                        "id": actividad_del_programa.actividad_reservada_id,
+                        "nombre": actividad_del_programa.actividad_reservada.descripcion,
+                        "nivel": actividad_del_programa.nivel
+                    }
+                )
+            except ProgramaTieneActividadReservada.DoesNotExist:
+                actividades_reservadas_del_programa.append(
+                    {
+                        "id": actividad.id,
+                        "nombre": actividad.descripcion,
+                        "nivel": NivelDescriptor.NADA
+                    }
+                )
+
+    else:
+        # El array con el nivel
+        descriptores_del_programa = ProgramaTieneDescriptor.objects.filter(
+            version_programa_asignatura=programa, descriptor__tipo=TipoDescriptor.DESCRIPTOR
+        ).values("descriptor_id", "descriptor__descripcion", "nivel")
+        ejes_transversales_del_programa = ProgramaTieneDescriptor.objects.filter(
+            version_programa_asignatura=programa,
+            descriptor__tipo=TipoDescriptor.EJE_TRANSVERSAL,
+        ).values("descriptor_id", "descriptor__descripcion", "nivel")
+        actividades_reservadas_del_programa = (
+            ProgramaTieneActividadReservada.objects.filter(
+                version_programa_asignatura=programa
+            )
+        ).values("actividad_reservada_id", "actividad_reservada__descripcion", "nivel")
+
         descriptores_del_programa = SerializerProgramaTieneDescriptor(
             descriptores_del_programa, many=True
         ).data
@@ -88,12 +158,6 @@ def serializer_programa_asignatura(
         actividades_reservadas_del_programa = SerializerProgramaTieneActividadReservada(
             actividades_reservadas_del_programa, many=True
         ).data
-    else:
-        # TODO: controlar que descriptores estan asociados con el programa y cuales no, y
-        # Armar un array con el formato necesario
-        descriptores_del_programa = []
-        ejes_transversales_del_programa = []
-        descriptores_del_programa = []
 
     return {
         "id": programa.id,

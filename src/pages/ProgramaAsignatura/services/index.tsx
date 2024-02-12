@@ -2,7 +2,9 @@ import { client } from '../../../utils/axiosClient'
 import {
   ProgramaAsignatura,
   ProgramaAsignaturaAPIBody,
-  ObtenerProgramaAsignaturaAPIErrorBody
+  ObtenerProgramaAsignaturaAPIErrorBody,
+  NuevoProgramaAPIBody,
+  NuevoPrograma
 } from '../../../interfaces/interfaces'
 import { RUTAS } from '../../../constants/constants'
 
@@ -48,6 +50,16 @@ const parserProgramaAsignatura = (
   }
 }
 
+const parserNuevoProgramaAsignatura = (
+  datos: NuevoProgramaAPIBody
+): NuevoPrograma => {
+  return {
+    ejesTransversales: datos.ejes_transversales,
+    actividadesReservadas: datos.actividades_reservadas,
+    descriptores: datos.descriptores
+  }
+}
+
 const parserErrores = (
   error: ObtenerProgramaAsignaturaAPIErrorBody
 ): string => {
@@ -63,6 +75,47 @@ export const getProgramaAsignatura = async (id: string) => {
     const response = await client.get<BodyInterface>(
       `${RUTAS.GET_PROGRAMA_ASIGNATURA}${id}/`
     )
+    return {
+      status: response.status,
+      data: parserProgramaAsignatura(response.data.data)
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    return {
+      status: err.response.status,
+      error: parserErrores(err.response.data)
+    }
+  }
+}
+
+interface ProgramaNuevoBodyInterface {
+  data: NuevoProgramaAPIBody
+}
+
+export const getInformacionNuevoPrograma = async (id: string) => {
+  try {
+    const response = await client.get<ProgramaNuevoBodyInterface>(
+      `${RUTAS.GET_DATOS_PARA_NUEVO_PROGRAMA}${id}/`
+    )
+    return {
+      status: response.status,
+      data: parserNuevoProgramaAsignatura(response.data.data)
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    return {
+      status: err.response.status,
+      error: parserErrores(err.response.data)
+    }
+  }
+}
+
+export const getInformacionParaModificacion = async (id: string) => {
+  try {
+    const response = await client.get<BodyInterface>(
+      `${RUTAS.GET_PROGRAMA_PARA_MODIFICAR}${id}/`
+    )
+
     return {
       status: response.status,
       data: parserProgramaAsignatura(response.data.data)

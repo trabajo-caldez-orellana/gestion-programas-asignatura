@@ -15,6 +15,7 @@ from backend.models import (
     ProgramaTieneDescriptor,
     ProgramaTieneActividadReservada,
     Rol,
+    Carrera
 )
 from backend.common.choices import (
     NivelDescriptor,
@@ -257,6 +258,7 @@ class ServicioVersionProgramaAsignatura:
         """
         Crea una nueva version de un programa de asignatura para el semestre que viene!
         """
+        # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
 
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
@@ -642,6 +644,7 @@ class ServicioVersionProgramaAsignatura:
         """
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
         """
+        # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
 
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
@@ -834,3 +837,51 @@ class ServicioVersionProgramaAsignatura:
 
         if rol.rol == Roles.SECRETARIO:
             return []
+
+    def obtener_datos_para_nuevo_programa(self, asignatura: Asignatura):
+        # obtengo todos los estandares/programas a los que pertenece la asignatura
+        carreras = Carrera.objects.filter(
+            plandeestudio__asignaturas=asignatura
+        ).distinct()
+        carreras_id = [carrera.id for carrera in carreras]
+        # obtengo todos los estandares relacionadas a la carrera
+        estandares = Estandar.objects.filter(carrera_id__in=carreras_id)
+        estandares_id = [estandar.id for estandar in estandares]
+
+        # Obtengo las actividades reservadas
+        actividades_reservadas_disponibles_para_nuevo_programa = (
+            ActividadReservada.objects.filter(estandar_id__in=estandares_id)
+        )
+
+        # obtengo todos los descriptores posibles
+        descriptores_del_programa_disponibles_para_nuevo_programa = set()
+        ejes_transversales_del_programa_disponibles = set()
+        for estandar in estandares:
+            for descriptor in estandar.descriptores.filter(
+                tipo=TipoDescriptor.DESCRIPTOR
+            ):
+                descriptores_del_programa_disponibles_para_nuevo_programa.add(descriptor)
+            for eje in estandar.descriptores.filter(
+                tipo=TipoDescriptor.EJE_TRANSVERSAL
+            ):
+                ejes_transversales_del_programa_disponibles.add(eje)
+
+
+        ejes_transversales_del_programa = [
+            {"id": eje.id, "nombre": eje.descripcion, "nivel": NivelDescriptor.NADA}
+            for eje in ejes_transversales_del_programa_disponibles
+        ]
+        descriptores_del_programa = [
+            {"id": descriptor.id, "nombre": descriptor.descripcion, "seleccionado": False}
+            for descriptor in descriptores_del_programa_disponibles_para_nuevo_programa
+        ]
+        actividades_reservadas_del_programa = [
+            {"id": actividad.id, "nombre": actividad.descripcion, "nivel": NivelDescriptor.NADA}
+            for actividad in actividades_reservadas_disponibles_para_nuevo_programa
+        ]
+
+        return {
+            "ejes_transversales": ejes_transversales_del_programa,
+            "descriptores": descriptores_del_programa,
+            "actividades_reservadas": actividades_reservadas_del_programa
+        }

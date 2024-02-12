@@ -22,12 +22,21 @@ from backend.views import (
     ObtenerFiltrosHistorial,
     ListarProgramasPendientesAPI,
     InformacionProgramaAPI,
+    InformacionModificacionProgramaAPI,
+    InformacionNuevoProgramaAPI,
 )
 
 urls_programas = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),
+    path(
+        "informacion_modificion/<id_programa>/",
+        InformacionModificacionProgramaAPI.as_view(),
+    ),
+    path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    # TODO. Crear una API nueva para editar el ultimo!!
+    path("editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
 ]
 
 historial_patterns = [
