@@ -1,5 +1,6 @@
 import TareasPendientes from './Pendientes/Pendientes'
-import ProgramasAsignaturas from './ProgramasAsignaturas/ProgramasAsignaturas'
+import ProgramaAsignatura from './ProgramaAsignatura/ProgramaAsignatura'
 import Historial from './Historial/Historial'
+import ProgramasVigentes from './ProgramasVigentes/ProgramasVigentes'
 
-export { TareasPendientes, ProgramasAsignaturas, Historial }
+export { TareasPendientes, ProgramaAsignatura, Historial, ProgramasVigentes }

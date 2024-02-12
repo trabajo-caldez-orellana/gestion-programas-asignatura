@@ -14,8 +14,6 @@ export default function ProgramasVigentes() {
 
   if (loading || !programasVigentes) return <h1>Cargando...</h1>
 
-  console.log(programasVigentes)
-
   const verPrograma = (id: number | string, modoPrograma: string) => {
     if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
       navigate(`/programa-asignaturas/${id}`)

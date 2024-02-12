@@ -1,2 +1,5 @@
 from .listar_tareas_pendientes import ListarProgramasPendientesAPI
 from .listar_programas_vigentes import ListarProgramasVigentesAPI
+from .informacion_del_programa import InformacionProgramaAPI
+from .informacion_modificacion_programa import InformacionModificacionProgramaAPI
+from .informacion_nuevo_programa import InformacionNuevoProgramaAPI

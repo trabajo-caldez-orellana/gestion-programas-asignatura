@@ -37,8 +37,8 @@ export default function InformacionAdicional({
       <h2 className="header">Informacion Adicional</h2>
       <form className="informacion-adicional-form">
         {CAMPOS_INFORMACION_ADICIONAL.map((config) => (
-          <>
-            <label htmlFor={config.id}>{config.label}</label>
+          <label htmlFor={config.id} key={config.id}>
+            {config.label}
             <textarea
               id={config.id}
               name={config.name}
@@ -48,7 +48,7 @@ export default function InformacionAdicional({
               cols={50}
               disabled={modoLectura}
             />
-          </>
+          </label>
         ))}
       </form>
     </section>

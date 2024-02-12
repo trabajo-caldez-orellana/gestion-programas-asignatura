@@ -1,14 +1,19 @@
 import { useParams } from 'react-router-dom'
-import CargaHoraria from './CargaHoraria'
-import InformacionAdicional from './InformacionAdicional'
-import SeccionDescriptores from './SeccionDescriptores'
-import { ProgramaAsignatura } from '../../../interfaces'
-import useProgramaAsignatura from '../hooks/useProgramaAsignatura'
-import useProgramaAsignaturaMutation from '../hooks/useProgramaAsignaturaMutation'
-import BotonesProgramaAsignatura from './BotonesProgramaAsignatura'
-import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
+
+import {
+  CargaHoraria,
+  InformacionAdicional,
+  SeccionDescriptores,
+  BotonesProgramaAsignatura
+} from './components'
+import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
+import { ProgramaAsignatura } from '../../interfaces'
+import useProgramaAsignatura from './hooks/useProgramaAsignatura'
+import useProgramaAsignaturaMutation from './hooks/useProgramaAsignaturaMutation'
+import './ProgramaAsignatura.css'
 
 export default function ProgramaAsignatura({ modo }: { modo: string }) {
+  // EN el caso de ser modo = NUEVO o EDITAR_ULTIMO, este id corresponderia a la asignatura a la que estamos entrando!!
   const { id } = useParams()
 
   // Este hook se encarga de hacer el get del programaAsignatura
@@ -17,7 +22,8 @@ export default function ProgramaAsignatura({ modo }: { modo: string }) {
     setProgramaAsignatura,
     modoProgramaAsignatura,
     loading,
-    error
+    error,
+    mensajeDeError
   } = useProgramaAsignatura(id?.toString(), modo)
 
   const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
@@ -33,7 +39,13 @@ export default function ProgramaAsignatura({ modo }: { modo: string }) {
     postPrograma(isDraft)
   }
 
-  if (error) return <h1>Error</h1>
+  if (error)
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>{mensajeDeError}</p>
+      </div>
+    )
 
   if (loading || !programaAsignatura) return <h1>Cargando...</h1>
 

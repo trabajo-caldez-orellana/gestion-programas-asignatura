@@ -1,6 +1,5 @@
 from typing import Any
 from django.db import models
-from django.utils import timezone
 
 from .asignatura import Asignatura
 from backend.common.mensajes_de_error import MENSAJE_FECHAS_INCORRECTAS

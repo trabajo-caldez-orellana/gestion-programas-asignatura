@@ -1,9 +1,13 @@
+import { ProgramaAsignatura } from 'interfaces'
+
 export const RUTAS = {
-  GET_PROGRAMA_ASIGNATURA: '/programa-asignaturas',
-  POST_PROGRAMAS_ASIGNATURAS: '/programa-asignatura',
-  GET_PROGRAMAS_ASIGNATURAS: '/programas-asignaturas/',
-  GET_TAREAS_PENDIENTES: '/api/programas/pendientes/',
-  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/'
+  GET_PROGRAMA_ASIGNATURA: '/api/programas/',
+  POST_PROGRAMAS_ASIGNATURAS: '/api/programa/',
+  GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
+  GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
+  GET_PROGRAMA_PARA_MODIFICAR: '/api/programas/informacion_modificion/',
+  GET_DATOS_PARA_NUEVO_PROGRAMA: '/api/programas/nuevo/',
+  GET_TAREAS_PENDIENTES: '/api/programas/pendientes/'
 }
 export const HANDLERS = {
   GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
@@ -15,18 +19,18 @@ export const HANDLERS = {
 export const MODOS_PROGRAMA_ASIGNATURA = {
   VER: 'VER',
   NUEVO: 'NUEVO',
-  EDITAR: 'EDITAR'
+  EDITAR: 'EDITAR',
+  EDITAR_ULTIMO: 'EDITAR_ULTIMO'
 }
 
-// TODO. Esto se usa?
-export const NUEVO_PROGRAMA_ASIGNATURA = {
+export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignatura = {
   id: 1,
   cargaHoraria: {
     semanasDictado: 0,
     teoriaPresencial: 0,
     practicaPresencial: 0,
     teoricoPracticoPresencial: 0,
-    laboratoriosPresenciales: 0,
+    laboratorioPresencial: 0,
     teoriaDistancia: 0,
     practicaDistancia: 0,
     teoricoPracticoDistancia: 0,
@@ -48,8 +52,10 @@ export const NUEVO_PROGRAMA_ASIGNATURA = {
     metodologiaAplicada: '',
     recursos: '',
     evaluacion: '',
-    investigacion: '',
-    extension: ''
+    investigacionDocentes: '',
+    investigacionEstudiantes: '',
+    extensionEstudiantes: '',
+    extensionDocentes: ''
   }
 }
 
@@ -213,7 +219,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         url: '/programas-vigentes'
       },
       {
-        id: 5,
+        id: 6,
         name: 'Tareas Pendientes',
         url: '/tareas-pendientes'
       }

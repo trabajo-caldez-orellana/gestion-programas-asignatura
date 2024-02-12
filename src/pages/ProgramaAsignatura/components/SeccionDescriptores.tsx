@@ -18,6 +18,10 @@ export default function SeccionDescriptores({
 }: SeccionDescriptoresProps) {
   const [modalResultadosAbierto, setModalResultadosAbierto] = useState(false)
   const [modalEjesTransversales, setModalEjesTransversales] = useState(false)
+  const [
+    modalActividadesReservadasAbierto,
+    setModalActividadesReservadasAbierto
+  ] = useState(false)
 
   const { descriptores } = programaAsignatura
   const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
@@ -58,9 +62,10 @@ export default function SeccionDescriptores({
 
   const resultadosAprendizajeCount = () => {
     //Contar solo los resultados de aprendizaje que no sean string vacios
-    return programaAsignatura.descriptores.resultadosAprendizaje.filter(
-      (item) => item !== ''
-    ).length
+    const resultadosAprendizaje =
+      programaAsignatura.descriptores.resultadosAprendizaje || []
+
+    return resultadosAprendizaje.filter((item) => item !== '').length || 0
   }
 
   const aniadirResultadoAprendizaje = () => {
@@ -79,7 +84,8 @@ export default function SeccionDescriptores({
 
   // Al abrir el modal limpiamos los resultados de aprendizaje que son string vacios
   const abrirModalResultados = () => {
-    const resultadosAprendizaje = [...descriptores.resultadosAprendizaje]
+    const resultadosAprendizaje: string[] =
+      descriptores.resultadosAprendizaje || []
     const resultadosAprendizajeLimpios = resultadosAprendizaje.filter(
       (item) => item !== ''
     )
@@ -133,6 +139,23 @@ export default function SeccionDescriptores({
     })
   }
 
+  const handleActividadReservadaChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { value } = e.target
+    const actividadesReservadas = [...descriptores.actividadesReservadas]
+    actividadesReservadas[index].nivel = parseInt(value)
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      descriptores: {
+        ...programaAsignatura.descriptores,
+        actividadesReservadas
+      }
+    })
+  }
+
   return (
     <>
       <section className="form-section">
@@ -174,7 +197,10 @@ export default function SeccionDescriptores({
               onChange={handleSeccionDescriptoresChange}
               disabled={modoLectura}
             />
-            <Button text="+" />
+            <Button
+              text="+"
+              onClick={() => setModalActividadesReservadasAbierto(true)}
+            />
           </div>
           <label htmlFor="descriptores">Descriptores</label>
           <br />
@@ -185,7 +211,10 @@ export default function SeccionDescriptores({
               {descriptores.descriptores.map(
                 (descriptor) =>
                   descriptor.seleccionado && (
-                    <p onClick={() => handleDescriptorChange(descriptor.id)}>
+                    <p
+                      key={descriptor.id}
+                      onClick={() => handleDescriptorChange(descriptor.id)}
+                    >
                       {descriptor.nombre}
                     </p>
                   )
@@ -196,7 +225,10 @@ export default function SeccionDescriptores({
               {descriptores.descriptores.map(
                 (descriptor) =>
                   !descriptor.seleccionado && (
-                    <p onClick={() => handleDescriptorChange(descriptor.id)}>
+                    <p
+                      key={descriptor.id}
+                      onClick={() => handleDescriptorChange(descriptor.id)}
+                    >
                       {descriptor.nombre}
                     </p>
                   )
@@ -210,11 +242,12 @@ export default function SeccionDescriptores({
         modalTitle="Resultados de aprendizaje"
         onClose={() => setModalResultadosAbierto(false)}
       >
-        {descriptores.resultadosAprendizaje.map((_, index) => (
+        {descriptores.resultadosAprendizaje.map((resultado, index) => (
           <>
             {/* {TODO: CREAR COMPONENTE} */}
             <textarea
-              value={descriptores.resultadosAprendizaje[index]}
+              key={index}
+              value={resultado}
               onChange={(e) => handleResultadosAprendizajeChange(e, index)}
               rows={4}
               cols={50}
@@ -277,6 +310,58 @@ export default function SeccionDescriptores({
                 value="3"
                 checked={eje.nivel === 3}
                 onChange={(e) => handleEjeTransversalChange(e, index)}
+                disabled={modoLectura}
+              />
+              Alto
+            </div>
+          </>
+        ))}
+      </Modal>
+      <Modal
+        open={modalActividadesReservadasAbierto}
+        modalTitle="Actividades Reservadas"
+        onClose={() => setModalActividadesReservadasAbierto(false)}
+      >
+        {descriptores.actividadesReservadas.map((actividad, index) => (
+          <>
+            <label>{actividad.nombre}</label>
+            {/* {TODO: CREAR COMPONENTE RADIO BUTTONS} */}
+
+            <div className="radio-buttons">
+              <input
+                type="radio"
+                name={actividad.nombre}
+                value="0"
+                defaultChecked
+                checked={actividad.nivel === 0}
+                onChange={(e) => handleActividadReservadaChange(e, index)}
+                disabled={modoLectura}
+              />
+              Nada
+              <input
+                type="radio"
+                name={actividad.nombre}
+                value="1"
+                checked={actividad.nivel === 1}
+                onChange={(e) => handleActividadReservadaChange(e, index)}
+                disabled={modoLectura}
+              />
+              Bajo
+              <input
+                type="radio"
+                name={actividad.nombre}
+                value="2"
+                checked={actividad.nivel === 2}
+                onChange={(e) => handleActividadReservadaChange(e, index)}
+                disabled={modoLectura}
+              />
+              Medio
+              <input
+                type="radio"
+                name={actividad.nombre}
+                value="3"
+                checked={actividad.nivel === 3}
+                onChange={(e) => handleActividadReservadaChange(e, index)}
                 disabled={modoLectura}
               />
               Alto

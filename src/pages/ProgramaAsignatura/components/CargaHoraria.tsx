@@ -37,8 +37,8 @@ export default function CargaHoraria({
       <h2 className="header">Carga Horaria</h2>
       <form className="carga-horaria-form">
         {CAMPOS_CARGA_HORARIA.map((config) => (
-          <>
-            <label htmlFor={config.id}>{config.label}</label>
+          <label htmlFor={config.id} key={config.id}>
+            {config.label}
             <input
               type="text"
               id={config.id}
@@ -47,7 +47,7 @@ export default function CargaHoraria({
               onChange={handleCargaHorariaChange}
               disabled={modoLectura}
             />
-          </>
+          </label>
         ))}
       </form>
     </section>

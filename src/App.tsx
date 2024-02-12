@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
-import './App.css'
-import Navbar from './components/Navbar/Navbar'
 import { Routes, Route } from 'react-router-dom'
-import { ProgramasAsignaturas, TareasPendientes } from './pages'
-import ProgramasVigentes from './pages/ProgramasVigentes'
-import ProgramaAsignatura from './pages/ProgramasAsignaturas/components/ProgramaAsignatura'
+import './App.css'
+
+import { Navbar } from './components'
+import {
+  Historial,
+  TareasPendientes,
+  ProgramaAsignatura,
+  ProgramasVigentes
+} from './pages'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
@@ -54,50 +58,6 @@ export default function App() {
     window.location.href = '/'
   }
 
-  // TODO: Poner en otro archivo y crear archivo de constantes
-  // const routes = {
-  //   semestres: {
-  //     path: '/semestres',
-  //     element: <h1>Semestres</h1>
-  //   },
-  //   parametros: {
-  //     path: '/parametros',
-  //     element: <h1>Parametros</h1>
-  //   },
-  //   estandar: {
-  //     path: '/estandar',
-  //     element: <h1>Estandares</h1>
-  //   },
-  //   usuarios: {
-  //     path: '/usuarios',
-  //     element: <h1>Usuarios</h1>
-  //   },
-  //   carrera: {
-  //     path: '/carrera',
-  //     element: <h1>Carrera</h1>
-  //   },
-  //   planEstudio: {
-  //     path: '/plan-estudio',
-  //     element: <h1>Plan de Estudio</h1>
-  //   },
-  //   descriptores: {
-  //     path: '/descriptores',
-  //     element: <h1>Descriptores</h1>
-  //   },
-  //   bloqueCurricular: {
-  //     path: '/bloque-curricular',
-  //     element: <h1>Bloque curricular</h1>
-  //   },
-  //   programaAsignaturas: {
-  //     path: '/programa-asignaturas',
-  //     element: <ProgramasAsignaturas />
-  //   },
-  //   auditoria: {
-  //     path: '/auditoria',
-  //     element: <h1>Auditoria</h1>
-  //   }
-  // }
-
   return (
     <>
       <Navbar
@@ -126,10 +86,8 @@ export default function App() {
             element={<h1>Bloque curricular</h1>}
           />
           <Route path="/programas-vigentes" element={<ProgramasVigentes />} />
-          <Route
-            path="/programa-asignaturas"
-            element={<ProgramasAsignaturas />}
-          />
+          <Route path="/programa-asignaturas" element={<Historial />} />
+
           <Route
             path="/programa-asignaturas/:id"
             element={

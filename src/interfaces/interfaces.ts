@@ -4,7 +4,7 @@ export interface CargaHoraria {
   teoriaPresencial: number
   practicaPresencial: number
   teoricoPracticoPresencial: number
-  laboratoriosPresenciales: number
+  laboratorioPresencial: number
   teoriaDistancia: number
   practicaDistancia: number
   teoricoPracticoDistancia: number
@@ -25,7 +25,11 @@ export interface Descriptor {
     nombre: string
     seleccionado: boolean
   }[]
-  actividadesReservadas: string[]
+  actividadesReservadas: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
 }
 
 export interface InformacionAdicional {
@@ -35,8 +39,10 @@ export interface InformacionAdicional {
   metodologiaAplicada: string
   recursos: string
   evaluacion: string
-  investigacion: string
-  extension: string
+  investigacionDocentes: string
+  investigacionEstudiantes: string
+  extensionDocentes: string
+  extensionEstudiantes: string
   // Index signature
   [key: string]: string | number
 }
@@ -46,6 +52,91 @@ export interface ProgramaAsignatura {
   cargaHoraria: CargaHoraria
   descriptores: Descriptor
   informacionAdicional: InformacionAdicional
+}
+
+export interface NuevoPrograma {
+  ejesTransversales: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
+  descriptores: {
+    id: number
+    nombre: string
+    seleccionado: boolean
+  }[]
+  actividadesReservadas: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
+}
+
+export interface ProgramaAsignaturaAPIBody {
+  id: number
+  carga_horaria: {
+    semanas_dictado: number
+    teoria_presencial: number
+    practica_presencial: number
+    teorico_practico_presencial: number
+    laboratorio_presencial: number
+    teoria_distancia: number
+    practica_distancia: number
+    teorico_practico_distancia: number
+    laboratorio_distancia: number
+  }
+  descriptores: {
+    resultados_de_aprendizaje: string[]
+    ejes_transversales: {
+      id: number
+      nombre: string
+      nivel: number
+    }[]
+    descriptores: {
+      id: number
+      nombre: string
+      seleccionado: boolean
+    }[]
+    actividades_reservadas: {
+      id: number
+      nombre: string
+      nivel: number
+    }[]
+  }
+  informacion_adicional: {
+    fundamentacion: string
+    contenidos: string
+    bibliografia: string
+    metodologia_aplicada: string
+    recursos: string
+    evaluacion: string
+    investigacion_docentes: string
+    investigacion_estudiantes: string
+    extension_docentes: string
+    extension_estudiantes: string
+  }
+}
+
+export interface NuevoProgramaAPIBody {
+  ejes_transversales: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
+  descriptores: {
+    id: number
+    nombre: string
+    seleccionado: boolean
+  }[]
+  actividades_reservadas: {
+    id: number
+    nombre: string
+    nivel: number
+  }[]
+}
+
+export interface ObtenerProgramaAsignaturaAPIErrorBody {
+  error: string
 }
 
 export interface DatosAsignaturaTareaPendiente {

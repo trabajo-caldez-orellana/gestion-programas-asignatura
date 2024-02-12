@@ -15,8 +15,6 @@ export default function Historial() {
 
   if (loading || !programasVigentes) return <h1>Cargando...</h1>
 
-  console.log(programasVigentes)
-
   const verPrograma = (id: number | null, modoPrograma: string) => {
     if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
       navigate(`/programa-asignaturas/${id}`)
