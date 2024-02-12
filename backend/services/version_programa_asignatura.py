@@ -654,7 +654,9 @@ class ServicioVersionProgramaAsignatura:
             return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
-        pass
+        programa.estado = EstadoAsignatura.PENDIENTE
+        programa.save()
+        return programa
 
     def reutilizar_ultimo_plan(self, asignatura: Asignatura):
         """
