@@ -19,30 +19,40 @@ from django.urls import path, include
 
 from backend.views import (
     ListarProgramasVigentesAPI,
-    ObtenerFiltrosHistorial,
+    ObtenerFiltros,
     ListarProgramasPendientesAPI,
     InformacionProgramaAPI,
     InformacionModificacionProgramaAPI,
     InformacionNuevoProgramaAPI,
-    ReutilizarUltimoPrograma
+    ReutilizarUltimoPrograma,
+    InformacionEditarProgramaAPartirDelUltimoAPI,
+    ObtenerProgramasHistorial,
 )
 
 programas_patterns = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),
+]
+
+formularios_patterns = [
     path(
-        "informacion_modificion/<id_programa>/",
-        InformacionModificacionProgramaAPI.as_view(),
-    ),
+            "editar/<id_programa>/",
+            InformacionModificacionProgramaAPI.as_view(),
+        ),
     path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     # TODO. Crear una API nueva para editar el ultimo!!
     path("editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
-    path("reutilizar-programa", ReutilizarUltimoPrograma.as_view())
+    path("reutilizar-programa", ReutilizarUltimoPrograma.as_view(),
+    path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
+]
+
+filtros_patterns = [
+    path("", ObtenerFiltros.as_view()),
 ]
 
 historial_patterns = [
-    path("", ObtenerFiltrosHistorial.as_view()),
+    path("", ObtenerProgramasHistorial.as_view()),
 ]
 
 urlpatterns = [
@@ -51,5 +61,7 @@ urlpatterns = [
     path("auth/", include("djoser.urls.authtoken")),
     path("auth/", include("djoser.social.urls")),
     path("api/programas/", include(programas_patterns)),
+    path("api/filtros/", include(filtros_patterns)),
     path("api/historial/", include(historial_patterns)),
+    path("api/informacion-formularios/", include(formularios_patterns))
 ]

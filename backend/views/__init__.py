@@ -4,6 +4,8 @@ from .programas_de_asignatura import (
     InformacionProgramaAPI,
     InformacionNuevoProgramaAPI,
     InformacionModificacionProgramaAPI,
-    ReutilizarUltimoPrograma
+    ReutilizarUltimoPrograma,
+    InformacionEditarProgramaAPartirDelUltimoAPI,
+    ObtenerFiltros,
+    ObtenerProgramasHistorial
 )
-from .historial.filtros_historial import ObtenerFiltrosHistorial

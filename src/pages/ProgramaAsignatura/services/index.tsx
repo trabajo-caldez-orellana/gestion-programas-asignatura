@@ -129,6 +129,25 @@ export const getInformacionParaModificacion = async (id: string) => {
   }
 }
 
+export const getInformacionModificarAPartirUltimo = async (id: string) => {
+  try {
+    const response = await client.get<BodyInterface>(
+      `${RUTAS.GET_DATOS_PARA_REUTILIZAR_ULTIMO_PROGRAMA}${id}/`
+    )
+
+    return {
+      status: response.status,
+      data: parserProgramaAsignatura(response.data.data)
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    return {
+      status: err.response.status,
+      error: parserErrores(err.response.data)
+    }
+  }
+}
+
 // TODO. Esto creo que se va a eliminar proximamente....
 export const postProgramaAsignatura = async (
   programaAsignatura: ProgramaAsignaturaInterface | null,
