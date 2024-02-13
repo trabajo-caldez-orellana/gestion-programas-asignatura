@@ -42,8 +42,7 @@ formularios_patterns = [
         ),
     path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     # TODO. Crear una API nueva para editar el ultimo!!
-    path("editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
-    path("reutilizar-programa", ReutilizarUltimoPrograma.as_view(),
+    path("reutilizar-programa", ReutilizarUltimoPrograma.as_view()),
     path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
 ]
 
