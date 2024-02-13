@@ -3,10 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.http import Http404
 
-from backend.models import VersionProgramaAsignatura, PlanDeEstudio
-from backend.common.choices import EstadoAsignatura
-from backend.serializers import ProgramasVigentesSerializer
-
+from backend.services import obtener_programas_historial
 
 class ObtenerProgramasHistorial(APIView):
     permission_classes = [
@@ -34,23 +31,7 @@ class ObtenerProgramasHistorial(APIView):
         asignatura_id = int(asignatura_id)
         anio_lectivo_id = int(anio_lectivo_id)
 
-        # Obtenemos los planes de estudio que contienen la carrera seleccionada
-        planes_de_estudio = PlanDeEstudio.objects.filter(carrera_id=carrera_id)
-
-        # Obtenemos las asignaturas relacionadas a los planes de estudio
-        asignaturas_relacionadas = []
-
-        for plan_de_estudio in planes_de_estudio:
-            asignaturas_relacionadas.extend(plan_de_estudio.asignaturas.all())
-
-        programas_historial = VersionProgramaAsignatura.objects.filter(
-            asignatura__in=asignaturas_relacionadas,
-            semestre_id=semestre_id,
-            asignatura_id=asignatura_id,
-            semestre__anio_academico_id=anio_lectivo_id,
-            estado=EstadoAsignatura.APROBADO,
-        )
-        serializer = ProgramasVigentesSerializer()
-        data = serializer.to_representation(programas_historial)
+        # Llamar al servicio para obtener los programas historiales
+        data = obtener_programas_historial(carrera_id, semestre_id, asignatura_id, anio_lectivo_id)
 
         return Response(data)

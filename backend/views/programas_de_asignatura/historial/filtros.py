@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from backend.models import Carrera, Semestre, Asignatura, AnioAcademico
 
 
-class ObtenerFiltrosHistorial(APIView):
+class ObtenerFiltros(APIView):
     def get(self, request):
         carreras = Carrera.objects.all().order_by("nombre")
         semestres = Semestre.objects.all().order_by("fecha_inicio")
