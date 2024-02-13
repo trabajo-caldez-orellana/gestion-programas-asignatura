@@ -4,6 +4,7 @@ MENSAJE_NIVEL_INVALIDO = "El nivel seleccionado no es un valor valido."
 MENSAJE_CAMPO_ENTERO = "Este campo debe ser un numero entero mayor a cero."
 MENSAJE_CAMPO_NO_NULO = "Este campo no puede ser nulo."
 MENSAJE_CAMPO_EN_BLANCO = "Este campo no puede estar en blanco."
+MENSAJE_ERROR_INESPERADO = "Un error inesperado ha ocurrido. Intente nuevamente más tarde."
 
 # Mensajes relacionados a usuarios
 MENSAJE_SUPERUSUARIO_ACTIVO = "Superusuario deberia estar activo."
