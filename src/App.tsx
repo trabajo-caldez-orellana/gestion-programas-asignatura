@@ -106,13 +106,16 @@ export default function App() {
               <ProgramaAsignatura modo={MODOS_PROGRAMA_ASIGNATURA.NUEVO} />
             }
           />
-          <Route path="/tareas-pendientes" element={<TareasPendientes />} />
           <Route
-            path="/historial"
+            path="/programa-asignaturas/editar-ultimo/:id"
             element={
-              <Historial />
+              <ProgramaAsignatura
+                modo={MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO}
+              />
             }
           />
+          <Route path="/tareas-pendientes" element={<TareasPendientes />} />
+          <Route path="/historial" element={<Historial />} />
           <Route path="/auditoria" element={<h1>Auditoria</h1>} />
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>
