@@ -766,9 +766,6 @@ class ServicioVersionProgramaAsignatura:
         version_programa: Optional[VersionProgramaAsignatura] = None,
     ) -> dict:
         se_puede_usar_ultimo = version_programa is None
-
-        print(asignatura, asignatura.semestre_dictado)
-
         try:
             if asignatura.semestre_dictado is None:
                 semestre_para_reutilizar = (
