@@ -38,7 +38,6 @@ from backend.common.mensajes_de_error import (
     MENSAJE_DESCRIPTOR,
     MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES,
     MENSAJE_PROGRAMAS_CERRADOS,
-    MENSAJE_VERSION_ANTERIOR_NO_APROBADA,
     MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
     MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR,
     MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
@@ -243,7 +242,7 @@ class ServicioVersionProgramaAsignatura:
 
     def _el_programa_ya_existe(self, asignatura: Asignatura, semestre: Semestre) -> bool:
         programas_count = VersionProgramaAsignatura.objects.filter(asignatura_id=asignatura.id, semestre_id=semestre.id).count()
-        return count > 0
+        return programas_count > 0
 
 
     def crear_nueva_version_programa_asignatura(
@@ -768,6 +767,8 @@ class ServicioVersionProgramaAsignatura:
     ) -> dict:
         se_puede_usar_ultimo = version_programa is None
 
+        print(asignatura, asignatura.semestre_dictado)
+
         try:
             if asignatura.semestre_dictado is None:
                 semestre_para_reutilizar = (
@@ -780,12 +781,17 @@ class ServicioVersionProgramaAsignatura:
                     )
                 )
 
-            if se_puede_usar_ultimo:
-                se_puede_usar_ultimo = VersionProgramaAsignatura.objects.filter(
-                    semestre=semestre_para_reutilizar, asignatura=asignatura
-                ).exists()
-        except ValidationError as e:
-            pass
+        except ValidationError:
+            semestre_para_reutilizar = None
+
+        if semestre_para_reutilizar is None:
+            se_puede_usar_ultimo = False
+
+        if se_puede_usar_ultimo:
+            se_puede_usar_ultimo = VersionProgramaAsignatura.objects.filter(
+                semestre=semestre_para_reutilizar, asignatura=asignatura
+            ).exists()
+
 
         se_puede_modificar = (
             version_programa is not None
