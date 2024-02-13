@@ -3,3 +3,6 @@ from .listar_programas_vigentes import ListarProgramasVigentesAPI
 from .informacion_del_programa import InformacionProgramaAPI
 from .informacion_modificacion_programa import InformacionModificacionProgramaAPI
 from .informacion_nuevo_programa import InformacionNuevoProgramaAPI
+from .historial.filtros import ObtenerFiltros
+from .historial.obtener_programas_historial import ObtenerProgramasHistorial
+

@@ -107,6 +107,12 @@ export default function App() {
             }
           />
           <Route path="/tareas-pendientes" element={<TareasPendientes />} />
+          <Route
+            path="/historial"
+            element={
+              <Historial />
+            }
+          />
           <Route path="/auditoria" element={<h1>Auditoria</h1>} />
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>
