@@ -7,7 +7,6 @@ from backend.common.choices import EstadoAsignatura, Roles
 class ServicioRoles:
     def obtener_roles_usuario(self, usuario: Usuario) -> QuerySet[Rol]:
         roles = Rol.objects.filter(usuario=usuario)
-
         return roles
 
     def usuario_tiene_permiso_para_crear_programa(
@@ -35,9 +34,9 @@ class ServicioRoles:
             if rol.rol == Roles.DIRECTOR_CARRERA:
                 # Verifica que la carrera tenga esa asignatura!
                 planes_relacionados = programa.asignatura.plandeestudio_set.all()
-                planes = planes_relacionados.filter(carrera=rol.carrera)
+                planes_count = planes_relacionados.filter(carrera=rol.carrera).count()
 
-                if planes.exists():
+                if planes_count > 0:
                     return True
 
             else:

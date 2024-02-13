@@ -3,7 +3,12 @@ import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
 import { Navbar } from './components'
-import { ProgramasVigentes, ProgramaAsignatura, Historial } from './pages'
+import {
+  Historial,
+  TareasPendientes,
+  ProgramaAsignatura,
+  ProgramasVigentes
+} from './pages'
 import useProfile from './hooks/useProfile'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
@@ -109,6 +114,8 @@ export default function App() {
               />
             }
           />
+          <Route path="/tareas-pendientes" element={<TareasPendientes />} />
+          <Route path="/historial" element={<Historial />} />
           <Route path="/auditoria" element={<h1>Auditoria</h1>} />
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>

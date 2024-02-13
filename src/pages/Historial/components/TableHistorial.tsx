@@ -4,7 +4,7 @@ import { tableRowProgramasVigentes } from 'props/props'
 
 interface TableProps {
   tableColumns: string[]
-  tableData: tableRowProgramasVigentes[]
+  tableData: tableRowProgramasVigentes[] | null
   verPrograma: (
     id: number | null,
     modoPrograma: ModosProgramaAsignatura
@@ -20,6 +20,10 @@ export default function TableHistorial({
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
 
+  if (!tableData || tableData.length === 0) {
+    return <h1>No hay datos</h1>
+  }
+
   return (
     <article>
       <table className="content-table">
@@ -34,7 +38,6 @@ export default function TableHistorial({
           {tableData.map((item) => (
             <tr key={item.id}>
               <td>{item.asignatura.nombre}</td>
-              <td>{item.estado}</td>
               <td id="column-acciones">
                 {item.acciones_posibles ? (
                   <>

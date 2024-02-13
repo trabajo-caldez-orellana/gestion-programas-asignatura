@@ -9,14 +9,14 @@ export default function SidebarSectionList() {
     <>
       {SIDEBAR_SECTIONS.map((section) => {
         return (
-          <section key={section.name}>
+          <section key={section.id}>
             <section className="section-header">
               <h2>{section.name}</h2>
             </section>
             <ul className="sidebar-section-items">
               {section.sections.map((subsection) => {
                 return (
-                  <li key={subsection.url}>
+                  <li key={subsection.id}>
                     <div>
                       <Link to={subsection.url}>{subsection.name}</Link>
                     </div>
