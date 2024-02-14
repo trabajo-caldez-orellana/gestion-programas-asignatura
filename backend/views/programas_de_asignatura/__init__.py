@@ -5,3 +5,7 @@ from .informacion_modificacion_programa import InformacionModificacionProgramaAP
 from .informacion_nuevo_programa import InformacionNuevoProgramaAPI
 from .modificar_programa import ModificarProgramaAPI
 from .nuevo_programa import NuevoProgramaAPI
+from .informacion_editar_a_partir_del_ultimo import InformacionEditarProgramaAPartirDelUltimoAPI
+from .historial.filtros import ObtenerFiltros
+from .historial.obtener_programas_historial import ObtenerProgramasHistorial
+

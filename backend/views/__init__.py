@@ -5,6 +5,8 @@ from .programas_de_asignatura import (
     InformacionNuevoProgramaAPI,
     InformacionModificacionProgramaAPI,
     ModificarProgramaAPI,
-    NuevoProgramaAPI
+    NuevoProgramaAPI,
+    InformacionEditarProgramaAPartirDelUltimoAPI,
+    ObtenerFiltros,
+    ObtenerProgramasHistorial
 )
-from .historial.filtros_historial import ObtenerFiltrosHistorial

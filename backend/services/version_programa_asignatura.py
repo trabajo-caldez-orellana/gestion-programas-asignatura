@@ -658,6 +658,18 @@ class ServicioVersionProgramaAsignatura:
         programa.save()
         return programa
 
+    def obtener_ultimo_programa_de_asignatura_aprobado(self, asignatura: Asignatura):
+        semestre_dictado_asignatura = asignatura.semestre_dictado
+        semestre_actual = self.servicio_semestre.obtener_semestre_actual()
+
+        if semestre_dictado_asignatura is None:
+            return VersionProgramaAsignatura.objects.get(semestre_id = semestre_actual.id, asignatura_id=asignatura.id, estado=EstadoAsignatura.APROBADO)
+        
+        else:
+            semestre_anterior = self.servicio_semestre.obtener_semestre_anterior(semestre_dictado_asignatura)
+            return VersionProgramaAsignatura.objects.get(semestre_id = semestre_anterior.id, asignatura_id=asignatura.id, estado=EstadoAsignatura.APROBADO)
+
+
     def reutilizar_ultimo_plan(self, asignatura: Asignatura):
         """
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
@@ -674,17 +686,11 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
         try:
-            ultimo_programa = VersionProgramaAsignatura.objects.get(
-                asignatura=asignatura
-            )
-
+            ultimo_programa = self.obtener_ultimo_programa_de_asignatura_aprobado(asignatura)
         except VersionProgramaAsignatura.DoesNotExist as e:
             raise ValidationError(
                 {"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES}
             ) from e
-
-        if ultimo_programa.estado != EstadoAsignatura.APROBADO:
-            raise ValidationError({"asignatura": MENSAJE_VERSION_ANTERIOR_NO_APROBADA})
 
         descriptores_del_programa = ProgramaTieneDescriptor.objects.filter(
             version_programa_asignatura=ultimo_programa
