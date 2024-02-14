@@ -19,7 +19,7 @@ from django.urls import path, include
 
 from backend.views import (
     ListarProgramasVigentesAPI,
-    ObtenerFiltross,
+    ObtenerFiltros,
     ListarProgramasPendientesAPI,
     InformacionProgramaAPI,
     InformacionModificacionProgramaAPI,
@@ -46,7 +46,10 @@ formularios_patterns = [
     path("informacion_nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     path("informacion_editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
+]
 
+filtros_patterns = [
+    path("", ObtenerFiltros.as_view()),
 ]
 
 historial_patterns = [
