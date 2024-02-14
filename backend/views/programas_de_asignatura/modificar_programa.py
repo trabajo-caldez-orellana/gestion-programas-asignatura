@@ -73,7 +73,7 @@ class ModificarProgramaAPI(APIView):
         
         data = self.InputSerializer(request.data)
         if not data.is_valid():
-            return Response({"error": data.error_messages}, status=HTTP_400_BAD_REQUEST)
+            return Response({"error": data.errors}, status=HTTP_400_BAD_REQUEST)
         validated_data = data.validated_data
 
         try:

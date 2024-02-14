@@ -70,9 +70,9 @@ class NuevoProgramaAPI(APIView):
                 status=HTTP_401_UNAUTHORIZED,
             )
         
-        data = self.InputSerializer(request.data)
+        data = self.InputSerializer(data=request.data)
         if not data.is_valid():
-            return Response({"error": data.error_messages}, status=HTTP_400_BAD_REQUEST)
+            return Response({"error": data.errors}, status=HTTP_400_BAD_REQUEST)
         validated_data = data.validated_data
         try:
             programa_modificado = servicio_programa.crear_nueva_version_programa_asignatura(
