@@ -411,6 +411,8 @@ class ServicioVersionProgramaAsignatura:
         resultados_de_aprendizaje: json,
         contenidos: str,
         bibliografia: str,
+        metodologia_aplicada: str,
+        fundamentacion: str,
         recursos: str,
         evaluacion: str,
         investigacion_docentes: str,
@@ -509,6 +511,8 @@ class ServicioVersionProgramaAsignatura:
                 version_programa.extension_docentes = extension_docentes
                 version_programa.extension_estudiantes = extension_estudiantes
                 version_programa.cronograma = cronograma
+                version_programa.metodologia_aplicada = metodologia_aplicada
+                version_programa.fundamentacion = fundamentacion
                 version_programa.full_clean()
                 version_programa.save()
 
