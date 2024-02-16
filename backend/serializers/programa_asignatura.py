@@ -179,10 +179,10 @@ def serializer_programa_asignatura(
             "actividades_reservadas": actividades_reservadas_del_programa,
         },
         "informacion_adicional": {
-            "fundamentacion": "",
+            "fundamentacion": programa.fundamentacion,
             "contenidos": programa.contenidos,
             "bibliografia": programa.bibliografia,
-            "metodologia_aplicada": "",
+            "metodologia_aplicada": programa.metodologia_aplicada,
             "recursos": programa.recursos,
             "evaluacion": programa.evaluacion,
             "investigacion_docentes": programa.investigacion_docentes,
