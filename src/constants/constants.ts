@@ -24,7 +24,8 @@ export const RUTAS = {
   GET_TAREAS_PENDIENTES: '/api/programas/pendientes/',
   GET_FILTROS_HISTORIAL: 'api/filtros/',
   GET_HISTORIAL: 'api/historial/',
-  POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/programa/'
+  POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/nuevo/',
+  POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/'
 }
 
 export const HANDLERS = {

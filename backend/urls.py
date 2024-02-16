@@ -34,17 +34,16 @@ programas_patterns = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),
-    path("modificar-programa/<id_programa>/", ModificarProgramaAPI.as_view()),
-    path("nuevo-programa/<id_asignatura>/", NuevoProgramaAPI.as_view()),
+    path("editar/<id_programa>/", ModificarProgramaAPI.as_view()),
+    path("nuevo/<id_asignatura>/", NuevoProgramaAPI.as_view()),
 ]
 
 formularios_patterns = [
     path(
-        "informacion_modificion/<id_programa>/",
+        "editar/<id_programa>/",
         InformacionModificacionProgramaAPI.as_view(),
     ),
-    path("informacion_nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
-    path("informacion_editar_ultimo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
 ]
 
