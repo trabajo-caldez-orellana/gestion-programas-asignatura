@@ -45,6 +45,8 @@ class ModificarProgramaAPI(APIView):
         descriptores = SerializerDescriptor(many=True)
         actividades_reservadas = SerializadorEjesyActividades(many=True)
         ejes_transversales = SerializadorEjesyActividades(many=True)
+        metodologia_aplicada: serializers.CharField()
+        fundamentacion: serializers.CharField()
         presentar_a_aprobacion = serializers.BooleanField()
         
 
