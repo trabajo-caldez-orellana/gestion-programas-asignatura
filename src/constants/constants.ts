@@ -1,4 +1,7 @@
-import { ProgramaAsignatura as ProgramaAsignaturaInterface } from 'interfaces'
+import {
+  ProgramaAsignatura as ProgramaAsignaturaInterface,
+  ProgramaAsignaturaErrores
+} from 'interfaces/interfaces'
 
 import {
   Inicio,
@@ -81,6 +84,29 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
   }
 }
 
+export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
+  descriptores: {
+    resultadosAprendizaje: '',
+    ejesTransversales: '',
+    descriptores: '',
+    actividadesReservadas: ''
+  },
+  informacionAdicional: {
+    fundamentacion: '',
+    cronograma: '',
+    contenidos: '',
+    bibliografia: '',
+    metodologiaAplicada: '',
+    recursos: '',
+    evaluacion: '',
+    investigacionDocentes: '',
+    investigacionEstudiantes: '',
+    extensionEstudiantes: '',
+    extensionDocentes: ''
+  },
+  all: ''
+}
+
 type CampoCargaHorariaType = {
   label: string
   id: string
@@ -151,6 +177,11 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     label: 'Contenidos',
     id: 'contenidos',
     name: 'contenidos'
+  },
+  {
+    label: 'Cronograma',
+    id: 'cronograma',
+    name: 'cronograma'
   },
   {
     label: 'Bibliografía',
