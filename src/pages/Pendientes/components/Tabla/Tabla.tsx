@@ -19,13 +19,29 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
     console.log('Ver programa numero ', id)
   }
 
+  const handleReutilizarUltimoPrograma = (id: number | null) => {
+    console.log('Reutilizar ultimo', id)
+  }
+
+  const handleModificarPrograma = (id: number | null) => {
+    console.log('Modificar programa', id)
+  }
+
+  const handleModificarAPartirUltimo = (id: number | null) => {
+    console.log('Modificar programa a partir del ultimo', id)
+  }
+
+  const handleCrearNuevoPrograma = (id: number | null) => {
+    console.log('Crear nuevo programa', id)
+  }
+
   return (
     <article>
       <table className="content-table">
         <thead>
           <tr>
             {columnasTablaPendientes.map((column) => (
-              <th>{column}</th>
+              <th key={column}>{column}</th>
             ))}
           </tr>
         </thead>
@@ -40,7 +56,7 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                     {item.accionesPosibles.verPrograma ? (
                       <i
                         onClick={() => handleVerPrograma(item.idPrograma)}
-                        className="fas fa-eye"
+                        className="fas fa-eye boton-accion"
                         title="Ver programa"
                       ></i>
                     ) : (
@@ -48,8 +64,8 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                     )}
                     {item.accionesPosibles.modificarPrograma ? (
                       <i
-                        onClick={() => handleVerPrograma(item.idPrograma)}
-                        className="fas fa-edit"
+                        onClick={() => handleModificarPrograma(item.idPrograma)}
+                        className="fas fa-edit boton-accion"
                         title="Editar programa"
                       ></i>
                     ) : (
@@ -57,7 +73,10 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                     )}
                     {item.accionesPosibles.reutilizarUltimo ? (
                       <i
-                        className="fas fa-redo"
+                        onClick={() =>
+                          handleReutilizarUltimoPrograma(item.asignatura.id)
+                        }
+                        className="fas fa-redo boton-accion"
                         title="Usar ultimo programa"
                       ></i>
                     ) : (
@@ -65,16 +84,21 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                     )}
                     {item.accionesPosibles.modificarUltimo ? (
                       <i
-                        className="fas fa-sync"
-                        title="Modificar ultimo program"
+                        onClick={() =>
+                          handleModificarAPartirUltimo(item.asignatura.id)
+                        }
+                        className="fas fa-sync boton-accion"
+                        title="Modificar a partir del ultimo program"
                       ></i>
                     ) : (
                       <></>
                     )}
                     {item.accionesPosibles.nuevo ? (
                       <i
-                        onClick={() => handleVerPrograma(item.idPrograma)}
-                        className="fas fa-plus"
+                        onClick={() =>
+                          handleCrearNuevoPrograma(item.asignatura.id)
+                        }
+                        className="fas fa-plus boton-accion"
                         title="Nuevo programa"
                       ></i>
                     ) : (
