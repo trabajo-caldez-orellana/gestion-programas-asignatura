@@ -1,5 +1,10 @@
-import './Tabla.css'
+import { useNavigate } from 'react-router-dom'
 
+import './Tabla.css'
+import {
+  RUTAS_PAGINAS,
+  MODOS_PROGRAMA_ASIGNATURA
+} from '../../../../constants/constants'
 import { TareaPendiente } from 'interfaces/interfaces'
 
 interface PropiedadesTablaPendientes {
@@ -7,7 +12,7 @@ interface PropiedadesTablaPendientes {
 }
 
 export default function Tabla({ datos }: PropiedadesTablaPendientes) {
-  // Si acciones no es null entonces renderizamos esa columna
+  const navigate = useNavigate()
 
   const columnasTablaPendientes = [
     'ASIGNATURA',
@@ -16,23 +21,29 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
   ]
 
   const handleVerPrograma = (id: number | null) => {
-    console.log('Ver programa numero ', id)
+    navigate(`${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${id}`)
   }
 
   const handleReutilizarUltimoPrograma = (id: number | null) => {
-    console.log('Reutilizar ultimo', id)
+    console.log('reutilizar ultimo', id)
   }
 
   const handleModificarPrograma = (id: number | null) => {
-    console.log('Modificar programa', id)
+    navigate(
+      `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.EDITAR}/${id}`
+    )
   }
 
   const handleModificarAPartirUltimo = (id: number | null) => {
-    console.log('Modificar programa a partir del ultimo', id)
+    navigate(
+      `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO}/${id}`
+    )
   }
 
   const handleCrearNuevoPrograma = (id: number | null) => {
-    console.log('Crear nuevo programa', id)
+    navigate(
+      `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.NUEVO}/${id}`
+    )
   }
 
   return (
@@ -51,27 +62,23 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
               <td>{item.asignatura.nombre}</td>
               <td>{item.accionRequerida}</td>
               <td id="column-acciones">
-                {item.accionesPosibles ? (
+                {item.accionesPosibles && (
                   <>
-                    {item.accionesPosibles.verPrograma ? (
+                    {item.accionesPosibles.verPrograma && (
                       <i
                         onClick={() => handleVerPrograma(item.idPrograma)}
                         className="fas fa-eye boton-accion"
                         title="Ver programa"
                       ></i>
-                    ) : (
-                      <></>
                     )}
-                    {item.accionesPosibles.modificarPrograma ? (
+                    {item.accionesPosibles.modificarPrograma && (
                       <i
                         onClick={() => handleModificarPrograma(item.idPrograma)}
                         className="fas fa-edit boton-accion"
                         title="Editar programa"
                       ></i>
-                    ) : (
-                      <></>
                     )}
-                    {item.accionesPosibles.reutilizarUltimo ? (
+                    {item.accionesPosibles.reutilizarUltimo && (
                       <i
                         onClick={() =>
                           handleReutilizarUltimoPrograma(item.asignatura.id)
@@ -79,10 +86,8 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                         className="fas fa-redo boton-accion"
                         title="Usar ultimo programa"
                       ></i>
-                    ) : (
-                      <></>
                     )}
-                    {item.accionesPosibles.modificarUltimo ? (
+                    {item.accionesPosibles.modificarUltimo && (
                       <i
                         onClick={() =>
                           handleModificarAPartirUltimo(item.asignatura.id)
@@ -90,10 +95,8 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                         className="fas fa-sync boton-accion"
                         title="Modificar a partir del ultimo program"
                       ></i>
-                    ) : (
-                      <></>
                     )}
-                    {item.accionesPosibles.nuevo ? (
+                    {item.accionesPosibles.nuevo && (
                       <i
                         onClick={() =>
                           handleCrearNuevoPrograma(item.asignatura.id)
@@ -101,12 +104,8 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                         className="fas fa-plus boton-accion"
                         title="Nuevo programa"
                       ></i>
-                    ) : (
-                      <></>
                     )}
                   </>
-                ) : (
-                  <></>
                 )}
               </td>
             </tr>
