@@ -243,7 +243,7 @@ class ServicioVersionProgramaAsignatura:
 
     def _el_programa_ya_existe(self, asignatura: Asignatura, semestre: Semestre) -> bool:
         programas_count = VersionProgramaAsignatura.objects.filter(asignatura_id=asignatura.id, semestre_id=semestre.id).count()
-        return count > 0
+        return programas_count > 0
 
 
     def crear_nueva_version_programa_asignatura(
@@ -259,6 +259,8 @@ class ServicioVersionProgramaAsignatura:
         evaluacion: str,
         investigacion_docentes: str,
         investigacion_estudiantes: str,
+        metodologia_aplicada: str,
+        fundamentacion: str,
         extension_docentes: str,
         extension_estudiantes: str,
         cronograma: str,
@@ -334,6 +336,8 @@ class ServicioVersionProgramaAsignatura:
                     investigacion_estudiantes=investigacion_estudiantes,
                     extension_docentes=extension_docentes,
                     extension_estudiantes=extension_estudiantes,
+                    metodologia_aplicada = metodologia_aplicada,
+                    fundamentacion = fundamentacion,
                     cronograma=cronograma,
                 )
                 version_programa.full_clean()
