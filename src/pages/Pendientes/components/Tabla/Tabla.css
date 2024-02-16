@@ -41,3 +41,7 @@
 #column-acciones > * {
   margin: 0px 5px;
 }
+
+.boton-accion {
+  cursor: pointer;
+}
