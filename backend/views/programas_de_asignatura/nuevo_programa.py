@@ -40,6 +40,8 @@ class NuevoProgramaAPI(APIView):
         extension_docentes = serializers.CharField()
         extension_estudiantes = serializers.CharField()
         cronograma = serializers.CharField()
+        metodologia_aplicada: serializers.CharField()
+        fundamentacion: serializers.CharField()
 
         # TODO. Verificar si es la manera correcta de hacerlo
         descriptores = SerializerDescriptor(many=True)
@@ -90,6 +92,8 @@ class NuevoProgramaAPI(APIView):
                 investigacion_estudiantes=validated_data["investigacion_estudiantes"],
                 extension_docentes=validated_data["extension_docentes"],
                 extension_estudiantes=validated_data["extension_estudiantes"],
+                metodologia_aplicada = validated_data["metodologia_aplicada"],
+                fundamentacion = validated_data["fundamentacion"],
             )
         except ValidationError as e:
             return Response({"error": e.message_dict}, status=HTTP_400_BAD_REQUEST)

@@ -45,8 +45,8 @@ class ModificarProgramaAPI(APIView):
         descriptores = SerializerDescriptor(many=True)
         actividades_reservadas = SerializadorEjesyActividades(many=True)
         ejes_transversales = SerializadorEjesyActividades(many=True)
-        metodologia_aplicada: serializers.CharField()
-        fundamentacion: serializers.CharField()
+        metodologia_aplicada = serializers.CharField()
+        fundamentacion = serializers.CharField()
         presentar_a_aprobacion = serializers.BooleanField()
         
 
@@ -94,6 +94,8 @@ class ModificarProgramaAPI(APIView):
                 investigacion_estudiantes=validated_data["investigacion_estudiantes"],
                 extension_docentes=validated_data["extension_docentes"],
                 extension_estudiantes=validated_data["extension_estudiantes"],
+                metodologia_aplicada = validated_data["metodologia_aplicada"],
+                fundamentacion = validated_data["fundamentacion"],
             )
         except ValidationError as e:
             return Response({"error": e.message_dict}, status=HTTP_400_BAD_REQUEST)

@@ -748,6 +748,8 @@ class ServicioVersionProgramaAsignatura:
                     investigacion_estudiantes=ultimo_programa.investigacion_estudiantes,
                     extension_docentes=ultimo_programa.extension_docentes,
                     extension_estudiantes=ultimo_programa.extension_docentes,
+                    metodologia_aplicada = ultimo_programa.metodologia_aplicada,
+                    fundamentacion = ultimo_programa.fundamentacion,
                     cronograma=ultimo_programa.cronograma,
                     resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
                 )
