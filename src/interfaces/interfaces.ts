@@ -43,6 +43,7 @@ export interface InformacionAdicional {
   investigacionEstudiantes: string
   extensionDocentes: string
   extensionEstudiantes: string
+  cronograma: string
   // Index signature
   [key: string]: string | number
 }
