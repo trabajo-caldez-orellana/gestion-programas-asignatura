@@ -277,7 +277,7 @@ class ServicioVersionProgramaAsignatura:
 
         semestre = self.servicio_semestre.obtener_semestre_siguiente()
 
-        if not self._el_programa_ya_existe():
+        if not self._el_programa_ya_existe(asignatura, semestre):
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
 
