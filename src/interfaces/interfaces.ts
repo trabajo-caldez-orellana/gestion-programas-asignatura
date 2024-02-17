@@ -149,6 +149,7 @@ export interface ProgramaAsignaturaAPIBody {
   }
   informacion_adicional: {
     fundamentacion: string
+    cronograma: string
     contenidos: string
     bibliografia: string
     metodologia_aplicada: string
