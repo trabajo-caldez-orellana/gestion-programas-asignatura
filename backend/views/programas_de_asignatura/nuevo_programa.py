@@ -40,8 +40,8 @@ class NuevoProgramaAPI(APIView):
         extension_docentes = serializers.CharField()
         extension_estudiantes = serializers.CharField()
         cronograma = serializers.CharField()
-        metodologia_aplicada: serializers.CharField()
-        fundamentacion: serializers.CharField()
+        metodologia_aplicada = serializers.CharField()
+        fundamentacion= serializers.CharField()
 
         # TODO. Verificar si es la manera correcta de hacerlo
         descriptores = SerializerDescriptor(many=True)

@@ -40,12 +40,12 @@ class ModificarProgramaAPI(APIView):
         extension_docentes = serializers.CharField()
         extension_estudiantes = serializers.CharField()
         cronograma = serializers.CharField()
+        metodologia_aplicada = serializers.CharField()
 
         # TODO. Verificar si es la manera correcta de hacerlo
         descriptores = SerializerDescriptor(many=True)
         actividades_reservadas = SerializadorEjesyActividades(many=True)
         ejes_transversales = SerializadorEjesyActividades(many=True)
-        metodologia_aplicada = serializers.CharField()
         fundamentacion = serializers.CharField()
         presentar_a_aprobacion = serializers.BooleanField()
         
@@ -73,7 +73,7 @@ class ModificarProgramaAPI(APIView):
                 status=HTTP_401_UNAUTHORIZED,
             )
         
-        data = self.InputSerializer(request.data)
+        data = self.InputSerializer(data=request.data)
         if not data.is_valid():
             return Response({"error": data.errors}, status=HTTP_400_BAD_REQUEST)
         validated_data = data.validated_data
