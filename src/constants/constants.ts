@@ -190,8 +190,8 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
   },
   {
     label: 'Metodología aplicada',
-    id: 'metodologia-aplicada',
-    name: 'metodologia_aplicada'
+    id: 'metodologiaAplicada',
+    name: 'metodologiaAplicada'
   },
   {
     label: 'Recursos',
@@ -204,14 +204,24 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     name: 'evaluacion'
   },
   {
-    label: 'Investigación',
-    id: 'investigacion',
-    name: 'investigacion'
+    label: 'Investigación Estudiantes',
+    id: 'investigacionEstudiantes',
+    name: 'investigacionEstudiantes'
   },
   {
-    label: 'Extensión',
-    id: 'extension',
-    name: 'extension'
+    label: 'Investigación Docentes',
+    id: 'investigacionDocentes',
+    name: 'investigacionDocentes'
+  },
+  {
+    label: 'Extensión Estudiantes',
+    id: 'extensionEstudiantes',
+    name: 'extensionEstudiantes'
+  },
+  {
+    label: 'Extensión Docentes',
+    id: 'extensionDocentes',
+    name: 'extensionDocentes'
   }
 ]
 
