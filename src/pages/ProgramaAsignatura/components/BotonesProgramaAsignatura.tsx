@@ -14,13 +14,15 @@ export default function BotonesProgramaAsignatura({
   if (modoLectura) return null
 
   return (
-    <div className="acciones-programa-asignatura">
-      <Button text="Guardar borrador" onClick={handlePostPrograma(true)} />
-      <Button
-        text="Enviar para aprobacion"
-        onClick={handlePostPrograma(false)}
-      />
+    <>
       {{ error } && <div className="mensaje-error">{error}</div>}
-    </div>
+      <div className="acciones-programa-asignatura">
+        <Button text="Guardar borrador" onClick={handlePostPrograma(true)} />
+        <Button
+          text="Enviar para aprobacion"
+          onClick={handlePostPrograma(false)}
+        />
+      </div>
+    </>
   )
 }

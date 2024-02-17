@@ -182,7 +182,7 @@ export default function SeccionDescriptores({
             </div>
             {erroresPrograma.descriptores.resultadosAprendizaje && (
               <div className="mensaje-error">
-                erroresPrograma.descriptores.resultadosAprendizaje
+                {erroresPrograma.descriptores.resultadosAprendizaje}
               </div>
             )}
           </div>
@@ -204,7 +204,7 @@ export default function SeccionDescriptores({
             </div>
             {erroresPrograma.descriptores.ejesTransversales && (
               <div className="mensaje-error">
-                erroresPrograma.descriptores.ejesTransversales
+                {erroresPrograma.descriptores.ejesTransversales}
               </div>
             )}
           </div>
@@ -228,7 +228,7 @@ export default function SeccionDescriptores({
             </div>
             {erroresPrograma.descriptores.resultadosAprendizaje && (
               <div className="mensaje-error">
-                erroresPrograma.descriptores.actividadesReservadas
+                {erroresPrograma.descriptores.actividadesReservadas}
               </div>
             )}
           </div>
@@ -236,7 +236,7 @@ export default function SeccionDescriptores({
             <label htmlFor="descriptores">Descriptores</label>
             {erroresPrograma.descriptores.resultadosAprendizaje && (
               <div className="mensaje-error">
-                erroresPrograma.descriptores.descriptores
+                {erroresPrograma.descriptores.descriptores}
               </div>
             )}
             <br />
