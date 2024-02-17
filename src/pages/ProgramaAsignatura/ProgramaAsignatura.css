@@ -159,6 +159,8 @@
 
 .mensaje-error {
   color: brown;
+  max-width: 500px;
+  width: 60%;
 }
 
 .input-section {
