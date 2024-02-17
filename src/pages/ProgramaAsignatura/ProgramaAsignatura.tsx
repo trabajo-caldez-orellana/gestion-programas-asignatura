@@ -20,22 +20,23 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     setProgramaAsignatura,
     modoProgramaAsignatura,
     loading,
-    error,
-    mensajeDeError,
+    errorInesperado,
     erroresProgramaAsignatura,
     guardarPrograma
   } = useProgramaAsignatura(id?.toString(), modo)
 
   const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
   const handlePostPrograma = (presentar: boolean) => () => {
+    // TODO. Hacer validaciones en el frontend para que no se manden
+    // formularios que sean no validos!
     guardarPrograma(presentar)
   }
 
-  if (error)
+  if (errorInesperado)
     return (
       <div>
         <h1>Error</h1>
-        <p>{mensajeDeError}</p>
+        <p>{errorInesperado}</p>
       </div>
     )
 
