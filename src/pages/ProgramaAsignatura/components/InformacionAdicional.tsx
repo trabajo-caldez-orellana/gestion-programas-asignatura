@@ -53,7 +53,9 @@ export default function InformacionAdicional({
               disabled={modoLectura}
             />
             {erroresInfornacionAdicional.informacionAdicional[config.name] && (
-              <span className="mensaje-error">HOLA</span>
+              <span className="mensaje-error">
+                {erroresInfornacionAdicional.informacionAdicional[config.name]}
+              </span>
             )}
           </label>
         ))}

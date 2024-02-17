@@ -1,35 +1,15 @@
 import { ProgramaAsignatura } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
-import {
-  MODOS_PROGRAMA_ASIGNATURA,
-  CAMPOS_CARGA_HORARIA
-} from '../../../constants/constants'
+import { CAMPOS_CARGA_HORARIA } from '../../../constants/constants'
 
 interface CargaHorariaProps {
   programaAsignatura: ProgramaAsignatura
-  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
-  modoProgramaAsignatura: string
 }
 
 export default function CargaHoraria({
-  programaAsignatura,
-  setProgramaAsignatura,
-  modoProgramaAsignatura
+  programaAsignatura
 }: CargaHorariaProps) {
   const { cargaHoraria } = programaAsignatura
-  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
-
-  const handleCargaHorariaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-
-    setProgramaAsignatura({
-      ...programaAsignatura,
-      cargaHoraria: {
-        ...programaAsignatura.cargaHoraria,
-        [camelCase(name)]: value
-      }
-    })
-  }
 
   // Los campos se obtienen desde la constante CAMPOS_CARGA_HORARIA
   return (
@@ -44,8 +24,7 @@ export default function CargaHoraria({
               id={config.id}
               name={config.name}
               value={cargaHoraria[camelCase(config.name)]}
-              onChange={handleCargaHorariaChange}
-              disabled={modoLectura}
+              disabled={true}
             />
           </label>
         ))}

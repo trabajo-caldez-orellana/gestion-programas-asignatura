@@ -1,23 +1,16 @@
 import Button from '../../../components/ui/Button'
 
 interface BotonesProgramaAsignatura {
-  errorPostProgramaAsignatura: boolean
-  resultPostProgramaAsignatura: boolean
+  error: string
   modoLectura: boolean
   handlePostPrograma: (isDraft: boolean) => () => void
 }
 
 export default function BotonesProgramaAsignatura({
-  errorPostProgramaAsignatura,
-  resultPostProgramaAsignatura,
+  error,
   modoLectura,
   handlePostPrograma
 }: BotonesProgramaAsignatura) {
-  if (errorPostProgramaAsignatura)
-    return <p>Error al guardar el programa asignatura</p>
-
-  if (resultPostProgramaAsignatura) return <p>Programa enviado correctamente</p>
-
   if (modoLectura) return null
 
   return (
@@ -27,6 +20,7 @@ export default function BotonesProgramaAsignatura({
         text="Enviar para aprobacion"
         onClick={handlePostPrograma(false)}
       />
+      {{ error } && <div className="mensaje-error">{error}</div>}
     </div>
   )
 }
