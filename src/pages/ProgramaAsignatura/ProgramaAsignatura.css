@@ -150,3 +150,7 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+.mensaje-error {
+  color: brown;
+}
