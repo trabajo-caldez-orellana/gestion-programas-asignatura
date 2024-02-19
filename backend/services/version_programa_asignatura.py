@@ -547,7 +547,7 @@ class ServicioVersionProgramaAsignatura:
                                 self._asignar_o_modificar_descriptor_prograna(
                                     instancia_descriptor,
                                     version_programa,
-                                    NivelDescriptor.MEDIO,
+                                    NivelDescriptor.BAJO,
                                 )
 
                         else:
@@ -555,7 +555,7 @@ class ServicioVersionProgramaAsignatura:
                             self._asignar_o_modificar_descriptor_prograna(
                                 instancia_descriptor,
                                 version_programa,
-                                NivelDescriptor.MEDIO if descriptor["seleccionado"] else NivelDescriptor.NADA,
+                                NivelDescriptor.BAJO if descriptor["seleccionado"] else NivelDescriptor.NADA,
                                 instancia,
                             )
 
@@ -843,18 +843,21 @@ class ServicioVersionProgramaAsignatura:
                 version = VersionProgramaAsignatura.objects.get(
                     semestre=semestre_siguente,
                     asignatura=rol.asignatura,
-                    estado=EstadoAsignatura.ABIERTO,
+                    estado__in=[EstadoAsignatura.ABIERTO, EstadoAsignatura.PENDIENTE]
                 )
             except VersionProgramaAsignatura.DoesNotExist:
                 return [
                     self._crear_objeto_para_lista_de_tareas_pendientes(rol.asignatura)
                 ]
 
-            return [
-                self._crear_objeto_para_lista_de_tareas_pendientes(
-                    rol.asignatura, version
-                )
-            ]
+            if version.estado == EstadoAsignatura.ABIERTO:
+                return [
+                    self._crear_objeto_para_lista_de_tareas_pendientes(
+                        rol.asignatura, version
+                    )
+                ]
+            
+            return []
 
         if rol.rol == Roles.DIRECTOR_CARRERA:
             # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.
