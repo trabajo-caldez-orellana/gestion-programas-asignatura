@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Optional, List
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -252,7 +252,7 @@ class ServicioVersionProgramaAsignatura:
         descriptores: list,  # Solo los ID de los descriptores, porque es si o no.
         actividades_reservadas: list,
         ejes_transversales: list,
-        resultados_de_aprendizaje: json,
+        resultados_de_aprendizaje: List[str],
         contenidos: str,
         bibliografia: str,
         recursos: str,
@@ -269,7 +269,8 @@ class ServicioVersionProgramaAsignatura:
         Crea una nueva version de un programa de asignatura para el semestre que viene!
         """
         # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
-
+        print(resultados_de_aprendizaje)
+        breakpoint()
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
         ):
@@ -277,7 +278,7 @@ class ServicioVersionProgramaAsignatura:
 
         semestre = self.servicio_semestre.obtener_semestre_siguiente()
 
-        if not self._el_programa_ya_existe(asignatura, semestre):
+        if self._el_programa_ya_existe(asignatura, semestre):
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
 

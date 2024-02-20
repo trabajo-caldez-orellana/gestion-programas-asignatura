@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 
 from backend.models import (
@@ -173,7 +174,7 @@ def serializer_programa_asignatura(
             "laboratorio_distancia": programa.asignatura.semanal_lab_remoto,
         },
         "descriptores": {
-            "resultados_de_aprendizaje": programa.resultados_de_aprendizaje,
+            "resultados_de_aprendizaje": json.loads(programa.resultados_de_aprendizaje),
             "ejes_transversales": ejes_transversales_del_programa,
             "descriptores": descriptores_del_programa,
             "actividades_reservadas": actividades_reservadas_del_programa,
@@ -184,6 +185,7 @@ def serializer_programa_asignatura(
             "bibliografia": programa.bibliografia,
             "metodologia_aplicada": programa.metodologia_aplicada,
             "recursos": programa.recursos,
+            "cronograma": programa.cronograma,
             "evaluacion": programa.evaluacion,
             "investigacion_docentes": programa.investigacion_docentes,
             "investigacion_estudiantes": programa.investigacion_estudiantes,

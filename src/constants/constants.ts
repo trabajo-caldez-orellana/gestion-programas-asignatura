@@ -392,7 +392,7 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO}/:id`,
     enabled: true,
     component: ProgramaAsignatura,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR
+    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO
   },
   {
     key: 'auditoria',

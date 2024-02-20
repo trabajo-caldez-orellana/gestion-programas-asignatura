@@ -17,10 +17,10 @@ export default function BotonesProgramaAsignatura({
     <>
       {{ error } && <div className="mensaje-error">{error}</div>}
       <div className="acciones-programa-asignatura">
-        <Button text="Guardar borrador" onClick={handlePostPrograma(true)} />
+        <Button text="Guardar borrador" onClick={handlePostPrograma(false)} />
         <Button
           text="Enviar para aprobacion"
-          onClick={handlePostPrograma(false)}
+          onClick={handlePostPrograma(true)}
         />
       </div>
     </>

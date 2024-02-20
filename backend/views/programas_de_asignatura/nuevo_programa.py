@@ -1,3 +1,5 @@
+import json
+
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -51,7 +53,8 @@ class NuevoProgramaAPI(APIView):
         
 
     def post(self, request, id_asignatura):
-        """Crea un nuevo programa
+        """
+        Crea un nuevo programa
         """
         servicio_rol = ServicioRoles()
         servicio_programa = ServicioVersionProgramaAsignatura()
