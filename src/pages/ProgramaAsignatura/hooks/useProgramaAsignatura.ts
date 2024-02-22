@@ -55,126 +55,32 @@ const useProgramaAsignatura = (
     let esFormularioValido = true
     let erroresFormulario = ERRORES_DEFAULT_PROGRAMA_ASIGNATURA
 
-    if (!programaAsignatura.informacionAdicional.bibliografia) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          bibliografia: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
+    const camposTextoRequeridos = [
+  'bibliografia',
+  'contenidos',
+  'cronograma',
+  'fundamentacion',
+  'metodologiaAplicada',
+  'recursos',
+  'evaluacion',
+  'investigacionDocentes',
+  'investigacionEstudiantes',
+  'extensionDocentes',
+  'extensionEstudiantes'
+];
 
-    if (!programaAsignatura.informacionAdicional.contenidos) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          contenidos: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
+camposTextoRequeridos.forEach(campo => {
+  if (!programaAsignatura.informacionAdicional[campo]) {
+    esFormularioValido = false;
+    erroresFormulario = {
+      ...erroresFormulario,
+      informacionAdicional: {
+        ...erroresFormulario.informacionAdicional,
+        [campo]: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
       }
-    }
-
-    if (!programaAsignatura.informacionAdicional.cronograma) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          cronograma: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.fundamentacion) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          fundamentacion: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.metodologiaAplicada) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          metodologiaAplicada: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.recursos) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          recursos: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.evaluacion) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          evaluacion: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.investigacionDocentes) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          investigacionDocentes: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.investigacionEstudiantes) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          investigacionEstudiantes: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.extensionDocentes) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          extensionDocentes: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
-
-    if (!programaAsignatura.informacionAdicional.extensionEstudiantes) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        informacionAdicional: {
-          ...erroresFormulario.informacionAdicional,
-          extensionEstudiantes: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
-        }
-      }
-    }
+    };
+  }
+});
 
     const cantidadResultados =
       programaAsignatura.descriptores.resultadosAprendizaje.filter(
