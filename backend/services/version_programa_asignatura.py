@@ -269,8 +269,6 @@ class ServicioVersionProgramaAsignatura:
         Crea una nueva version de un programa de asignatura para el semestre que viene!
         """
         # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
-        print(resultados_de_aprendizaje)
-        breakpoint()
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
         ):
