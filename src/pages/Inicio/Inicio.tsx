@@ -2,9 +2,9 @@ import React from 'react'
 import useProfile from '../../hooks/useProfile'
 
 const Inicio: React.FC = () => {
-  const { data: profile } = useProfile()
+  const { profileData } = useProfile()
 
-  return <div>Bienvenido {profile?.firstName}! :D</div>
+  return <div>Bienvenido {profileData?.firstName}! :D</div>
 }
 
 export default Inicio

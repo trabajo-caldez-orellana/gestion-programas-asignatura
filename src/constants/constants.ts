@@ -193,7 +193,6 @@ type SidebarSection = {
 }
 
 export const RUTAS_PAGINAS = {
-  INICIO: '',
   CARRERA: '/carrera',
   PLAN_DE_ESTUDIO: '/plan-estudio',
   DESCRIPTORES: '/descriptores',
@@ -203,7 +202,8 @@ export const RUTAS_PAGINAS = {
   PROGRAMAS_VIGENTES: '/programas-vigentes',
   TAREAS_PENDIENTES: '/tareas-pendientes',
   HISTORIAL: '/historial',
-  LOGIN: '/login'
+  LOGIN: '/login',
+  INICIO: ''
 }
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
@@ -272,14 +272,6 @@ export interface Pagina {
 }
 
 export const PAGINAS: Pagina[] = [
-  {
-    key: 'inicio',
-    title: 'Pagina Inicio',
-    path: RUTAS_PAGINAS.INICIO,
-    enabled: true,
-    component: Inicio,
-    protectedByLogin: true
-  },
   {
     key: 'carrera',
     title: 'Carrera',
@@ -398,5 +390,13 @@ export const PAGINAS: Pagina[] = [
     enabled: true,
     component: Login,
     protectedByLogin: false
+  },
+  {
+    key: 'inicio',
+    title: 'Pagina Inicio',
+    path: RUTAS_PAGINAS.INICIO,
+    enabled: true,
+    component: Inicio,
+    protectedByLogin: true
   }
 ]
