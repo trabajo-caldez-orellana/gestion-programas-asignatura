@@ -8,14 +8,12 @@ import useProfile from '../../hooks/useProfile.ts'
 interface NavbarProps {
   isSidebarOpen: boolean
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
-  handleLogin: () => void
   handleLogout: () => void
 }
 
 export default function Navbar({
   isSidebarOpen,
   setIsSidebarOpen,
-  handleLogin,
   handleLogout
 }: NavbarProps) {
   const { profileData, isLoading } = useProfile()
@@ -29,37 +27,27 @@ export default function Navbar({
     setIsAuthenticated(!isLoading && !!profileData)
   }, [profileData, isLoading])
 
-  return (
+  return isAuthenticated ? (
     <>
       <nav className={`navbar wrapper ${isSidebarOpen ? '' : 'inactive'}`}>
         <div className="section">
           <div className="top_navbar">
-            {isAuthenticated ? (
-              <div className="hamburger">
-                <a href="#" onClick={handleOpenSidebar}>
-                  <i className="fas fa-bars"></i>
-                </a>
-              </div>
-            ) : (
-              <></>
-            )}
+            <div className="hamburger">
+              <a href="#" onClick={handleOpenSidebar}>
+                <i className="fas fa-bars"></i>
+              </a>
+            </div>
           </div>
         </div>
         <ul id="navbar-items">
-          {isAuthenticated ? (
-            <>
-              <li>
-                <Button text="Cerrar Sesion" onClick={handleLogout} />
-              </li>
-              <li>
-                <Button text="Notificaciones" />
-              </li>
-            </>
-          ) : (
+          <>
             <li>
-              <Button text="Iniciar Sesion" onClick={handleLogin} />
+              <Button text="Cerrar Sesion" onClick={handleLogout} />
             </li>
-          )}
+            <li>
+              <Button text="Notificaciones" />
+            </li>
+          </>
         </ul>
         <div className="sidebar">
           {profileData ? (
@@ -75,5 +63,7 @@ export default function Navbar({
         </div>
       </nav>
     </>
+  ) : (
+    <></>
   )
 }
