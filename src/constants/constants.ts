@@ -9,7 +9,8 @@ import {
   ProgramaAsignatura,
   TareasPendientes,
   ProgramasVigentes,
-  Auditoria
+  Auditoria,
+  Login
 } from '../pages'
 
 export const RUTAS = {
@@ -201,7 +202,8 @@ export const RUTAS_PAGINAS = {
   AUDITORIA: '/auditoria',
   PROGRAMAS_VIGENTES: '/programas-vigentes',
   TAREAS_PENDIENTES: '/tareas-pendientes',
-  HISTORIAL: '/historial'
+  HISTORIAL: '/historial',
+  LOGIN: '/login'
 }
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
@@ -254,7 +256,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         id: 7,
         name: 'Historial',
         url: RUTAS_PAGINAS.HISTORIAL
-      },
+      }
     ]
   }
 ]
@@ -266,6 +268,7 @@ export interface Pagina {
   enabled: boolean
   component: React.FC<any>
   modo?: string
+  protectedByLogin: boolean
 }
 
 export const PAGINAS: Pagina[] = [
@@ -274,49 +277,56 @@ export const PAGINAS: Pagina[] = [
     title: 'Pagina Inicio',
     path: RUTAS_PAGINAS.INICIO,
     enabled: true,
-    component: Inicio
+    component: Inicio,
+    protectedByLogin: false
   },
   {
     key: 'carrera',
     title: 'Carrera',
     path: RUTAS_PAGINAS.CARRERA,
     enabled: true,
-    component: Carrera
+    component: Carrera,
+    protectedByLogin: true
   },
   {
     key: 'plan-estudio',
     title: 'Plan de Estudio',
     path: RUTAS_PAGINAS.PLAN_DE_ESTUDIO,
     enabled: true,
-    component: PlanEstudio
+    component: PlanEstudio,
+    protectedByLogin: true
   },
   {
     key: 'descriptores',
     title: 'Descriptores',
     path: RUTAS_PAGINAS.DESCRIPTORES,
     enabled: true,
-    component: Descriptores
+    component: Descriptores,
+    protectedByLogin: true
   },
   {
     key: 'bloque-curricular',
     title: 'Bloque Curricular',
     path: RUTAS_PAGINAS.BLOQUE_CURRICULAR,
     enabled: true,
-    component: BloqueCurricular
+    component: BloqueCurricular,
+    protectedByLogin: true
   },
   {
     key: 'programas-vigentes',
     title: 'Programas Vigentes',
     path: RUTAS_PAGINAS.PROGRAMAS_VIGENTES,
     enabled: true,
-    component: ProgramasVigentes
+    component: ProgramasVigentes,
+    protectedByLogin: true
   },
   {
     key: 'historial',
     title: 'Historial',
     path: RUTAS_PAGINAS.HISTORIAL,
     enabled: true,
-    component: Historial
+    component: Historial,
+    protectedByLogin: true
   },
   {
     key: 'ver-programa-asignatura',
@@ -324,7 +334,8 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/:id`,
     enabled: true,
     component: ProgramaAsignatura,
-    modo: MODOS_PROGRAMA_ASIGNATURA.VER
+    modo: MODOS_PROGRAMA_ASIGNATURA.VER,
+    protectedByLogin: true
   },
   {
     key: 'nuevo-programa-asignatura',
@@ -332,7 +343,8 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.NUEVO}/:id`,
     enabled: true,
     component: ProgramaAsignatura,
-    modo: MODOS_PROGRAMA_ASIGNATURA.NUEVO
+    modo: MODOS_PROGRAMA_ASIGNATURA.NUEVO,
+    protectedByLogin: true
   },
   {
     key: 'editar-programa-asignatura',
@@ -340,7 +352,8 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.EDITAR}/:id`,
     enabled: true,
     component: ProgramaAsignatura,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR
+    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR,
+    protectedByLogin: true
   },
   {
     key: 'editar-ultimo-programa-asignatura',
@@ -348,7 +361,8 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO}/:id`,
     enabled: true,
     component: ProgramaAsignatura,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO
+    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO,
+    protectedByLogin: true
   },
   {
     key: 'auditoria',
@@ -356,7 +370,8 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.AUDITORIA}`,
     enabled: true,
     component: Auditoria,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR
+    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR,
+    protectedByLogin: true
   },
   {
     key: 'tareas-pendientes',
@@ -364,7 +379,8 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.TAREAS_PENDIENTES}`,
     enabled: true,
     component: TareasPendientes,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR
+    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR,
+    protectedByLogin: true
   },
   {
     key: 'editar-programa-asignatura',
@@ -372,6 +388,15 @@ export const PAGINAS: Pagina[] = [
     path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}`,
     enabled: true,
     component: ProgramaAsignatura,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR
+    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR,
+    protectedByLogin: true
+  },
+  {
+    key: 'login',
+    title: 'Iniciar Sesion',
+    path: RUTAS_PAGINAS.LOGIN,
+    enabled: true,
+    component: Login,
+    protectedByLogin: false
   }
 ]
