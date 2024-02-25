@@ -26,7 +26,6 @@ export default function Navbar({
   }
 
   useEffect(() => {
-    console.log('Navbar profile', profileData)
     setIsAuthenticated(!isLoading && !!profileData)
   }, [profileData, isLoading])
 
