@@ -1,5 +1,7 @@
-import { camelCase } from 'lodash'
-import { ProgramaAsignaturaInterface } from '../../../interfaces'
+import {
+  ProgramaAsignaturaInterface,
+  ProgramaAsignaturaErrores
+} from '../../../interfaces/interfaces'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
   CAMPOS_INFORMACION_ADICIONAL
@@ -11,12 +13,14 @@ interface InformacionAdicionalProps {
     programaAsignatura: ProgramaAsignaturaInterface
   ) => void
   modoProgramaAsignatura: string
+  erroresInfornacionAdicional: ProgramaAsignaturaErrores
 }
 
 export default function InformacionAdicional({
   programaAsignatura,
   setProgramaAsignatura,
-  modoProgramaAsignatura
+  modoProgramaAsignatura,
+  erroresInfornacionAdicional
 }: InformacionAdicionalProps) {
   const { informacionAdicional } = programaAsignatura
   const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
@@ -28,7 +32,7 @@ export default function InformacionAdicional({
       ...programaAsignatura,
       informacionAdicional: {
         ...programaAsignatura.informacionAdicional,
-        [camelCase(name)]: value
+        [name]: value
       }
     })
   }
@@ -44,12 +48,17 @@ export default function InformacionAdicional({
             <textarea
               id={config.id}
               name={config.name}
-              value={informacionAdicional[camelCase(config.name)]}
+              value={informacionAdicional[config.name]}
               onChange={handleChange}
               rows={4}
               cols={50}
               disabled={modoLectura}
             />
+            {erroresInfornacionAdicional.informacionAdicional[config.name] && (
+              <span className="mensaje-error">
+                {erroresInfornacionAdicional.informacionAdicional[config.name]}
+              </span>
+            )}
           </label>
         ))}
       </form>

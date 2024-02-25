@@ -43,6 +43,7 @@ export interface InformacionAdicional {
   investigacionEstudiantes: string
   extensionDocentes: string
   extensionEstudiantes: string
+  cronograma: string
   // Index signature
   [key: string]: string | number
 }
@@ -52,6 +53,49 @@ export interface ProgramaAsignaturaInterface {
   cargaHoraria: CargaHoraria
   descriptores: Descriptor
   informacionAdicional: InformacionAdicional
+}
+
+export interface CargaHorariaErrores {
+  semanasDictado: string
+  teoriaPresencial: string
+  practicaPresencial: string
+  teoricoPracticoPresencial: string
+  laboratorioPresencial: string
+  teoriaDistancia: string
+  practicaDistancia: string
+  teoricoPracticoDistancia: string
+  laboratorioDistancia: string
+  // Index signature
+  [key: string]: string
+}
+
+export interface DescriptorErrores {
+  resultadosAprendizaje: string
+  ejesTransversales: string
+  descriptores: string
+  actividadesReservadas: string
+}
+
+export interface InformacionAdicionalErrores {
+  fundamentacion: string
+  contenidos: string
+  bibliografia: string
+  metodologiaAplicada: string
+  recursos: string
+  evaluacion: string
+  investigacionDocentes: string
+  investigacionEstudiantes: string
+  extensionDocentes: string
+  extensionEstudiantes: string
+  cronograma: string
+  // Index signature
+  [key: string]: string
+}
+
+export interface ProgramaAsignaturaErrores {
+  descriptores: DescriptorErrores
+  informacionAdicional: InformacionAdicionalErrores
+  all: string
 }
 
 export interface NuevoPrograma {
@@ -105,6 +149,7 @@ export interface ProgramaAsignaturaAPIBody {
   }
   informacion_adicional: {
     fundamentacion: string
+    cronograma: string
     contenidos: string
     bibliografia: string
     metodologia_aplicada: string

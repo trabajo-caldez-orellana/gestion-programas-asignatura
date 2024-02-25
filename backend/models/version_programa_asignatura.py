@@ -21,6 +21,8 @@ class VersionProgramaAsignatura(models.Model):
     extension_docentes = models.TextField()
     extension_estudiantes = models.TextField()
     cronograma = models.TextField()
+    metodologia_aplicada = models.TextField()
+    fundamentacion = models.TextField()
 
     resultados_de_aprendizaje = models.JSONField()
     creado_en = models.DateTimeField(default=obtener_fecha_y_hora_actual)

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Button from '../../../components/ui/Button'
 import Modal from '../../../components/Modal/Modal'
-import { ProgramaAsignaturaInterface } from '../../../interfaces'
-import camelCase from 'lodash/camelCase'
+import {
+  ProgramaAsignaturaInterface,
+  ProgramaAsignaturaErrores
+} from '../../../interfaces/interfaces'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 
 interface SeccionDescriptoresProps {
@@ -11,12 +13,14 @@ interface SeccionDescriptoresProps {
     programaAsignatura: ProgramaAsignaturaInterface
   ) => void
   modoProgramaAsignatura: string
+  erroresPrograma: ProgramaAsignaturaErrores
 }
 
 export default function SeccionDescriptores({
   programaAsignatura,
   setProgramaAsignatura,
-  modoProgramaAsignatura
+  modoProgramaAsignatura,
+  erroresPrograma
 }: SeccionDescriptoresProps) {
   const [modalResultadosAbierto, setModalResultadosAbierto] = useState(false)
   const [modalEjesTransversales, setModalEjesTransversales] = useState(false)
@@ -37,7 +41,7 @@ export default function SeccionDescriptores({
       ...programaAsignatura,
       descriptores: {
         ...programaAsignatura.descriptores,
-        [camelCase(name)]: value
+        [name]: value
       }
     })
   }
@@ -163,78 +167,111 @@ export default function SeccionDescriptores({
       <section className="form-section">
         <h2 className="header">Informacion Especifica</h2>
         <form className="seccion-descriptores-form">
-          <label htmlFor="resultados-aprendizaje">
-            Resultados de aprendizaje
-          </label>
-          <div className="modal-input">
-            <input
-              type="text"
-              id="resultados-aprendizaje"
-              name="resultados_aprendizaje"
-              value={resultadosAprendizajeCount()}
-              onChange={handleSeccionDescriptoresChange}
-              disabled={modoLectura}
-            />
-            <Button text="+" onClick={abrirModalResultados} />
-          </div>
-          <label htmlFor="ejes-transversales">Ejes transversales</label>
-          <div className="modal-input">
-            <input
-              type="text"
-              id="ejes-transversales"
-              name="ejes_transversales"
-              value={descriptores.ejesTransversales.length}
-              onChange={handleSeccionDescriptoresChange}
-              disabled={modoLectura}
-            />
-            <Button text="+" onClick={() => setModalEjesTransversales(true)} />
-          </div>
-          <label htmlFor="actividades-reservadas">Actividades reservadas</label>
-          <div className="modal-input">
-            <input
-              type="text"
-              id="actividades-reservadas"
-              name="actividades_reservadas"
-              value={descriptores.actividadesReservadas.length}
-              onChange={handleSeccionDescriptoresChange}
-              disabled={modoLectura}
-            />
-            <Button
-              text="+"
-              onClick={() => setModalActividadesReservadasAbierto(true)}
-            />
-          </div>
-          <label htmlFor="descriptores">Descriptores</label>
-          <br />
-          <div className="selector-descritores">
-            <div className="selector-descriptores-columna">
-              <label>Si</label>
-
-              {descriptores.descriptores.map(
-                (descriptor) =>
-                  descriptor.seleccionado && (
-                    <p
-                      key={descriptor.id}
-                      onClick={() => handleDescriptorChange(descriptor.id)}
-                    >
-                      {descriptor.nombre}
-                    </p>
-                  )
-              )}
+          <div className="input-section">
+            <label htmlFor="resultados-aprendizaje">
+              Resultados de aprendizaje
+            </label>
+            <div className="modal-input">
+              <input
+                type="text"
+                id="resultados-aprendizaje"
+                name="resultados_aprendizaje"
+                value={resultadosAprendizajeCount()}
+                onChange={handleSeccionDescriptoresChange}
+                disabled={modoLectura}
+              />
+              <Button text="+" onClick={abrirModalResultados} />
             </div>
-            <div className="selector-descriptores-columna">
-              <label>No</label>
-              {descriptores.descriptores.map(
-                (descriptor) =>
-                  !descriptor.seleccionado && (
-                    <p
-                      key={descriptor.id}
-                      onClick={() => handleDescriptorChange(descriptor.id)}
-                    >
-                      {descriptor.nombre}
-                    </p>
-                  )
-              )}
+            {erroresPrograma.descriptores.resultadosAprendizaje && (
+              <div className="mensaje-error">
+                {erroresPrograma.descriptores.resultadosAprendizaje}
+              </div>
+            )}
+          </div>
+          <div className="input-section">
+            <label htmlFor="ejes-transversales">Ejes transversales</label>
+            <div className="modal-input">
+              <input
+                type="text"
+                id="ejes-transversales"
+                name="ejes_transversales"
+                value={descriptores.ejesTransversales.length}
+                onChange={handleSeccionDescriptoresChange}
+                disabled={modoLectura}
+              />
+              <Button
+                text="+"
+                onClick={() => setModalEjesTransversales(true)}
+              />
+            </div>
+            {erroresPrograma.descriptores.ejesTransversales && (
+              <div className="mensaje-error">
+                {erroresPrograma.descriptores.ejesTransversales}
+              </div>
+            )}
+          </div>
+          <div className="input-section">
+            <label htmlFor="actividades-reservadas">
+              Actividades reservadas
+            </label>
+            <div className="modal-input">
+              <input
+                type="text"
+                id="actividades-reservadas"
+                name="actividades_reservadas"
+                value={descriptores.actividadesReservadas.length}
+                onChange={handleSeccionDescriptoresChange}
+                disabled={modoLectura}
+              />
+              <Button
+                text="+"
+                onClick={() => setModalActividadesReservadasAbierto(true)}
+              />
+            </div>
+            {erroresPrograma.descriptores.resultadosAprendizaje && (
+              <div className="mensaje-error">
+                {erroresPrograma.descriptores.actividadesReservadas}
+              </div>
+            )}
+          </div>
+          <div className="input-section">
+            <label htmlFor="descriptores">Descriptores</label>
+            {erroresPrograma.descriptores.resultadosAprendizaje && (
+              <div className="mensaje-error">
+                {erroresPrograma.descriptores.descriptores}
+              </div>
+            )}
+            <br />
+            <div className="selector-descritores">
+              <div className="selector-descriptores-columna">
+                <label>Si</label>
+
+                {descriptores.descriptores.map(
+                  (descriptor) =>
+                    descriptor.seleccionado && (
+                      <p
+                        key={descriptor.id}
+                        onClick={() => handleDescriptorChange(descriptor.id)}
+                      >
+                        {descriptor.nombre}
+                      </p>
+                    )
+                )}
+              </div>
+              <div className="selector-descriptores-columna">
+                <label>No</label>
+                {descriptores.descriptores.map(
+                  (descriptor) =>
+                    !descriptor.seleccionado && (
+                      <p
+                        key={descriptor.id}
+                        onClick={() => handleDescriptorChange(descriptor.id)}
+                      >
+                        {descriptor.nombre}
+                      </p>
+                    )
+                )}
+              </div>
             </div>
           </div>
         </form>

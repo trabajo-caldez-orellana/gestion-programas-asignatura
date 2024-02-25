@@ -5,6 +5,8 @@ from .programas_de_asignatura import (
     InformacionNuevoProgramaAPI,
     InformacionModificacionProgramaAPI,
     ReutilizarUltimoPrograma,
+    ModificarProgramaAPI,
+    NuevoProgramaAPI,
     InformacionEditarProgramaAPartirDelUltimoAPI,
     ObtenerFiltros,
     ObtenerProgramasHistorial

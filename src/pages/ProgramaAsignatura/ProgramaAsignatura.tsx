@@ -8,7 +8,6 @@ import {
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
-import useProgramaAsignaturaMutation from './hooks/useProgramaAsignaturaMutation'
 import './ProgramaAsignatura.css'
 
 const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
@@ -21,28 +20,23 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     setProgramaAsignatura,
     modoProgramaAsignatura,
     loading,
-    error,
-    mensajeDeError
+    errorInesperado,
+    erroresProgramaAsignatura,
+    guardarPrograma
   } = useProgramaAsignatura(id?.toString(), modo)
 
   const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
-
-  // Este hook se encarga de hacer el post del programaAsignatura
-  const {
-    postPrograma,
-    resultPostProgramaAsignatura,
-    errorPostProgramaAsignatura
-  } = useProgramaAsignaturaMutation(programaAsignatura)
-
-  const handlePostPrograma = (isDraft: boolean) => () => {
-    postPrograma(isDraft)
+  const handlePostPrograma = (presentar: boolean) => () => {
+    // TODO. Hacer validaciones en el frontend para que no se manden
+    // formularios que sean no validos!
+    guardarPrograma(presentar)
   }
 
-  if (error)
+  if (errorInesperado)
     return (
       <div>
         <h1>Error</h1>
-        <p>{mensajeDeError}</p>
+        <p>{errorInesperado}</p>
       </div>
     )
 
@@ -50,25 +44,22 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
 
   return (
     <section className="section-content">
-      <CargaHoraria
-        programaAsignatura={programaAsignatura}
-        setProgramaAsignatura={setProgramaAsignatura}
-        modoProgramaAsignatura={modoProgramaAsignatura}
-      />
+      <CargaHoraria programaAsignatura={programaAsignatura} />
       <SeccionDescriptores
         programaAsignatura={programaAsignatura}
         setProgramaAsignatura={setProgramaAsignatura}
         modoProgramaAsignatura={modoProgramaAsignatura}
+        erroresPrograma={erroresProgramaAsignatura}
       />
       <InformacionAdicional
         programaAsignatura={programaAsignatura}
         setProgramaAsignatura={setProgramaAsignatura}
         modoProgramaAsignatura={modoProgramaAsignatura}
+        erroresInfornacionAdicional={erroresProgramaAsignatura}
       />
       <br />
       <BotonesProgramaAsignatura
-        errorPostProgramaAsignatura={errorPostProgramaAsignatura}
-        resultPostProgramaAsignatura={resultPostProgramaAsignatura}
+        error={erroresProgramaAsignatura.all}
         modoLectura={modoLectura}
         handlePostPrograma={handlePostPrograma}
       />

@@ -1,4 +1,8 @@
-import { ProgramaAsignaturaInterface } from '../interfaces'
+import {
+  ProgramaAsignaturaInterface,
+  ProgramaAsignaturaErrores
+} from 'interfaces/interfaces'
+
 import {
   Inicio,
   Carrera,
@@ -14,7 +18,6 @@ import {
 
 export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/api/programas/',
-  POST_PROGRAMAS_ASIGNATURAS: '/api/programa/',
   GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
   GET_PROGRAMAS_VIGENTES: '/api/programas/vigentes/',
   GET_PROGRAMA_PARA_MODIFICAR: '/api/informacion-formularios/editar/',
@@ -23,7 +26,9 @@ export const RUTAS = {
     '/api/informacion-formularios/editar_ultimo/',
   GET_TAREAS_PENDIENTES: '/api/programas/pendientes/',
   GET_FILTROS_HISTORIAL: 'api/filtros/',
-  GET_HISTORIAL: 'api/historial/'
+  GET_HISTORIAL: 'api/historial/',
+  POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/nuevo/',
+  POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/'
 }
 
 export const HANDLERS = {
@@ -66,6 +71,7 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
   },
   informacionAdicional: {
     fundamentacion: '',
+    cronograma: '',
     contenidos: '',
     bibliografia: '',
     metodologiaAplicada: '',
@@ -76,6 +82,29 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
     extensionEstudiantes: '',
     extensionDocentes: ''
   }
+}
+
+export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
+  descriptores: {
+    resultadosAprendizaje: '',
+    ejesTransversales: '',
+    descriptores: '',
+    actividadesReservadas: ''
+  },
+  informacionAdicional: {
+    fundamentacion: '',
+    cronograma: '',
+    contenidos: '',
+    bibliografia: '',
+    metodologiaAplicada: '',
+    recursos: '',
+    evaluacion: '',
+    investigacionDocentes: '',
+    investigacionEstudiantes: '',
+    extensionEstudiantes: '',
+    extensionDocentes: ''
+  },
+  all: ''
 }
 
 type CampoCargaHorariaType = {
@@ -150,14 +179,19 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     name: 'contenidos'
   },
   {
+    label: 'Cronograma',
+    id: 'cronograma',
+    name: 'cronograma'
+  },
+  {
     label: 'Bibliografía',
     id: 'bibliografia',
     name: 'bibliografia'
   },
   {
     label: 'Metodología aplicada',
-    id: 'metodologia-aplicada',
-    name: 'metodologia_aplicada'
+    id: 'metodologiaAplicada',
+    name: 'metodologiaAplicada'
   },
   {
     label: 'Recursos',
@@ -170,14 +204,24 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
     name: 'evaluacion'
   },
   {
-    label: 'Investigación',
-    id: 'investigacion',
-    name: 'investigacion'
+    label: 'Investigación Estudiantes',
+    id: 'investigacionEstudiantes',
+    name: 'investigacionEstudiantes'
   },
   {
-    label: 'Extensión',
-    id: 'extension',
-    name: 'extension'
+    label: 'Investigación Docentes',
+    id: 'investigacionDocentes',
+    name: 'investigacionDocentes'
+  },
+  {
+    label: 'Extensión Estudiantes',
+    id: 'extensionEstudiantes',
+    name: 'extensionEstudiantes'
+  },
+  {
+    label: 'Extensión Docentes',
+    id: 'extensionDocentes',
+    name: 'extensionDocentes'
   }
 ]
 
@@ -254,7 +298,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         id: 7,
         name: 'Historial',
         url: RUTAS_PAGINAS.HISTORIAL
-      },
+      }
     ]
   }
 ]
@@ -375,3 +419,13 @@ export const PAGINAS: Pagina[] = [
     modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR
   }
 ]
+
+export const MENSAJES_DE_ERROR = {
+  CAMPO_REQUERIDO: 'Este campo es requerido.',
+  CANTIDAD_RESULTADOS_APRENDIZAJE:
+    'Un programa debe tener entre 5 a 8 resultados de aprendizaje.',
+  SELECCIONAR_DESCRIPTOR: 'Debe seleccionar al menos un descriptor.',
+  SELECCIONAR_EJE_TRANSVERSAL: 'Debe seleccionar al menos un eje transversal.',
+  SELECCIONAR_ACTIVIDAD_RESERVADA:
+    'Debe seleccionar al menos una actividad reservada.'
+}

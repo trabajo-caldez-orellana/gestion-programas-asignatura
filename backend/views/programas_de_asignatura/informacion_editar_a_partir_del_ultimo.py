@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 
 from backend.models import VersionProgramaAsignatura, Asignatura
-from backend.common.choices import EstadoAsignatura
 from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura
 from backend.serializers import serializer_programa_asignatura
 from backend.common.mensajes_de_error import (
@@ -69,7 +68,7 @@ class InformacionEditarProgramaAPartirDelUltimoAPI(APIView):
 
         if servicio_rol.usuario_tiene_permiso_para_crear_programa(request.user, asignatura):
           try:
-              ultimo_programa = servicio_programa.obtener_ultimo_programa_de_asignatura_aprobado(asignatura)
+              ultimo_programa = servicio_programa.obtener_ultimo_programa_de_asignatura_aprobado(asignatura=asignatura)
               # Obtiene los datos del programa, con informacion extra para su modificacion
               data = serializer_programa_asignatura(ultimo_programa)
               return Response({"data": data})
