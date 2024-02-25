@@ -278,7 +278,7 @@ export const PAGINAS: Pagina[] = [
     path: RUTAS_PAGINAS.INICIO,
     enabled: true,
     component: Inicio,
-    protectedByLogin: false
+    protectedByLogin: true
   },
   {
     key: 'carrera',
