@@ -16,7 +16,8 @@ import {
   MODOS_PROGRAMA_ASIGNATURA,
   NUEVO_PROGRAMA_ASIGNATURA,
   ERRORES_DEFAULT_PROGRAMA_ASIGNATURA,
-  RUTAS_PAGINAS
+  RUTAS_PAGINAS,
+  MENSAJES_DE_ERROR
 } from '../../../constants/constants'
 
 type useProgramaAsignaturaType = {
@@ -50,39 +51,139 @@ const useProgramaAsignatura = (
   const [errorInesperado, setErrorInesperado] = useState<string>('')
   const navigate = useNavigate()
 
+  const validarDatosPrograma = (): boolean => {
+    let esFormularioValido = true
+    let erroresFormulario = ERRORES_DEFAULT_PROGRAMA_ASIGNATURA
+
+    const camposTextoRequeridos = [
+  'bibliografia',
+  'contenidos',
+  'cronograma',
+  'fundamentacion',
+  'metodologiaAplicada',
+  'recursos',
+  'evaluacion',
+  'investigacionDocentes',
+  'investigacionEstudiantes',
+  'extensionDocentes',
+  'extensionEstudiantes'
+];
+
+camposTextoRequeridos.forEach(campo => {
+  if (!programaAsignatura.informacionAdicional[campo]) {
+    esFormularioValido = false;
+    erroresFormulario = {
+      ...erroresFormulario,
+      informacionAdicional: {
+        ...erroresFormulario.informacionAdicional,
+        [campo]: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
+      }
+    };
+  }
+});
+
+    const cantidadResultados =
+      programaAsignatura.descriptores.resultadosAprendizaje.filter(
+        (item) => item !== ''
+      ).length
+    if (cantidadResultados < 5 || cantidadResultados > 8) {
+      esFormularioValido = esFormularioValido && false
+      erroresFormulario = {
+        ...erroresFormulario,
+        descriptores: {
+          ...erroresFormulario.descriptores,
+          resultadosAprendizaje:
+            MENSAJES_DE_ERROR.CANTIDAD_RESULTADOS_APRENDIZAJE
+        }
+      }
+    }
+
+    const cantidadDescriptores =
+      programaAsignatura.descriptores.descriptores.filter(
+        (item) => item.seleccionado
+      ).length
+    const cantidadActividadesReservadas =
+      programaAsignatura.descriptores.actividadesReservadas.filter(
+        (item) => item.nivel !== 0
+      ).length
+    const cantidadEjesTrasversales =
+      programaAsignatura.descriptores.ejesTransversales.filter(
+        (item) => item.nivel !== 0
+      ).length
+
+    if (cantidadActividadesReservadas === 0) {
+      esFormularioValido = esFormularioValido && false
+      erroresFormulario = {
+        ...erroresFormulario,
+        descriptores: {
+          ...erroresFormulario.descriptores,
+          actividadesReservadas:
+            MENSAJES_DE_ERROR.SELECCIONAR_ACTIVIDAD_RESERVADA
+        }
+      }
+    }
+
+    if (cantidadDescriptores === 0) {
+      esFormularioValido = esFormularioValido && false
+      erroresFormulario = {
+        ...erroresFormulario,
+        descriptores: {
+          ...erroresFormulario.descriptores,
+          descriptores: MENSAJES_DE_ERROR.SELECCIONAR_DESCRIPTOR
+        }
+      }
+    }
+
+    if (cantidadEjesTrasversales === 0) {
+      esFormularioValido = esFormularioValido && false
+      erroresFormulario = {
+        ...erroresFormulario,
+        descriptores: {
+          ...erroresFormulario.descriptores,
+          ejesTransversales: MENSAJES_DE_ERROR.SELECCIONAR_EJE_TRANSVERSAL
+        }
+      }
+    }
+
+    setErroresProgramaAsignatura(erroresFormulario)
+    return esFormularioValido
+  }
+
   const guardarPrograma = async (presentarAprobacion: boolean) => {
-    if (
-      modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO ||
-      modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO
-    ) {
-      const response = await crearProgramaAsignatura(
-        programaAsignatura,
-        presentarAprobacion,
-        parseInt(id)
-      )
+    if (validarDatosPrograma()) {
+      if (
+        modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO ||
+        modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO
+      ) {
+        const response = await crearProgramaAsignatura(
+          programaAsignatura,
+          presentarAprobacion,
+          parseInt(id)
+        )
 
-      if (response.status === 200) {
-        navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
-        return
-      }
+        if (response.status === 200) {
+          navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+          return
+        }
 
-      if (response.error) {
-        setErroresProgramaAsignatura(response.error)
-      }
-    } else {
-      const response = await modificarProgramaAsignatura(
-        programaAsignatura,
-        presentarAprobacion,
-        parseInt(id)
-      )
+        if (response.error) {
+          setErroresProgramaAsignatura(response.error)
+        }
+      } else {
+        const response = await modificarProgramaAsignatura(
+          programaAsignatura,
+          presentarAprobacion,
+          parseInt(id)
+        )
 
-      if (response.status === 200) {
-        navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
-        return
-      }
+        if (response.status === 200) {
+          navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+          return
+        }
 
-      if (response.error) {
-        setErroresProgramaAsignatura(response.error)
+        if (response.error) {
+          setErroresProgramaAsignatura(response.error)
+        }
       }
     }
   }

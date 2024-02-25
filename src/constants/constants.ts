@@ -419,3 +419,13 @@ export const PAGINAS: Pagina[] = [
     modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR
   }
 ]
+
+export const MENSAJES_DE_ERROR = {
+  CAMPO_REQUERIDO: 'Este campo es requerido.',
+  CANTIDAD_RESULTADOS_APRENDIZAJE:
+    'Un programa debe tener entre 5 a 8 resultados de aprendizaje.',
+  SELECCIONAR_DESCRIPTOR: 'Debe seleccionar al menos un descriptor.',
+  SELECCIONAR_EJE_TRANSVERSAL: 'Debe seleccionar al menos un eje transversal.',
+  SELECCIONAR_ACTIVIDAD_RESERVADA:
+    'Debe seleccionar al menos una actividad reservada.'
+}
