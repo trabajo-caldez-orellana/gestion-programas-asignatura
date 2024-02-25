@@ -7,12 +7,10 @@ import {
   BotonesProgramaAsignatura
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
-import { ProgramaAsignatura } from '../../interfaces'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
-import useProgramaAsignaturaMutation from './hooks/useProgramaAsignaturaMutation'
 import './ProgramaAsignatura.css'
 
-export default function ProgramaAsignatura({ modo }: { modo: string }) {
+const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
   // EN el caso de ser modo = NUEVO o EDITAR_ULTIMO, este id corresponderia a la asignatura a la que estamos entrando!!
   const { id } = useParams()
 
@@ -22,28 +20,23 @@ export default function ProgramaAsignatura({ modo }: { modo: string }) {
     setProgramaAsignatura,
     modoProgramaAsignatura,
     loading,
-    error,
-    mensajeDeError
+    errorInesperado,
+    erroresProgramaAsignatura,
+    guardarPrograma
   } = useProgramaAsignatura(id?.toString(), modo)
 
   const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
-
-  // Este hook se encarga de hacer el post del programaAsignatura
-  const {
-    postPrograma,
-    resultPostProgramaAsignatura,
-    errorPostProgramaAsignatura
-  } = useProgramaAsignaturaMutation(programaAsignatura)
-
-  const handlePostPrograma = (isDraft: boolean) => () => {
-    postPrograma(isDraft)
+  const handlePostPrograma = (presentar: boolean) => () => {
+    // TODO. Hacer validaciones en el frontend para que no se manden
+    // formularios que sean no validos!
+    guardarPrograma(presentar)
   }
 
-  if (error)
+  if (errorInesperado)
     return (
       <div>
         <h1>Error</h1>
-        <p>{mensajeDeError}</p>
+        <p>{errorInesperado}</p>
       </div>
     )
 
@@ -51,28 +44,27 @@ export default function ProgramaAsignatura({ modo }: { modo: string }) {
 
   return (
     <section className="section-content">
-      <CargaHoraria
-        programaAsignatura={programaAsignatura}
-        setProgramaAsignatura={setProgramaAsignatura}
-        modoProgramaAsignatura={modoProgramaAsignatura}
-      />
+      <CargaHoraria programaAsignatura={programaAsignatura} />
       <SeccionDescriptores
         programaAsignatura={programaAsignatura}
         setProgramaAsignatura={setProgramaAsignatura}
         modoProgramaAsignatura={modoProgramaAsignatura}
+        erroresPrograma={erroresProgramaAsignatura}
       />
       <InformacionAdicional
         programaAsignatura={programaAsignatura}
         setProgramaAsignatura={setProgramaAsignatura}
         modoProgramaAsignatura={modoProgramaAsignatura}
+        erroresInfornacionAdicional={erroresProgramaAsignatura}
       />
       <br />
       <BotonesProgramaAsignatura
-        errorPostProgramaAsignatura={errorPostProgramaAsignatura}
-        resultPostProgramaAsignatura={resultPostProgramaAsignatura}
+        error={erroresProgramaAsignatura.all}
         modoLectura={modoLectura}
         handlePostPrograma={handlePostPrograma}
       />
     </section>
   )
 }
+
+export default ProgramaAsignatura

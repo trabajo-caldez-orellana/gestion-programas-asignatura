@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Optional, List
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -243,7 +243,7 @@ class ServicioVersionProgramaAsignatura:
 
     def _el_programa_ya_existe(self, asignatura: Asignatura, semestre: Semestre) -> bool:
         programas_count = VersionProgramaAsignatura.objects.filter(asignatura_id=asignatura.id, semestre_id=semestre.id).count()
-        return count > 0
+        return programas_count > 0
 
 
     def crear_nueva_version_programa_asignatura(
@@ -252,13 +252,15 @@ class ServicioVersionProgramaAsignatura:
         descriptores: list,  # Solo los ID de los descriptores, porque es si o no.
         actividades_reservadas: list,
         ejes_transversales: list,
-        resultados_de_aprendizaje: json,
+        resultados_de_aprendizaje: List[str],
         contenidos: str,
         bibliografia: str,
         recursos: str,
         evaluacion: str,
         investigacion_docentes: str,
         investigacion_estudiantes: str,
+        metodologia_aplicada: str,
+        fundamentacion: str,
         extension_docentes: str,
         extension_estudiantes: str,
         cronograma: str,
@@ -267,7 +269,6 @@ class ServicioVersionProgramaAsignatura:
         Crea una nueva version de un programa de asignatura para el semestre que viene!
         """
         # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
-
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
         ):
@@ -275,7 +276,7 @@ class ServicioVersionProgramaAsignatura:
 
         semestre = self.servicio_semestre.obtener_semestre_siguiente()
 
-        if not self._el_programa_ya_existe():
+        if self._el_programa_ya_existe(asignatura, semestre):
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
 
@@ -334,6 +335,8 @@ class ServicioVersionProgramaAsignatura:
                     investigacion_estudiantes=investigacion_estudiantes,
                     extension_docentes=extension_docentes,
                     extension_estudiantes=extension_estudiantes,
+                    metodologia_aplicada = metodologia_aplicada,
+                    fundamentacion = fundamentacion,
                     cronograma=cronograma,
                 )
                 version_programa.full_clean()
@@ -411,6 +414,8 @@ class ServicioVersionProgramaAsignatura:
         resultados_de_aprendizaje: json,
         contenidos: str,
         bibliografia: str,
+        metodologia_aplicada: str,
+        fundamentacion: str,
         recursos: str,
         evaluacion: str,
         investigacion_docentes: str,
@@ -439,7 +444,7 @@ class ServicioVersionProgramaAsignatura:
         # Formato descriptores, actividades y ejes transversales:
         # {
         #  "id": number,
-        #  "nivel": boolean
+        #  "seleccionado": boolean
         # }
 
         mensajes_de_error = {}
@@ -447,7 +452,7 @@ class ServicioVersionProgramaAsignatura:
         cantidad_descriptores = 0
         for descriptor in descriptores:
             try:
-                if descriptor["nivel"]:
+                if descriptor["seleccionado"]:
                     cantidad_descriptores += 1
             except (TypeError, KeyError, ValueError) as exc:
                 raise ValidationError(
@@ -509,6 +514,8 @@ class ServicioVersionProgramaAsignatura:
                 version_programa.extension_docentes = extension_docentes
                 version_programa.extension_estudiantes = extension_estudiantes
                 version_programa.cronograma = cronograma
+                version_programa.metodologia_aplicada = metodologia_aplicada
+                version_programa.fundamentacion = fundamentacion
                 version_programa.full_clean()
                 version_programa.save()
 
@@ -516,6 +523,7 @@ class ServicioVersionProgramaAsignatura:
                 # La lista de descriptores tiene el siguiente formato:
                 # {
                 #   "id": int
+                #   "seleccionado": boolean
                 # }
                 for descriptor in descriptores:
                     try:
@@ -534,18 +542,19 @@ class ServicioVersionProgramaAsignatura:
                         )
 
                         if not descriptor_programa.exists():
-                            self._asignar_o_modificar_descriptor_prograna(
-                                instancia_descriptor,
-                                version_programa,
-                                descriptor["nivel"],
-                            )
+                            if descriptor["seleccionado"]:
+                                self._asignar_o_modificar_descriptor_prograna(
+                                    instancia_descriptor,
+                                    version_programa,
+                                    NivelDescriptor.BAJO,
+                                )
 
                         else:
                             instancia = descriptor_programa.first()
                             self._asignar_o_modificar_descriptor_prograna(
                                 instancia_descriptor,
                                 version_programa,
-                                descriptor["nivel"],
+                                NivelDescriptor.BAJO if descriptor["seleccionado"] else NivelDescriptor.NADA,
                                 instancia,
                             )
 
@@ -587,11 +596,12 @@ class ServicioVersionProgramaAsignatura:
                                 eje_transversal_programa,
                             )
                         except ProgramaTieneDescriptor.DoesNotExist:
-                            self._asignar_o_modificar_descriptor_prograna(
-                                instancia_eje_transversal,
-                                version_programa,
-                                eje["nivel"],
-                            )
+                            if eje["nivel"] != NivelDescriptor.NADA:
+                                self._asignar_o_modificar_descriptor_prograna(
+                                    instancia_eje_transversal,
+                                    version_programa,
+                                    eje["nivel"],
+                                )
 
                     except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
@@ -635,10 +645,11 @@ class ServicioVersionProgramaAsignatura:
                                 actividad_reservada_programa,
                             )
                         except ProgramaTieneActividadReservada.DoesNotExist:
-                            self._asignar_o_modificar_nivel_actividad_reservada(
-                                instancia_actividad_reservada,
-                                version_programa,
-                                actividad["nivel"],
+                            if actividad["nivel"] != NivelDescriptor.NADA:
+                                self._asignar_o_modificar_nivel_actividad_reservada(
+                                    instancia_actividad_reservada,
+                                    version_programa,
+                                    actividad["nivel"],
                             )
                     except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
@@ -650,7 +661,9 @@ class ServicioVersionProgramaAsignatura:
             return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
-        pass
+        programa.estado = EstadoAsignatura.PENDIENTE
+        programa.save()
+        return programa
 
     def obtener_ultimo_programa_de_asignatura_aprobado(self, asignatura: Asignatura):
         semestre_dictado_asignatura = asignatura.semestre_dictado
@@ -734,6 +747,8 @@ class ServicioVersionProgramaAsignatura:
                     investigacion_estudiantes=ultimo_programa.investigacion_estudiantes,
                     extension_docentes=ultimo_programa.extension_docentes,
                     extension_estudiantes=ultimo_programa.extension_docentes,
+                    metodologia_aplicada = ultimo_programa.metodologia_aplicada,
+                    fundamentacion = ultimo_programa.fundamentacion,
                     cronograma=ultimo_programa.cronograma,
                     resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
                 )
@@ -827,18 +842,21 @@ class ServicioVersionProgramaAsignatura:
                 version = VersionProgramaAsignatura.objects.get(
                     semestre=semestre_siguente,
                     asignatura=rol.asignatura,
-                    estado=EstadoAsignatura.ABIERTO,
+                    estado__in=[EstadoAsignatura.ABIERTO, EstadoAsignatura.PENDIENTE]
                 )
             except VersionProgramaAsignatura.DoesNotExist:
                 return [
                     self._crear_objeto_para_lista_de_tareas_pendientes(rol.asignatura)
                 ]
 
-            return [
-                self._crear_objeto_para_lista_de_tareas_pendientes(
-                    rol.asignatura, version
-                )
-            ]
+            if version.estado == EstadoAsignatura.ABIERTO:
+                return [
+                    self._crear_objeto_para_lista_de_tareas_pendientes(
+                        rol.asignatura, version
+                    )
+                ]
+            
+            return []
 
         if rol.rol == Roles.DIRECTOR_CARRERA:
             # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.

@@ -24,6 +24,8 @@ from backend.views import (
     InformacionProgramaAPI,
     InformacionModificacionProgramaAPI,
     InformacionNuevoProgramaAPI,
+    ModificarProgramaAPI,
+    NuevoProgramaAPI,
     InformacionEditarProgramaAPartirDelUltimoAPI,
     ObtenerProgramasHistorial,
 )
@@ -31,14 +33,16 @@ from backend.views import (
 programas_patterns = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
+    path("editar/<id_programa>/", ModificarProgramaAPI.as_view()),
+    path("nuevo/<id_asignatura>/", NuevoProgramaAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),
 ]
 
 formularios_patterns = [
     path(
-            "editar/<id_programa>/",
-            InformacionModificacionProgramaAPI.as_view(),
-        ),
+        "editar/<id_programa>/",
+        InformacionModificacionProgramaAPI.as_view(),
+    ),
     path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
 ]

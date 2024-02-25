@@ -70,7 +70,7 @@ class InformacionEditarProgramaAPartirDelUltimoAPI(APIView):
 
         if servicio_rol.usuario_tiene_permiso_para_crear_programa(request.user, asignatura):
           try:
-              ultimo_programa = servicio_programa.obtener_ultimo_programa_de_asignatura_aprobado()
+              ultimo_programa = servicio_programa.obtener_ultimo_programa_de_asignatura_aprobado(asignatura=asignatura)
               # Obtiene los datos del programa, con informacion extra para su modificacion
               data = serializer_programa_asignatura(ultimo_programa)
               return Response({"data": data})
