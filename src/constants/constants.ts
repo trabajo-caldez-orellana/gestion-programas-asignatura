@@ -1,5 +1,5 @@
 import {
-  ProgramaAsignatura as ProgramaAsignaturaInterface,
+  ProgramaAsignaturaInterface,
   ProgramaAsignaturaErrores
 } from 'interfaces/interfaces'
 

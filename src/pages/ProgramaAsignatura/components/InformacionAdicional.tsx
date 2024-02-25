@@ -1,5 +1,5 @@
 import {
-  ProgramaAsignatura,
+  ProgramaAsignaturaInterface,
   ProgramaAsignaturaErrores
 } from '../../../interfaces/interfaces'
 import {
@@ -8,8 +8,10 @@ import {
 } from '../../../constants/constants'
 
 interface InformacionAdicionalProps {
-  programaAsignatura: ProgramaAsignatura
-  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  programaAsignatura: ProgramaAsignaturaInterface
+  setProgramaAsignatura: (
+    programaAsignatura: ProgramaAsignaturaInterface
+  ) => void
   modoProgramaAsignatura: string
   erroresInfornacionAdicional: ProgramaAsignaturaErrores
 }

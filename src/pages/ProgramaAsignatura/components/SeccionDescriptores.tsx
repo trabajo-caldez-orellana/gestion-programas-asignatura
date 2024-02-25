@@ -2,14 +2,16 @@ import { useState } from 'react'
 import Button from '../../../components/ui/Button'
 import Modal from '../../../components/Modal/Modal'
 import {
-  ProgramaAsignatura,
+  ProgramaAsignaturaInterface,
   ProgramaAsignaturaErrores
 } from '../../../interfaces/interfaces'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 
 interface SeccionDescriptoresProps {
-  programaAsignatura: ProgramaAsignatura
-  setProgramaAsignatura: (programaAsignatura: ProgramaAsignatura) => void
+  programaAsignatura: ProgramaAsignaturaInterface
+  setProgramaAsignatura: (
+    programaAsignatura: ProgramaAsignaturaInterface
+  ) => void
   modoProgramaAsignatura: string
   erroresPrograma: ProgramaAsignaturaErrores
 }

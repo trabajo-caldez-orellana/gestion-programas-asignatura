@@ -1,9 +1,9 @@
-import { ProgramaAsignatura } from '../../../interfaces'
+import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
 import { CAMPOS_CARGA_HORARIA } from '../../../constants/constants'
 
 interface CargaHorariaProps {
-  programaAsignatura: ProgramaAsignatura
+  programaAsignatura: ProgramaAsignaturaInterface
 }
 
 export default function CargaHoraria({

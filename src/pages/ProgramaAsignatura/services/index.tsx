@@ -1,6 +1,6 @@
 import { client } from '../../../utils/axiosClient'
 import {
-  ProgramaAsignatura,
+  ProgramaAsignaturaInterface,
   ProgramaAsignaturaAPIBody,
   ObtenerProgramaAsignaturaAPIErrorBody,
   NuevoProgramaAPIBody,
@@ -11,7 +11,7 @@ import { RUTAS } from '../../../constants/constants'
 
 const parserProgramaAsignatura = (
   programa: ProgramaAsignaturaAPIBody
-): ProgramaAsignatura => {
+): ProgramaAsignaturaInterface => {
   return {
     id: programa.id,
     cargaHoraria: {
@@ -189,7 +189,7 @@ interface ProgramaPOSTBodyErrorInterface {
 }
 
 const parseProgramaPOSTBody = (
-  programa: ProgramaAsignatura,
+  programa: ProgramaAsignaturaInterface,
   presentar: boolean
 ): ProgramaPOSTBodyInterface => {
   const parsedDescriptores = programa.descriptores.descriptores.map(

@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 
 from backend.models import VersionProgramaAsignatura, Asignatura
-from backend.common.choices import EstadoAsignatura
 from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura
 from backend.serializers import serializer_programa_asignatura
 from backend.common.mensajes_de_error import (
@@ -66,7 +65,6 @@ class InformacionEditarProgramaAPartirDelUltimoAPI(APIView):
                 status=HTTP_400_BAD_REQUEST,
             )
         
-
 
         if servicio_rol.usuario_tiene_permiso_para_crear_programa(request.user, asignatura):
           try:

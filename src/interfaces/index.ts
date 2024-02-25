@@ -1,1 +1,1 @@
-export type { ProgramaAsignatura } from './interfaces'
+export type { ProgramaAsignaturaInterface } from './interfaces'

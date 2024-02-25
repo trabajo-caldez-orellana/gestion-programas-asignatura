@@ -48,7 +48,7 @@ export interface InformacionAdicional {
   [key: string]: string | number
 }
 
-export interface ProgramaAsignatura {
+export interface ProgramaAsignaturaInterface {
   id: number
   cargaHoraria: CargaHoraria
   descriptores: Descriptor

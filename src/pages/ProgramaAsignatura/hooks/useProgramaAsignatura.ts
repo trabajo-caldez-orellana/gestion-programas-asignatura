@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  ProgramaAsignatura,
+  ProgramaAsignaturaInterface,
   ProgramaAsignaturaErrores
 } from 'interfaces/interfaces'
 import {
@@ -21,9 +21,9 @@ import {
 } from '../../../constants/constants'
 
 type useProgramaAsignaturaType = {
-  programaAsignatura: ProgramaAsignatura
+  programaAsignatura: ProgramaAsignaturaInterface
   setProgramaAsignatura: React.Dispatch<
-    React.SetStateAction<ProgramaAsignatura>
+    React.SetStateAction<ProgramaAsignaturaInterface>
   >
   erroresProgramaAsignatura: ProgramaAsignaturaErrores
   guardarPrograma: (presentarAprobacion: boolean) => void
@@ -40,7 +40,7 @@ const useProgramaAsignatura = (
   modo: string | null
 ): useProgramaAsignaturaType => {
   const [programaAsignatura, setProgramaAsignatura] =
-    useState<ProgramaAsignatura>(NUEVO_PROGRAMA_ASIGNATURA)
+    useState<ProgramaAsignaturaInterface>(NUEVO_PROGRAMA_ASIGNATURA)
   const [erroresProgramaAsignatura, setErroresProgramaAsignatura] =
     useState<ProgramaAsignaturaErrores>(ERRORES_DEFAULT_PROGRAMA_ASIGNATURA)
   // Persistimos el modo, por defecto es VER
@@ -56,31 +56,31 @@ const useProgramaAsignatura = (
     let erroresFormulario = ERRORES_DEFAULT_PROGRAMA_ASIGNATURA
 
     const camposTextoRequeridos = [
-  'bibliografia',
-  'contenidos',
-  'cronograma',
-  'fundamentacion',
-  'metodologiaAplicada',
-  'recursos',
-  'evaluacion',
-  'investigacionDocentes',
-  'investigacionEstudiantes',
-  'extensionDocentes',
-  'extensionEstudiantes'
-];
+      'bibliografia',
+      'contenidos',
+      'cronograma',
+      'fundamentacion',
+      'metodologiaAplicada',
+      'recursos',
+      'evaluacion',
+      'investigacionDocentes',
+      'investigacionEstudiantes',
+      'extensionDocentes',
+      'extensionEstudiantes'
+    ]
 
-camposTextoRequeridos.forEach(campo => {
-  if (!programaAsignatura.informacionAdicional[campo]) {
-    esFormularioValido = false;
-    erroresFormulario = {
-      ...erroresFormulario,
-      informacionAdicional: {
-        ...erroresFormulario.informacionAdicional,
-        [campo]: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
+    camposTextoRequeridos.forEach((campo) => {
+      if (!programaAsignatura.informacionAdicional[campo]) {
+        esFormularioValido = false
+        erroresFormulario = {
+          ...erroresFormulario,
+          informacionAdicional: {
+            ...erroresFormulario.informacionAdicional,
+            [campo]: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
+          }
+        }
       }
-    };
-  }
-});
+    })
 
     const cantidadResultados =
       programaAsignatura.descriptores.resultadosAprendizaje.filter(
