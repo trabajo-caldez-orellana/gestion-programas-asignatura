@@ -50,6 +50,16 @@ class Asignatura(models.Model):
         max_length=2, choices=Semestres.choices, blank=True, null=True
     )
 
+    planes_de_estudio = models.ManyToManyField(
+        "PlanDeEstudio",
+        related_name="asignaturas_relacionadas",
+        blank=True,
+        through='plandeestudio_asignaturas',
+    )
+
+    def get_metodologia(self):
+        return self.get_metodologia_display()
+
     objects = ManagerAsignatura()
 
     @property

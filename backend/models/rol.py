@@ -5,7 +5,7 @@ from backend.models.usuario import Usuario
 from backend.models.carrera import Carrera
 from backend.models.asignatura import Asignatura
 
-from backend.common.choices import Roles
+from backend.common.choices import Roles, Dedicaciones
 from backend.common.mensajes_de_error import (
     MENSAJE_DOCENTE_SELECCIONA_ASIGNATURA,
     MENSAJE_DIRECTOR_SELECCIONA_ASIGNATURA,
@@ -32,6 +32,13 @@ class Rol(models.Model):
         Asignatura, on_delete=models.SET_NULL, null=True, blank=True
     )
     rol = models.CharField(max_length=2, choices=Roles.choices)
+    dedicacion = models.CharField(max_length=2, choices=Dedicaciones.choices)
+
+    def get_dedicacion(self):
+        return self.get_dedicacion_display()
+
+    def get_rol(self):
+        return self.get_rol_display()
 
     def __str__(self):
         return "{} - {}".format(self.rol, self.usuario)
