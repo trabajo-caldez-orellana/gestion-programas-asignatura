@@ -8,6 +8,7 @@ import PlanEstudio from './PlanEstudio/PlanEstudio'
 import Descriptores from './Descriptores/Descriptores'
 import BloqueCurricular from './BloqueCurricular/BloqueCurricular'
 import Auditoria from './Auditoria/Auditoria'
+import Login from './Login/Login'
 
 export {
   TareasPendientes,
@@ -19,5 +20,6 @@ export {
   PlanEstudio,
   Descriptores,
   BloqueCurricular,
+  Login,
   Auditoria
 }

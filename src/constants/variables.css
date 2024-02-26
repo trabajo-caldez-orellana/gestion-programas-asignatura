@@ -1,6 +1,9 @@
 /* variables.css */
 :root {
   --primary-color: #4169e1;
+  --secondary-color: #d2e8ff;
+  --third-color: #a4d2ff;
   --contrast-color: #ffffff;
+  --dark-color: #2d669d;
   --text-area: #ccc;
 }

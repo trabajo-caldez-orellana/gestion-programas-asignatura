@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
-import { Navbar } from './components'
-import useProfile from './hooks/useProfile'
+import { Navbar, ProtectedRoute } from './components'
 import useGoogleAuthLink from './hooks/useGoogleAuthLink'
 import useGoogleAuthToken from './hooks/useGoogleAuthToken'
 import { PAGINAS } from './constants/constants'
@@ -11,9 +10,8 @@ import { PAGINAS } from './constants/constants'
 export default function App() {
   // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const { data: profile, refetch: fetchProfile } = useProfile()
-  const { data: googleAuth, refetch: fetchGoogleAuth } = useGoogleAuthLink()
-  const { mutate, isSuccess } = useGoogleAuthToken()
+  const { data: googleAuth } = useGoogleAuthLink()
+  const { mutate } = useGoogleAuthToken()
 
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search)
@@ -27,21 +25,10 @@ export default function App() {
   }, [mutate])
 
   useEffect(() => {
-    if (isSuccess) {
-      // fetchProfile()
-    }
-  }, [isSuccess, fetchProfile])
-
-  useEffect(() => {
     if (googleAuth) {
       window.location.replace(googleAuth.authorizationUrl)
     }
   }, [googleAuth])
-
-  // Handlers
-  const handleGoogleLogin = () => {
-    fetchGoogleAuth()
-  }
 
   const handleLogout = () => {
     localStorage.removeItem('token') // Remueve el token
@@ -57,28 +44,27 @@ export default function App() {
       <Navbar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
-        profile={profile}
-        handleLogin={handleGoogleLogin}
         handleLogout={handleLogout}
       />
       <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
-        {/* TODO: Crear componente rutas */}
-        <Routes>
-          {PAGINAS.map((pagina) => (
-            <Route
-              key={pagina.key}
-              path={pagina.path}
-              element={
-                pagina.modo ? (
-                  <pagina.component modo={pagina.modo} />
-                ) : (
-                  <pagina.component />
-                )
-              }
-            />
-          ))}
-          <Route path="*" element={<h1>Not found</h1>} />
-        </Routes>
+        <ProtectedRoute>
+          <Routes>
+            {PAGINAS.map((pagina) => (
+              <Route
+                key={pagina.key}
+                path={pagina.path}
+                element={
+                  pagina.modo ? (
+                    <pagina.component modo={pagina.modo} />
+                  ) : (
+                    <pagina.component />
+                  )
+                }
+              />
+            ))}
+            <Route path="*" element={<h1>Not found</h1>} />
+          </Routes>
+        </ProtectedRoute>
       </main>
     </>
   )
