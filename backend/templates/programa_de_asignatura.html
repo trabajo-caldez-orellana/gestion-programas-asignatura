@@ -91,7 +91,7 @@
               </td>
             </tr>
             <tr>
-              <td>Año Académico: Ciclo lectivo {{anio_academico}}</td>
+              <td>Año Académico: Ciclo lectivo {{anio_academico.year}}</td>
             </tr>
           </table>
         </td>
@@ -119,7 +119,7 @@
         <td class="seccion">Fundamentación</td>
         <td>
           <p class="campo-texto">
-            {{asignatura.fundamentacion}}
+            {{programa.fundamentacion}}
           </p>
         </td>
       </tr>
@@ -249,7 +249,12 @@
               </td>
             </tr>
             <tr>
-              <td>Cronograma de actividades: {{programa.cronograma}}</td>
+              <td>
+                <p>Cronograma de actividades:</p>
+                <p class="campo-texto">
+                  {{programa.cronograma}}
+                </p>
+              </td>
             </tr>
           </table>
         </td>

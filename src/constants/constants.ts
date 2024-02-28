@@ -45,7 +45,8 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
   VER: 'ver',
   NUEVO: 'nuevo',
   EDITAR: 'editar',
-  EDITAR_ULTIMO: 'editar-ultimo'
+  EDITAR_ULTIMO: 'editar-ultimo',
+  IMPRIMIR: 'imprimir'
 }
 
 export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {

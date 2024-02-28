@@ -14,6 +14,7 @@ class ProgramasVigentesSerializer(serializers.Serializer):
                 "id_programa": programa.id,
                 "acciones_posibles": {
                     "ver_programa": True,
+                    "imprimir": True,
                 },
                 "accion_requerida": False
             }

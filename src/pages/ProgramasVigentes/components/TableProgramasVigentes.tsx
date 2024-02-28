@@ -26,6 +26,10 @@ interface TableProps {
     id: number | string,
     modoPrograma: ModosProgramaAsignatura
   ) => void
+  imprimir: (
+    id: number | string,
+    modoPrograma: ModosProgramaAsignatura
+  ) => void
 }
 
 type ModosProgramaAsignatura = keyof typeof MODOS_PROGRAMA_ASIGNATURA
@@ -33,7 +37,8 @@ type ModosProgramaAsignatura = keyof typeof MODOS_PROGRAMA_ASIGNATURA
 export default function Table({
   tableColumns,
   tableData,
-  verPrograma
+  verPrograma,
+  imprimir,
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
 
@@ -69,7 +74,12 @@ export default function Table({
                     ) : null}
                     {item.acciones_posibles.imprimir ? (
                       <i
-                        //   TODO: Agregar onclick xd
+                        onClick={() =>
+                          imprimir(
+                            item.id,
+                            MODOS_PROGRAMA_ASIGNATURA.IMPRIMIR as ModosProgramaAsignatura
+                          )
+                        }
                         className="fas fa-print"
                         title="Imprimir"
                       ></i>

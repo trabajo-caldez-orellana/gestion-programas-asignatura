@@ -42,6 +42,7 @@ class AdminVersionProgramaAsignatura(admin.ModelAdmin):
                     "evaluacion",
                     "cronograma",
                     "resultados_de_aprendizaje",
+                    "fundamentacion",
                 ]
             },
         ),
