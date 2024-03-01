@@ -29,11 +29,13 @@ from backend.views import (
     NuevoProgramaAPI,
     InformacionEditarProgramaAPartirDelUltimoAPI,
     ObtenerProgramasHistorial,
+    GenerarPDF,
 )
 
 programas_patterns = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
     path("vigentes/", ListarProgramasVigentesAPI.as_view()),
+    path("pdf/<id_programa>/", GenerarPDF.as_view()),
     path("editar/<id_programa>/", ModificarProgramaAPI.as_view()),
     path("nuevo/<id_asignatura>/", NuevoProgramaAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),

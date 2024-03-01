@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Programa de asignatura</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .tabla-padre * {
+        font-size: 12px;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      td {
+        border: 1px solid black;
+      }
+      .seccion {
+        text-align: center;
+      }
+      /* Elimina border internos a las tablas */
+      .border-none {
+        border-collapse: collapse;
+        border: none;
+      }
+      .border-none td {
+        border: 1px solid black;
+      }
+
+      .border-none tr:first-child td {
+        border-top: none;
+      }
+
+      .border-none tr:last-child td {
+        border-bottom: none;
+      }
+
+      .border-none tr td:first-child {
+        border-left: none;
+      }
+
+      .border-none tr td:last-child {
+        border-right: none;
+      }
+
+      .tabla-padre ul {
+        padding: 0;
+      }
+
+      .tabla-padre li, .tabla-padre .campo-texto {
+        padding-left: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <table border="1" class="tabla-padre">
+      <!-- Informacion curricular -->
+      <tr>
+        <td class="seccion">Información de la actividad curricular</td>
+        <td>
+          <table class="border-none">
+            <tr>
+              <td>
+                <p>
+                  Denominación de la Actividad Curricular:
+                  {{asignatura.denominacion}}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>Código: {{ asignatura.codigo}}</td>
+            </tr>
+            <tr>
+              <td>
+                <p>Carrera/s:</p>
+                <ul>
+                  {% for carrera in carreras %}
+                  <li>{{ carrera.nombre }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>Bloque de Conocimiento al que pertenece:</p>
+                <ul>
+                  <li>{{bloque_curricular}}</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>Año Académico: Ciclo lectivo {{anio_academico.year}}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!-- Equipo docente -->
+      <tr>
+        <td class="seccion">Equipo docente</td>
+        <td>
+          <table class="border-none">
+            {% for docente in docentes %}
+            <tr>
+              <td>
+                Apellido y Nombre: {{docente.usuario.first_name}}
+                {{docente.usuario.last_name}}
+              </td>
+              <td>Cargo: {{docente.get_rol}}</td>
+              <td>Dedicación: {{docente.get_dedicacion}}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+      <!-- Fundamentacion -->
+      <tr>
+        <td class="seccion">Fundamentación</td>
+        <td>
+          <p class="campo-texto">
+            {{programa.fundamentacion}}
+          </p>
+        </td>
+      </tr>
+      <!-- Resultados de Aprendizaje -->
+      <tr>
+        <td class="seccion">Resultados de Aprendizaje</td>
+        <td>
+          <ul>
+            {% for resultado in resultados_de_aprendizaje %}
+            <li>{{ resultado }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <!-- Contenidos -->
+      <tr>
+        <td class="seccion">Contenidos</td>
+        <td>
+          <table class="border-none">
+            <tr>
+              <td>
+                <p>Programa analitico de contenidos:</p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p class="campo-texto">
+                  {{programa.contenidos}}
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!-- Bibliografia -->
+      <tr>
+        <td class="seccion">Bibliografía</td>
+        <td>
+          <p class="campo-texto">
+            {{programa.bibliografia}}
+          </p>
+        </td>
+      </tr>
+      <!-- Carga horaria -->
+      <tr>
+        <td class="seccion">Carga horaria</td>
+        <td>
+          <table class="border-none">
+            <tr>
+              <td>Carga horaria total: {{asignatura.carga_total}}</td>
+            </tr>
+            <tr>
+              <td>Carga RTF: {{asignatura.carga_rtf}}</td>
+            </tr>
+            <tr>
+              <td>
+                <ul>
+                  <li>Horas totales de Ciencias Básicas: 2</li>
+                  <li>Horas totales de Tecnologías Básica: 3</li>
+                  <li>Horas totales de Tecnologías Aplicadas: 2</li>
+                  <li>Horas totales de Tecnologías Complementarias: 3</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Duracion del dictado en semanas: {{asignatura.semanas_dictado}}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Horas semanales de clases: {{asignatura.horas_semanales_clases}}
+              </td>
+            </tr>
+            <tr>
+              <td>Cantidad semanal de horas de:</td>
+            </tr>
+            <tr>
+              <td>
+                <ul>
+                  {% if asignatura.semanal_teoria_presencial %}
+                  <li>
+                    Teoría presencial: {{ asignatura.semanal_teoria_presencial }}
+                  </li>
+                  {% endif %}
+                  {% if asignatura.semanal_practica_presencial %}
+                    <li>
+                      Práctica presencial: {{ asignatura.semanal_practica_presencial }}
+                    </li>
+                  {% endif %}
+                  {% if asignatura.semanal_teorico_practico_presencial %}
+                    <li>
+                      Teórico-práctica presencial: {{ asignatura.semanal_teorico_practico_presencial }}
+                    </li>
+                  {% endif %}
+                  {% if asignatura.semanal_lab_presencial %}
+                    <li>
+                      Laboratorios presenciales: {{ asignatura.semanal_lab_presencial }}
+                    </li>
+                  {% endif %}
+                  {% if asignatura.semanal_teoria_remoto %}
+                    <li>
+                      Teoría a distancia: {{ asignatura.semanal_teoria_remoto }}
+                    </li>
+                  {% endif %}
+                  {% if asignatura.semanal_practica_remoto %}
+                    <li>
+                      Práctica a distancia: {{ asignatura.semanal_practica_remoto }}
+                    </li>
+                  {% endif %}
+                  {% if asignatura.semanal_teorico_practico_remoto %}
+                    <li>
+                      Teórico-práctica a distancia: {{ asignatura.semanal_teorico_practico_remoto }}
+                    </li>
+                  {% endif %}
+                  {% if asignatura.semanal_lab_remoto %}
+                    <li>
+                      Laboratorios a distancia: {{ asignatura.semanal_lab_remoto }}
+                    </li>
+                  {% endif %}
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Horas dedicadas a evaluaciones: {{asignatura.horas_evaluacion}}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>Cronograma de actividades:</p>
+                <p class="campo-texto">
+                  {{programa.cronograma}}
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!-- Metodoliga aplicada -->
+      <tr>
+        <td class="seccion">Metodología aplicada</td>
+        <td>
+          <p class="campo-texto">
+            {{asignatura.get_metodologia}}
+          </p>
+        </td>
+      </tr>
+      <!-- Recursos -->
+      <tr>
+        <td class="seccion">Recursos</td>
+        <td>
+          <p>Recursos necesarios para el dictado de la actividad curricular:</p>
+          <p class="campo-texto">
+            {{programa.recursos}}
+          </p>
+        </td>
+      </tr>
+      <!-- Evaluacion -->
+      <tr>
+        <td class="seccion">Evaluación:</td>
+        <td>
+          <p>Recursos necesarios para el dictado de la actividad curricular:</p>
+          <p class="campo-texto">
+            {{programa.evaluacion}}
+          </p>
+        </td>
+      </tr>
+      <!-- Correlativas -->
+      <tr>
+        <td class="seccion">Correlativas</td>
+        <td>
+          <table class="border-none">
+            <tr>
+              <td>
+                <p>Asignaturas correlativas para cursar:</p>
+                <ul>
+                  {% for asignatura_regular in correlativas_regular %}
+                  <li>{{ asignatura_regular.denominacion }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>Asignaturas correlativas para rendir exámen final:</p>
+                <ul>
+                  {% for asignatura_aprobada in correlativas_aprobado %}
+                  <li>{{ asignatura_aprobada.denominacion }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!-- Ejes transversales -->
+      <tr>
+        <td class="seccion">Ejes transversales</td>
+        <td>
+          <ul>
+            {% for eje in ejes_transversales %}
+              <li>{{ eje.nombre }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <!-- Investigacion -->
+      <tr>
+        <td class="seccion">Investigación</td>
+        <td>
+          <table class="border-none">
+            <tr>
+              <td>
+                <p>
+                  Proyectos de investigación relacionados a la asignatura en los
+                  que participen los docentes:
+                </p>
+                <p class="campo-texto">
+                  {{programa.investigacion_docentes}}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>
+                  Proyectos de investigación relacionados a la asignatura en los
+                  que participen los docentes:
+                </p>
+                <p class="campo-texto">
+                  {{programa.investigacion_estudiantes}}
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!-- Extension -->
+      <tr>
+        <td class="seccion">Extensión</td>
+        <td>
+          <table class="border-none">
+            <tr>
+              <td>
+                <p>
+                  Proyectos de extensión relacionados a la asignatura en los que
+                  participen los docentes:
+                </p>
+                <p class="campo-texto">
+                  {{programa.extension_docentes}}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>
+                  Proyectos de extensión relacionados a la asignatura en los que
+                  participen los estudiantes:
+                </p>
+                <p class="campo-texto">
+                  {{programa.extension_estudiantes}}
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

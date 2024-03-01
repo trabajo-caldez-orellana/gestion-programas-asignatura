@@ -21,7 +21,7 @@ class PlanDeEstudio(models.Model):
     nombre = models.TextField()
 
     carrera = models.ForeignKey("Carrera", on_delete=models.PROTECT)
-    asignaturas = models.ManyToManyField(Asignatura)
+    asignaturas = models.ManyToManyField(Asignatura, related_name="planes_de_estudio")
 
     @property
     def esta_activo(self) -> bool:

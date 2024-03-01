@@ -52,6 +52,9 @@ class Roles(TextChoices):
     )
     DOCENTE = "D", "Docente"
 
+class Dedicaciones(TextChoices):
+    SIMPLE = "N", "No exclusiva"
+    EXCLUSIVA = "E", "Exclusiva"
 
 class ParametrosDeConfiguracion(TextChoices):
     INICIO_PERIODO_MODIFICACION = (

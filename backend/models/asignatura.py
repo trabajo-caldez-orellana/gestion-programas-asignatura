@@ -43,12 +43,16 @@ class Asignatura(models.Model):
     semanal_practica_remoto = models.PositiveIntegerField(blank=True, null=True)
     semanal_teorico_practico_remoto = models.PositiveIntegerField(blank=True, null=True)
     semanal_lab_remoto = models.PositiveIntegerField(blank=True, null=True)
+    horas_evaluacion = models.PositiveIntegerField(blank=True, null=True)
     carga_rtf = models.PositiveIntegerField()
 
     # Si es null, la materia se dicta ambos cuatrimestres
     semestre_dictado = models.CharField(
         max_length=2, choices=Semestres.choices, blank=True, null=True
     )
+
+    def get_metodologia(self):
+        return self.get_metodologia_display()
 
     objects = ManagerAsignatura()
 
