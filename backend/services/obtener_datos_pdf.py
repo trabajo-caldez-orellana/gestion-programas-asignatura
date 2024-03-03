@@ -10,7 +10,7 @@ from backend.common.mensajes_de_error import (
 from backend.common.choices import TipoDescriptor
 
 class ObtenerDatosPdf:
-    def obtener_datos_programa(id_programa):
+    def obtener_datos_programa(self, id_programa):
     # Obtenemos todos los datos que necesitamos para generar el PDF
         try:
             programa = VersionProgramaAsignatura.objects.get(id=id_programa)
