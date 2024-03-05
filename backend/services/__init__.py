@@ -7,3 +7,5 @@ from .anio_academico import ServicioAnioAcademico
 from .plan_de_estudio import ServicioPlanDeEstudio
 from .obtener_programas_historial import obtener_programas_historial
 from .obtener_datos_pdf import ObtenerDatosPdf
+from .estandar import ServicioEstandar
+from .obtener_datos_matriz import ObtenerDatosMatriz

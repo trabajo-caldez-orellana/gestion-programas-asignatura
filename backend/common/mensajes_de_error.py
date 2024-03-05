@@ -113,3 +113,4 @@ MENSAJE_PERMISO_PROGRAMAS_PENDIENTES = (
     "No tiene permiso para accceder a programas pendientes."
 )
 MENSAJE_PERMISO_PROGRAMA = "No tiene permiso para acceder a este Programa."
+MENSAJE_NO_ESTAN_TODOS_LOS_PROGRAMAS = "Faltan programas por aprobar para este semestre."
