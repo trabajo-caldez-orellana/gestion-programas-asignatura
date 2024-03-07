@@ -4,6 +4,7 @@ import Historial from './Historial/Historial'
 import ProgramasVigentes from './ProgramasVigentes/ProgramasVigentes'
 import Inicio from './Inicio/Inicio'
 import Login from './Login/Login'
+import Matriz from './MatrizTributacion/Matriz'
 
 export {
   TareasPendientes,
@@ -11,5 +12,6 @@ export {
   Historial,
   ProgramasVigentes,
   Inicio,
-  Login
+  Login,
+  Matriz
 }

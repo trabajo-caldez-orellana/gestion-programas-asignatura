@@ -9,7 +9,8 @@ import {
   ProgramaAsignatura,
   TareasPendientes,
   ProgramasVigentes,
-  Login
+  Login,
+  Matriz
 } from '../pages'
 
 export const RUTAS = {
@@ -365,6 +366,14 @@ export const PAGINAS: Pagina[] = [
     enabled: true,
     component: Login,
     protectedByLogin: false
+  },
+  {
+    key: 'matriz-tributacion',
+    title: 'Matriz de Tributación',
+    path: RUTAS_PAGINAS.MATRIZ,
+    enabled: true,
+    component: Matriz,
+    protectedByLogin: true
   },
   {
     key: 'inicio',
