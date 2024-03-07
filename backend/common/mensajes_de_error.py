@@ -114,3 +114,6 @@ MENSAJE_PERMISO_PROGRAMAS_PENDIENTES = (
 )
 MENSAJE_PERMISO_PROGRAMA = "No tiene permiso para acceder a este Programa."
 MENSAJE_NO_ESTAN_TODOS_LOS_PROGRAMAS = "Faltan programas por aprobar para este año lectivo."
+
+# MENSAJES DE APIs
+MENSAJE_CARRERA_PLAN = "El programa provisto no pertenece a la carrera provista."
