@@ -11,7 +11,7 @@ type usePlanesDeEstudioType = {
 const MENSAJE_ERROR_INESPERADO =
   'Algo inesperado ha ocurrido. Intente nuevamente más tarde.'
 
-const useProgramaAsignatura = (): usePlanesDeEstudioType => {
+const usePlanesDeEstudio = (): usePlanesDeEstudioType => {
   const [loading, setLoading] = useState<boolean>(true)
   const [planesDeEstudio, setPlanesDeEstudio] = useState<
     PlanesDeEstudioInterface[]
@@ -42,4 +42,4 @@ const useProgramaAsignatura = (): usePlanesDeEstudioType => {
   }
 }
 
-export default useProgramaAsignatura
+export default usePlanesDeEstudio

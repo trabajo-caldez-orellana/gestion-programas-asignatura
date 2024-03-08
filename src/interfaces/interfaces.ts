@@ -59,7 +59,7 @@ export interface PlanesDeEstudioAPIBody {
   id: number
   nombre: string
   carrera_id: number
-  carrera_nombre: string
+  nombre_carrera: string
 }
 
 export interface PlanesDeEstudioInterface {

@@ -1,5 +1,5 @@
-import { RUTAS } from 'constants/constants'
-import { client } from 'utils/axiosClient'
+import { RUTAS } from '../../../constants/constants'
+import { client } from '../../../utils/axiosClient'
 
 import {
   PlanesDeEstudioAPIBody,
@@ -14,7 +14,7 @@ const parsePlanesDeEstudio = (
       id: plan.id,
       nombre: plan.nombre,
       carreraId: plan.carrera_id,
-      carreraNombre: plan.carrera_nombre
+      carreraNombre: plan.nombre_carrera
     }
   })
 }
