@@ -30,7 +30,8 @@ from backend.views import (
     InformacionEditarProgramaAPartirDelUltimoAPI,
     ObtenerProgramasHistorial,
     GenerarPDF,
-    GenerarMatriz
+    GenerarMatriz,
+    APIListarPlanesDeEstudio
 )
 
 informes_patterns = [
@@ -65,6 +66,10 @@ historial_patterns = [
     path("", ObtenerProgramasHistorial.as_view()),
 ]
 
+planes_estudio_patterns = [
+    path("", APIListarPlanesDeEstudio.as_view()),
+]
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("djoser.urls")),
@@ -74,5 +79,6 @@ urlpatterns = [
     path("api/filtros/", include(filtros_patterns)),
     path("api/historial/", include(historial_patterns)),
     path("api/informacion-formularios/", include(formularios_patterns)),
-    path("api/informes/", include(informes_patterns))
+    path("api/informes/", include(informes_patterns)),
+    path("api/planes-de-esutdio/", include(planes_estudio_patterns))
 ]
