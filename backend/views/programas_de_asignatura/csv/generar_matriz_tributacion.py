@@ -26,16 +26,16 @@ class GenerarMatriz(APIView):
         try:
             carrera = Carrera.objects.get(id=id_carrera)
         except Carrera.DoesNotExist:
-            return Response({"error": {"carrera": MENSAJE_ID_INEXISTENTE}}, status=HTTP_400_BAD_REQUEST)
+            return Response({"error": {"carrera": [MENSAJE_ID_INEXISTENTE]}}, status=HTTP_400_BAD_REQUEST)
         
         try:
             plan_de_estudio = PlanDeEstudio.objects.get(id=id_plan_de_estudio)
         except PlanDeEstudio.DoesNotExist:
-            return Response({"error": {"plan_de_estudio": MENSAJE_ID_INEXISTENTE}}, status=HTTP_400_BAD_REQUEST)
+            return Response({"error": {"plan_de_estudio": [MENSAJE_ID_INEXISTENTE]}}, status=HTTP_400_BAD_REQUEST)
 
         # Verifico que el plan de estudio pertenezca a la carrera
         if carrera.id != plan_de_estudio.carrera_id:
-            return Response({"error": {"__all__": MENSAJE_CARRERA_PLAN}}, status=HTTP_400_BAD_REQUEST)
+            return Response({"error": {"__all__": [MENSAJE_CARRERA_PLAN]}}, status=HTTP_400_BAD_REQUEST)
             
 
         obtener_datos_matriz = ObtenerDatosMatriz()

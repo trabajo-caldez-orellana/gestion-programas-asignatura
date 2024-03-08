@@ -26,7 +26,8 @@ export const RUTAS = {
   GET_HISTORIAL: 'api/historial/',
   POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/nuevo/',
   POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/',
-  GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/'
+  GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/',
+  GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/'
 }
 
 export const HANDLERS = {

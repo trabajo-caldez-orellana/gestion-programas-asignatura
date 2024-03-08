@@ -2,6 +2,8 @@ import { RUTAS } from '../../../constants/constants'
 import { client } from '../../../utils/axiosClient'
 
 import {
+  MatrizAPIErrorInterface,
+  MatrizErroresInterface,
   PlanesDeEstudioAPIBody,
   PlanesDeEstudioInterface
 } from 'interfaces/interfaces'
@@ -30,6 +32,36 @@ export const getPlanesDeEstudio = async () => {
   } catch (err: any) {
     return {
       status: err.response.status
+    }
+  }
+}
+
+const parseMatrizErrors = (
+  error: MatrizAPIErrorInterface
+): MatrizErroresInterface => {
+  return {
+    all: error.__all__ ? error.__all__[0] : '',
+    planDeEstudio: error.plan_de_estudio ? error.plan_de_estudio[0] : '',
+    carrera: error.carrera ? error.carrera[0] : ''
+  }
+}
+
+export const getMatrizDeTributacion = async (
+  idPlanDeEstudio: number,
+  idCarrera: number
+) => {
+  try {
+    const response = await client.get(
+      `${RUTAS.GET_MATRIZ_DE_TRIBUTACION}${idCarrera}/${idPlanDeEstudio}/`
+    )
+    return {
+      status: response.status,
+      data: response.data
+    }
+  } catch (err: any) {
+    return {
+      status: err.response.status,
+      error: parseMatrizErrors(err.resonse.data.error)
     }
   }
 }
