@@ -77,6 +77,7 @@ class ObtenerDatosMatriz:
         cabecera_csv = [""] + [programa.asignatura.denominacion for programa in programas_de_asignatura]
         filas_matriz.append(cabecera_csv)
         separacion_csv = ["Descriptores"] + ['' for _ in range(len(programas_de_asignatura))]
+        filas_matriz.append(separacion_csv)
 
 
         for descriptor in descriptores:
@@ -93,8 +94,8 @@ class ObtenerDatosMatriz:
            filas_matriz.append(fila)
 
         separacion_csv_2 = separacion_csv.copy()
-        separacion_csv_2[0] = ["Ejes Transversales"]
-        filas_matriz.append(separacion_csv)
+        separacion_csv_2[0] = "Ejes Transversales"
+        filas_matriz.append(separacion_csv_2)
 
         for eje in ejes_transversales:
            fila = [eje.descripcion]
@@ -112,7 +113,7 @@ class ObtenerDatosMatriz:
         
         separacion_csv_3 = separacion_csv.copy()
         separacion_csv_3[0] = "Actividades Reservadas"
-        filas_matriz.append(separacion_csv_2)
+        filas_matriz.append(separacion_csv_3)
 
         for actividad in actividades_reservadas:
            fila = [actividad.descripcion]

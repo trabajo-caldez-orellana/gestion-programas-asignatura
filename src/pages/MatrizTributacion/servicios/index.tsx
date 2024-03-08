@@ -52,7 +52,8 @@ export const getMatrizDeTributacion = async (
 ) => {
   try {
     const response = await client.get(
-      `${RUTAS.GET_MATRIZ_DE_TRIBUTACION}${idCarrera}/${idPlanDeEstudio}/`
+      `${RUTAS.GET_MATRIZ_DE_TRIBUTACION}${idCarrera}/${idPlanDeEstudio}/`,
+      { headers: { 'Content-Type': 'text/csv' } }
     )
     return {
       status: response.status,
@@ -61,7 +62,7 @@ export const getMatrizDeTributacion = async (
   } catch (err: any) {
     return {
       status: err.response.status,
-      error: parseMatrizErrors(err.resonse.data.error)
+      error: parseMatrizErrors(err.response.data.error)
     }
   }
 }

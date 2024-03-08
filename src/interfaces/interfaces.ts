@@ -69,6 +69,18 @@ export interface PlanesDeEstudioInterface {
   carreraNombre: string
 }
 
+export interface MatrizAPIErrorInterface {
+  __all__?: string[]
+  plan_de_estudio?: string[]
+  carrera?: string[]
+}
+
+export interface MatrizErroresInterface {
+  all: string
+  planDeEstudio: string
+  carrera: string
+}
+
 export interface CargaHorariaErrores {
   semanasDictado: string
   teoriaPresencial: string
