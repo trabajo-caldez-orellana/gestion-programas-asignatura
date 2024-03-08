@@ -55,6 +55,20 @@ export interface ProgramaAsignaturaInterface {
   informacionAdicional: InformacionAdicional
 }
 
+export interface PlanesDeEstudioAPIBody {
+  id: number
+  nombre: string
+  carrera_id: number
+  carrera_nombre: string
+}
+
+export interface PlanesDeEstudioInterface {
+  id: number
+  nombre: string
+  carreraId: number
+  carreraNombre: string
+}
+
 export interface CargaHorariaErrores {
   semanasDictado: string
   teoriaPresencial: string
