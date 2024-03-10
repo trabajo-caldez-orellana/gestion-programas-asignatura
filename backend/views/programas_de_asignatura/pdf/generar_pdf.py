@@ -16,7 +16,7 @@ class GenerarPDF(APIView):
     ]
 
     def get(self, request, id_programa):
-        servicio_obtener_datos =ObtenerDatosPdf()
+        servicio_obtener_datos = ObtenerDatosPdf()
         datos_programa = servicio_obtener_datos.obtener_datos_programa(id_programa)
 
         context =  {
