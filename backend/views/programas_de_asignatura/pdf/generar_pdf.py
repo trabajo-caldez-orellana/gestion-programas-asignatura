@@ -1,21 +1,14 @@
+from weasyprint import HTML
+
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+
 from django.http import HttpResponse
 from django.template.loader import get_template
-from weasyprint import HTML
-from backend.models import VersionProgramaAsignatura, Correlativa, Estandar, ProgramaTieneDescriptor
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
-from backend.common.choices import TipoCorrelativa, NivelDescriptor
-from backend.models import VersionProgramaAsignatura, Rol
+
 from backend.services import ObtenerDatosPdf
-from backend.serializers import serializer_programa_asignatura
-from backend.common.mensajes_de_error import (
-    MENSAJE_ID_INEXISTENTE,
-    MENSAJE_PERMISO_PROGRAMA,
-)
-from backend.common.choices import TipoDescriptor
+
 
 class GenerarPDF(APIView):
     permission_classes = [
@@ -23,9 +16,8 @@ class GenerarPDF(APIView):
     ]
 
     def get(self, request, id_programa):
-
-        
-        datos_programa = ObtenerDatosPdf.obtener_datos_programa(id_programa)
+        servicio_obtener_datos = ObtenerDatosPdf()
+        datos_programa = servicio_obtener_datos.obtener_datos_programa(id_programa)
 
         context =  {
             "programa": datos_programa["programa"],

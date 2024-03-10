@@ -5,16 +5,12 @@ import {
 
 import {
   Inicio,
-  Carrera,
-  PlanEstudio,
-  Descriptores,
-  BloqueCurricular,
   Historial,
   ProgramaAsignatura,
   TareasPendientes,
   ProgramasVigentes,
-  Auditoria,
-  Login
+  Login,
+  Matriz
 } from '../pages'
 
 export const RUTAS = {
@@ -29,7 +25,9 @@ export const RUTAS = {
   GET_FILTROS_HISTORIAL: 'api/filtros/',
   GET_HISTORIAL: 'api/historial/',
   POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/nuevo/',
-  POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/'
+  POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/',
+  GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/',
+  GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/'
 }
 
 export const HANDLERS = {
@@ -238,38 +236,24 @@ type SidebarSection = {
 }
 
 export const RUTAS_PAGINAS = {
-  CARRERA: '/carrera',
-  PLAN_DE_ESTUDIO: '/plan-estudio',
-  DESCRIPTORES: '/descriptores',
-  BLOQUE_CURRICULAR: '/bloque-curricular',
   PROGRAMA_DE_ASIGNATURA: '/programa-asignatura',
-  AUDITORIA: '/auditoria',
   PROGRAMAS_VIGENTES: '/programas-vigentes',
   TAREAS_PENDIENTES: '/tareas-pendientes',
   HISTORIAL: '/historial',
   LOGIN: '/login',
+  MATRIZ: '/matriz-tributacion',
   INICIO: ''
 }
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 1,
-    name: 'Carrera',
+    name: 'Informes',
     sections: [
       {
         id: 1,
-        name: 'Carrera',
-        url: RUTAS_PAGINAS.CARRERA
-      },
-      {
-        id: 2,
-        name: 'Plan de Estudio',
-        url: RUTAS_PAGINAS.PLAN_DE_ESTUDIO
-      },
-      {
-        id: 3,
-        name: 'Descriptores',
-        url: RUTAS_PAGINAS.DESCRIPTORES
+        name: 'Matriz de Tributación',
+        url: RUTAS_PAGINAS.MATRIZ
       }
     ]
   },
@@ -277,16 +261,6 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     id: 2,
     name: 'Programas de Asignatura',
     sections: [
-      {
-        id: 1,
-        name: 'Bloque curricular',
-        url: RUTAS_PAGINAS.BLOQUE_CURRICULAR
-      },
-      {
-        id: 3,
-        name: 'Auditoria',
-        url: RUTAS_PAGINAS.AUDITORIA
-      },
       {
         id: 4,
         name: 'Programas vigentes',
@@ -317,38 +291,6 @@ export interface Pagina {
 }
 
 export const PAGINAS: Pagina[] = [
-  {
-    key: 'carrera',
-    title: 'Carrera',
-    path: RUTAS_PAGINAS.CARRERA,
-    enabled: true,
-    component: Carrera,
-    protectedByLogin: true
-  },
-  {
-    key: 'plan-estudio',
-    title: 'Plan de Estudio',
-    path: RUTAS_PAGINAS.PLAN_DE_ESTUDIO,
-    enabled: true,
-    component: PlanEstudio,
-    protectedByLogin: true
-  },
-  {
-    key: 'descriptores',
-    title: 'Descriptores',
-    path: RUTAS_PAGINAS.DESCRIPTORES,
-    enabled: true,
-    component: Descriptores,
-    protectedByLogin: true
-  },
-  {
-    key: 'bloque-curricular',
-    title: 'Bloque Curricular',
-    path: RUTAS_PAGINAS.BLOQUE_CURRICULAR,
-    enabled: true,
-    component: BloqueCurricular,
-    protectedByLogin: true
-  },
   {
     key: 'programas-vigentes',
     title: 'Programas Vigentes',
@@ -402,15 +344,6 @@ export const PAGINAS: Pagina[] = [
     protectedByLogin: true
   },
   {
-    key: 'auditoria',
-    title: 'Auditoria',
-    path: `${RUTAS_PAGINAS.AUDITORIA}`,
-    enabled: true,
-    component: Auditoria,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR,
-    protectedByLogin: true
-  },
-  {
     key: 'tareas-pendientes',
     title: 'Tareas Pendientes',
     path: `${RUTAS_PAGINAS.TAREAS_PENDIENTES}`,
@@ -435,6 +368,14 @@ export const PAGINAS: Pagina[] = [
     enabled: true,
     component: Login,
     protectedByLogin: false
+  },
+  {
+    key: 'matriz-tributacion',
+    title: 'Matriz de Tributación',
+    path: RUTAS_PAGINAS.MATRIZ,
+    enabled: true,
+    component: Matriz,
+    protectedByLogin: true
   },
   {
     key: 'inicio',

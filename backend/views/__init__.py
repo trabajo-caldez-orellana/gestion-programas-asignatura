@@ -9,8 +9,8 @@ from .programas_de_asignatura import (
     NuevoProgramaAPI,
     InformacionEditarProgramaAPartirDelUltimoAPI,
     ObtenerFiltros,
-    ObtenerProgramasHistorial
+    ObtenerProgramasHistorial,
+    GenerarMatriz
 )
 from .programas_de_asignatura.pdf.generar_pdf import GenerarPDF
-
-
+from .plan import APIListarPlanesDeEstudio
