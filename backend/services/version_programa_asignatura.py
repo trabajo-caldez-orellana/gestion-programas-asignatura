@@ -865,7 +865,7 @@ class ServicioVersionProgramaAsignatura:
             # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.
             planes = self.servicio_planes.obtener_planes_activos_de_carrera(rol.carrera)
             id_planes = [plan.id for plan in planes]
-            asignaturas = Asignatura.objects.filter(plandeestudio__id__in=id_planes)
+            asignaturas = Asignatura.objects.filter(planes_de_estudio__id__in=id_planes)
             id_asignaturas = [asignatura.id for asignatura in asignaturas]
 
             versiones = VersionProgramaAsignatura.objects.filter(

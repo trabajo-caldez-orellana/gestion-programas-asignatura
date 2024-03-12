@@ -8,7 +8,6 @@ import Filtros from './components/Filtros'
 import { ProgramasHistorial } from '../../types'
 import { client } from '../../utils/axiosClient'
 
-
 export default function Historial() {
   const navigate = useNavigate()
   const [programasHistorial, setProgramasHistorial] =
@@ -22,18 +21,19 @@ export default function Historial() {
     errorFiltros
   } = useFiltros()
 
-  const { searchHistorialProgramas, loading, error } = useHistorial({ setProgramasHistorial })
+  const { searchHistorialProgramas, loading, error } = useHistorial({
+    setProgramasHistorial
+  })
 
   const tableColumns = ['Asignatura', 'Acciones']
 
   if (error || errorFiltros) return <h1>Error</h1>
 
-  if (loading || loadingFiltros || !filtros)
-    return <h1>Cargando...</h1>
+  if (loading || loadingFiltros || !filtros) return <h1>Cargando...</h1>
 
   const verPrograma = (id: number | null, modoPrograma: string) => {
     if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
-      navigate(`/programa-asignaturas/${id}`)
+      navigate(`/programa-asignatura/${id}`)
   }
 
   const imprimir = (id: number | string | null) => {
