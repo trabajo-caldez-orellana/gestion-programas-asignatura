@@ -237,6 +237,7 @@ class Command(BaseCommand):
                 nueva_informacion = {**info_asignatura}
                 nueva_informacion["codigo"] = codigo_asignatura.format(indice_carrera, indice_asignatura)
                 nueva_informacion["bloque_curricular"] = bloque_curricular
+                nueva_informacion["denominacion"] = f"Asignatura {carrera} {indice_asignatura}"
                 asignatura = Asignatura(**nueva_informacion)
                 asignatura.full_clean()
                 asignatura.save()
