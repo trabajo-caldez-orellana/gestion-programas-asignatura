@@ -15,7 +15,7 @@ export default function TareasPendientes() {
   return (
     <div className="section-content">
       <h1 className="header">Tareas Pendientes</h1>
-      <Tabla datos={tareasPendientes} />
+      <Tabla />
     </div>
   )
 }
