@@ -1,12 +1,9 @@
-// import { useNavigate } from 'react-router-dom'
-
 import './Pendientes.css'
-
 import useTareasPendientes from './hooks/useTareasPendientes'
 import { Tabla } from './components'
 
 export default function TareasPendientes() {
-  const { tareasPendientes, loading, error } = useTareasPendientes()
+  const { loading, error } = useTareasPendientes()
 
   if (error) return <h1>Error</h1>
 
