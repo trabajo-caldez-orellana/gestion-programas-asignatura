@@ -46,7 +46,7 @@ export default function App() {
         setIsSidebarOpen={setIsSidebarOpen}
         handleLogout={handleLogout}
       />
-      <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
+      <main className="main-content">
         <ProtectedRoute>
           <Routes>
             {PAGINAS.map((pagina) => (

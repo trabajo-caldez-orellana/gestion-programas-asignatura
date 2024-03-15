@@ -4,7 +4,8 @@ import {
   CargaHoraria,
   InformacionAdicional,
   SeccionDescriptores,
-  BotonesProgramaAsignatura
+  BotonesProgramaAsignatura,
+  InformacionGeneral
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
@@ -44,6 +45,7 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
 
   return (
     <section className="section-content">
+      <InformacionGeneral programaAsignatura={programaAsignatura} />
       <CargaHoraria programaAsignatura={programaAsignatura} />
       <SeccionDescriptores
         programaAsignatura={programaAsignatura}

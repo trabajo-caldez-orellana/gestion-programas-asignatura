@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import TablaPlanesEstudio from './TablasPlanesEstudio/TablaPlanesEstudio'
 import usePlanesDeEstudio from './hooks/usePlanesDeEstudio'
 import { getMatrizDeTributacion } from './servicios'
-import { Modal } from '../../components'
+import { Modal, Titulo, Subtitulo } from '../../components'
 import './Matriz.css'
 
 const COLUMNAS_TABLA = ['Plan de Estudio', 'Carrera', 'Acciones']
@@ -58,8 +58,8 @@ const Matriz: React.FC = () => {
         <div>{mensajeDeError}</div>
       </Modal>
       <div className="cabecera-matriz">
-        <h1 className="titulo-matriz">Generar Reportes</h1>
-        <h2 className="subtitulo-matriz">Matriz de Tributación</h2>
+        <Titulo>Generar Reportes</Titulo>
+        <Subtitulo>Matriz de Tributación</Subtitulo>
       </div>
 
       {loading ? (

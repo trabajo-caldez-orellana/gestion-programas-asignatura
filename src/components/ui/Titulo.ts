@@ -5,7 +5,6 @@ export const Titulo = styled.h1`
   font-size: 30px;
   width: 100%;
   text-align: center;
-  margin: 30px auto;
   box-sizing: border-box;
 `
 

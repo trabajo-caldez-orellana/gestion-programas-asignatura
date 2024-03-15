@@ -6,6 +6,8 @@ import {
   MODOS_PROGRAMA_ASIGNATURA,
   CAMPOS_INFORMACION_ADICIONAL
 } from '../../../constants/constants'
+import { TituloSeccion } from '../../../components'
+import { SeccionFormulario } from './SeccionFormulario'
 
 interface InformacionAdicionalProps {
   programaAsignatura: ProgramaAsignaturaInterface
@@ -39,8 +41,8 @@ export default function InformacionAdicional({
 
   // Los campos se obtienen desde la constante CAMPOS_INFORMACION_ADICIONAL
   return (
-    <section className="form-section">
-      <h2 className="header">Informacion Adicional</h2>
+    <SeccionFormulario>
+      <TituloSeccion>Informacion Adicional</TituloSeccion>
       <form className="informacion-adicional-form">
         {CAMPOS_INFORMACION_ADICIONAL.map((config) => (
           <label htmlFor={config.id} key={config.id}>
@@ -62,6 +64,6 @@ export default function InformacionAdicional({
           </label>
         ))}
       </form>
-    </section>
+    </SeccionFormulario>
   )
 }

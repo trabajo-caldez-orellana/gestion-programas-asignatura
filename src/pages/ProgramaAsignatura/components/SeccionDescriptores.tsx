@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import Button from '../../../components/ui/Button'
-import Modal from '../../../components/Modal/Modal'
+import { Modal, TituloSeccion } from '../../../components'
 import {
   ProgramaAsignaturaInterface,
   ProgramaAsignaturaErrores
 } from '../../../interfaces/interfaces'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
+import { SeccionFormulario } from './SeccionFormulario'
 
 interface SeccionDescriptoresProps {
   programaAsignatura: ProgramaAsignaturaInterface
@@ -165,8 +166,8 @@ export default function SeccionDescriptores({
 
   return (
     <>
-      <section className="form-section">
-        <h2 className="header">Informacion Especifica</h2>
+      <SeccionFormulario>
+        <TituloSeccion>Informacion Especifica</TituloSeccion>
         <form className="seccion-descriptores-form">
           <div className="input-section">
             <label htmlFor="resultados-aprendizaje">
@@ -276,7 +277,7 @@ export default function SeccionDescriptores({
             </div>
           </div>
         </form>
-      </section>
+      </SeccionFormulario>
       <Modal
         open={modalResultadosAbierto}
         modalTitle="Resultados de aprendizaje"

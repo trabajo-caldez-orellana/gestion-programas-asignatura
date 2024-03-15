@@ -1,6 +1,8 @@
 import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
 import { CAMPOS_CARGA_HORARIA } from '../../../constants/constants'
+import { TituloSeccion } from '../../../components'
+import { SeccionFormulario } from './SeccionFormulario'
 
 interface CargaHorariaProps {
   programaAsignatura: ProgramaAsignaturaInterface
@@ -13,8 +15,8 @@ export default function CargaHoraria({
 
   // Los campos se obtienen desde la constante CAMPOS_CARGA_HORARIA
   return (
-    <section className="form-section">
-      <h2 className="header">Carga Horaria</h2>
+    <SeccionFormulario>
+      <TituloSeccion>Carga Horaria</TituloSeccion>
       <form className="carga-horaria-form">
         {CAMPOS_CARGA_HORARIA.map((config) => (
           <label htmlFor={config.id} key={config.id}>
@@ -29,6 +31,6 @@ export default function CargaHoraria({
           </label>
         ))}
       </form>
-    </section>
+    </SeccionFormulario>
   )
 }
