@@ -1,4 +1,5 @@
-import Button from '../../../components/ui/Button'
+import { Button, MensajeDeError } from '../../../components'
+import { SeccionFormulario } from './SeccionFormulario'
 
 interface BotonesProgramaAsignatura {
   error: string
@@ -14,8 +15,8 @@ export default function BotonesProgramaAsignatura({
   if (modoLectura) return null
 
   return (
-    <>
-      {{ error } && <div className="mensaje-error">{error}</div>}
+    <SeccionFormulario>
+      {{ error } && <MensajeDeError>{error}</MensajeDeError>}
       <div className="acciones-programa-asignatura">
         <Button text="Guardar borrador" onClick={handlePostPrograma(false)} />
         <Button
@@ -23,6 +24,6 @@ export default function BotonesProgramaAsignatura({
           onClick={handlePostPrograma(true)}
         />
       </div>
-    </>
+    </SeccionFormulario>
   )
 }

@@ -6,7 +6,7 @@ import {
   MODOS_PROGRAMA_ASIGNATURA,
   CAMPOS_INFORMACION_ADICIONAL
 } from '../../../constants/constants'
-import { TituloSeccion } from '../../../components'
+import { TituloSeccion, Formulario, TextArea } from '../../../components'
 import { SeccionFormulario } from './SeccionFormulario'
 
 interface InformacionAdicionalProps {
@@ -27,9 +27,7 @@ export default function InformacionAdicional({
   const { informacionAdicional } = programaAsignatura
   const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-
+  const handleChange = (name: string, value: string) => {
     setProgramaAsignatura({
       ...programaAsignatura,
       informacionAdicional: {
@@ -43,27 +41,21 @@ export default function InformacionAdicional({
   return (
     <SeccionFormulario>
       <TituloSeccion>Informacion Adicional</TituloSeccion>
-      <form className="informacion-adicional-form">
+      <Formulario>
         {CAMPOS_INFORMACION_ADICIONAL.map((config) => (
-          <label htmlFor={config.id} key={config.id}>
-            {config.label}
-            <textarea
-              id={config.id}
-              name={config.name}
-              value={informacionAdicional[config.name]}
-              onChange={handleChange}
-              rows={4}
-              cols={50}
-              disabled={modoLectura}
-            />
-            {erroresInfornacionAdicional.informacionAdicional[config.name] && (
-              <span className="mensaje-error">
-                {erroresInfornacionAdicional.informacionAdicional[config.name]}
-              </span>
-            )}
-          </label>
+          <TextArea
+            modoLectura={modoLectura}
+            label={config.label}
+            name={config.name}
+            id={config.name}
+            value={informacionAdicional[config.name]}
+            onChange={handleChange}
+            mensajeDeError={
+              erroresInfornacionAdicional.informacionAdicional[config.name]
+            }
+          />
         ))}
-      </form>
+      </Formulario>
     </SeccionFormulario>
   )
 }

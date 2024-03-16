@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import Button from '../../../components/ui/Button'
-import { Modal, TituloSeccion } from '../../../components'
+import {
+  Formulario,
+  Modal,
+  TituloSeccion,
+  MensajeDeError
+} from '../../../components'
 import {
   ProgramaAsignaturaInterface,
   ProgramaAsignaturaErrores
@@ -168,7 +173,7 @@ export default function SeccionDescriptores({
     <>
       <SeccionFormulario>
         <TituloSeccion>Informacion Especifica</TituloSeccion>
-        <form className="seccion-descriptores-form">
+        <Formulario>
           <div className="input-section">
             <label htmlFor="resultados-aprendizaje">
               Resultados de aprendizaje
@@ -185,9 +190,9 @@ export default function SeccionDescriptores({
               <Button text="+" onClick={abrirModalResultados} />
             </div>
             {erroresPrograma.descriptores.resultadosAprendizaje && (
-              <div className="mensaje-error">
+              <MensajeDeError>
                 {erroresPrograma.descriptores.resultadosAprendizaje}
-              </div>
+              </MensajeDeError>
             )}
           </div>
           <div className="input-section">
@@ -207,9 +212,9 @@ export default function SeccionDescriptores({
               />
             </div>
             {erroresPrograma.descriptores.ejesTransversales && (
-              <div className="mensaje-error">
+              <MensajeDeError>
                 {erroresPrograma.descriptores.ejesTransversales}
-              </div>
+              </MensajeDeError>
             )}
           </div>
           <div className="input-section">
@@ -231,17 +236,17 @@ export default function SeccionDescriptores({
               />
             </div>
             {erroresPrograma.descriptores.resultadosAprendizaje && (
-              <div className="mensaje-error">
+              <MensajeDeError>
                 {erroresPrograma.descriptores.actividadesReservadas}
-              </div>
+              </MensajeDeError>
             )}
           </div>
           <div className="input-section">
             <label htmlFor="descriptores">Descriptores</label>
             {erroresPrograma.descriptores.resultadosAprendizaje && (
-              <div className="mensaje-error">
+              <MensajeDeError>
                 {erroresPrograma.descriptores.descriptores}
-              </div>
+              </MensajeDeError>
             )}
             <br />
             <div className="selector-descritores">
@@ -276,7 +281,7 @@ export default function SeccionDescriptores({
               </div>
             </div>
           </div>
-        </form>
+        </Formulario>
       </SeccionFormulario>
       <Modal
         open={modalResultadosAbierto}
