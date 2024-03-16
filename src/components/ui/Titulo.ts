@@ -15,7 +15,12 @@ export const Subtitulo = styled.h2`
 `
 
 export const TituloSeccion = styled.h3`
-  color: var(--dark-color);
+  color: white;
   font-size: 20px;
-  text-align: left;
+  text-align: center;
+  width: 100%;
+  background-color: var(--dark-color);
+  box-sizing: border-box;
+  padding: 10px;
+  text-transform: uppercase;
 `

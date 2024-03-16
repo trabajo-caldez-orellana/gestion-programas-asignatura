@@ -9,7 +9,6 @@ import {
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
-import './ProgramaAsignatura.css'
 
 const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
   // EN el caso de ser modo = NUEVO o EDITAR_ULTIMO, este id corresponderia a la asignatura a la que estamos entrando!!
@@ -59,7 +58,6 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
         modoProgramaAsignatura={modoProgramaAsignatura}
         erroresInfornacionAdicional={erroresProgramaAsignatura}
       />
-      <br />
       <BotonesProgramaAsignatura
         error={erroresProgramaAsignatura.all}
         modoLectura={modoLectura}

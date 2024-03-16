@@ -4,6 +4,16 @@ import Sidebar from './Sidebar/Sidebar'
 import Table from './Table/Table'
 import ProtectedRoute from './ProtectedRoute'
 import { Titulo, Subtitulo, TituloSeccion } from './ui/Titulo'
+import {
+  Formulario,
+  MensajeDeError,
+  Input,
+  TextArea,
+  InputLabel,
+  SectionDivider,
+  TextAreaStyled
+} from './Formulario'
+import Button from './ui/Button'
 
 export {
   Navbar,
@@ -13,5 +23,13 @@ export {
   ProtectedRoute,
   Titulo,
   Subtitulo,
-  TituloSeccion
+  TituloSeccion,
+  Formulario,
+  MensajeDeError,
+  Button,
+  Input,
+  TextArea,
+  InputLabel,
+  SectionDivider,
+  TextAreaStyled
 }
