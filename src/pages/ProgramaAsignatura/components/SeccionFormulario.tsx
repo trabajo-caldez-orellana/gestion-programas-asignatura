@@ -10,3 +10,11 @@ export const SeccionFormulario = styled.section`
   flex-direction: column;
   align-items: center;
 `
+
+export const InputOutsideContainer = styled.div`
+  width: 100%;
+
+  @media (min-width: 1100px) {
+    width: 47%;
+  }
+`

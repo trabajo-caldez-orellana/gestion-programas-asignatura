@@ -2,7 +2,7 @@ import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
 import { CAMPOS_CARGA_HORARIA } from '../../../constants/constants'
 import { Formulario, TituloSeccion, Input } from '../../../components'
-import { SeccionFormulario } from './SeccionFormulario'
+import { SeccionFormulario, InputOutsideContainer } from './SeccionFormulario'
 
 interface CargaHorariaProps {
   programaAsignatura: ProgramaAsignaturaInterface
@@ -22,17 +22,18 @@ export default function CargaHoraria({
           console.log(config.name, cargaHoraria[config.name])
           if (cargaHoraria[camelCase(config.name)]) {
             return (
-              <Input
-                id={config.id}
-                key={config.id}
-                name={config.name}
-                onChange={() => {}}
-                value={cargaHoraria[camelCase(config.name)]}
-                mensajeDeError=""
-                label={config.label}
-                type="number"
-                modoLectura
-              />
+              <InputOutsideContainer key={config.id}>
+                <Input
+                  id={config.id}
+                  name={config.name}
+                  onChange={() => {}}
+                  value={cargaHoraria[camelCase(config.name)]}
+                  mensajeDeError=""
+                  label={config.label}
+                  type="number"
+                  modoLectura
+                />
+              </InputOutsideContainer>
             )
           }
 

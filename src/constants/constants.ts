@@ -397,3 +397,8 @@ export const MENSAJES_DE_ERROR = {
   SELECCIONAR_ACTIVIDAD_RESERVADA:
     'Debe seleccionar al menos una actividad reservada.'
 }
+
+export interface DatoListaInterface {
+  id: number
+  informacion: string
+}

@@ -2,10 +2,12 @@ import styled from 'styled-components'
 
 export const Formulario = styled.form`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   width: 100%;
   box-sizing: border-box;
   margin: 20px 0 0;
+  justify-content: space-between;
 `
 
 export const MensajeDeError = styled.span`
@@ -15,7 +17,7 @@ export const MensajeDeError = styled.span`
   padding: 5px 10px;
 `
 
-export const InputLabel = styled.label`
+export const TextAreaLabel = styled.label`
   background-color: var(--primary-color);
   color: white;
   padding: 5px 10px;
@@ -39,9 +41,74 @@ export const TextAreaContainer = styled.div`
   width: 100%;
   flex-direction: column;
   justify-content: center;
+  margin: 10px auto;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+`
+
+export const InputContainer = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  margin: 10px auto;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+`
+
+export const LabelContainer = styled.div`
+  display: flex;
+  width: 30%;
+  flex-direction: column;
+  justify-content: center;
   border-radius: 5px;
   margin: 10px auto;
   box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+`
+
+export const InputLabel = styled.label`
+  background-color: var(--primary-color);
+  color: white;
+  width: 30%;
+  padding: 5px 10px;
+`
+
+export const InputStyled = styled.input`
+  border: none;
+  width: 70%;
+  background-color: #00000022;
+  padding: 5px 10px;
+  color: black;
+`
+
+export const ContenedorLista = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin: 10px auto;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+`
+
+export const TituloLista = styled.h4`
+  background-color: var(--primary-color);
+  color: white;
+  padding: 5px 10px;
+  font-weight: 400;
+`
+
+export const Listado = styled.ul`
+  border: none;
+  width: 100%;
+  background-color: #00000022;
+  list-style: none;
+`
+
+export const Item = styled.li`
+  padding: 5px 10px;
+  font-size: 14px;
 `
