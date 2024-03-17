@@ -31,7 +31,9 @@ const SeleccionConModal: React.FC<SeleccionConModalInterface> = ({
 }) => {
   const [modalAbierto, setModalAbierto] = useState<boolean>(false)
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
     if (onOpenModal) {
       onOpenModal()
     }
@@ -42,7 +44,7 @@ const SeleccionConModal: React.FC<SeleccionConModalInterface> = ({
   }
 
   return (
-    <>
+    <ModalInputContainer>
       <Modal
         onClose={handleCloseModal}
         open={modalAbierto}
@@ -50,24 +52,22 @@ const SeleccionConModal: React.FC<SeleccionConModalInterface> = ({
       >
         {children}
       </Modal>
-      <ModalInputContainer>
-        <SeleccionConModalLabel htmlFor={name}>
-          {tituloModal}
-        </SeleccionConModalLabel>
-        <ModalInputSection>
-          <ModalInput
-            type="text"
-            id={name}
-            name={name}
-            value={valorInput}
-            onChange={() => {}}
-            disabled={isDisabled}
-          />
-          <ModalInputButton onClick={handleOpenModal}>+</ModalInputButton>
-        </ModalInputSection>
-        {mensajeDeError && <MensajeDeError>{mensajeDeError}</MensajeDeError>}
-      </ModalInputContainer>
-    </>
+      <SeleccionConModalLabel htmlFor={name}>
+        {tituloModal}
+      </SeleccionConModalLabel>
+      <ModalInputSection>
+        <ModalInput
+          type="text"
+          id={name}
+          name={name}
+          value={valorInput}
+          disabled={isDisabled}
+          readOnly={true}
+        />
+        <ModalInputButton onClick={handleOpenModal}>+</ModalInputButton>
+      </ModalInputSection>
+      {mensajeDeError && <MensajeDeError>{mensajeDeError}</MensajeDeError>}
+    </ModalInputContainer>
   )
 }
 
