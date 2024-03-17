@@ -112,3 +112,43 @@ export const Item = styled.li`
   padding: 5px 10px;
   font-size: 14px;
 `
+
+export const ModalInputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  margin: 10px auto;
+  flex-direction: column;
+
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+`
+
+export const SeleccionConModalLabel = styled.label`
+  background-color: var(--primary-color);
+  color: white;
+  padding: 5px 10px;
+  width: 100%;
+`
+
+export const ModalInputSection = styled.div`
+  display: flex;
+  width: 100%;
+`
+
+export const ModalInput = styled.input`
+  width: 80%;
+  padding: 5px 10px;
+  border: none;
+  box-sizing: border-box;
+  background-color: #00000022;
+`
+
+export const ModalInputButton = styled.button`
+  margin: 0;
+  box-sizing: border-box;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  width: 20%;
+  border: none;
+`

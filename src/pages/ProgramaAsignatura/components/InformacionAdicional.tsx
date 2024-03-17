@@ -44,6 +44,7 @@ export default function InformacionAdicional({
       <Formulario>
         {CAMPOS_INFORMACION_ADICIONAL.map((config) => (
           <TextArea
+            key={config.id}
             modoLectura={modoLectura}
             label={config.label}
             name={config.name}

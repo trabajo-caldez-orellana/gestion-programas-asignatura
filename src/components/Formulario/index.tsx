@@ -1,6 +1,7 @@
 import Input from './Input'
 import TextArea from './TextArea'
 import ListadoDatos from './ListadoDatos'
+import SeleccionConModal from './SeleccionConModal'
 import {
   MensajeDeError,
   Formulario,
@@ -17,5 +18,6 @@ export {
   TextAreaLabel as InputLabel,
   TextAreaStyled,
   SectionDivider,
-  ListadoDatos
+  ListadoDatos,
+  SeleccionConModal
 }

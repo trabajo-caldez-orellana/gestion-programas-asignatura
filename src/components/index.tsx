@@ -12,7 +12,8 @@ import {
   InputLabel,
   SectionDivider,
   TextAreaStyled,
-  ListadoDatos
+  ListadoDatos,
+  SeleccionConModal
 } from './Formulario'
 import Button from './ui/Button'
 
@@ -33,5 +34,6 @@ export {
   InputLabel,
   SectionDivider,
   TextAreaStyled,
-  ListadoDatos
+  ListadoDatos,
+  SeleccionConModal
 }

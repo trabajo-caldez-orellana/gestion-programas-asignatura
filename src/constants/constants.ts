@@ -402,3 +402,10 @@ export interface DatoListaInterface {
   id: number
   informacion: string
 }
+
+export interface ModalProps {
+  open: boolean
+  children: React.ReactNode
+  modalTitle?: string
+  onClose: () => void
+}
