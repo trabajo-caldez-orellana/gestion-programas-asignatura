@@ -3,7 +3,7 @@ import TextArea from './TextArea'
 import {
   MensajeDeError,
   Formulario,
-  InputLabel,
+  TextAreaLabel,
   TextAreaStyled,
   SectionDivider
 } from './Formulario'
@@ -13,7 +13,7 @@ export {
   MensajeDeError,
   Formulario,
   TextArea,
-  InputLabel,
+  TextAreaLabel as InputLabel,
   TextAreaStyled,
   SectionDivider
 }

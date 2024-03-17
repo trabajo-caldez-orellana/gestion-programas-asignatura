@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  InputLabel,
+  TextAreaLabel,
   MensajeDeError,
   TextAreaStyled,
   TextAreaContainer
@@ -31,9 +31,9 @@ const TextArea: React.FC<TextAreaTextoInterface> = ({
 
   return (
     <TextAreaContainer>
-      <InputLabel htmlFor={id} key={id}>
+      <TextAreaLabel htmlFor={id} key={id}>
         {label}
-      </InputLabel>
+      </TextAreaLabel>
       <TextAreaStyled
         id={id}
         name={name}
