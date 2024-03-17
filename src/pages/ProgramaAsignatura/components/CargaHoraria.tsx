@@ -19,7 +19,6 @@ export default function CargaHoraria({
       <TituloSeccion>CARGA HORARIA</TituloSeccion>
       <Formulario>
         {CAMPOS_CARGA_HORARIA.map((config) => {
-          console.log(config.name, cargaHoraria[config.name])
           if (cargaHoraria[camelCase(config.name)]) {
             return (
               <InputOutsideContainer key={config.id}>
