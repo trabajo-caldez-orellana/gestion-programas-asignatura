@@ -18,3 +18,7 @@ export const InputOutsideContainer = styled.div`
     width: 47%;
   }
 `
+
+export const WholeWidthInputContainer = styled.div`
+  width: 100%;
+`

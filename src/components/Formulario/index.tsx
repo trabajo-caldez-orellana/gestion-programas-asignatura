@@ -2,6 +2,7 @@ import Input from './Input'
 import TextArea from './TextArea'
 import ListadoDatos from './ListadoDatos'
 import SeleccionConModal from './SeleccionConModal'
+import DoubleSelectionInput from './DoubleSelectionInput'
 import {
   MensajeDeError,
   Formulario,
@@ -19,5 +20,6 @@ export {
   TextAreaStyled,
   SectionDivider,
   ListadoDatos,
-  SeleccionConModal
+  SeleccionConModal,
+  DoubleSelectionInput
 }

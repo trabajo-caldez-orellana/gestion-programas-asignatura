@@ -111,6 +111,11 @@ export const Listado = styled.ul`
 export const Item = styled.li`
   padding: 5px 10px;
   font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #00000022;
+  }
 `
 
 export const ModalInputContainer = styled.div`
@@ -151,4 +156,26 @@ export const ModalInputButton = styled.button`
   background-color: var(--secondary-color);
   width: 20%;
   border: none;
+`
+
+export const DoubleSelectionCoulmunsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+`
+
+export const ListadoColumna = styled.li`
+  border: none;
+  width: 100%;
+  list-style: none;
+`
+
+export const DoubleSelectionCoulumn = styled.div`
+  width: 50%;
+  background-color: #00000022;
+`
+
+export const TituloColumna = styled(TituloLista)`
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
 `

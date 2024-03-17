@@ -403,6 +403,10 @@ export interface DatoListaInterface {
   informacion: string
 }
 
+export interface DatosListaSeleccionInterface extends DatoListaInterface {
+  seleccionado: boolean
+}
+
 export interface ModalProps {
   open: boolean
   children: React.ReactNode

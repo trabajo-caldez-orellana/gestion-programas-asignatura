@@ -13,7 +13,8 @@ import {
   SectionDivider,
   TextAreaStyled,
   ListadoDatos,
-  SeleccionConModal
+  SeleccionConModal,
+  DoubleSelectionInput
 } from './Formulario'
 import Button from './ui/Button'
 
@@ -35,5 +36,6 @@ export {
   SectionDivider,
   TextAreaStyled,
   ListadoDatos,
-  SeleccionConModal
+  SeleccionConModal,
+  DoubleSelectionInput
 }
