@@ -144,7 +144,6 @@ export default function SeccionDescriptores({
       }
     })
   }
-  console.log(programaAsignatura.descriptores.resultadosAprendizaje)
 
   const handleActividadReservadaChange = (
     e: React.ChangeEvent<HTMLInputElement>,
