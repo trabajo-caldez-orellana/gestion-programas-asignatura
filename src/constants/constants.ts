@@ -27,7 +27,8 @@ export const RUTAS = {
   POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/nuevo/',
   POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/',
   GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/',
-  GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/'
+  GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/',
+  REUTILIZAR_ULTIMO_PROGRAMA: 'api/informacion-formularios/reutilizar-programa/'
 }
 
 export const HANDLERS = {

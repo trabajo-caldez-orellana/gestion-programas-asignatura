@@ -19,9 +19,13 @@ const Login: React.FC = () => {
 
         <img className="logo-unt" src={img.UNT} />
         <img className="logo-facet" src={img.FACET} />
-        <h1 className="title">Sistema de Gestion de Programas de Asignatura</h1>
-        <h2 className="title">Facultad de Ciencias Exactas y Tecnología</h2>
-        <h3 className="title">Universidad Nacional de Tucumán</h3>
+        <h1 className="login-title">
+          Sistema de Gestion de Programas de Asignatura
+        </h1>
+        <h2 className="login-subtitle">
+          Facultad de Ciencias Exactas y Tecnología
+        </h2>
+        <h3 className="login-h3">Universidad Nacional de Tucumán</h3>
         <p className="text">
           Para poder acceder a las funciones del sistema, debe iniciar sesión
           con Google. Si es su primera vez ingresando, debe comunicarse con el
