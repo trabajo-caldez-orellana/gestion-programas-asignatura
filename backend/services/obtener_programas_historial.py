@@ -5,7 +5,6 @@ from backend.serializers import ProgramasVigentesSerializer
 def obtener_programas_historial(carrera_id, semestre_id, asignatura_id, anio_lectivo_id):
     # Obtenemos los planes de estudio que contienen la carrera seleccionada
     planes_de_estudio = PlanDeEstudio.objects.filter(carrera_id=carrera_id)
-    print(planes_de_estudio)
 
     # Obtenemos las asignaturas relacionadas a los planes de estudio
     asignaturas_relacionadas = []
