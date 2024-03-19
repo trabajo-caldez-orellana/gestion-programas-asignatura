@@ -875,12 +875,24 @@ class ServicioVersionProgramaAsignatura:
                 estado=EstadoAsignatura.PENDIENTE,
             )
 
-            return [
-                self._crear_objeto_para_lista_de_tareas_pendientes(
-                    version.asignatura, version
-                )
-                for version in versiones
-            ]
+            tareas_pendientes_director = []
+            for version in versiones:
+                try:
+                    auditoria = AuditoriaEstadoVersionPrograma.objects.get(
+                        version_programa_id=version.id,
+                        rol_id=rol.rol
+                    )
+                    
+                    if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                        tarea = self._crear_objeto_para_lista_de_tareas_pendientes(
+                            version.asignatura, version
+                        )
+                        tareas_pendientes_director.append(tarea)
+                except AuditoriaEstadoVersionPrograma.DoesNotExist:
+                    tarea = self._crear_objeto_para_lista_de_tareas_pendientes(
+                        version.asignatura, version
+                    )
+                    tareas_pendientes_director.append(tarea)
 
         if rol.rol == Roles.SECRETARIO:
             return []
