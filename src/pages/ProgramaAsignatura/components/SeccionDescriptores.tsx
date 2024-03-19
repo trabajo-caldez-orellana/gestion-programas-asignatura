@@ -30,7 +30,9 @@ export default function SeccionDescriptores({
   ] = useState(false)
 
   const { descriptores } = programaAsignatura
-  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
+  const modoLectura =
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER ||
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.REVISAR
 
   const handleSeccionDescriptoresChange = (
     e: React.ChangeEvent<HTMLInputElement>

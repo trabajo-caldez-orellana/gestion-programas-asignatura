@@ -44,7 +44,8 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
   NUEVO: 'nuevo',
   EDITAR: 'editar',
   EDITAR_ULTIMO: 'editar-ultimo',
-  IMPRIMIR: 'imprimir'
+  IMPRIMIR: 'imprimir',
+  REVISAR: 'revisar'
 }
 
 export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
@@ -341,6 +342,15 @@ export const PAGINAS: Pagina[] = [
     enabled: true,
     component: ProgramaAsignatura,
     modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO,
+    protectedByLogin: true
+  },
+  {
+    key: 'revisar-programa-de-asignatura',
+    title: 'Revisar Programa Asignatura',
+    path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.REVISAR}/:id`,
+    enabled: true,
+    component: ProgramaAsignatura,
+    modo: MODOS_PROGRAMA_ASIGNATURA.REVISAR,
     protectedByLogin: true
   },
   {

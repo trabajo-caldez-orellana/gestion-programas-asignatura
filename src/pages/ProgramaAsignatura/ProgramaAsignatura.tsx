@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import {
   CargaHoraria,
   InformacionAdicional,
   SeccionDescriptores,
-  BotonesProgramaAsignatura
+  BotonesProgramaAsignatura,
+  BotonesRevisionProgramaAsignatura
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
@@ -13,6 +15,7 @@ import './ProgramaAsignatura.css'
 const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
   // EN el caso de ser modo = NUEVO o EDITAR_ULTIMO, este id corresponderia a la asignatura a la que estamos entrando!!
   const { id } = useParams()
+  const [erroresCorreccion, setErroresCorreccion] = useState<string>('')
 
   // Este hook se encarga de hacer el get del programaAsignatura
   const {
@@ -25,11 +28,24 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     guardarPrograma
   } = useProgramaAsignatura(id?.toString(), modo)
 
-  const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
+  const modoLectura =
+    modo === MODOS_PROGRAMA_ASIGNATURA.VER ||
+    modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR
+
   const handlePostPrograma = (presentar: boolean) => () => {
     // TODO. Hacer validaciones en el frontend para que no se manden
     // formularios que sean no validos!
     guardarPrograma(presentar)
+  }
+
+  const handleAprobarPrograma = () => {
+    console.log('Aprobar programa')
+    setErroresCorreccion('')
+  }
+
+  const handlePedirCambiosPrograma = (mensaje: string) => {
+    console.log('Pedir cambios: ', mensaje)
+    setErroresCorreccion('')
   }
 
   if (errorInesperado)
@@ -58,11 +74,19 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
         erroresInfornacionAdicional={erroresProgramaAsignatura}
       />
       <br />
-      <BotonesProgramaAsignatura
-        error={erroresProgramaAsignatura.all}
-        modoLectura={modoLectura}
-        handlePostPrograma={handlePostPrograma}
-      />
+      {modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR ? (
+        <BotonesRevisionProgramaAsignatura
+          handleAprobarPrograma={handleAprobarPrograma}
+          handlePedirCambiosPrograma={handlePedirCambiosPrograma}
+          error={erroresCorreccion}
+        />
+      ) : (
+        <BotonesProgramaAsignatura
+          error={erroresProgramaAsignatura.all}
+          modoLectura={modoLectura}
+          handlePostPrograma={handlePostPrograma}
+        />
+      )}
     </section>
   )
 }

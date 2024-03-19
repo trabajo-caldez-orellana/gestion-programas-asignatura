@@ -221,6 +221,7 @@ export interface AccionesPosiblesInterface {
   reutilizarUltimo: boolean
   modificarUltimo: boolean
   nuevo: boolean
+  revisarPrograma: boolean
 }
 
 export interface TareaPendiente {

@@ -225,7 +225,10 @@ const useProgramaAsignatura = (
 
         setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
         setLoading(false)
-      } else if (modo === MODOS_PROGRAMA_ASIGNATURA.VER) {
+      } else if (
+        modo === MODOS_PROGRAMA_ASIGNATURA.VER ||
+        modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR
+      ) {
         try {
           const response = await getProgramaAsignatura(id)
           if (response.status === 200 && response.data) {

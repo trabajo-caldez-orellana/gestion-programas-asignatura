@@ -23,7 +23,9 @@ export default function InformacionAdicional({
   erroresInfornacionAdicional
 }: InformacionAdicionalProps) {
   const { informacionAdicional } = programaAsignatura
-  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
+  const modoLectura =
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER ||
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.REVISAR
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target
