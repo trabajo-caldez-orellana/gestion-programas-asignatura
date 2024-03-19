@@ -805,7 +805,7 @@ class ServicioVersionProgramaAsignatura:
                 semestre=semestre_para_reutilizar, asignatura=asignatura
             ).exists()
 
-
+        revisar = False
         se_puede_modificar = (
             version_programa is not None
             and version_programa.estado == EstadoAsignatura.ABIERTO
@@ -817,6 +817,7 @@ class ServicioVersionProgramaAsignatura:
             accion = "Presentar Programa de Asignatura."
         else:
             accion = "Revisar Programa de Asignatura."
+            revisar = True
 
         return {
             "asignatura": SerializerAsignatura(asignatura).data,
@@ -830,6 +831,7 @@ class ServicioVersionProgramaAsignatura:
                 "reutilizar_ultimo": se_puede_usar_ultimo,
                 "modificar_ultimo": se_puede_usar_ultimo,
                 "nuevo": version_programa is None,
+                "revisar_programa": revisar
             },
         }
 
@@ -866,7 +868,7 @@ class ServicioVersionProgramaAsignatura:
             # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.
             planes = self.servicio_planes.obtener_planes_activos_de_carrera(rol.carrera)
             id_planes = [plan.id for plan in planes]
-            asignaturas = Asignatura.objects.filter(plandeestudio__id__in=id_planes)
+            asignaturas = Asignatura.objects.filter(planes_de_estudio__id__in=id_planes)
             id_asignaturas = [asignatura.id for asignatura in asignaturas]
 
             versiones = VersionProgramaAsignatura.objects.filter(
@@ -880,7 +882,7 @@ class ServicioVersionProgramaAsignatura:
                 try:
                     auditoria = AuditoriaEstadoVersionPrograma.objects.get(
                         version_programa_id=version.id,
-                        rol_id=rol.rol
+                        rol_id=rol.id
                     )
                     
                     if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
@@ -893,6 +895,8 @@ class ServicioVersionProgramaAsignatura:
                         version.asignatura, version
                     )
                     tareas_pendientes_director.append(tarea)
+            
+            return tareas_pendientes_director
 
         if rol.rol == Roles.SECRETARIO:
             return []
