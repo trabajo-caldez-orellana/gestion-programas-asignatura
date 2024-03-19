@@ -99,6 +99,7 @@ MENSAJE_TIPO_SEMESTRE_REPETIDO = (
 MENSAJE_SEGUNDO_SEMESTRE_DESPUES_DEL_PRIMERO = (
     "Un semestre del primer semestre debe tener fecha antes de uno del segundo semeste."
 )
+MENSAJE_FALLO_REUTILIZACION = "La reutilización del programa fallo. El programa anterior tiene fallas."
 
 # Mensajes relacionados a parametros de configuracion
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."

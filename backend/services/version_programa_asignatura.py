@@ -52,7 +52,8 @@ from backend.common.mensajes_de_error import (
     MENSAJE_NIVEL_INVALIDO,
     MENSAJE_VERSION_CERRADA_PARA_MODIFICACION,
     MENSAJE_PROGRAMA_YA_EXISTENTE,
-    MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR
+    MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR,
+    MENSAJE_FALLO_REUTILIZACION
     
 )
 from backend.services.semestre import ServicioSemestre
@@ -220,21 +221,14 @@ class ServicioVersionProgramaAsignatura:
         Valida los datos del programa de la asignatura para ver si cumple con las reglas del negocio
         """
         # Valida los resultados de aprendizaje: Formato correcto, cantidad correcta.
-        try:
-            resultados = json.loads(resultados_de_aprendizaje)
-        except (TypeError, json.JSONDecodeError) as exc:
-            raise ValidationError(
-                {"resultados_de_aprendizaje": MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO}
-            ) from exc
-
-        if not isinstance(resultados, list):
+        if not isinstance(resultados_de_aprendizaje, list):
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO}
             )
 
         if (
-            len(resultados) < MINIMO_RESULTADOS_DE_APRENDIZAJE
-            or len(resultados) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
+            len(resultados_de_aprendizaje) < MINIMO_RESULTADOS_DE_APRENDIZAJE
+            or len(resultados_de_aprendizaje) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
         ):
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_CANTIDAD_DE_RESULTADOS}
@@ -662,6 +656,7 @@ class ServicioVersionProgramaAsignatura:
             return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
+        # TODO. Enviar mail avisando a los directores de carrera
         programa.estado = EstadoAsignatura.PENDIENTE
         programa.save()
         return programa
@@ -688,15 +683,15 @@ class ServicioVersionProgramaAsignatura:
         ):
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
-
-        if not self._el_programa_ya_existe():
+        semestre_siguiente = self.servicio_semestre.obtener_semestre_siguiente()
+        if self._el_programa_ya_existe(asignatura=asignatura, semestre=semestre_siguiente):
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
         try:
             ultimo_programa = self.obtener_ultimo_programa_de_asignatura_aprobado(asignatura)
         except VersionProgramaAsignatura.DoesNotExist as e:
             raise ValidationError(
-                {"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES}
+                {"__all__": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES}
             ) from e
 
         descriptores_del_programa = ProgramaTieneDescriptor.objects.filter(
@@ -712,12 +707,12 @@ class ServicioVersionProgramaAsignatura:
 
         if not descriptores.exists():
             raise ValidationError(
-                {"descriptor": MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR}
+                {"__all__": MENSAJE_FALLO_REUTILIZACION}
             )
 
         if not ejes.exists():
             raise ValidationError(
-                {"eje_transversal": MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL}
+                {"__all__": MENSAJE_FALLO_REUTILIZACION}
             )
 
         actividades_reservadas = ProgramaTieneActividadReservada.objects.filter(
@@ -726,47 +721,51 @@ class ServicioVersionProgramaAsignatura:
         if not actividades_reservadas.exists():
             raise ValidationError(
                 {
-                    "actividades_reservadas": MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA
+                    "__all__": MENSAJE_FALLO_REUTILIZACION
                 }
             )
 
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
-            if self._validar_resultados_de_aprendizaje(
-                resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
-            ):
-                nuevo_programa = VersionProgramaAsignatura.objects.create(
-                    asignatura=ultimo_programa.asignatura,
-                    semestre=self.servicio_semestre.obtener_semestre_siguiente(),
-                    estado=EstadoAsignatura.ABIERTO,
-                    contenidos=ultimo_programa.contenidos,
-                    bibliografia=ultimo_programa.bibliografia,
-                    recursos=ultimo_programa.recursos,
-                    evaluacion=ultimo_programa.evaluacion,
-                    investigacion_docentes=ultimo_programa.investigacion_docentes,
-                    investigacion_estudiantes=ultimo_programa.investigacion_estudiantes,
-                    extension_docentes=ultimo_programa.extension_docentes,
-                    extension_estudiantes=ultimo_programa.extension_docentes,
-                    metodologia_aplicada = ultimo_programa.metodologia_aplicada,
-                    fundamentacion = ultimo_programa.fundamentacion,
-                    cronograma=ultimo_programa.cronograma,
+            try:
+                if self._validar_resultados_de_aprendizaje(
                     resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
-                )
-
-                for descriptor_del_programa in descriptores_del_programa:
-                    self._asignar_o_modificar_descriptor_prograna(
-                        descriptor=descriptor_del_programa.descriptor,
-                        programa=nuevo_programa,
-                        nivel=descriptor_del_programa.nivel,
+                ):
+                    nuevo_programa = VersionProgramaAsignatura.objects.create(
+                        asignatura=ultimo_programa.asignatura,
+                        semestre=self.servicio_semestre.obtener_semestre_siguiente(),
+                        estado=EstadoAsignatura.ABIERTO,
+                        contenidos=ultimo_programa.contenidos,
+                        bibliografia=ultimo_programa.bibliografia,
+                        recursos=ultimo_programa.recursos,
+                        evaluacion=ultimo_programa.evaluacion,
+                        investigacion_docentes=ultimo_programa.investigacion_docentes,
+                        investigacion_estudiantes=ultimo_programa.investigacion_estudiantes,
+                        extension_docentes=ultimo_programa.extension_docentes,
+                        extension_estudiantes=ultimo_programa.extension_docentes,
+                        metodologia_aplicada = ultimo_programa.metodologia_aplicada,
+                        fundamentacion = ultimo_programa.fundamentacion,
+                        cronograma=ultimo_programa.cronograma,
+                        resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
                     )
-                for actividad_reservada in actividades_reservadas:
-                    self._asignar_o_modificar_nivel_actividad_reservada(
-                        actividad=actividad_reservada.actividad_reservada,
-                        programa=nuevo_programa,
-                        nivel=actividad_reservada.nivel,
-                    )
 
-                return nuevo_programa
+                    for descriptor_del_programa in descriptores_del_programa:
+                        self._asignar_o_modificar_descriptor_prograna(
+                            descriptor=descriptor_del_programa.descriptor,
+                            programa=nuevo_programa,
+                            nivel=descriptor_del_programa.nivel,
+                        )
+                    for actividad_reservada in actividades_reservadas:
+                        self._asignar_o_modificar_nivel_actividad_reservada(
+                            actividad=actividad_reservada.actividad_reservada,
+                            programa=nuevo_programa,
+                            nivel=actividad_reservada.nivel,
+                        )
+
+                    self.presentar_programa_para_aprobacion(nuevo_programa)
+                    return nuevo_programa
+            except ValidationError as e:
+                raise ValidationError({"__all__": MENSAJE_FALLO_REUTILIZACION})
 
         return None
 

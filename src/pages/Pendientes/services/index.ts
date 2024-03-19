@@ -52,3 +52,28 @@ export const getTareasPendientes = async (): Promise<TareaPendiente[]> => {
 
   return parserTareasPendientes(response.data.data)
 }
+
+interface ErroresRetilizarPrograma {
+  __all__?: string[]
+}
+
+const parseErrores = (erroresPrograma: ErroresRetilizarPrograma): string => {
+  return erroresPrograma.__all__ ? erroresPrograma.__all__[0] : ''
+}
+
+export const reutilizarUltimoPrograma = async (id_asignatura: number) => {
+  try {
+    const response = await client.get(
+      `${RUTAS.REUTILIZAR_ULTIMO_PROGRAMA}${id_asignatura}/`
+    )
+
+    return {
+      status: response.status
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      error: parseErrores(error.response.data.error)
+    }
+  }
+}
