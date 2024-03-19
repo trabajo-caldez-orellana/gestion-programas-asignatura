@@ -16,7 +16,8 @@ from backend.models import (
     ProgramaTieneActividadReservada,
     Rol,
     Carrera,
-    Semestre
+    Semestre,
+    AuditoriaEstadoVersionPrograma
 )
 from backend.common.choices import (
     NivelDescriptor,
@@ -24,6 +25,7 @@ from backend.common.choices import (
     EstadoAsignatura,
     Roles,
     Semestres,
+    EstadosAprobacionPrograma
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -49,21 +51,21 @@ from backend.common.mensajes_de_error import (
     MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
     MENSAJE_NIVEL_INVALIDO,
     MENSAJE_VERSION_CERRADA_PARA_MODIFICACION,
-    MENSAJE_PROGRAMA_YA_EXISTENTE
+    MENSAJE_PROGRAMA_YA_EXISTENTE,
+    MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR
     
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
 from backend.services.plan_de_estudio import ServicioPlanDeEstudio
 from backend.serializers import SerializerAsignatura
-
+from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
 
 class ServicioVersionProgramaAsignatura:
     """
     Todos los servicios relacionados a la creacion, modificacion, y seguimiento de los Programas
     de asignatura
     """
-
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
     servicio_planes = ServicioPlanDeEstudio()
@@ -675,7 +677,6 @@ class ServicioVersionProgramaAsignatura:
             semestre_anterior = self.servicio_semestre.obtener_semestre_anterior(semestre_dictado_asignatura)
             return VersionProgramaAsignatura.objects.get(semestre_id = semestre_anterior.id, asignatura_id=asignatura.id, estado=EstadoAsignatura.APROBADO)
 
-
     def reutilizar_ultimo_plan(self, asignatura: Asignatura):
         """
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
@@ -883,6 +884,118 @@ class ServicioVersionProgramaAsignatura:
 
         if rol.rol == Roles.SECRETARIO:
             return []
+
+    def _verificar_programa_queda_aprobado(self, version_programa: VersionProgramaAsignatura):
+        planes_de_estudio_relacionados = version_programa.asignatura.planes_de_estudio.all()
+        carreras_de_planes_de_estudio = set()
+        
+        for plan in planes_de_estudio_relacionados:
+            carreras_de_planes_de_estudio.add(plan.carrera.id)
+
+        roles = Rol.objects.filter(carrera__id__in=carreras_de_planes_de_estudio, rol=Roles.DIRECTOR_CARRERA)
+
+        for rol in roles:
+            # Se que esto esta horriblemente ineficiente pero son 50 usuarios saludos
+            try:
+                auditoria = AuditoriaEstadoVersionPrograma.objects.get(
+                    version_programa_id=version_programa.id,
+                    rol_id=rol.id
+                )
+
+                if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                    return False
+            except AuditoriaEstadoVersionPrograma.DoesNotExist:
+                return False
+
+        return True
+
+    def _tiene_permiso_para_corregir_programas(self, rol: Rol, version_programa: VersionProgramaAsignatura):
+        if rol.rol != Roles.DIRECTOR_CARRERA:
+            return False
+        
+        carrera_rol = rol.carrera
+        planes_de_estudio_relacionados = version_programa.asignatura.planes_de_estudio.all()
+        carreras_de_planes_de_estudio = set()
+        for plan in planes_de_estudio_relacionados:
+            carreras_de_planes_de_estudio.add(plan.carrera)
+
+        if not(carrera_rol in carreras_de_planes_de_estudio):
+            return False
+        
+        return True
+
+    def pedir_cambios_programa_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol, mensaje: str):
+        if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
+            raise ValidationError(MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR)
+
+        try:
+            auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
+                rol_id=rol.id,
+                version_programa_id=version_programa.id
+            )
+            
+            auditoria_anterior.estado = EstadosAprobacionPrograma.PEDIDO_CAMBIOS
+            auditoria_anterior.mensaje_cambios = mensaje
+            auditoria_anterior.full_clean()
+            auditoria_anterior.save(update_fields=["estado", "mensaje_cambios"])
+            
+        except AuditoriaEstadoVersionPrograma.DoesNotExist:
+            nueva_auditoria = AuditoriaEstadoVersionPrograma(
+                version_programa=version_programa,
+                rol=rol,
+                estado=EstadosAprobacionPrograma.PEDIDO_CAMBIOS,
+                mensaje_cambios=mensaje
+            )
+            nueva_auditoria.full_clean()
+            nueva_auditoria.save()
+
+        auditorias = AuditoriaEstadoVersionPrograma.objects.filter(
+                version_programa_id=version_programa.id,
+                estado=EstadosAprobacionPrograma.APROBADO
+        )
+        auditorias.update(
+            estado=EstadosAprobacionPrograma.APROBACION_DEPRECADA,
+            modificado_en=obtener_fecha_y_hora_actual()
+        )
+
+        version_programa.estado = EstadoAsignatura.ABIERTO
+        version_programa.full_clean()
+        version_programa.save(update_fields=["estado"])
+
+        # TODO. Enviar email notificando que se pidieron cambios
+
+    def aprobar_programa_de_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol):
+        if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
+            raise ValidationError(MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR)
+
+        try:
+            auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
+                rol_id=rol.id,
+                estado__in=[
+                    EstadosAprobacionPrograma.APROBACION_DEPRECADA,
+                    EstadosAprobacionPrograma.PEDIDO_CAMBIOS
+                ],
+                version_programa_id=version_programa.id
+            )
+            auditoria_anterior.estado = EstadosAprobacionPrograma.APROBADO
+            auditoria_anterior.modificado_en = obtener_fecha_y_hora_actual()
+            auditoria_anterior.full_clean()
+            auditoria_anterior.save(update_fields=["estado", "modificado_en"])
+        except AuditoriaEstadoVersionPrograma.DoesNotExist:
+            nueva_auditoria = AuditoriaEstadoVersionPrograma(
+                version_programa=version_programa,
+                rol=rol,
+                estado=EstadosAprobacionPrograma.APROBADO,
+                mensaje_cambios="Aprobado"
+            )
+            nueva_auditoria.full_clean()
+            nueva_auditoria.save()
+
+        if self._verificar_programa_queda_aprobado(version_programa):
+            version_programa.estado = EstadoAsignatura.APROBADO
+            version_programa.full_clean()
+            version_programa.save(update_fields=["estado"])
+            # TODO. Enviar email notificando que se aprobaron los cambios
 
     def obtener_datos_para_nuevo_programa(self, asignatura: Asignatura):
         # obtengo todos los estandares/programas a los que pertenece la asignatura
