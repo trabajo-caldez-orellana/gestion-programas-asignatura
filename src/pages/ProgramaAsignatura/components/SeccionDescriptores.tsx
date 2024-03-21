@@ -284,7 +284,7 @@ export default function SeccionDescriptores({
         onClose={() => setModalResultadosAbierto(false)}
       >
         {descriptores.resultadosAprendizaje.map((resultado, index) => (
-          <>
+          <div key={index}>
             {/* {TODO: CREAR COMPONENTE} */}
             <textarea
               key={index}
@@ -303,7 +303,7 @@ export default function SeccionDescriptores({
                 ></Button>
               </div>
             )}
-          </>
+          </div>
         ))}
       </Modal>
       <Modal
@@ -312,7 +312,7 @@ export default function SeccionDescriptores({
         onClose={() => setModalEjesTransversales(false)}
       >
         {descriptores.ejesTransversales.map((eje, index) => (
-          <>
+          <div key={eje.id}>
             <label>{eje.nombre}</label>
             {/* {TODO: CREAR COMPONENTE RADIO BUTTONS} */}
 
@@ -355,7 +355,7 @@ export default function SeccionDescriptores({
               />
               Alto
             </div>
-          </>
+          </div>
         ))}
       </Modal>
       <Modal
@@ -364,7 +364,7 @@ export default function SeccionDescriptores({
         onClose={() => setModalActividadesReservadasAbierto(false)}
       >
         {descriptores.actividadesReservadas.map((actividad, index) => (
-          <>
+          <div key={actividad.id}>
             <label>{actividad.nombre}</label>
             {/* {TODO: CREAR COMPONENTE RADIO BUTTONS} */}
 
@@ -407,7 +407,7 @@ export default function SeccionDescriptores({
               />
               Alto
             </div>
-          </>
+          </div>
         ))}
       </Modal>
     </>
