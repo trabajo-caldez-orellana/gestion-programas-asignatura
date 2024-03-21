@@ -28,7 +28,10 @@ export const RUTAS = {
   POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/',
   GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/',
   GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/',
-  REUTILIZAR_ULTIMO_PROGRAMA: 'api/informacion-formularios/reutilizar-programa/'
+  REUTILIZAR_ULTIMO_PROGRAMA:
+    'api/informacion-formularios/reutilizar-programa/',
+  APROBAR_PROGRAMA: 'api/programas/aprobar/',
+  PEDIR_CAMBIOS_PROGRAMA: 'api/programas/pedir_cambios/'
 }
 
 export const HANDLERS = {
@@ -106,7 +109,8 @@ export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
     extensionEstudiantes: '',
     extensionDocentes: ''
   },
-  all: ''
+  all: '',
+  mensaje: ''
 }
 
 type CampoCargaHorariaType = {

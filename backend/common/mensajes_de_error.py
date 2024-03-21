@@ -83,6 +83,7 @@ MENSAJE_ID_INEXISTENTE = "El ID provisto no es valido."
 MENSAJE_PROGRAMA_APROBADO = "No es posible modificar un programa que ya fue aprobado."
 MENSAJE_PROGRAMA_YA_EXISTENTE = "Ya fue creado un programa para la asignatura para el semestre siguiente."
 MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR = "No puede corregir un programa de asignatura porque no tiene los permisos."
+MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR = "El programa no esta disponible para ser corregido."
 
 # Mensajes relacionados a semestres y anios lectivos
 MENSAJE_NO_PUEDEN_HABER_VARIOS_SEMESTRES_CON_LA_MISMA_FECHA = "No se puede definir un semestre que este activo al mismo momento que otro. Verifique las fechas."

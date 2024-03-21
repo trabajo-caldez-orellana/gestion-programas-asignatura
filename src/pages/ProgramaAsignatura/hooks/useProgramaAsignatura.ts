@@ -10,7 +10,9 @@ import {
   getInformacionNuevoPrograma,
   getInformacionModificarAPartirUltimo,
   crearProgramaAsignatura,
-  modificarProgramaAsignatura
+  modificarProgramaAsignatura,
+  aprobarProgramaAsignatura,
+  pedirCambiosProgramaAsignatura
 } from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
@@ -30,6 +32,8 @@ type useProgramaAsignaturaType = {
   modoProgramaAsignatura: string
   loading: boolean
   errorInesperado: string
+  aprobarPrograma: () => void
+  pedirCambiosPrograma: (mensaje: string) => void
 }
 
 const MENSAJE_ERROR_INESPERADO =
@@ -147,6 +151,32 @@ const useProgramaAsignatura = (
 
     setErroresProgramaAsignatura(erroresFormulario)
     return esFormularioValido
+  }
+
+  const aprobarPrograma = async () => {
+    const response = await aprobarProgramaAsignatura(parseInt(id))
+
+    if (response.status !== 200 && response.error) {
+      setErroresProgramaAsignatura(response.error)
+      return
+    }
+
+    if (response.status === 200) {
+      navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+    }
+  }
+
+  const pedirCambiosPrograma = async (mensaje: string) => {
+    const response = await pedirCambiosProgramaAsignatura(parseInt(id), mensaje)
+
+    if (response.status !== 200 && response.error) {
+      setErroresProgramaAsignatura(response.error)
+      return
+    }
+
+    if (response.status === 200) {
+      navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+    }
   }
 
   const guardarPrograma = async (presentarAprobacion: boolean) => {
@@ -278,7 +308,9 @@ const useProgramaAsignatura = (
     erroresProgramaAsignatura,
     loading,
     errorInesperado,
-    guardarPrograma
+    guardarPrograma,
+    aprobarPrograma,
+    pedirCambiosPrograma
   }
 }
 

@@ -186,6 +186,7 @@ interface ProgramaPOSTBodyErrorInterface {
   actividades_reservadas?: string[]
   ejes_transversales?: string[]
   __all__?: string[]
+  mensaje?: string[]
 }
 
 const parseProgramaPOSTBody = (
@@ -277,12 +278,13 @@ const parseProgramaPOSTError = (
         ? responseError.extension_docentes[0]
         : ''
     },
-    all: responseError.__all__ ? responseError.__all__[0] : ''
+    all: responseError.__all__ ? responseError.__all__[0] : '',
+    mensaje: responseError.mensaje ? responseError.mensaje[0] : ''
   }
 }
 
 export const crearProgramaAsignatura = async (
-  datos: ProgramaAsignatura,
+  datos: ProgramaAsignaturaInterface,
   presentar: boolean,
   id_asignatura: number
 ) => {
@@ -306,7 +308,7 @@ export const crearProgramaAsignatura = async (
 }
 
 export const modificarProgramaAsignatura = async (
-  datos: ProgramaAsignatura,
+  datos: ProgramaAsignaturaInterface,
   presentar: boolean,
   id_programa: number
 ) => {
@@ -315,6 +317,46 @@ export const modificarProgramaAsignatura = async (
   try {
     const response = await client.post(
       `${RUTAS.POST_EDITAR_PROGRAMA_ASIGNATURA}${id_programa}/`,
+      cuerpoPost
+    )
+
+    return {
+      status: response.status
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      error: parseProgramaPOSTError(error.response.data.error)
+    }
+  }
+}
+
+export const aprobarProgramaAsignatura = async (id_programa: number) => {
+  try {
+    const response = await client.get(
+      `${RUTAS.APROBAR_PROGRAMA}${id_programa}/`
+    )
+
+    return {
+      status: response.status
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      error: parseProgramaPOSTError(error.response.data.error)
+    }
+  }
+}
+
+export const pedirCambiosProgramaAsignatura = async (
+  id_programa: number,
+  mensaje: string
+) => {
+  const cuerpoPost = { mensaje: mensaje }
+
+  try {
+    const response = await client.post(
+      `${RUTAS.PEDIR_CAMBIOS_PROGRAMA}${id_programa}/`,
       cuerpoPost
     )
 

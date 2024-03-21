@@ -53,7 +53,8 @@ from backend.common.mensajes_de_error import (
     MENSAJE_VERSION_CERRADA_PARA_MODIFICACION,
     MENSAJE_PROGRAMA_YA_EXISTENTE,
     MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR,
-    MENSAJE_FALLO_REUTILIZACION
+    MENSAJE_FALLO_REUTILIZACION,
+    MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR
     
 )
 from backend.services.semestre import ServicioSemestre
@@ -221,14 +222,15 @@ class ServicioVersionProgramaAsignatura:
         Valida los datos del programa de la asignatura para ver si cumple con las reglas del negocio
         """
         # Valida los resultados de aprendizaje: Formato correcto, cantidad correcta.
-        if not isinstance(resultados_de_aprendizaje, list):
+        resultados = json.loads(resultados_de_aprendizaje)
+        if not isinstance(resultados, list):
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO}
             )
 
         if (
-            len(resultados_de_aprendizaje) < MINIMO_RESULTADOS_DE_APRENDIZAJE
-            or len(resultados_de_aprendizaje) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
+            len(resultados) < MINIMO_RESULTADOS_DE_APRENDIZAJE
+            or len(resultados) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
         ):
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_CANTIDAD_DE_RESULTADOS}
@@ -317,11 +319,12 @@ class ServicioVersionProgramaAsignatura:
         ):
             with transaction.atomic():
                 # Creo un programa. Si falla algo, saltara una excepcion
+                resultados = json.loads(resultados_de_aprendizaje)
                 version_programa = VersionProgramaAsignatura(
                     estado=EstadoAsignatura.ABIERTO,
                     asignatura=asignatura,
                     semestre=semestre,
-                    resultados_de_aprendizaje=resultados_de_aprendizaje,
+                    resultados_de_aprendizaje=resultados,
                     contenidos=contenidos,
                     bibliografia=bibliografia,
                     recursos=recursos,
@@ -498,8 +501,8 @@ class ServicioVersionProgramaAsignatura:
         ):
             with transaction.atomic():
                 # Modifico el programa. Si falla algo, saltara una excepcion
-
-                version_programa.resultados_de_aprendizaje = resultados_de_aprendizaje
+                resultados = json.loads(resultados_de_aprendizaje)
+                version_programa.resultados_de_aprendizaje = resultados
                 version_programa.contenidos = contenidos
                 version_programa.bibliografia = bibliografia
                 version_programa.recursos = recursos
@@ -847,7 +850,6 @@ class ServicioVersionProgramaAsignatura:
                 version = VersionProgramaAsignatura.objects.get(
                     semestre=semestre_siguente,
                     asignatura=rol.asignatura,
-                    estado__in=[EstadoAsignatura.ABIERTO, EstadoAsignatura.PENDIENTE]
                 )
             except VersionProgramaAsignatura.DoesNotExist:
                 return [
@@ -940,8 +942,10 @@ class ServicioVersionProgramaAsignatura:
         return True
 
     def pedir_cambios_programa_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol, mensaje: str):
+        if not version_programa.estado == EstadoAsignatura.PENDIENTE:
+            raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
         if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
-            raise ValidationError(MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR)
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
 
         try:
             auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
@@ -980,8 +984,10 @@ class ServicioVersionProgramaAsignatura:
         # TODO. Enviar email notificando que se pidieron cambios
 
     def aprobar_programa_de_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol):
+        if not version_programa.estado == EstadoAsignatura.PENDIENTE:
+            raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
         if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
-            raise ValidationError(MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR)
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
 
         try:
             auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(

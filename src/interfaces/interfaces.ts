@@ -122,6 +122,7 @@ export interface ProgramaAsignaturaErrores {
   descriptores: DescriptorErrores
   informacionAdicional: InformacionAdicionalErrores
   all: string
+  mensaje: string
 }
 
 export interface NuevoPrograma {
