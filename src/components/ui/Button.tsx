@@ -2,7 +2,7 @@ import './Button.css'
 
 interface ButtonProps {
   text: string
-  onClick?: () => void
+  onClick: () => void
   link?: string
   cssClass?: string
   disabled?: boolean

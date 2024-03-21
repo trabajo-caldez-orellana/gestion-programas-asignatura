@@ -33,8 +33,6 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR
 
   const handlePostPrograma = (presentar: boolean) => () => {
-    // TODO. Hacer validaciones en el frontend para que no se manden
-    // formularios que sean no validos!
     guardarPrograma(presentar)
   }
 
