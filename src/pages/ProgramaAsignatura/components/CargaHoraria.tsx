@@ -16,18 +16,20 @@ export default function CargaHoraria({
     <section className="form-section">
       <h2 className="header">Carga Horaria</h2>
       <form className="carga-horaria-form">
-        {CAMPOS_CARGA_HORARIA.map((config) => (
-          <label htmlFor={config.id} key={config.id}>
-            {config.label}
-            <input
-              type="text"
-              id={config.id}
-              name={config.name}
-              value={cargaHoraria[camelCase(config.name)]}
-              disabled={true}
-            />
-          </label>
-        ))}
+        {CAMPOS_CARGA_HORARIA.map((config) => {
+          return (
+            <label htmlFor={config.id} key={config.id}>
+              {config.label}
+              <input
+                type="text"
+                id={config.id}
+                name={config.name}
+                value={cargaHoraria[camelCase(config.name)] || 0}
+                disabled={true}
+              />
+            </label>
+          )
+        })}
       </form>
     </section>
   )
