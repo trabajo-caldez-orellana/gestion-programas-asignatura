@@ -1,0 +1,15 @@
+# DOCKERIZADO DEL BACKEND
+FROM python:3.11.8-bullseye
+WORKDIR /app
+COPY requirements.txt ./
+RUN
+
+COPY . .
+RUN pip install -r requirements.txt
+COPY . .
+RUN python manage.py migrate
+
+COPY . .
+EXPOSE 8000
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
