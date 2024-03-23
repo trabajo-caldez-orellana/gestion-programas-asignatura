@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"  # Puerto del contenedor expuesto
+    depends_on:
+      - backend  # Espera a que el servicio backend esté listo antes de iniciar
+    volumes:
+      - frontend_volume:/app/node_modules  # Volume para los módulos de Node.js
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"  # Puerto del contenedor expuesto
+    # Probablemente necesitemos la dependencia de la database en el futuro
+    # depends_on:
+    #   - database  # Dependencia opcional si usas una base de datos en otro contenedor
+    volumes:
+      - backend_volume:/app/staticfiles  # Volume para archivos estáticos de Django
+
+volumes:
+  frontend_volume:
+  backend_volume:
