@@ -10,7 +10,10 @@ services:
     depends_on:
       - backend  # Espera a que el servicio backend esté listo antes de iniciar
     volumes:
-      - frontend_volume:/app/node_modules  # Volume para los módulos de Node.js
+      - ./src:/app/src
+      - ./public:/app/src
+      - .env:/app/.env
+      - .env.sample:/app/.env.sample
 
   backend:
     build:
@@ -22,7 +25,7 @@ services:
     # depends_on:
     #   - database  # Dependencia opcional si usas una base de datos en otro contenedor
     volumes:
-      - backend_volume:/app/staticfiles  # Volume para archivos estáticos de Django
+      - ./:/app
 
 volumes:
   frontend_volume:
