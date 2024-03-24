@@ -21,9 +21,7 @@ services:
       dockerfile: Dockerfile.backend
     ports:
       - "8000:8000"  # Puerto del contenedor expuesto
-    # Probablemente necesitemos la dependencia de la database en el futuro
-    # depends_on:
-    #   - database  # Dependencia opcional si usas una base de datos en otro contenedor
+
     volumes:
       - ./:/app
 
