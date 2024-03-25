@@ -1,0 +1,5 @@
+
+htmlcov
+node_modules
+
+# Ignorar tambien el db.sqlite3 cuando conectemos con otra DB
