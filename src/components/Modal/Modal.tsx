@@ -1,13 +1,7 @@
 import ReactDom from 'react-dom'
 import './Modal.css'
 import Button from '../ui/Button'
-
-interface ModalProps {
-  open: boolean
-  children: React.ReactNode
-  modalTitle?: string
-  onClose: () => void
-}
+import { ModalProps } from '../../constants/constants'
 
 export default function Modal({
   open,

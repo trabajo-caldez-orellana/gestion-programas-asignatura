@@ -1,11 +1,23 @@
-import { useState } from 'react'
-import Button from '../../../components/ui/Button'
-import Modal from '../../../components/Modal/Modal'
+import {
+  Formulario,
+  TituloSeccion,
+  SeleccionConModal,
+  Button,
+  DoubleSelectionInput
+} from '../../../components'
 import {
   ProgramaAsignaturaInterface,
   ProgramaAsignaturaErrores
 } from '../../../interfaces/interfaces'
-import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
+import {
+  MODOS_PROGRAMA_ASIGNATURA,
+  DatosListaSeleccionInterface
+} from '../../../constants/constants'
+import {
+  InputOutsideContainer,
+  SeccionFormulario,
+  WholeWidthInputContainer
+} from './SeccionFormulario'
 
 interface SeccionDescriptoresProps {
   programaAsignatura: ProgramaAsignaturaInterface
@@ -22,15 +34,17 @@ export default function SeccionDescriptores({
   modoProgramaAsignatura,
   erroresPrograma
 }: SeccionDescriptoresProps) {
-  const [modalResultadosAbierto, setModalResultadosAbierto] = useState(false)
-  const [modalEjesTransversales, setModalEjesTransversales] = useState(false)
-  const [
-    modalActividadesReservadasAbierto,
-    setModalActividadesReservadasAbierto
-  ] = useState(false)
-
   const { descriptores } = programaAsignatura
   const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
+
+  const datosListaSeleccionDescriptores: DatosListaSeleccionInterface[] =
+    descriptores.descriptores.map((descriptor) => {
+      return {
+        id: descriptor.id,
+        informacion: descriptor.nombre,
+        seleccionado: descriptor.seleccionado
+      }
+    })
 
   const handleSeccionDescriptoresChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -106,7 +120,6 @@ export default function SeccionDescriptores({
         resultadosAprendizaje: resultadosAprendizajeLimpios
       }
     })
-    setModalResultadosAbierto(true)
   }
 
   const handleEjeTransversalChange = (
@@ -163,251 +176,159 @@ export default function SeccionDescriptores({
   }
 
   return (
-    <>
-      <section className="form-section">
-        <h2 className="header">Informacion Especifica</h2>
-        <form className="seccion-descriptores-form">
-          <div className="input-section">
-            <label htmlFor="resultados-aprendizaje">
-              Resultados de aprendizaje
-            </label>
-            <div className="modal-input">
-              <input
-                type="text"
-                id="resultados-aprendizaje"
-                name="resultados_aprendizaje"
-                value={resultadosAprendizajeCount()}
-                onChange={handleSeccionDescriptoresChange}
-                disabled={modoLectura}
-              />
-              <Button text="+" onClick={abrirModalResultados} />
-            </div>
-            {erroresPrograma.descriptores.resultadosAprendizaje && (
-              <div className="mensaje-error">
-                {erroresPrograma.descriptores.resultadosAprendizaje}
-              </div>
-            )}
-          </div>
-          <div className="input-section">
-            <label htmlFor="ejes-transversales">Ejes transversales</label>
-            <div className="modal-input">
-              <input
-                type="text"
-                id="ejes-transversales"
-                name="ejes_transversales"
-                value={descriptores.ejesTransversales.length}
-                onChange={handleSeccionDescriptoresChange}
-                disabled={modoLectura}
-              />
-              <Button
-                text="+"
-                onClick={() => setModalEjesTransversales(true)}
-              />
-            </div>
-            {erroresPrograma.descriptores.ejesTransversales && (
-              <div className="mensaje-error">
-                {erroresPrograma.descriptores.ejesTransversales}
-              </div>
-            )}
-          </div>
-          <div className="input-section">
-            <label htmlFor="actividades-reservadas">
-              Actividades reservadas
-            </label>
-            <div className="modal-input">
-              <input
-                type="text"
-                id="actividades-reservadas"
-                name="actividades_reservadas"
-                value={descriptores.actividadesReservadas.length}
-                onChange={handleSeccionDescriptoresChange}
-                disabled={modoLectura}
-              />
-              <Button
-                text="+"
-                onClick={() => setModalActividadesReservadasAbierto(true)}
-              />
-            </div>
-            {erroresPrograma.descriptores.resultadosAprendizaje && (
-              <div className="mensaje-error">
-                {erroresPrograma.descriptores.actividadesReservadas}
-              </div>
-            )}
-          </div>
-          <div className="input-section">
-            <label htmlFor="descriptores">Descriptores</label>
-            {erroresPrograma.descriptores.resultadosAprendizaje && (
-              <div className="mensaje-error">
-                {erroresPrograma.descriptores.descriptores}
-              </div>
-            )}
-            <br />
-            <div className="selector-descritores">
-              <div className="selector-descriptores-columna">
-                <label>Si</label>
-
-                {descriptores.descriptores.map(
-                  (descriptor) =>
-                    descriptor.seleccionado && (
-                      <p
-                        key={descriptor.id}
-                        onClick={() => handleDescriptorChange(descriptor.id)}
-                      >
-                        {descriptor.nombre}
-                      </p>
-                    )
-                )}
-              </div>
-              <div className="selector-descriptores-columna">
-                <label>No</label>
-                {descriptores.descriptores.map(
-                  (descriptor) =>
-                    !descriptor.seleccionado && (
-                      <p
-                        key={descriptor.id}
-                        onClick={() => handleDescriptorChange(descriptor.id)}
-                      >
-                        {descriptor.nombre}
-                      </p>
-                    )
-                )}
-              </div>
-            </div>
-          </div>
-        </form>
-      </section>
-      <Modal
-        open={modalResultadosAbierto}
-        modalTitle="Resultados de aprendizaje"
-        onClose={() => setModalResultadosAbierto(false)}
-      >
-        {descriptores.resultadosAprendizaje.map((resultado, index) => (
-          <>
-            {/* {TODO: CREAR COMPONENTE} */}
-            <textarea
-              key={index}
-              value={resultado}
-              onChange={(e) => handleResultadosAprendizajeChange(e, index)}
-              rows={4}
-              cols={50}
-              disabled={modoLectura}
-            />
-            {index === descriptores.resultadosAprendizaje.length - 1 && (
-              <div className="sumar-text-area">
-                <Button
-                  text="+"
-                  onClick={aniadirResultadoAprendizaje}
+    <SeccionFormulario>
+      <TituloSeccion>Información Específica</TituloSeccion>
+      <Formulario>
+        <InputOutsideContainer>
+          <SeleccionConModal
+            onOpenModal={abrirModalResultados}
+            name="resultados-aprendizaje"
+            valorInput={resultadosAprendizajeCount()}
+            mensajeDeError={erroresPrograma.descriptores.resultadosAprendizaje}
+            isDisabled={modoLectura}
+            tituloModal="Resultados de Aprendizaje"
+          >
+            {descriptores.resultadosAprendizaje.map((resultado, index) => (
+              <div key={index}>
+                {/* {TODO: CREAR COMPONENTE} */}
+                <textarea
+                  key={index}
+                  value={resultado}
+                  onChange={(e) => handleResultadosAprendizajeChange(e, index)}
+                  rows={4}
+                  cols={50}
                   disabled={modoLectura}
-                ></Button>
+                />
+                {index === descriptores.resultadosAprendizaje.length - 1 && (
+                  <div className="sumar-text-area">
+                    <Button
+                      text="+"
+                      onClick={aniadirResultadoAprendizaje}
+                      disabled={modoLectura}
+                    ></Button>
+                  </div>
+                )}
               </div>
-            )}
-          </>
-        ))}
-      </Modal>
-      <Modal
-        open={modalEjesTransversales}
-        modalTitle="Ejes transversales"
-        onClose={() => setModalEjesTransversales(false)}
-      >
-        {descriptores.ejesTransversales.map((eje, index) => (
-          <>
-            <label>{eje.nombre}</label>
-            {/* {TODO: CREAR COMPONENTE RADIO BUTTONS} */}
-
-            <div className="radio-buttons">
-              <input
-                type="radio"
-                name={eje.nombre}
-                value="0"
-                defaultChecked
-                checked={eje.nivel === 0}
-                onChange={(e) => handleEjeTransversalChange(e, index)}
-                disabled={modoLectura}
-              />
-              Nada
-              <input
-                type="radio"
-                name={eje.nombre}
-                value="1"
-                checked={eje.nivel === 1}
-                onChange={(e) => handleEjeTransversalChange(e, index)}
-                disabled={modoLectura}
-              />
-              Bajo
-              <input
-                type="radio"
-                name={eje.nombre}
-                value="2"
-                checked={eje.nivel === 2}
-                onChange={(e) => handleEjeTransversalChange(e, index)}
-                disabled={modoLectura}
-              />
-              Medio
-              <input
-                type="radio"
-                name={eje.nombre}
-                value="3"
-                checked={eje.nivel === 3}
-                onChange={(e) => handleEjeTransversalChange(e, index)}
-                disabled={modoLectura}
-              />
-              Alto
-            </div>
-          </>
-        ))}
-      </Modal>
-      <Modal
-        open={modalActividadesReservadasAbierto}
-        modalTitle="Actividades Reservadas"
-        onClose={() => setModalActividadesReservadasAbierto(false)}
-      >
-        {descriptores.actividadesReservadas.map((actividad, index) => (
-          <>
-            <label>{actividad.nombre}</label>
-            {/* {TODO: CREAR COMPONENTE RADIO BUTTONS} */}
-
-            <div className="radio-buttons">
-              <input
-                type="radio"
-                name={actividad.nombre}
-                value="0"
-                defaultChecked
-                checked={actividad.nivel === 0}
-                onChange={(e) => handleActividadReservadaChange(e, index)}
-                disabled={modoLectura}
-              />
-              Nada
-              <input
-                type="radio"
-                name={actividad.nombre}
-                value="1"
-                checked={actividad.nivel === 1}
-                onChange={(e) => handleActividadReservadaChange(e, index)}
-                disabled={modoLectura}
-              />
-              Bajo
-              <input
-                type="radio"
-                name={actividad.nombre}
-                value="2"
-                checked={actividad.nivel === 2}
-                onChange={(e) => handleActividadReservadaChange(e, index)}
-                disabled={modoLectura}
-              />
-              Medio
-              <input
-                type="radio"
-                name={actividad.nombre}
-                value="3"
-                checked={actividad.nivel === 3}
-                onChange={(e) => handleActividadReservadaChange(e, index)}
-                disabled={modoLectura}
-              />
-              Alto
-            </div>
-          </>
-        ))}
-      </Modal>
-    </>
+            ))}
+          </SeleccionConModal>
+        </InputOutsideContainer>
+        <InputOutsideContainer>
+          <SeleccionConModal
+            name="ejes-transversales"
+            valorInput={descriptores.ejesTransversales.length}
+            mensajeDeError={erroresPrograma.descriptores.ejesTransversales}
+            isDisabled={modoLectura}
+            tituloModal="Ejes Transversales"
+          >
+            {descriptores.ejesTransversales.map((eje, index) => (
+              <div key={index}>
+                <label>{eje.nombre}</label>
+                <div className="radio-buttons">
+                  <input
+                    type="radio"
+                    name={eje.nombre}
+                    value="0"
+                    defaultChecked
+                    checked={eje.nivel === 0}
+                    onChange={(e) => handleEjeTransversalChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Nada
+                  <input
+                    type="radio"
+                    name={eje.nombre}
+                    value="1"
+                    checked={eje.nivel === 1}
+                    onChange={(e) => handleEjeTransversalChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Bajo
+                  <input
+                    type="radio"
+                    name={eje.nombre}
+                    value="2"
+                    checked={eje.nivel === 2}
+                    onChange={(e) => handleEjeTransversalChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Medio
+                  <input
+                    type="radio"
+                    name={eje.nombre}
+                    value="3"
+                    checked={eje.nivel === 3}
+                    onChange={(e) => handleEjeTransversalChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Alto
+                </div>
+              </div>
+            ))}
+          </SeleccionConModal>
+        </InputOutsideContainer>
+        <InputOutsideContainer>
+          <SeleccionConModal
+            name="actividades-reservadas"
+            valorInput={descriptores.ejesTransversales.length}
+            mensajeDeError={erroresPrograma.descriptores.ejesTransversales}
+            isDisabled={modoLectura}
+            tituloModal="Actividades Reservadas"
+          >
+            {descriptores.actividadesReservadas.map((actividad, index) => (
+              <div key={index}>
+                <label>{actividad.nombre}</label>
+                <div className="radio-buttons">
+                  <input
+                    type="radio"
+                    name={actividad.nombre}
+                    value="0"
+                    defaultChecked
+                    checked={actividad.nivel === 0}
+                    onChange={(e) => handleActividadReservadaChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Nada
+                  <input
+                    type="radio"
+                    name={actividad.nombre}
+                    value="1"
+                    checked={actividad.nivel === 1}
+                    onChange={(e) => handleActividadReservadaChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Bajo
+                  <input
+                    type="radio"
+                    name={actividad.nombre}
+                    value="2"
+                    checked={actividad.nivel === 2}
+                    onChange={(e) => handleActividadReservadaChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Medio
+                  <input
+                    type="radio"
+                    name={actividad.nombre}
+                    value="3"
+                    checked={actividad.nivel === 3}
+                    onChange={(e) => handleActividadReservadaChange(e, index)}
+                    disabled={modoLectura}
+                  />
+                  Alto
+                </div>
+              </div>
+            ))}
+          </SeleccionConModal>
+        </InputOutsideContainer>
+        <WholeWidthInputContainer>
+          <DoubleSelectionInput
+            datosParaSeleccion={datosListaSeleccionDescriptores}
+            titulo="DESCRIPTORES"
+            mensajeDeError={erroresPrograma.descriptores.descriptores}
+            handleListChange={handleDescriptorChange}
+          />
+        </WholeWidthInputContainer>
+      </Formulario>
+    </SeccionFormulario>
   )
 }

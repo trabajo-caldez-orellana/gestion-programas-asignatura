@@ -6,6 +6,8 @@ import {
   MODOS_PROGRAMA_ASIGNATURA,
   CAMPOS_INFORMACION_ADICIONAL
 } from '../../../constants/constants'
+import { TituloSeccion, Formulario, TextArea } from '../../../components'
+import { SeccionFormulario } from './SeccionFormulario'
 
 interface InformacionAdicionalProps {
   programaAsignatura: ProgramaAsignaturaInterface
@@ -25,9 +27,7 @@ export default function InformacionAdicional({
   const { informacionAdicional } = programaAsignatura
   const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-
+  const handleChange = (name: string, value: string) => {
     setProgramaAsignatura({
       ...programaAsignatura,
       informacionAdicional: {
@@ -39,29 +39,24 @@ export default function InformacionAdicional({
 
   // Los campos se obtienen desde la constante CAMPOS_INFORMACION_ADICIONAL
   return (
-    <section className="form-section">
-      <h2 className="header">Informacion Adicional</h2>
-      <form className="informacion-adicional-form">
+    <SeccionFormulario>
+      <TituloSeccion>Informacion Adicional</TituloSeccion>
+      <Formulario>
         {CAMPOS_INFORMACION_ADICIONAL.map((config) => (
-          <label htmlFor={config.id} key={config.id}>
-            {config.label}
-            <textarea
-              id={config.id}
-              name={config.name}
-              value={informacionAdicional[config.name]}
-              onChange={handleChange}
-              rows={4}
-              cols={50}
-              disabled={modoLectura}
-            />
-            {erroresInfornacionAdicional.informacionAdicional[config.name] && (
-              <span className="mensaje-error">
-                {erroresInfornacionAdicional.informacionAdicional[config.name]}
-              </span>
-            )}
-          </label>
+          <TextArea
+            key={config.id}
+            modoLectura={modoLectura}
+            label={config.label}
+            name={config.name}
+            id={config.name}
+            value={informacionAdicional[config.name]}
+            onChange={handleChange}
+            mensajeDeError={
+              erroresInfornacionAdicional.informacionAdicional[config.name]
+            }
+          />
         ))}
-      </form>
-    </section>
+      </Formulario>
+    </SeccionFormulario>
   )
 }

@@ -7,6 +7,7 @@ type useTareasPendientesType = {
   tareasPendientes: TareaPendiente[]
   loading: boolean
   error: boolean
+  refetchTareas: () => void
 }
 
 const useTareasPendientes = (): useTareasPendientesType => {
@@ -14,25 +15,29 @@ const useTareasPendientes = (): useTareasPendientesType => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
 
-  // TODO. Hacer error dependiendo del codigo de error para mostrar mensajes personalizados en la pagina.
+  const fetchData = async () => {
+    try {
+      const response = await getTareasPendientes()
+      setTareasPendientes(response)
+
+      setError(false)
+      setLoading(false)
+    } catch (err) {
+      setError(true)
+      setLoading(false)
+    }
+  }
+
+  const refetchTareas = () => {
+    fetchData()
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getTareasPendientes()
-        setTareasPendientes(response)
-
-        setError(false)
-        setLoading(false)
-      } catch (err) {
-        setError(true)
-        setLoading(false)
-      }
-    }
     fetchData()
   }, [])
 
   return {
+    refetchTareas,
     tareasPendientes: tareasPendientes,
     loading,
     error

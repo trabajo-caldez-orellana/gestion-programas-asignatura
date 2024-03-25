@@ -27,7 +27,8 @@ export const RUTAS = {
   POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/nuevo/',
   POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/',
   GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/',
-  GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/'
+  GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/',
+  REUTILIZAR_ULTIMO_PROGRAMA: 'api/informacion-formularios/reutilizar-programa/'
 }
 
 export const HANDLERS = {
@@ -395,4 +396,20 @@ export const MENSAJES_DE_ERROR = {
   SELECCIONAR_EJE_TRANSVERSAL: 'Debe seleccionar al menos un eje transversal.',
   SELECCIONAR_ACTIVIDAD_RESERVADA:
     'Debe seleccionar al menos una actividad reservada.'
+}
+
+export interface DatoListaInterface {
+  id: number
+  informacion: string
+}
+
+export interface DatosListaSeleccionInterface extends DatoListaInterface {
+  seleccionado: boolean
+}
+
+export interface ModalProps {
+  open: boolean
+  children: React.ReactNode
+  modalTitle?: string
+  onClose: () => void
 }
