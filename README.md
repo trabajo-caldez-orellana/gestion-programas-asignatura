@@ -1,5 +1,14 @@
 # Gestión de Programas de Asignatura
 
+# Setup con Docker!
+1. Setear variables de entorno en el archivo `.env` del frontend y del backend
+2. En el root del proyecto, correr el siguiente comando: `docker compose up`
+
+LISTO! Ahora se puede acceder a `http://127.0.0.1:5173` para ver el proyecto. 
+Si se quiere acceder al panel de admin de django, se debe acceder a `http://127.0.0.1:8000/admin/`.
+Es necesario crear un superusuario, y para eso se debe ingresar al container del backend y crear un superusuario con `python manage.py createsuperuser`
+
+# SI NO SE USA DOCKER SEGUIR LAS SIGUIENTES INSTRUCCIONES
 ## Setup de frontend
 1. Instalar dependencias con `npm install`
 2. Setear variables de entorno en el archivo `.env`
