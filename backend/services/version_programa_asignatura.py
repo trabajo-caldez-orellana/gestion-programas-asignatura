@@ -219,14 +219,15 @@ class ServicioVersionProgramaAsignatura:
         Valida los datos del programa de la asignatura para ver si cumple con las reglas del negocio
         """
         # Valida los resultados de aprendizaje: Formato correcto, cantidad correcta.
-        if not isinstance(resultados_de_aprendizaje, list):
+        resultados = json.loads(resultados_de_aprendizaje)
+        if not isinstance(resultados, list):
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO}
             )
 
         if (
-            len(resultados_de_aprendizaje) < MINIMO_RESULTADOS_DE_APRENDIZAJE
-            or len(resultados_de_aprendizaje) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
+            len(resultados) < MINIMO_RESULTADOS_DE_APRENDIZAJE
+            or len(resultados) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
         ):
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_CANTIDAD_DE_RESULTADOS}
@@ -315,11 +316,12 @@ class ServicioVersionProgramaAsignatura:
         ):
             with transaction.atomic():
                 # Creo un programa. Si falla algo, saltara una excepcion
+                resultados = json.loads(resultados_de_aprendizaje)
                 version_programa = VersionProgramaAsignatura(
                     estado=EstadoAsignatura.ABIERTO,
                     asignatura=asignatura,
                     semestre=semestre,
-                    resultados_de_aprendizaje=resultados_de_aprendizaje,
+                    resultados_de_aprendizaje=resultados,
                     contenidos=contenidos,
                     bibliografia=bibliografia,
                     recursos=recursos,
@@ -496,8 +498,8 @@ class ServicioVersionProgramaAsignatura:
         ):
             with transaction.atomic():
                 # Modifico el programa. Si falla algo, saltara una excepcion
-
-                version_programa.resultados_de_aprendizaje = resultados_de_aprendizaje
+                resultados = json.loads(resultados_de_aprendizaje)
+                version_programa.resultados_de_aprendizaje = resultados
                 version_programa.contenidos = contenidos
                 version_programa.bibliografia = bibliografia
                 version_programa.recursos = recursos

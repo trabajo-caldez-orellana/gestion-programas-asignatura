@@ -13,16 +13,6 @@
   flex-direction: column;
 }
 
-.titulo-matriz {
-  color: var(--dark-color);
-}
-
-.subtitulo-matriz {
-  color: black;
-  text-align: center;
-  margin: 0;
-}
-
 .tabla-planes {
   width: 80%;
 }
