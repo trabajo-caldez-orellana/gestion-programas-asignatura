@@ -30,7 +30,7 @@ class AprobarVersionProgramaAPI(APIView):
         if not roles_directores.exists():
             return Response({"error": {"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR}}, status=HTTP_401_UNAUTHORIZED)
         
-        # PREGUNTA. Se que no ocurrira este caso peeeeero
+        # TODO: PREGUNTA. Se que no ocurrira este caso peeeeero
         # Si un usuario tiene multiples roles de director para distintas carreras, una aprobacion deberia
         # contar para todos ono
         for rol in roles_directores:
