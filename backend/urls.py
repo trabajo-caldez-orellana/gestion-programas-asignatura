@@ -31,7 +31,9 @@ from backend.views import (
     ObtenerProgramasHistorial,
     GenerarPDF,
     GenerarMatriz,
-    APIListarPlanesDeEstudio
+    APIListarPlanesDeEstudio,
+    AprobarVersionProgramaAPI,
+    PedirCambiosVersionProgramaAPI
 )
 
 informes_patterns = [
@@ -44,6 +46,8 @@ programas_patterns = [
     path("pdf/<id_programa>/", GenerarPDF.as_view()),
     path("editar/<id_programa>/", ModificarProgramaAPI.as_view()),
     path("nuevo/<id_asignatura>/", NuevoProgramaAPI.as_view()),
+    path("aprobar/<id_programa>/", AprobarVersionProgramaAPI.as_view()),
+    path("pedir_cambios/<id_programa>/", PedirCambiosVersionProgramaAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),
 ]
 

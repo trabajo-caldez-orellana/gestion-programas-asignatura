@@ -10,3 +10,5 @@ from .informacion_editar_a_partir_del_ultimo import InformacionEditarProgramaAPa
 from .historial.filtros import ObtenerFiltros
 from .historial.obtener_programas_historial import ObtenerProgramasHistorial
 from .csv import GenerarMatriz
+from .aprobar_programa import AprobarVersionProgramaAPI
+from .pedir_cambios_programas import PedirCambiosVersionProgramaAPI
