@@ -229,7 +229,6 @@ class ServicioVersionProgramaAsignatura:
             len(resultados) < MINIMO_RESULTADOS_DE_APRENDIZAJE
             or len(resultados) > MAXIMO_RESULTADOS_DE_APRENDIZAJE
         ):
-            print('FALLANDO ACA')
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_CANTIDAD_DE_RESULTADOS}
             )
