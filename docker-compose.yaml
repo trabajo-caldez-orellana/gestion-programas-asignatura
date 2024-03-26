@@ -1,24 +1,10 @@
 version: '3'
 
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "5173:5173"  # Puerto del contenedor expuesto
-    depends_on:
-      - backend  # Espera a que el servicio backend esté listo antes de iniciar
-    volumes:
-      - ./src:/app/src
-      - ./public:/app/src
-      - .env:/app/.env
-      - .env.sample:/app/.env.sample
-
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"  # Puerto del contenedor expuesto
 
@@ -26,5 +12,4 @@ services:
       - ./:/app
 
 volumes:
-  frontend_volume:
   backend_volume:
