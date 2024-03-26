@@ -1,12 +1,6 @@
 import React from 'react'
 
-import {
-  Formulario,
-  Input,
-  ListadoDatos,
-  Titulo,
-  TituloSeccion
-} from '../../../components'
+import { Formulario, Input, ListadoDatos, Titulo } from '../../../components'
 import { ProgramaAsignaturaInterface } from '../../../interfaces/interfaces'
 import { SeccionFormulario, InputOutsideContainer } from './SeccionFormulario'
 import { DatoListaInterface } from '../../../constants/constants'
@@ -62,6 +56,8 @@ const INFORMACION_ADICIONAL = {
 const InformacionGeneral: React.FC<InformacionGeneralProps> = ({
   programaAsignatura
 }) => {
+  console.log('progamaAsignatura pa q no se queje', programaAsignatura)
+
   const datosDocentes: DatoListaInterface[] =
     INFORMACION_ADICIONAL.equipoDocente.map((docente) => {
       return {
