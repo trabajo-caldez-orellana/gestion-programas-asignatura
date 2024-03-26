@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { camelizeKeys } from 'humps'
 import { OAuthCredential, OAuthUrl, Profile } from './types'
+import { BASE_URL, GOOGLE_REDIRECT_URL } from '../helpers/env-variables'
 
 export type { OAuthCredential, OAuthUrl }
 
@@ -8,7 +9,6 @@ export const TOKEN_KEY = 'token'
 
 // TODO. Modificar esto. Agregar BASE_URL como una variable de entorno
 // Y leerla en un archivo constant en helpers.
-const BASE_URL = 'http://127.0.0.1:8000'
 
 export const client = axios.create({
   baseURL: BASE_URL
@@ -36,7 +36,7 @@ client.interceptors.request.use((config) => {
 export const getGoogleAuthLink = async () => {
   const response = await client.get<OAuthUrl>('/auth/o/google-oauth2/', {
     params: {
-      redirect_uri: 'http://127.0.0.1:8000' // TODO. Crear una variable de entorno para donde redireccionamos
+      redirect_uri: GOOGLE_REDIRECT_URL // TODO. Crear una variable de entorno para donde redireccionamos
     },
     withCredentials: true
   })
