@@ -15,7 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.generic import TemplateView
 
 from backend.views import (
     ListarProgramasVigentesAPI,
@@ -33,7 +34,7 @@ from backend.views import (
     GenerarMatriz,
     APIListarPlanesDeEstudio,
     AprobarVersionProgramaAPI,
-    PedirCambiosVersionProgramaAPI
+    PedirCambiosVersionProgramaAPI,
 )
 
 informes_patterns = [
@@ -83,5 +84,7 @@ urlpatterns = [
     path("api/historial/", include(historial_patterns)),
     path("api/informacion-formularios/", include(formularios_patterns)),
     path("api/informes/", include(informes_patterns)),
-    path("api/planes-de-esutdio/", include(planes_estudio_patterns))
+    path("api/planes-de-esutdio/", include(planes_estudio_patterns)),
+    re_path("<path:route>", TemplateView.as_view(template_name='index.html'), name="index"),
+    re_path("", TemplateView.as_view(template_name='index.html'), name="index"),
 ]
