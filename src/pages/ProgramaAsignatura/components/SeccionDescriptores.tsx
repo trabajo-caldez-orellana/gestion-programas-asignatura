@@ -46,20 +46,6 @@ export default function SeccionDescriptores({
       }
     })
 
-  const handleSeccionDescriptoresChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = e.target
-
-    setProgramaAsignatura({
-      ...programaAsignatura,
-      descriptores: {
-        ...programaAsignatura.descriptores,
-        [name]: value
-      }
-    })
-  }
-
   const handleResultadosAprendizajeChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
     index: number

@@ -282,7 +282,7 @@ const parseProgramaPOSTError = (
 }
 
 export const crearProgramaAsignatura = async (
-  datos: ProgramaAsignatura,
+  datos: ProgramaAsignaturaInterface,
   presentar: boolean,
   id_asignatura: number
 ) => {
@@ -306,7 +306,7 @@ export const crearProgramaAsignatura = async (
 }
 
 export const modificarProgramaAsignatura = async (
-  datos: ProgramaAsignatura,
+  datos: ProgramaAsignaturaInterface,
   presentar: boolean,
   id_programa: number
 ) => {
