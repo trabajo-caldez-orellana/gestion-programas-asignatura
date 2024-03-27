@@ -1,7 +1,7 @@
 # DOCKERIZADO DEL FRONTEND
 FROM node:20-alpine3.18 
-WORKDIR .
-COPY package.json package-lock.json ./
+WORKDIR /
+COPY package.json package-lock.json /
 RUN npm install
 COPY . .
 RUN npm run build
