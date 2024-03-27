@@ -13,11 +13,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+import dj_database_url
 
 # Inicializar las variables de entorno
 env = environ.Env()
 environ.Env.read_env()
 BASE_URL = env.str("BASE_URL", "")
+ENVIRONMENT = env.str("ENVIRONMENT", "development")
+POSTGRESS_LOCALLY = env.bool("POSTGRESS_LOCALLY", "development")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -95,6 +98,12 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+
+
+if ENVIRONMENT == 'production' or POSTGRESS_LOCALLY == True: 
+    DATABASE_URL_PRODUCTION = env.str("DATABASE_URL_PRODUCTION", "")
+    DATABASES["default"] = dj_database_url.parse(DATABASE_URL_PRODUCTION)
 
 
 # Password validation
