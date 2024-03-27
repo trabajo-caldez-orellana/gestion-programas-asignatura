@@ -1,6 +1,6 @@
 # DOCKERIZADO DEL FRONTEND
 FROM node:20-alpine3.18 
-WORKDIR ./
+WORKDIR .
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
@@ -9,9 +9,9 @@ RUN npm run build
 FROM python:3.11.8-bullseye
 
 # Set the working directory to /app
-WORKDIR ./
+WORKDIR .
 EXPOSE 8000
-COPY . ./
+COPY . .
 # Install system dependencies and update the package list
 RUN apt-get update && apt-get install -y python3-pip
 RUN pip install -r requirements.txt
