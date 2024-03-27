@@ -9,7 +9,7 @@ RUN npm run build
 FROM python:3.11.8-bullseye
 
 # Set the working directory to /app
-WORKDIR .
+WORKDIR /
 EXPOSE 8000
 COPY . .
 # Install system dependencies and update the package list
