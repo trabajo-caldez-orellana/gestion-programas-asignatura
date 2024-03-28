@@ -1,14 +1,16 @@
 import '../Historial.css'
 import Button from '../../../components/ui/Button'
-import { Filtros, selectedFiltrosType } from 'types'
+import { FiltrosType, selectedFiltrosType } from 'types'
 
 interface FiltrosProps {
-  filtros: Filtros
+  filtros: FiltrosType
   selectedFiltros: selectedFiltrosType | null
   setSelectedFiltros: React.Dispatch<
     React.SetStateAction<selectedFiltrosType | null>
   >
-  searchHistorialProgramas: (selectedFiltros: selectedFiltrosType | null) => void
+  searchHistorialProgramas: (
+    selectedFiltros: selectedFiltrosType | null
+  ) => void
 }
 
 export default function Filtros({
@@ -41,7 +43,10 @@ export default function Filtros({
           </div>
         ))}
       </section>
-      <Button text="Buscar" onClick={() => searchHistorialProgramas(selectedFiltros)} />
+      <Button
+        text="Buscar"
+        onClick={() => searchHistorialProgramas(selectedFiltros)}
+      />
     </section>
   )
 }

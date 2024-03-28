@@ -40,7 +40,7 @@ type Filtro = {
   nombre: string
 }
 
-export type Filtros = {
+export type FiltrosType = {
   tipo: string
   nombre: string
   opciones: Filtro[]
