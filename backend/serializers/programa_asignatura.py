@@ -168,7 +168,7 @@ def serializer_programa_asignatura(
     equipo_docente_inforamacion = [
         {
             "id": rol.id,
-            "informacion": f"{str(rol.usuario)} - {rol.rol} - {rol.dedicacion}"
+            "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}"
         }
         for rol in equipo_docente
     ]
