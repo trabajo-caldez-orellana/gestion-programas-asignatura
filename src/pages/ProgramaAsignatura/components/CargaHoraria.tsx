@@ -1,6 +1,8 @@
 import { ProgramaAsignaturaInterface } from '../../../interfaces'
 import camelCase from 'lodash/camelCase'
 import { CAMPOS_CARGA_HORARIA } from '../../../constants/constants'
+import { Formulario, TituloSeccion, Input } from '../../../components'
+import { SeccionFormulario, InputOutsideContainer } from './SeccionFormulario'
 
 interface CargaHorariaProps {
   programaAsignatura: ProgramaAsignaturaInterface
@@ -13,24 +15,30 @@ export default function CargaHoraria({
 
   // Los campos se obtienen desde la constante CAMPOS_CARGA_HORARIA
   return (
-    <section className="form-section">
-      <h2 className="header">Carga Horaria</h2>
-      <form className="carga-horaria-form">
+    <SeccionFormulario>
+      <TituloSeccion>CARGA HORARIA</TituloSeccion>
+      <Formulario>
         {CAMPOS_CARGA_HORARIA.map((config) => {
-          return (
-            <label htmlFor={config.id} key={config.id}>
-              {config.label}
-              <input
-                type="text"
-                id={config.id}
-                name={config.name}
-                value={cargaHoraria[camelCase(config.name)] || 0}
-                disabled={true}
-              />
-            </label>
-          )
+          if (cargaHoraria[camelCase(config.name)]) {
+            return (
+              <InputOutsideContainer key={config.id}>
+                <Input
+                  id={config.id}
+                  name={config.name}
+                  onChange={() => {}}
+                  value={cargaHoraria[camelCase(config.name)] || 0}
+                  mensajeDeError=""
+                  label={config.label}
+                  type="number"
+                  modoLectura
+                />
+              </InputOutsideContainer>
+            )
+          }
+
+          return null
         })}
-      </form>
-    </section>
+      </Formulario>
+    </SeccionFormulario>
   )
 }

@@ -13,11 +13,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+import dj_database_url
 
 # Inicializar las variables de entorno
 env = environ.Env()
 environ.Env.read_env()
 BASE_URL = env.str("BASE_URL", "")
+ENVIRONMENT = env.str("ENVIRONMENT", "development")
+POSTGRESS_LOCALLY = env.bool("POSTGRESS_LOCALLY", "development")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    'whitenoise.runserver_nostatic',
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
@@ -53,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -68,7 +73,7 @@ ROOT_URLCONF = "backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "build", "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -93,6 +98,12 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+
+
+if ENVIRONMENT == 'production' or POSTGRESS_LOCALLY == True: 
+    DATABASE_URL_PRODUCTION = env.str("DATABASE_URL_PRODUCTION", "")
+    DATABASES["default"] = dj_database_url.parse(DATABASE_URL_PRODUCTION)
 
 
 # Password validation
@@ -130,12 +141,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_DIR = os.path.join("backend", "static")
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "dist"),
+    os.path.join(BASE_DIR, "build", "assets"),
 ]
-
+STATICFILES_STORAGE = (
+    'whitenoise.storage.CompressedManifestStaticFilesStorage'
+)
+WHITENOISE_ROOT = BASE_DIR / 'build'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -151,8 +165,7 @@ AUTHENTICATION_BACKENDS = (
 
 # CORS
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
-CORS_ORIGIN_WHITELIST = env.list("CORS_ORIGIN_WHITELIST", default=[])
-CORS_ALLOW_CREDENTIALS = env.bool("CORS_ALLOW_CREDENTIALS", True)
+CORS_TRUSTED_ORIGINS = env.list("CORS_TRUSTED_ORIGINS", default=[])
 
 DJOSER = {
     "LOGIN_FIELD": "email",

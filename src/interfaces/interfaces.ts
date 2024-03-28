@@ -45,7 +45,7 @@ export interface InformacionAdicional {
   extensionEstudiantes: string
   cronograma: string
   // Index signature
-  [key: string]: string | number
+  [key: string]: string
 }
 
 export interface ProgramaAsignaturaInterface {
