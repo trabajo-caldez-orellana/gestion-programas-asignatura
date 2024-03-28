@@ -5,6 +5,7 @@ import {
   InformacionAdicional,
   SeccionDescriptores,
   BotonesProgramaAsignatura,
+  BotonesRevisionProgramaAsignatura,
   InformacionGeneral
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
@@ -22,14 +23,25 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     loading,
     errorInesperado,
     erroresProgramaAsignatura,
-    guardarPrograma
+    guardarPrograma,
+    aprobarPrograma,
+    pedirCambiosPrograma
   } = useProgramaAsignatura(id?.toString(), modo)
 
-  const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
+  const modoLectura =
+    modo === MODOS_PROGRAMA_ASIGNATURA.VER ||
+    modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR
+
   const handlePostPrograma = (presentar: boolean) => () => {
-    // TODO. Hacer validaciones en el frontend para que no se manden
-    // formularios que sean no validos!
     guardarPrograma(presentar)
+  }
+
+  const handleAprobarPrograma = () => {
+    aprobarPrograma()
+  }
+
+  const handlePedirCambiosPrograma = (mensaje: string) => {
+    pedirCambiosPrograma(mensaje)
   }
 
   if (errorInesperado)
@@ -58,11 +70,20 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
         modoProgramaAsignatura={modoProgramaAsignatura}
         erroresInfornacionAdicional={erroresProgramaAsignatura}
       />
-      <BotonesProgramaAsignatura
-        error={erroresProgramaAsignatura.all}
-        modoLectura={modoLectura}
-        handlePostPrograma={handlePostPrograma}
-      />
+      <br />
+      {modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR ? (
+        <BotonesRevisionProgramaAsignatura
+          handleAprobarPrograma={handleAprobarPrograma}
+          handlePedirCambiosPrograma={handlePedirCambiosPrograma}
+          error={erroresProgramaAsignatura.all}
+        />
+      ) : (
+        <BotonesProgramaAsignatura
+          error={erroresProgramaAsignatura.all}
+          modoLectura={modoLectura}
+          handlePostPrograma={handlePostPrograma}
+        />
+      )}
     </section>
   )
 }

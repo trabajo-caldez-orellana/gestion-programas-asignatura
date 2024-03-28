@@ -28,7 +28,10 @@ export const RUTAS = {
   POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/',
   GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/',
   GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/',
-  REUTILIZAR_ULTIMO_PROGRAMA: 'api/informacion-formularios/reutilizar-programa/'
+  REUTILIZAR_ULTIMO_PROGRAMA:
+    'api/informacion-formularios/reutilizar-programa/',
+  APROBAR_PROGRAMA: 'api/programas/aprobar/',
+  PEDIR_CAMBIOS_PROGRAMA: 'api/programas/pedir_cambios/'
 }
 
 export const HANDLERS = {
@@ -45,7 +48,8 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
   NUEVO: 'nuevo',
   EDITAR: 'editar',
   EDITAR_ULTIMO: 'editar-ultimo',
-  IMPRIMIR: 'imprimir'
+  IMPRIMIR: 'imprimir',
+  REVISAR: 'revisar'
 }
 
 export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
@@ -105,7 +109,8 @@ export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
     extensionEstudiantes: '',
     extensionDocentes: ''
   },
-  all: ''
+  all: '',
+  mensaje: ''
 }
 
 type CampoCargaHorariaType = {
@@ -342,6 +347,15 @@ export const PAGINAS: Pagina[] = [
     enabled: true,
     component: ProgramaAsignatura,
     modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO,
+    protectedByLogin: true
+  },
+  {
+    key: 'revisar-programa-de-asignatura',
+    title: 'Revisar Programa Asignatura',
+    path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.REVISAR}/:id`,
+    enabled: true,
+    component: ProgramaAsignatura,
+    modo: MODOS_PROGRAMA_ASIGNATURA.REVISAR,
     protectedByLogin: true
   },
   {

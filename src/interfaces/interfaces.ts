@@ -122,6 +122,7 @@ export interface ProgramaAsignaturaErrores {
   descriptores: DescriptorErrores
   informacionAdicional: InformacionAdicionalErrores
   all: string
+  mensaje: string
 }
 
 export interface NuevoPrograma {
@@ -221,6 +222,7 @@ export interface AccionesPosiblesInterface {
   reutilizarUltimo: boolean
   modificarUltimo: boolean
   nuevo: boolean
+  revisarPrograma: boolean
 }
 
 export interface TareaPendiente {

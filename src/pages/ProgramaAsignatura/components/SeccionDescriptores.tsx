@@ -35,7 +35,9 @@ export default function SeccionDescriptores({
   erroresPrograma
 }: SeccionDescriptoresProps) {
   const { descriptores } = programaAsignatura
-  const modoLectura = modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER
+  const modoLectura =
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER ||
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.REVISAR
 
   const datosListaSeleccionDescriptores: DatosListaSeleccionInterface[] =
     descriptores.descriptores.map((descriptor) => {

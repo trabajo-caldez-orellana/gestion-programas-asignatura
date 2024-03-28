@@ -54,6 +54,7 @@ from backend.common.mensajes_de_error import (
     MENSAJE_PROGRAMA_YA_EXISTENTE,
     MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR,
     MENSAJE_FALLO_REUTILIZACION,
+    MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR
     
 )
 from backend.services.semestre import ServicioSemestre
@@ -806,7 +807,7 @@ class ServicioVersionProgramaAsignatura:
                 semestre=semestre_para_reutilizar, asignatura=asignatura
             ).exists()
 
-
+        revisar = False
         se_puede_modificar = (
             version_programa is not None
             and version_programa.estado == EstadoAsignatura.ABIERTO
@@ -818,6 +819,7 @@ class ServicioVersionProgramaAsignatura:
             accion = "Presentar Programa de Asignatura."
         else:
             accion = "Revisar Programa de Asignatura."
+            revisar = True
 
         return {
             "asignatura": SerializerAsignatura(asignatura).data,
@@ -831,6 +833,7 @@ class ServicioVersionProgramaAsignatura:
                 "reutilizar_ultimo": se_puede_usar_ultimo,
                 "modificar_ultimo": se_puede_usar_ultimo,
                 "nuevo": version_programa is None,
+                "revisar_programa": revisar
             },
         }
 
@@ -847,7 +850,6 @@ class ServicioVersionProgramaAsignatura:
                 version = VersionProgramaAsignatura.objects.get(
                     semestre=semestre_siguente,
                     asignatura=rol.asignatura,
-                    estado__in=[EstadoAsignatura.ABIERTO, EstadoAsignatura.PENDIENTE]
                 )
             except VersionProgramaAsignatura.DoesNotExist:
                 return [
@@ -881,7 +883,7 @@ class ServicioVersionProgramaAsignatura:
                 try:
                     auditoria = AuditoriaEstadoVersionPrograma.objects.get(
                         version_programa_id=version.id,
-                        rol_id=rol.rol
+                        rol_id=rol.id
                     )
                     
                     if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
@@ -894,6 +896,8 @@ class ServicioVersionProgramaAsignatura:
                         version.asignatura, version
                     )
                     tareas_pendientes_director.append(tarea)
+            
+            return tareas_pendientes_director
 
         if rol.rol == Roles.SECRETARIO:
             return []
@@ -938,8 +942,10 @@ class ServicioVersionProgramaAsignatura:
         return True
 
     def pedir_cambios_programa_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol, mensaje: str):
+        if not version_programa.estado == EstadoAsignatura.PENDIENTE:
+            raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
         if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
-            raise ValidationError(MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR)
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
 
         try:
             auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
@@ -978,8 +984,10 @@ class ServicioVersionProgramaAsignatura:
         # TODO. Enviar email notificando que se pidieron cambios
 
     def aprobar_programa_de_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol):
+        if not version_programa.estado == EstadoAsignatura.PENDIENTE:
+            raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
         if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
-            raise ValidationError(MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR)
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
 
         try:
             auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(

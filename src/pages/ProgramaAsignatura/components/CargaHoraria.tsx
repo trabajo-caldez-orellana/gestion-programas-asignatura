@@ -26,7 +26,7 @@ export default function CargaHoraria({
                   id={config.id}
                   name={config.name}
                   onChange={() => {}}
-                  value={cargaHoraria[camelCase(config.name)]}
+                  value={cargaHoraria[camelCase(config.name)] || 0}
                   mensajeDeError=""
                   label={config.label}
                   type="number"

@@ -14,6 +14,7 @@ interface AccionesPosiblesInterfaceAPI {
   reutilizar_ultimo: boolean
   modificar_ultimo: boolean
   nuevo: boolean
+  revisar_programa: boolean
 }
 
 interface TareaPendienteAPI {
@@ -39,7 +40,8 @@ const parserTareasPendientes = (
         modificarPrograma: tarea.acciones_posibles.modificar_programa,
         reutilizarUltimo: tarea.acciones_posibles.reutilizar_ultimo,
         modificarUltimo: tarea.acciones_posibles.modificar_ultimo,
-        nuevo: tarea.acciones_posibles.nuevo
+        nuevo: tarea.acciones_posibles.nuevo,
+        revisarPrograma: tarea.acciones_posibles.revisar_programa
       }
     }
   })

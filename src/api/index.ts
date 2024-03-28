@@ -36,7 +36,7 @@ client.interceptors.request.use((config) => {
 export const getGoogleAuthLink = async () => {
   const response = await client.get<OAuthUrl>('/auth/o/google-oauth2/', {
     params: {
-      redirect_uri: GOOGLE_REDIRECT_URL // TODO. Crear una variable de entorno para donde redireccionamos
+      redirect_uri: 'http://127.0.0.1:5173' // TODO. Crear una variable de entorno para donde redireccionamos
     },
     withCredentials: true
   })

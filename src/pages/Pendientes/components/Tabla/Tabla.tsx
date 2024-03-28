@@ -72,6 +72,12 @@ export default function Tabla() {
     )
   }
 
+  const handleRevisarPrograma = (id: number | null) => {
+    navigate(
+      `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.REVISAR}/${id}`
+    )
+  }
+
   return (
     <article>
       <Modal
@@ -136,6 +142,13 @@ export default function Tabla() {
                         }
                         className="fas fa-plus boton-accion"
                         title="Nuevo programa"
+                      ></i>
+                    )}
+                    {item.accionesPosibles.revisarPrograma && (
+                      <i
+                        onClick={() => handleRevisarPrograma(item.idPrograma)}
+                        className="fas fa-check boton-accion"
+                        title="Revisar programa"
                       ></i>
                     )}
                   </>
