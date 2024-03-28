@@ -138,6 +138,8 @@ export interface ProgramaAsignaturaErrores {
 }
 
 export interface NuevoPrograma {
+  informacionGeneral: InformacionGeneral
+  cargaHoraria: CargaHoraria
   ejesTransversales: {
     id: number
     nombre: string
@@ -210,6 +212,25 @@ export interface ProgramaAsignaturaAPIBody {
 }
 
 export interface NuevoProgramaAPIBody {
+  informacion_general: {
+    nombre_asignatura: string
+    codigo_aignatura: string
+    anio_academico: string
+    bloque_curricular: string
+    carreras: DatoListaInterface[]
+    equipo_docente: DatoListaInterface[]
+  }
+  carga_horaria: {
+    semanas_dictado: number
+    teoria_presencial: number
+    practica_presencial: number
+    teorico_practico_presencial: number
+    laboratorio_presencial: number
+    teoria_distancia: number
+    practica_distancia: number
+    teorico_practico_distancia: number
+    laboratorio_distancia: number
+  }
   ejes_transversales: {
     id: number
     nombre: string

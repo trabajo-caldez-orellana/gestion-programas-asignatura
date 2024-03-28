@@ -64,6 +64,26 @@ const parserNuevoProgramaAsignatura = (
   datos: NuevoProgramaAPIBody
 ): NuevoPrograma => {
   return {
+    informacionGeneral: {
+      nombreAsignatura: datos.informacion_general.nombre_asignatura,
+      codigoAsignatura: datos.informacion_general.codigo_aignatura,
+      bloqueCurricular: datos.informacion_general.bloque_curricular,
+      carreras: datos.informacion_general.carreras,
+      equipoDocente: datos.informacion_general.equipo_docente,
+      anioAcademico: datos.informacion_general.anio_academico
+    },
+    cargaHoraria: {
+      practicaDistancia: datos.carga_horaria.practica_distancia,
+      teoriaDistancia: datos.carga_horaria.teoria_distancia,
+      laboratorioDistancia: datos.carga_horaria.laboratorio_distancia,
+      teoricoPracticoDistancia: datos.carga_horaria.teorico_practico_distancia,
+      practicaPresencial: datos.carga_horaria.practica_presencial,
+      teoriaPresencial: datos.carga_horaria.teoria_presencial,
+      laboratorioPresencial: datos.carga_horaria.laboratorio_presencial,
+      teoricoPracticoPresencial:
+        datos.carga_horaria.teorico_practico_presencial,
+      semanasDictado: datos.carga_horaria.semanas_dictado
+    },
     ejesTransversales: datos.ejes_transversales,
     actividadesReservadas: datos.actividades_reservadas,
     descriptores: datos.descriptores
