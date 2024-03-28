@@ -54,6 +54,14 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
 
 export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
   id: 1,
+  informacionGeneral: {
+    nombreAsignatura: '',
+    codigoAsignatura: '',
+    carreras: [],
+    equipoDocente: [],
+    anioAcademico: '',
+    bloqueCurricular: ''
+  },
   cargaHoraria: {
     semanasDictado: 0,
     teoriaPresencial: 0,

@@ -1,3 +1,5 @@
+import { DatoListaInterface } from '../constants/constants'
+
 export interface CargaHoraria {
   // cargaHorariaTotal: number
   semanasDictado: number
@@ -48,8 +50,18 @@ export interface InformacionAdicional {
   [key: string]: string
 }
 
+export interface InformacionGeneral {
+  nombreAsignatura: string
+  codigoAsignatura: string
+  anioAcademico: string
+  bloqueCurricular: string
+  carreras: DatoListaInterface[]
+  equipoDocente: DatoListaInterface[]
+}
+
 export interface ProgramaAsignaturaInterface {
   id: number
+  informacionGeneral: InformacionGeneral
   cargaHoraria: CargaHoraria
   descriptores: Descriptor
   informacionAdicional: InformacionAdicional
@@ -145,6 +157,14 @@ export interface NuevoPrograma {
 
 export interface ProgramaAsignaturaAPIBody {
   id: number
+  informacion_general: {
+    nombre_asignatura: string
+    codigo_aignatura: string
+    anio_academico: string
+    bloque_curricular: string
+    carreras: DatoListaInterface[]
+    equipo_docente: DatoListaInterface[]
+  }
   carga_horaria: {
     semanas_dictado: number
     teoria_presencial: number

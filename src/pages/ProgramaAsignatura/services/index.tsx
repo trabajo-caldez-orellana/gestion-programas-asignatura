@@ -14,6 +14,14 @@ const parserProgramaAsignatura = (
 ): ProgramaAsignaturaInterface => {
   return {
     id: programa.id,
+    informacionGeneral: {
+      nombreAsignatura: programa.informacion_general.nombre_asignatura,
+      codigoAsignatura: programa.informacion_general.codigo_aignatura,
+      bloqueCurricular: programa.informacion_general.bloque_curricular,
+      carreras: programa.informacion_general.carreras,
+      equipoDocente: programa.informacion_general.equipo_docente,
+      anioAcademico: programa.informacion_general.anio_academico
+    },
     cargaHoraria: {
       practicaDistancia: programa.carga_horaria.practica_distancia,
       teoriaDistancia: programa.carga_horaria.teoria_distancia,
