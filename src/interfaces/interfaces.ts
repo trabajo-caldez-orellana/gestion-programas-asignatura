@@ -1,4 +1,8 @@
-import { DatoListaInterface } from '../constants/constants'
+import {
+  DatoListaInterface,
+  REQUISITOS_CORRELATIVA,
+  TIPO_CORRELATIVA
+} from '../constants/constants'
 
 export interface CargaHoraria {
   // cargaHorariaTotal: number
@@ -59,12 +63,21 @@ export interface InformacionGeneral {
   equipoDocente: DatoListaInterface[]
 }
 
+export interface Correlativa {
+  tipo: TIPO_CORRELATIVA
+  requisito: REQUISITOS_CORRELATIVA
+  asignatura?: DatoListaInterface
+  cantidadAsignaturas?: number
+  modulo?: string
+}
+
 export interface ProgramaAsignaturaInterface {
   id: number
   informacionGeneral: InformacionGeneral
   cargaHoraria: CargaHoraria
   descriptores: Descriptor
   informacionAdicional: InformacionAdicional
+  correlativas: Correlativa[]
 }
 
 export interface PlanesDeEstudioAPIBody {
@@ -209,6 +222,13 @@ export interface ProgramaAsignaturaAPIBody {
     extension_docentes: string
     extension_estudiantes: string
   }
+  correlativas: {
+    tipo: TIPO_CORRELATIVA
+    requisito: REQUISITOS_CORRELATIVA
+    asignatura?: DatoListaInterface
+    modulo?: string
+    cantidad?: string
+  }[]
 }
 
 export interface NuevoProgramaAPIBody {

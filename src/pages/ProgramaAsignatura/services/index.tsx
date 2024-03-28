@@ -56,7 +56,9 @@ const parserProgramaAsignatura = (
       extensionEstudiantes:
         programa.informacion_adicional.extension_estudiantes,
       extensionDocentes: programa.informacion_adicional.extension_docentes
-    }
+    },
+    // TODO. Parse correlativas desde el backend
+    correlativas: []
   }
 }
 

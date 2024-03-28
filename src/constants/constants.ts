@@ -75,10 +75,7 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
   },
   descriptores: {
     resultadosAprendizaje: [''],
-    ejesTransversales: [
-      { id: 1, nombre: 'Eje 1', nivel: 0 },
-      { id: 2, nombre: 'Eje 2', nivel: 2 }
-    ],
+    ejesTransversales: [],
     descriptores: [],
     actividadesReservadas: []
   },
@@ -94,7 +91,8 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
     investigacionEstudiantes: '',
     extensionEstudiantes: '',
     extensionDocentes: ''
-  }
+  },
+  correlativas: []
 }
 
 export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
@@ -434,4 +432,15 @@ export interface ModalProps {
   children: React.ReactNode
   modalTitle?: string
   onClose: () => void
+}
+
+export enum TIPO_CORRELATIVA {
+  REGULAR = 'R',
+  APROBADO = 'A'
+}
+
+export enum REQUISITOS_CORRELATIVA {
+  ASIGNATURA = 'asignatura',
+  CANTIDAD_ASIGNATURAS = 'cantidad',
+  MODULO = 'modulo'
 }
