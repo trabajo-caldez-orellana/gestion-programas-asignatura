@@ -11,7 +11,7 @@ import {
   DatoListaInterface,
   MODOS_PROGRAMA_ASIGNATURA
 } from '../../../constants/constants'
-import { SeccionFormulario } from './SeccionFormulario'
+import { SeccionFormulario, BotonAgregarCorrelativa } from './SeccionFormulario'
 import { TituloSeccion } from '../../../components'
 import {
   CorrelativaAsignaturas,
@@ -130,6 +130,8 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
     )
   }
 
+  const handleAgregarCorrelativa = () => {}
+
   return (
     <SeccionFormulario>
       <TituloSeccion>CORRELATIVAS</TituloSeccion>
@@ -189,6 +191,12 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
             />
           )
       })}
+      <BotonAgregarCorrelativa
+        onClick={handleAgregarCorrelativa}
+        disabled={modoLectura}
+      >
+        Agregar correlativa
+      </BotonAgregarCorrelativa>
     </SeccionFormulario>
   )
 }
