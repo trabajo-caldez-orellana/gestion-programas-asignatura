@@ -64,6 +64,7 @@ export interface InformacionGeneral {
 }
 
 export interface Correlativa {
+  id: number | null
   tipo: TIPO_CORRELATIVA
   requisito: REQUISITOS_CORRELATIVA
   asignatura?: DatoListaInterface

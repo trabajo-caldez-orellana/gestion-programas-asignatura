@@ -434,13 +434,43 @@ export interface ModalProps {
   onClose: () => void
 }
 
-export enum TIPO_CORRELATIVA {
+export const enum TIPO_CORRELATIVA {
+  NO_SELECCIONADO = '-',
   REGULAR = 'R',
   APROBADO = 'A'
 }
 
-export enum REQUISITOS_CORRELATIVA {
+export const enum REQUISITOS_CORRELATIVA {
+  NO_SELECCIONADO = '-',
   ASIGNATURA = 'asignatura',
   CANTIDAD_ASIGNATURAS = 'cantidad',
   MODULO = 'modulo'
 }
+
+export const LISTADO_SELECCION_TIPOS_CORRELATIVA = [
+  {
+    id: TIPO_CORRELATIVA.NO_SELECCIONADO,
+    informacion: 'Seleccione Tipo de Correlativa'
+  },
+  { id: TIPO_CORRELATIVA.APROBADO, informacion: 'Aprobado' },
+  { id: TIPO_CORRELATIVA.REGULAR, informacion: 'Regular' }
+]
+
+export const LISTADO_SELECCION_REQUISITOS_CORRELACTIVA = [
+  {
+    id: REQUISITOS_CORRELATIVA.NO_SELECCIONADO,
+    informacion: 'Seleccione requisito de correlativa.'
+  },
+  {
+    id: REQUISITOS_CORRELATIVA.ASIGNATURA,
+    informacion: 'Una Asignatura es correlativa.'
+  },
+  {
+    id: REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS,
+    informacion: 'Requiere una cantidad de asignaturas aprobadas/regulares.'
+  },
+  {
+    id: REQUISITOS_CORRELATIVA.MODULO,
+    informacion: 'Requiere un modulo aprobado/regular.'
+  }
+]
