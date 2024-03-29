@@ -14,7 +14,7 @@ interface InputTextoInterface {
   type: string
   label: string
   mensajeDeError: string
-  onChange: (name: string | number, value: string) => void
+  onChange: (value: string | number) => void
   modoLectura: boolean
 }
 
@@ -29,7 +29,7 @@ const Input: React.FC<InputTextoInterface> = ({
   modoLectura
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(name, e.target.value)
+    onChange(e.target.value)
   }
 
   return (

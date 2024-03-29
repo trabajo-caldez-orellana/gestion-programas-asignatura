@@ -3,7 +3,7 @@ import {
   SelectStyled,
   MensajeDeError,
   InputButtonContainer,
-  TextAreaLabel
+  InputLabel
 } from './Formulario'
 
 interface ChoicesForDropdown {
@@ -36,7 +36,7 @@ const Dropdown: React.FC<DropdownInterface> = ({
 
   return (
     <DropdownContainer>
-      <TextAreaLabel>{label}</TextAreaLabel>
+      <InputLabel>{label}</InputLabel>
       <InputButtonContainer $tieneError={!!error}>
         <SelectStyled
           name={name}

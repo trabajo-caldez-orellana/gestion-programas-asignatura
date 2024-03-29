@@ -215,6 +215,7 @@ export const InputButtonContainer = styled.div<TieneErrorInterface>`
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  width: 70%;
   position: relative;
   border: 2px solid ${(props) => (props.$tieneError ? 'red' : 'none')};
 `
