@@ -7,7 +7,7 @@ import {
   NuevoPrograma,
   ProgramaAsignaturaErrores
 } from '../../../interfaces/interfaces'
-import { RUTAS } from '../../../constants/constants'
+import { DatoListaInterface, RUTAS } from '../../../constants/constants'
 
 const parserProgramaAsignatura = (
   programa: ProgramaAsignaturaAPIBody
@@ -399,6 +399,46 @@ export const pedirCambiosProgramaAsignatura = async (
     return {
       status: error.response.status,
       error: parseProgramaPOSTError(error.response.data.error)
+    }
+  }
+}
+
+export const obtenerAsignaturasDisponiblesAPartirDeAsignatura = async (
+  id_asignatura: string
+) => {
+  try {
+    const response = await client.post(
+      `${RUTAS.OBTENER_CORRELATIVAS_DISPONIBLES_ASIGNATURA}${id_asignatura}/`
+    )
+
+    return {
+      status: response.status,
+      data: response.data.data as DatoListaInterface[]
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      data: [] as DatoListaInterface[]
+    }
+  }
+}
+
+export const obtenerAsignaturasDisponiblesAPartirDePrograma = async (
+  id_programa: string
+) => {
+  try {
+    const response = await client.post(
+      `${RUTAS.OBTENER_CORRELATIVAS_DISPONIBLES_PROGRAMA}${id_programa}/`
+    )
+
+    return {
+      status: response.status,
+      data: response.data.data as DatoListaInterface[]
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      data: [] as DatoListaInterface[]
     }
   }
 }
