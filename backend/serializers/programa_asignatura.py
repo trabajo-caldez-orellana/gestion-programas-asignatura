@@ -8,8 +8,9 @@ from backend.models import (
     Estandar,
     ProgramaTieneActividadReservada,
     ProgramaTieneDescriptor,
+    Rol,
 )
-from backend.common.choices import TipoDescriptor, NivelDescriptor
+from backend.common.choices import TipoDescriptor, NivelDescriptor, Roles
 
 
 class SerializerProgramaTieneDescriptor(serializers.Serializer):
@@ -33,16 +34,15 @@ class SerializerProgramaTieneEjeTransversal(serializers.Serializer):
     nombre = serializers.CharField(source="descriptor__descripcion")
 
 
-# TODO. Modificar para que sea solo lectura
 def serializer_programa_asignatura(
     programa: VersionProgramaAsignatura, solo_lectura: bool = False
 ):
+    carreras_de_la_asignatura = Carrera.objects.filter(
+        plandeestudio__asignaturas=programa.asignatura
+    ).distinct()
     if not solo_lectura:
         # obtengo todos los estandares/programas a los que pertenece la asignatura
-        carreras = Carrera.objects.filter(
-            plandeestudio__asignaturas=programa.asignatura
-        ).distinct()
-        carreras_id = [carrera.id for carrera in carreras]
+        carreras_id = [carrera.id for carrera in carreras_de_la_asignatura]
         # obtengo todos los estandares relacionadas a la carrera
         estandares = Estandar.objects.filter(carrera_id__in=carreras_id)
         estandares_id = [estandar.id for estandar in estandares]
@@ -160,8 +160,29 @@ def serializer_programa_asignatura(
             actividades_reservadas_del_programa, many=True
         ).data
 
+    equipo_docente = Rol.objects.filter(
+        rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE],
+        asignatura_id=programa.asignatura.id
+    )
+
+    equipo_docente_inforamacion = [
+        {
+            "id": rol.id,
+            "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}"
+        }
+        for rol in equipo_docente
+    ]
+
     return {
         "id": programa.id,
+        "informacion_general": {
+            "nombre_asignatura": programa.asignatura.denominacion,
+            "codigo_aignatura": programa.asignatura.codigo,
+            "anio_academico": str(programa.semestre.anio_academico),
+            "bloque_curricular": programa.asignatura.bloque_curricular.nombre,
+            "carreras": [{"id": carrera.id, "informacion": carrera.nombre} for carrera in carreras_de_la_asignatura],
+            "equipo_docente": equipo_docente_inforamacion,
+        },
         "carga_horaria": {
             "semanas_dictado": programa.asignatura.semanas_dictado,
             "teoria_presencial": programa.asignatura.semanal_teoria_presencial,

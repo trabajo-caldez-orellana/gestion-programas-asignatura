@@ -37,8 +37,7 @@ export const getGoogleAuthLink = async () => {
   const response = await client.get<OAuthUrl>('/auth/o/google-oauth2/', {
     params: {
       redirect_uri: GOOGLE_REDIRECT_URL
-    },
-    withCredentials: true
+    }
   })
   return response.data
 }

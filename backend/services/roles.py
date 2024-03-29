@@ -33,7 +33,7 @@ class ServicioRoles:
 
             if rol.rol == Roles.DIRECTOR_CARRERA:
                 # Verifica que la carrera tenga esa asignatura!
-                planes_relacionados = programa.asignatura.plandeestudio_set.all()
+                planes_relacionados = programa.asignatura.planes_de_estudio.all()
                 planes_count = planes_relacionados.filter(carrera=rol.carrera).count()
 
                 if planes_count > 0:
