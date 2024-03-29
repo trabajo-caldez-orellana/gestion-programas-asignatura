@@ -22,3 +22,27 @@ export const InputOutsideContainer = styled.div`
 export const WholeWidthInputContainer = styled.div`
   width: 100%;
 `
+
+export const BotonAgregarCorrelativa = styled.button`
+  width: 100%;
+  padding: 5px 10px;
+  border: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+
+  margin-bottom: 5px;
+  &:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+`
+
+export const ModalSeleccionCorrelativa = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 10px;
+`

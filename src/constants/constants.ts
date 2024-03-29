@@ -75,10 +75,7 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
   },
   descriptores: {
     resultadosAprendizaje: [''],
-    ejesTransversales: [
-      { id: 1, nombre: 'Eje 1', nivel: 0 },
-      { id: 2, nombre: 'Eje 2', nivel: 2 }
-    ],
+    ejesTransversales: [],
     descriptores: [],
     actividadesReservadas: []
   },
@@ -94,7 +91,8 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
     investigacionEstudiantes: '',
     extensionEstudiantes: '',
     extensionDocentes: ''
-  }
+  },
+  correlativas: []
 }
 
 export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
@@ -117,6 +115,7 @@ export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
     extensionEstudiantes: '',
     extensionDocentes: ''
   },
+  correlativas: '',
   all: '',
   mensaje: ''
 }
@@ -435,3 +434,24 @@ export interface ModalProps {
   modalTitle?: string
   onClose: () => void
 }
+
+export const enum TIPO_CORRELATIVA {
+  NO_SELECCIONADO = '-',
+  REGULAR = 'R',
+  APROBADO = 'A'
+}
+
+export const enum REQUISITOS_CORRELATIVA {
+  ASIGNATURA = 'asignatura',
+  CANTIDAD_ASIGNATURAS = 'cantidad',
+  MODULO = 'modulo'
+}
+
+export const LISTADO_SELECCION_TIPOS_CORRELATIVA = [
+  {
+    id: TIPO_CORRELATIVA.NO_SELECCIONADO,
+    informacion: 'Seleccione Tipo de Correlativa'
+  },
+  { id: TIPO_CORRELATIVA.APROBADO, informacion: 'Aprobado' },
+  { id: TIPO_CORRELATIVA.REGULAR, informacion: 'Regular' }
+]

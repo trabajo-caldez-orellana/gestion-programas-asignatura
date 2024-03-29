@@ -56,7 +56,9 @@ const parserProgramaAsignatura = (
       extensionEstudiantes:
         programa.informacion_adicional.extension_estudiantes,
       extensionDocentes: programa.informacion_adicional.extension_docentes
-    }
+    },
+    // TODO. Parse correlativas desde el backend
+    correlativas: []
   }
 }
 
@@ -306,6 +308,8 @@ const parseProgramaPOSTError = (
         ? responseError.extension_docentes[0]
         : ''
     },
+    // TODO. Cambiar cuadno cree la llamada a a la api
+    correlativas: '',
     all: responseError.__all__ ? responseError.__all__[0] : '',
     mensaje: responseError.mensaje ? responseError.mensaje[0] : ''
   }
