@@ -1,3 +1,4 @@
 import CorrelativaAsignaturas from './CorrelativaAsignaturas'
+import CorrelativaCantidad from './CorrelativaCantidad'
 
-export { CorrelativaAsignaturas }
+export { CorrelativaAsignaturas, CorrelativaCantidad }

@@ -8,11 +8,15 @@ import {
 import {
   TIPO_CORRELATIVA,
   REQUISITOS_CORRELATIVA,
-  DatoListaInterface
+  DatoListaInterface,
+  MODOS_PROGRAMA_ASIGNATURA
 } from '../../../constants/constants'
 import { SeccionFormulario } from './SeccionFormulario'
 import { TituloSeccion } from '../../../components'
-import { CorrelativaAsignaturas } from './ObjetosListaCorrelativas'
+import {
+  CorrelativaAsignaturas,
+  CorrelativaCantidad
+} from './ObjetosListaCorrelativas'
 
 const ASIGNATURAS_DISPONIBLES_EJEMPLO: DatoListaInterface[] = [
   {
@@ -58,6 +62,10 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
     modoProgramaAsignatura,
     erroresSeccionCorrelativas
   )
+
+  const modoLectura =
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER ||
+    modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.REVISAR
 
   const OBJETO_PRUEBA_CORRELATIVAS: Correlativa[] = [
     {
@@ -131,6 +139,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
         ) {
           return (
             <CorrelativaAsignaturas
+              modoLectura={modoLectura}
               key={`${programaAsignatura.id}${index}`}
               tipo={correlativa.tipo}
               asignaturasDisponibles={ASIGNATURAS_DISPONIBLES_EJEMPLO}
@@ -147,11 +156,20 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
         }
 
         if (
-          correlativa.requisito ===
-            REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS &&
-          !!correlativa.cantidadAsignaturas
+          correlativa.requisito === REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS
         ) {
-          return <></>
+          return (
+            <CorrelativaCantidad
+              cantidadAsignaturas={correlativa.cantidadAsignaturas || 0}
+              tipo={correlativa.tipo}
+              enCambioCantidadAsignaturas={() => {}}
+              enBorradoCorrelativa={() => handleBorrarCorrelativa(index)}
+              enCambioTipoCorrelativa={(seleccion) =>
+                enCambioTipoCorrelativa(index, seleccion)
+              }
+              modoLectura={modoLectura}
+            />
+          )
         }
 
         if (

@@ -18,3 +18,8 @@ export const BorrarCorrelativaButton = styled.button`
   border: none;
   padding: 5px 10px;
 `
+
+export const InfoContainer = styled.div`
+  width: 45%;
+  display: flex;
+`

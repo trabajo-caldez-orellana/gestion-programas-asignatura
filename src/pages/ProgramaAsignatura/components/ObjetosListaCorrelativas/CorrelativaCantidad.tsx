@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  DatoListaInterface,
   TIPO_CORRELATIVA,
   LISTADO_SELECCION_TIPOS_CORRELATIVA
 } from '../../../../constants/constants'
@@ -9,23 +8,21 @@ import {
   BorrarCorrelativaButton,
   InfoContainer
 } from './CorrelativaStyled'
-import { Dropdown } from '../../../../components'
+import { Input, Dropdown } from '../../../../components'
 
 interface CorrelativaAsignaturasInterface {
-  asignaturaSeleccionada: number
+  cantidadAsignaturas: number
   tipo: TIPO_CORRELATIVA
-  asignaturasDisponibles: DatoListaInterface[]
   enCambioTipoCorrelativa: (seleccion: TIPO_CORRELATIVA) => void
-  enCambioAsignaturaSeleccionada: (seleccion: number | string) => void
+  enCambioCantidadAsignaturas: (valor: number | string) => void
   enBorradoCorrelativa: () => void
   modoLectura: boolean
 }
 
-const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
-  asignaturaSeleccionada,
+const CorrelativaCantidad: React.FC<CorrelativaAsignaturasInterface> = ({
+  cantidadAsignaturas,
   tipo,
-  asignaturasDisponibles,
-  enCambioAsignaturaSeleccionada,
+  enCambioCantidadAsignaturas,
   enBorradoCorrelativa,
   enCambioTipoCorrelativa,
   modoLectura
@@ -57,13 +54,14 @@ const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
         />
       </InfoContainer>
       <InfoContainer>
-        <Dropdown
-          name="Asignatura"
-          value={asignaturaSeleccionada}
-          error=""
-          label="Asignatura"
-          choices={asignaturasDisponibles}
-          onChange={enCambioAsignaturaSeleccionada}
+        <Input
+          id="cantidad"
+          type="number"
+          name="cantidad"
+          mensajeDeError=""
+          value={cantidadAsignaturas}
+          label="Cantidad asignaturas"
+          onChange={enCambioCantidadAsignaturas}
           modoLectura={modoLectura}
         />
       </InfoContainer>
@@ -74,4 +72,4 @@ const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
   )
 }
 
-export default CorrelativaAsignaturas
+export default CorrelativaCantidad
