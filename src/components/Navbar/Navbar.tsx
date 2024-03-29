@@ -8,16 +8,14 @@ import useAuth from "../../hooks/useAuth";
 interface NavbarProps {
   isSidebarOpen: boolean
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
-  handleLogout: () => void
 }
 
 export default function Navbar({
   isSidebarOpen,
   setIsSidebarOpen,
-  handleLogout
 }: NavbarProps) {
 
-  const { auth } = useAuth()
+  const { auth, logOutUser } = useAuth()
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
@@ -44,7 +42,7 @@ export default function Navbar({
         <ul id="navbar-items">
           <>
             <li>
-              <Button text="Cerrar Sesion" onClick={handleLogout} />
+              <Button text="Cerrar Sesion" onClick={logOutUser} />
             </li>
             <li>
               <Button text="Notificaciones" />
