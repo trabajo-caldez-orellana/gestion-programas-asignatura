@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
   ProgramaAsignaturaInterface,
@@ -11,13 +11,23 @@ import {
   DatoListaInterface,
   MODOS_PROGRAMA_ASIGNATURA
 } from '../../../constants/constants'
-import { SeccionFormulario, BotonAgregarCorrelativa } from './SeccionFormulario'
-import { TituloSeccion } from '../../../components'
+import {
+  SeccionFormulario,
+  BotonAgregarCorrelativa,
+  ModalSeleccionCorrelativa
+} from './SeccionFormulario'
+import { MensajeDeError, TituloSeccion, Modal } from '../../../components'
 import {
   CorrelativaAsignaturas,
   CorrelativaCantidad,
   CorrelativaModulo
 } from './ObjetosListaCorrelativas'
+import { concat } from 'lodash'
+
+const ASIGNATURA_VACIA: DatoListaInterface = {
+  id: -1,
+  informacion: ''
+}
 
 const ASIGNATURAS_DISPONIBLES_EJEMPLO: DatoListaInterface[] = [
   {
@@ -37,7 +47,7 @@ const ASIGNATURAS_DISPONIBLES_EJEMPLO: DatoListaInterface[] = [
     informacion: 'Algebra I'
   },
   {
-    id: 1,
+    id: 5,
     informacion: 'Algebra II'
   }
 ]
@@ -57,96 +67,204 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
   modoProgramaAsignatura,
   erroresSeccionCorrelativas
 }) => {
-  console.log(
-    programaAsignatura,
-    setProgramaAsignatura,
-    modoProgramaAsignatura,
-    erroresSeccionCorrelativas
+  const { correlativas } = programaAsignatura
+  const [modalSeleccionAbierto, setModalSeleccionAbierto] =
+    useState<boolean>(false)
+
+  const asignaturasDisponibles = concat(
+    [ASIGNATURA_VACIA],
+    ASIGNATURAS_DISPONIBLES_EJEMPLO
   )
+
+  const NUEVO_CORRELATIVA_ASIGNATURA: Correlativa = {
+    id: null,
+    requisito: REQUISITOS_CORRELATIVA.ASIGNATURA,
+    tipo: TIPO_CORRELATIVA.NO_SELECCIONADO,
+    asignatura: ASIGNATURA_VACIA
+  }
+
+  const NUEVO_CORRELATIVA_CANTIDAD: Correlativa = {
+    id: null,
+    requisito: REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS,
+    tipo: TIPO_CORRELATIVA.NO_SELECCIONADO,
+    cantidadAsignaturas: 0
+  }
+
+  const NUEVA_CORRELATIVA_MODULO: Correlativa = {
+    id: null,
+    requisito: REQUISITOS_CORRELATIVA.MODULO,
+    tipo: TIPO_CORRELATIVA.NO_SELECCIONADO,
+    modulo: ''
+  }
 
   const modoLectura =
     modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.VER ||
     modoProgramaAsignatura === MODOS_PROGRAMA_ASIGNATURA.REVISAR
 
-  const OBJETO_PRUEBA_CORRELATIVAS: Correlativa[] = [
-    {
-      id: 1,
-      tipo: TIPO_CORRELATIVA.REGULAR,
-      requisito: REQUISITOS_CORRELATIVA.ASIGNATURA,
-      asignatura: ASIGNATURAS_DISPONIBLES_EJEMPLO[0]
-    },
-    {
-      id: 2,
-      tipo: TIPO_CORRELATIVA.REGULAR,
-      requisito: REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS,
-      cantidadAsignaturas: 20
-    },
-    {
-      id: 3,
-      tipo: TIPO_CORRELATIVA.REGULAR,
-      requisito: REQUISITOS_CORRELATIVA.MODULO,
-      modulo: 'II'
-    },
-    {
-      id: 4,
-      tipo: TIPO_CORRELATIVA.APROBADO,
-      requisito: REQUISITOS_CORRELATIVA.ASIGNATURA,
-      asignatura: ASIGNATURAS_DISPONIBLES_EJEMPLO[1]
-    },
-    {
-      id: 5,
-      tipo: TIPO_CORRELATIVA.APROBADO,
-      requisito: REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS,
-      cantidadAsignaturas: 20
-    },
-    {
-      id: 6,
-      tipo: TIPO_CORRELATIVA.APROBADO,
-      requisito: REQUISITOS_CORRELATIVA.MODULO,
-      modulo: 'I'
-    }
-  ]
-
   const handleSeleccionarCorrelativaAsignatura = (
     indice: number,
     asignaturaSeleccionada: number | string
   ) => {
-    console.log('Modificar numero ', indice, ' de la lista')
-    console.log('Asignatura seleccionada: ', asignaturaSeleccionada)
-  }
+    var correlativasModificadas = correlativas
+    const objetoAsignaturaSeleccionada = asignaturasDisponibles.find(
+      (dato) => dato.id == asignaturaSeleccionada
+    )
 
-  const handleBorrarCorrelativa = (indice: number) => {
-    console.log('Eliminando Correlativa', indice)
+    correlativasModificadas[indice] = {
+      ...correlativasModificadas[indice],
+      asignatura: objetoAsignaturaSeleccionada || ASIGNATURA_VACIA
+    }
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
   }
 
   const enCambioTipoCorrelativa = (
     indice: number,
-    tipoCorrelativa: TIPO_CORRELATIVA
+    tipoCorrelativa: string | number
   ) => {
-    console.log(
-      'Cambiando la correlativa a correlativa numero ',
-      indice,
-      tipoCorrelativa
-    )
+    const tipoSeleccionado =
+      tipoCorrelativa === TIPO_CORRELATIVA.NO_SELECCIONADO
+        ? TIPO_CORRELATIVA.NO_SELECCIONADO
+        : tipoCorrelativa === TIPO_CORRELATIVA.APROBADO
+          ? TIPO_CORRELATIVA.APROBADO
+          : TIPO_CORRELATIVA.REGULAR
+
+    var correlativasModificadas = correlativas
+    correlativasModificadas[indice] = {
+      ...correlativasModificadas[indice],
+      tipo: tipoSeleccionado
+    }
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
   }
 
-  const handleAgregarCorrelativa = () => {}
+  const handleBorrarCorrelativa = (indice: number) => {
+    var nuevasCorrelativas = correlativas
+    nuevasCorrelativas.splice(indice, 1)
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: nuevasCorrelativas
+    })
+  }
+
+  const handleAgregarCorrelativa = () => {
+    setModalSeleccionAbierto(true)
+  }
+
+  const handleCerrarModal = () => {
+    setModalSeleccionAbierto(false)
+  }
+
+  const handleSeleccionRequisitoCorrelativa = (
+    requisito: REQUISITOS_CORRELATIVA
+  ) => {
+    var correlativasModificadas = correlativas
+
+    if (requisito === REQUISITOS_CORRELATIVA.ASIGNATURA) {
+      correlativasModificadas.push(NUEVO_CORRELATIVA_ASIGNATURA)
+    }
+    if (requisito === REQUISITOS_CORRELATIVA.MODULO) {
+      correlativasModificadas.push(NUEVA_CORRELATIVA_MODULO)
+    }
+    if (requisito === REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS) {
+      correlativasModificadas.push(NUEVO_CORRELATIVA_CANTIDAD)
+    }
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
+    handleCerrarModal()
+  }
+
+  const handleModificarCantidadAsignaturas = (
+    indice: number,
+    cantidad: string | number
+  ) => {
+    var cantidadNueva = undefined
+    if (typeof cantidad === 'string') {
+      cantidadNueva = parseInt(cantidad) || 0
+    } else {
+      cantidadNueva = cantidad
+    }
+
+    var correlativasModificadas = correlativas
+    correlativasModificadas[indice] = {
+      ...correlativasModificadas[indice],
+      cantidadAsignaturas: cantidadNueva
+    }
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
+  }
+
+  const handleModificarModulo = (indice: number, modulo: string | number) => {
+    var correlativasModificadas = correlativas
+    correlativasModificadas[indice] = {
+      ...correlativasModificadas[indice],
+      modulo: modulo.toString()
+    }
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
+  }
 
   return (
     <SeccionFormulario>
+      <Modal
+        open={modalSeleccionAbierto}
+        onClose={handleCerrarModal}
+        modalTitle="¿Qué tipo de correlativa desea agregar?"
+      >
+        <ModalSeleccionCorrelativa>
+          <BotonAgregarCorrelativa
+            onClick={() =>
+              handleSeleccionRequisitoCorrelativa(
+                REQUISITOS_CORRELATIVA.ASIGNATURA
+              )
+            }
+          >
+            Asignatura aprobada o regular
+          </BotonAgregarCorrelativa>
+          <BotonAgregarCorrelativa
+            onClick={() =>
+              handleSeleccionRequisitoCorrelativa(
+                REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS
+              )
+            }
+          >
+            Número de asignaturas aprobadas/regulares
+          </BotonAgregarCorrelativa>
+          <BotonAgregarCorrelativa
+            onClick={() =>
+              handleSeleccionRequisitoCorrelativa(REQUISITOS_CORRELATIVA.MODULO)
+            }
+          >
+            Módulo aprobado o regular
+          </BotonAgregarCorrelativa>
+        </ModalSeleccionCorrelativa>
+      </Modal>
       <TituloSeccion>CORRELATIVAS</TituloSeccion>
-      {OBJETO_PRUEBA_CORRELATIVAS.map((correlativa, index) => {
-        if (
-          correlativa.requisito === REQUISITOS_CORRELATIVA.ASIGNATURA &&
-          !!correlativa.asignatura
-        ) {
+      {correlativas.map((correlativa, index) => {
+        if (correlativa.requisito === REQUISITOS_CORRELATIVA.ASIGNATURA) {
           return (
             <CorrelativaAsignaturas
               modoLectura={modoLectura}
               key={`${programaAsignatura.id}${correlativa.id}`}
               tipo={correlativa.tipo}
-              asignaturasDisponibles={ASIGNATURAS_DISPONIBLES_EJEMPLO}
-              asignaturaSeleccionada={correlativa.asignatura.id}
+              asignaturasDisponibles={asignaturasDisponibles}
+              asignaturaSeleccionada={
+                correlativa.asignatura?.id || ASIGNATURA_VACIA.id
+              }
               enCambioAsignaturaSeleccionada={(seleccion: number | string) =>
                 handleSeleccionarCorrelativaAsignatura(index, seleccion)
               }
@@ -166,7 +284,9 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
               key={`${programaAsignatura.id}${correlativa.id}`}
               cantidadAsignaturas={correlativa.cantidadAsignaturas || 0}
               tipo={correlativa.tipo}
-              enCambioCantidadAsignaturas={() => {}}
+              enCambioCantidadAsignaturas={(valor) =>
+                handleModificarCantidadAsignaturas(index, valor)
+              }
               enBorradoCorrelativa={() => handleBorrarCorrelativa(index)}
               enCambioTipoCorrelativa={(seleccion) =>
                 enCambioTipoCorrelativa(index, seleccion)
@@ -182,7 +302,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
               key={`${programaAsignatura.id}${correlativa.id}`}
               modulo={correlativa.modulo || ''}
               tipo={correlativa.tipo}
-              enCambioModulo={() => {}}
+              enCambioModulo={(modulo) => handleModificarModulo(index, modulo)}
               enBorradoCorrelativa={() => handleBorrarCorrelativa(index)}
               enCambioTipoCorrelativa={(seleccion) =>
                 enCambioTipoCorrelativa(index, seleccion)
@@ -191,6 +311,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
             />
           )
       })}
+      <MensajeDeError>{erroresSeccionCorrelativas.correlativas}</MensajeDeError>
       <BotonAgregarCorrelativa
         onClick={handleAgregarCorrelativa}
         disabled={modoLectura}

@@ -147,6 +147,7 @@ export interface InformacionAdicionalErrores {
 export interface ProgramaAsignaturaErrores {
   descriptores: DescriptorErrores
   informacionAdicional: InformacionAdicionalErrores
+  correlativas: string
   all: string
   mensaje: string
 }
