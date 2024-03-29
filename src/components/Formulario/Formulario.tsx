@@ -196,7 +196,7 @@ export const SelectStyled = styled.select`
   text-align: center;
   border: none;
   cursor: pointer;
-  background-color: var(--contrast-color);
+  background-color: #00000022;
 
   &::placeholder {
     text-transform: uppercase;
