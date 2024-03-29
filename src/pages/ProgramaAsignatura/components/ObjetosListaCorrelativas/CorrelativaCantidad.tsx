@@ -13,7 +13,7 @@ import { Input, Dropdown } from '../../../../components'
 interface CorrelativaAsignaturasInterface {
   cantidadAsignaturas: number
   tipo: TIPO_CORRELATIVA
-  enCambioTipoCorrelativa: (seleccion: TIPO_CORRELATIVA) => void
+  enCambioTipoCorrelativa: (seleccion: number | string) => void
   enCambioCantidadAsignaturas: (valor: number | string) => void
   enBorradoCorrelativa: () => void
   modoLectura: boolean
@@ -27,19 +27,6 @@ const CorrelativaCantidad: React.FC<CorrelativaAsignaturasInterface> = ({
   enCambioTipoCorrelativa,
   modoLectura
 }) => {
-  const handelModificarTipoDeCorrelativa = (
-    valorCorrelativa: string | number
-  ) => {
-    if (!valorCorrelativa) {
-      return
-    }
-    const tipoCorrelativa =
-      valorCorrelativa === TIPO_CORRELATIVA.APROBADO
-        ? TIPO_CORRELATIVA.APROBADO
-        : TIPO_CORRELATIVA.REGULAR
-    enCambioTipoCorrelativa(tipoCorrelativa)
-  }
-
   return (
     <CorrelativaContainer>
       <InfoContainer>
@@ -49,7 +36,7 @@ const CorrelativaCantidad: React.FC<CorrelativaAsignaturasInterface> = ({
           error=""
           label="Tipo de Correlativa"
           choices={LISTADO_SELECCION_TIPOS_CORRELATIVA}
-          onChange={handelModificarTipoDeCorrelativa}
+          onChange={enCambioTipoCorrelativa}
           modoLectura={modoLectura}
         />
       </InfoContainer>

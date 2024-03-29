@@ -47,7 +47,7 @@ const ASIGNATURAS_DISPONIBLES_EJEMPLO: DatoListaInterface[] = [
     informacion: 'Algebra I'
   },
   {
-    id: 1,
+    id: 5,
     informacion: 'Algebra II'
   }
 ]
@@ -106,8 +106,8 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
     asignaturaSeleccionada: number | string
   ) => {
     var correlativasModificadas = correlativas
-    const objetoAsignaturaSeleccionada = ASIGNATURAS_DISPONIBLES_EJEMPLO.find(
-      (dato) => dato.id === asignaturaSeleccionada
+    const objetoAsignaturaSeleccionada = asignaturasDisponibles.find(
+      (dato) => dato.id == asignaturaSeleccionada
     )
 
     correlativasModificadas[indice] = {
@@ -121,19 +121,36 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
     })
   }
 
-  const handleBorrarCorrelativa = (indice: number) => {
-    console.log('Eliminando Correlativa', indice)
-  }
-
   const enCambioTipoCorrelativa = (
     indice: number,
-    tipoCorrelativa: TIPO_CORRELATIVA
+    tipoCorrelativa: string | number
   ) => {
-    console.log(
-      'Cambiando la correlativa a correlativa numero ',
-      indice,
-      tipoCorrelativa
-    )
+    const tipoSeleccionado =
+      tipoCorrelativa === TIPO_CORRELATIVA.NO_SELECCIONADO
+        ? TIPO_CORRELATIVA.NO_SELECCIONADO
+        : tipoCorrelativa === TIPO_CORRELATIVA.APROBADO
+          ? TIPO_CORRELATIVA.APROBADO
+          : TIPO_CORRELATIVA.REGULAR
+
+    var correlativasModificadas = correlativas
+    correlativasModificadas[indice] = {
+      ...correlativasModificadas[indice],
+      tipo: tipoSeleccionado
+    }
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
+  }
+
+  const handleBorrarCorrelativa = (indice: number) => {
+    var nuevasCorrelativas = correlativas
+    nuevasCorrelativas.splice(indice, 1)
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: nuevasCorrelativas
+    })
   }
 
   const handleAgregarCorrelativa = () => {
@@ -163,6 +180,42 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
       correlativas: correlativasModificadas
     })
     handleCerrarModal()
+  }
+
+  const handleModificarCantidadAsignaturas = (
+    indice: number,
+    cantidad: string | number
+  ) => {
+    var cantidadNueva = undefined
+    if (typeof cantidad === 'string') {
+      cantidadNueva = parseInt(cantidad) || 0
+    } else {
+      cantidadNueva = cantidad
+    }
+
+    var correlativasModificadas = correlativas
+    correlativasModificadas[indice] = {
+      ...correlativasModificadas[indice],
+      cantidadAsignaturas: cantidadNueva
+    }
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
+  }
+
+  const handleModificarModulo = (indice: number, modulo: string | number) => {
+    var correlativasModificadas = correlativas
+    correlativasModificadas[indice] = {
+      ...correlativasModificadas[indice],
+      modulo: modulo.toString()
+    }
+
+    setProgramaAsignatura({
+      ...programaAsignatura,
+      correlativas: correlativasModificadas
+    })
   }
 
   return (
@@ -231,7 +284,9 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
               key={`${programaAsignatura.id}${correlativa.id}`}
               cantidadAsignaturas={correlativa.cantidadAsignaturas || 0}
               tipo={correlativa.tipo}
-              enCambioCantidadAsignaturas={() => {}}
+              enCambioCantidadAsignaturas={(valor) =>
+                handleModificarCantidadAsignaturas(index, valor)
+              }
               enBorradoCorrelativa={() => handleBorrarCorrelativa(index)}
               enCambioTipoCorrelativa={(seleccion) =>
                 enCambioTipoCorrelativa(index, seleccion)
@@ -247,7 +302,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
               key={`${programaAsignatura.id}${correlativa.id}`}
               modulo={correlativa.modulo || ''}
               tipo={correlativa.tipo}
-              enCambioModulo={() => {}}
+              enCambioModulo={(modulo) => handleModificarModulo(index, modulo)}
               enBorradoCorrelativa={() => handleBorrarCorrelativa(index)}
               enCambioTipoCorrelativa={(seleccion) =>
                 enCambioTipoCorrelativa(index, seleccion)
