@@ -31,7 +31,11 @@ export const RUTAS = {
   REUTILIZAR_ULTIMO_PROGRAMA:
     'api/informacion-formularios/reutilizar-programa/',
   APROBAR_PROGRAMA: 'api/programas/aprobar/',
-  PEDIR_CAMBIOS_PROGRAMA: 'api/programas/pedir_cambios/'
+  PEDIR_CAMBIOS_PROGRAMA: 'api/programas/pedir_cambios/',
+  OBTENER_CORRELATIVAS_DISPONIBLES_PROGRAMA:
+    'api/opciones/asignaturas-correlativas-programa/',
+  OBTENER_CORRELATIVAS_DISPONIBLES_ASIGNATURA:
+    'api/opciones/asignaturas-correlativas/'
 }
 
 export const HANDLERS = {
