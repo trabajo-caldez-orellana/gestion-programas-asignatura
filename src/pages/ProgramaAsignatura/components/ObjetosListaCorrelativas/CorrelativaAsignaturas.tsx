@@ -17,6 +17,7 @@ interface CorrelativaAsignaturasInterface {
   enCambioTipoCorrelativa: (seleccion: TIPO_CORRELATIVA) => void
   enCambioAsignaturaSeleccionada: (seleccion: number | string) => void
   enBorradoCorrelativa: () => void
+  modoLectura: boolean
 }
 
 const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
@@ -25,7 +26,8 @@ const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
   asignaturasDisponibles,
   enCambioAsignaturaSeleccionada,
   enBorradoCorrelativa,
-  enCambioTipoCorrelativa
+  enCambioTipoCorrelativa,
+  modoLectura
 }) => {
   const handelModificarTipoDeCorrelativa = (
     valorCorrelativa: string | number
@@ -50,6 +52,7 @@ const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
           label="Tipo de Correlativa"
           choices={LISTADO_SELECCION_TIPOS_CORRELATIVA}
           onChange={handelModificarTipoDeCorrelativa}
+          modoLectura={modoLectura}
         />
       </div>
       <div>
@@ -60,6 +63,7 @@ const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
           label="Asignatura"
           choices={asignaturasDisponibles}
           onChange={enCambioAsignaturaSeleccionada}
+          modoLectura={modoLectura}
         />
       </div>
       <BorrarCorrelativaButton onClick={enBorradoCorrelativa}>

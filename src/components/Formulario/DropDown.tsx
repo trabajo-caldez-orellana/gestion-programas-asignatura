@@ -18,6 +18,7 @@ interface DropdownInterface {
   error: string
   choices: ChoicesForDropdown[]
   onChange: (value: number | string) => void
+  modoLectura: boolean
 }
 
 const Dropdown: React.FC<DropdownInterface> = ({
@@ -26,7 +27,8 @@ const Dropdown: React.FC<DropdownInterface> = ({
   value,
   error,
   choices,
-  onChange
+  onChange,
+  modoLectura
 }) => {
   const handleValueChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value)
@@ -36,7 +38,12 @@ const Dropdown: React.FC<DropdownInterface> = ({
     <DropdownContainer>
       <TextAreaLabel>{label}</TextAreaLabel>
       <InputButtonContainer $tieneError={!!error}>
-        <SelectStyled name={name} value={value} onChange={handleValueChange}>
+        <SelectStyled
+          name={name}
+          value={value}
+          onChange={handleValueChange}
+          disabled={modoLectura}
+        >
           {choices.map((choice) => (
             <option key={choice.id} value={choice.id}>
               {choice.informacion}
