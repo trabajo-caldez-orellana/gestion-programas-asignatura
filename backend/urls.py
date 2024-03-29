@@ -35,6 +35,8 @@ from backend.views import (
     APIListarPlanesDeEstudio,
     AprobarVersionProgramaAPI,
     PedirCambiosVersionProgramaAPI,
+    AsignaturasDisponiblesAPartirAsignatura,
+    AsignaturasDisponiblesAPartirPrograma
 )
 
 informes_patterns = [
@@ -62,6 +64,11 @@ formularios_patterns = [
     ),
 ]
 
+opciones_patterns = [
+    path("asignaturas-correlativas-programa/<id_programa>", AsignaturasDisponiblesAPartirPrograma.as_view()),
+    path("asignaturas-correlativas/<id_asignatura>", AsignaturasDisponiblesAPartirAsignatura.as_view()),
+]
+
 filtros_patterns = [
     path("", ObtenerFiltros.as_view()),
 ]
@@ -85,6 +92,7 @@ urlpatterns = [
     path("api/informacion-formularios/", include(formularios_patterns)),
     path("api/informes/", include(informes_patterns)),
     path("api/planes-de-esutdio/", include(planes_estudio_patterns)),
+    path("api/opciones/", include(opciones_patterns)),
     re_path("<path:route>", TemplateView.as_view(template_name='index.html'), name="index"),
     re_path("", TemplateView.as_view(template_name='index.html'), name="index"),
 ]

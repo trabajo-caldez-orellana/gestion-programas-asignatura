@@ -16,3 +16,7 @@ from .programas_de_asignatura import (
 )
 from .programas_de_asignatura.pdf.generar_pdf import GenerarPDF
 from .plan import APIListarPlanesDeEstudio
+from .informacion_para_formularios import (
+    AsignaturasDisponiblesAPartirPrograma,
+    AsignaturasDisponiblesAPartirAsignatura
+)
