@@ -12,14 +12,17 @@ import {
   crearProgramaAsignatura,
   modificarProgramaAsignatura,
   aprobarProgramaAsignatura,
-  pedirCambiosProgramaAsignatura
+  pedirCambiosProgramaAsignatura,
+  obtenerAsignaturasDisponiblesAPartirDeAsignatura,
+  obtenerAsignaturasDisponiblesAPartirDePrograma
 } from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
   NUEVO_PROGRAMA_ASIGNATURA,
   ERRORES_DEFAULT_PROGRAMA_ASIGNATURA,
   RUTAS_PAGINAS,
-  MENSAJES_DE_ERROR
+  MENSAJES_DE_ERROR,
+  DatoListaInterface
 } from '../../../constants/constants'
 
 type useProgramaAsignaturaType = {
@@ -34,6 +37,7 @@ type useProgramaAsignaturaType = {
   errorInesperado: string
   aprobarPrograma: () => void
   pedirCambiosPrograma: (mensaje: string) => void
+  asignaturasDisponibles: DatoListaInterface[]
 }
 
 const MENSAJE_ERROR_INESPERADO =
@@ -43,6 +47,9 @@ const useProgramaAsignatura = (
   id: string = '',
   modo: string | null
 ): useProgramaAsignaturaType => {
+  const [asignaturasDisponibles, setAsignaturasDisponibles] = useState<
+    DatoListaInterface[]
+  >([])
   const [programaAsignatura, setProgramaAsignatura] =
     useState<ProgramaAsignaturaInterface>(NUEVO_PROGRAMA_ASIGNATURA)
   const [erroresProgramaAsignatura, setErroresProgramaAsignatura] =
@@ -303,6 +310,23 @@ const useProgramaAsignatura = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
+  useEffect(() => {
+    if (
+      modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO ||
+      modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO
+    ) {
+      obtenerAsignaturasDisponiblesAPartirDeAsignatura(id).then((response) => {
+        setAsignaturasDisponibles(response.data)
+      })
+    } else if (modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR) {
+      obtenerAsignaturasDisponiblesAPartirDePrograma(id).then((response) => {
+        setAsignaturasDisponibles(response.data)
+      })
+    } else {
+      setAsignaturasDisponibles([])
+    }
+  }, [modo])
+
   return {
     programaAsignatura,
     setProgramaAsignatura,
@@ -312,7 +336,8 @@ const useProgramaAsignatura = (
     errorInesperado,
     guardarPrograma,
     aprobarPrograma,
-    pedirCambiosPrograma
+    pedirCambiosPrograma,
+    asignaturasDisponibles
   }
 }
 

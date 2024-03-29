@@ -29,29 +29,6 @@ const ASIGNATURA_VACIA: DatoListaInterface = {
   informacion: ''
 }
 
-const ASIGNATURAS_DISPONIBLES_EJEMPLO: DatoListaInterface[] = [
-  {
-    id: 1,
-    informacion: 'Calculo I'
-  },
-  {
-    id: 2,
-    informacion: 'Calculo II'
-  },
-  {
-    id: 3,
-    informacion: 'Calculo III'
-  },
-  {
-    id: 4,
-    informacion: 'Algebra I'
-  },
-  {
-    id: 5,
-    informacion: 'Algebra II'
-  }
-]
-
 interface SeccionCorrelativasProps {
   programaAsignatura: ProgramaAsignaturaInterface
   setProgramaAsignatura: (
@@ -59,21 +36,23 @@ interface SeccionCorrelativasProps {
   ) => void
   modoProgramaAsignatura: string
   erroresSeccionCorrelativas: ProgramaAsignaturaErrores
+  asignaturasDisponibles: DatoListaInterface[]
 }
 
 const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
   programaAsignatura,
   setProgramaAsignatura,
   modoProgramaAsignatura,
-  erroresSeccionCorrelativas
+  erroresSeccionCorrelativas,
+  asignaturasDisponibles
 }) => {
   const { correlativas } = programaAsignatura
   const [modalSeleccionAbierto, setModalSeleccionAbierto] =
     useState<boolean>(false)
 
-  const asignaturasDisponibles = concat(
+  const asignaturasCorrelativasDisponibles = concat(
     [ASIGNATURA_VACIA],
-    ASIGNATURAS_DISPONIBLES_EJEMPLO
+    asignaturasDisponibles
   )
 
   const NUEVO_CORRELATIVA_ASIGNATURA: Correlativa = {
@@ -261,7 +240,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
               modoLectura={modoLectura}
               key={`${programaAsignatura.id}${correlativa.id}`}
               tipo={correlativa.tipo}
-              asignaturasDisponibles={asignaturasDisponibles}
+              asignaturasDisponibles={asignaturasCorrelativasDisponibles}
               asignaturaSeleccionada={
                 correlativa.asignatura?.id || ASIGNATURA_VACIA.id
               }
