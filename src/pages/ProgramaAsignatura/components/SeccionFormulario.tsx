@@ -31,4 +31,18 @@ export const BotonAgregarCorrelativa = styled.button`
   cursor: pointer;
   color: var(--primary-color);
   background-color: var(--secondary-color);
+
+  margin-bottom: 5px;
+  &:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+`
+
+export const ModalSeleccionCorrelativa = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 10px;
 `
