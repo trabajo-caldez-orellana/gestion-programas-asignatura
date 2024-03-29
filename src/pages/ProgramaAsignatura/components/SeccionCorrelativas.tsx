@@ -15,7 +15,8 @@ import { SeccionFormulario } from './SeccionFormulario'
 import { TituloSeccion } from '../../../components'
 import {
   CorrelativaAsignaturas,
-  CorrelativaCantidad
+  CorrelativaCantidad,
+  CorrelativaModulo
 } from './ObjetosListaCorrelativas'
 
 const ASIGNATURAS_DISPONIBLES_EJEMPLO: DatoListaInterface[] = [
@@ -140,7 +141,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
           return (
             <CorrelativaAsignaturas
               modoLectura={modoLectura}
-              key={`${programaAsignatura.id}${index}`}
+              key={`${programaAsignatura.id}${correlativa.id}`}
               tipo={correlativa.tipo}
               asignaturasDisponibles={ASIGNATURAS_DISPONIBLES_EJEMPLO}
               asignaturaSeleccionada={correlativa.asignatura.id}
@@ -160,6 +161,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
         ) {
           return (
             <CorrelativaCantidad
+              key={`${programaAsignatura.id}${correlativa.id}`}
               cantidadAsignaturas={correlativa.cantidadAsignaturas || 0}
               tipo={correlativa.tipo}
               enCambioCantidadAsignaturas={() => {}}
@@ -172,11 +174,20 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
           )
         }
 
-        if (
-          correlativa.requisito === REQUISITOS_CORRELATIVA.MODULO &&
-          !!correlativa.modulo
-        )
-          return <></>
+        if (correlativa.requisito === REQUISITOS_CORRELATIVA.MODULO)
+          return (
+            <CorrelativaModulo
+              key={`${programaAsignatura.id}${correlativa.id}`}
+              modulo={correlativa.modulo || ''}
+              tipo={correlativa.tipo}
+              enCambioModulo={() => {}}
+              enBorradoCorrelativa={() => handleBorrarCorrelativa(index)}
+              enCambioTipoCorrelativa={(seleccion) =>
+                enCambioTipoCorrelativa(index, seleccion)
+              }
+              modoLectura={modoLectura}
+            />
+          )
       })}
     </SeccionFormulario>
   )
