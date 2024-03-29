@@ -1,3 +1,9 @@
+import {
+  DatoListaInterface,
+  REQUISITOS_CORRELATIVA,
+  TIPO_CORRELATIVA
+} from '../constants/constants'
+
 export interface CargaHoraria {
   // cargaHorariaTotal: number
   semanasDictado: number
@@ -45,14 +51,60 @@ export interface InformacionAdicional {
   extensionEstudiantes: string
   cronograma: string
   // Index signature
-  [key: string]: string | number
+  [key: string]: string
+}
+
+export interface InformacionGeneral {
+  nombreAsignatura: string
+  codigoAsignatura: string
+  anioAcademico: string
+  bloqueCurricular: string
+  carreras: DatoListaInterface[]
+  equipoDocente: DatoListaInterface[]
+}
+
+export interface Correlativa {
+  id: number | null
+  tipo: TIPO_CORRELATIVA
+  requisito: REQUISITOS_CORRELATIVA
+  asignatura?: DatoListaInterface
+  cantidadAsignaturas?: number
+  modulo?: string
 }
 
 export interface ProgramaAsignaturaInterface {
   id: number
+  informacionGeneral: InformacionGeneral
   cargaHoraria: CargaHoraria
   descriptores: Descriptor
   informacionAdicional: InformacionAdicional
+  correlativas: Correlativa[]
+}
+
+export interface PlanesDeEstudioAPIBody {
+  id: number
+  nombre: string
+  carrera_id: number
+  nombre_carrera: string
+}
+
+export interface PlanesDeEstudioInterface {
+  id: number
+  nombre: string
+  carreraId: number
+  carreraNombre: string
+}
+
+export interface MatrizAPIErrorInterface {
+  __all__?: string[]
+  plan_de_estudio?: string[]
+  carrera?: string[]
+}
+
+export interface MatrizErroresInterface {
+  all: string
+  planDeEstudio: string
+  carrera: string
 }
 
 export interface CargaHorariaErrores {
@@ -95,10 +147,14 @@ export interface InformacionAdicionalErrores {
 export interface ProgramaAsignaturaErrores {
   descriptores: DescriptorErrores
   informacionAdicional: InformacionAdicionalErrores
+  correlativas: string
   all: string
+  mensaje: string
 }
 
 export interface NuevoPrograma {
+  informacionGeneral: InformacionGeneral
+  cargaHoraria: CargaHoraria
   ejesTransversales: {
     id: number
     nombre: string
@@ -118,6 +174,14 @@ export interface NuevoPrograma {
 
 export interface ProgramaAsignaturaAPIBody {
   id: number
+  informacion_general: {
+    nombre_asignatura: string
+    codigo_aignatura: string
+    anio_academico: string
+    bloque_curricular: string
+    carreras: DatoListaInterface[]
+    equipo_docente: DatoListaInterface[]
+  }
   carga_horaria: {
     semanas_dictado: number
     teoria_presencial: number
@@ -160,9 +224,35 @@ export interface ProgramaAsignaturaAPIBody {
     extension_docentes: string
     extension_estudiantes: string
   }
+  correlativas: {
+    tipo: TIPO_CORRELATIVA
+    requisito: REQUISITOS_CORRELATIVA
+    asignatura?: DatoListaInterface
+    modulo?: string
+    cantidad?: string
+  }[]
 }
 
 export interface NuevoProgramaAPIBody {
+  informacion_general: {
+    nombre_asignatura: string
+    codigo_aignatura: string
+    anio_academico: string
+    bloque_curricular: string
+    carreras: DatoListaInterface[]
+    equipo_docente: DatoListaInterface[]
+  }
+  carga_horaria: {
+    semanas_dictado: number
+    teoria_presencial: number
+    practica_presencial: number
+    teorico_practico_presencial: number
+    laboratorio_presencial: number
+    teoria_distancia: number
+    practica_distancia: number
+    teorico_practico_distancia: number
+    laboratorio_distancia: number
+  }
   ejes_transversales: {
     id: number
     nombre: string
@@ -195,6 +285,7 @@ export interface AccionesPosiblesInterface {
   reutilizarUltimo: boolean
   modificarUltimo: boolean
   nuevo: boolean
+  revisarPrograma: boolean
 }
 
 export interface TareaPendiente {

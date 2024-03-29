@@ -4,11 +4,13 @@ import {
   CargaHoraria,
   InformacionAdicional,
   SeccionDescriptores,
-  BotonesProgramaAsignatura
+  BotonesProgramaAsignatura,
+  BotonesRevisionProgramaAsignatura,
+  InformacionGeneral,
+  SeccionCorrelativas
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
-import './ProgramaAsignatura.css'
 
 const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
   // EN el caso de ser modo = NUEVO o EDITAR_ULTIMO, este id corresponderia a la asignatura a la que estamos entrando!!
@@ -22,14 +24,25 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     loading,
     errorInesperado,
     erroresProgramaAsignatura,
-    guardarPrograma
+    guardarPrograma,
+    aprobarPrograma,
+    pedirCambiosPrograma
   } = useProgramaAsignatura(id?.toString(), modo)
 
-  const modoLectura = modo === MODOS_PROGRAMA_ASIGNATURA.VER
+  const modoLectura =
+    modo === MODOS_PROGRAMA_ASIGNATURA.VER ||
+    modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR
+
   const handlePostPrograma = (presentar: boolean) => () => {
-    // TODO. Hacer validaciones en el frontend para que no se manden
-    // formularios que sean no validos!
     guardarPrograma(presentar)
+  }
+
+  const handleAprobarPrograma = () => {
+    aprobarPrograma()
+  }
+
+  const handlePedirCambiosPrograma = (mensaje: string) => {
+    pedirCambiosPrograma(mensaje)
   }
 
   if (errorInesperado)
@@ -44,6 +57,7 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
 
   return (
     <section className="section-content">
+      <InformacionGeneral programaAsignatura={programaAsignatura} />
       <CargaHoraria programaAsignatura={programaAsignatura} />
       <SeccionDescriptores
         programaAsignatura={programaAsignatura}
@@ -57,12 +71,26 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
         modoProgramaAsignatura={modoProgramaAsignatura}
         erroresInfornacionAdicional={erroresProgramaAsignatura}
       />
-      <br />
-      <BotonesProgramaAsignatura
-        error={erroresProgramaAsignatura.all}
-        modoLectura={modoLectura}
-        handlePostPrograma={handlePostPrograma}
+      <SeccionCorrelativas
+        programaAsignatura={programaAsignatura}
+        setProgramaAsignatura={setProgramaAsignatura}
+        modoProgramaAsignatura={modoProgramaAsignatura}
+        erroresSeccionCorrelativas={erroresProgramaAsignatura}
       />
+      <br />
+      {modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR ? (
+        <BotonesRevisionProgramaAsignatura
+          handleAprobarPrograma={handleAprobarPrograma}
+          handlePedirCambiosPrograma={handlePedirCambiosPrograma}
+          error={erroresProgramaAsignatura.all}
+        />
+      ) : (
+        <BotonesProgramaAsignatura
+          error={erroresProgramaAsignatura.all}
+          modoLectura={modoLectura}
+          handlePostPrograma={handlePostPrograma}
+        />
+      )}
     </section>
   )
 }

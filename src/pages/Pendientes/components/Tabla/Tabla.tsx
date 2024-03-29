@@ -1,18 +1,22 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { Modal } from '../../../../components'
 import './Tabla.css'
 import {
   RUTAS_PAGINAS,
   MODOS_PROGRAMA_ASIGNATURA
 } from '../../../../constants/constants'
-import { TareaPendiente } from 'interfaces/interfaces'
+import { reutilizarUltimoPrograma } from '../../services'
+import useTareasPendientes from '../../hooks/useTareasPendientes'
 
-interface PropiedadesTablaPendientes {
-  datos: TareaPendiente[]
-}
+export default function Tabla() {
+  const { tareasPendientes, refetchTareas } = useTareasPendientes()
 
-export default function Tabla({ datos }: PropiedadesTablaPendientes) {
   const navigate = useNavigate()
+  const [cargando, setCargando] = useState<boolean>(false)
+  const [modalAbierto, setModalAbierto] = useState<boolean>(false)
+  const [mensajeRespuesta, setMensajeRespuesta] = useState<string>('')
 
   const columnasTablaPendientes = [
     'ASIGNATURA',
@@ -24,8 +28,30 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
     navigate(`${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${id}`)
   }
 
-  const handleReutilizarUltimoPrograma = (id: number | null) => {
-    console.log('reutilizar ultimo', id)
+  const handleReutilizarUltimoPrograma = async (id: number | null) => {
+    setCargando(true)
+    setModalAbierto(true)
+    setMensajeRespuesta('')
+
+    if (id) {
+      const response = await reutilizarUltimoPrograma(id)
+      if (response.status === 200) {
+        setMensajeRespuesta('Programa reutilizado con exito.')
+        refetchTareas()
+      } else {
+        if (response.error) {
+          setMensajeRespuesta(response.error)
+        } else {
+          setMensajeRespuesta('Error inesperado. Intente nuevamente más tarde.')
+        }
+      }
+
+      setCargando(false)
+      return
+    }
+
+    setCargando(false)
+    setMensajeRespuesta('No se selcciono ninguna asignatura')
   }
 
   const handleModificarPrograma = (id: number | null) => {
@@ -46,8 +72,21 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
     )
   }
 
+  const handleRevisarPrograma = (id: number | null) => {
+    navigate(
+      `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.REVISAR}/${id}`
+    )
+  }
+
   return (
     <article>
+      <Modal
+        open={modalAbierto}
+        onClose={() => setModalAbierto(false)}
+        modalTitle="Reutilizar Ultimo Programa"
+      >
+        {cargando ? 'Cargando...' : mensajeRespuesta}
+      </Modal>
       <table className="content-table">
         <thead>
           <tr>
@@ -57,7 +96,7 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
           </tr>
         </thead>
         <tbody>
-          {datos.map((item) => (
+          {tareasPendientes.map((item) => (
             <tr key={item.asignatura.id}>
               <td>{item.asignatura.nombre}</td>
               <td>{item.accionRequerida}</td>
@@ -103,6 +142,13 @@ export default function Tabla({ datos }: PropiedadesTablaPendientes) {
                         }
                         className="fas fa-plus boton-accion"
                         title="Nuevo programa"
+                      ></i>
+                    )}
+                    {item.accionesPosibles.revisarPrograma && (
+                      <i
+                        onClick={() => handleRevisarPrograma(item.idPrograma)}
+                        className="fas fa-check boton-accion"
+                        title="Revisar programa"
                       ></i>
                     )}
                   </>

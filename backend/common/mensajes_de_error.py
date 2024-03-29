@@ -82,6 +82,8 @@ MENSAJE_SEMESTRE_DEBE_PERTENECER_A_ANIO_LECTIVO = (
 MENSAJE_ID_INEXISTENTE = "El ID provisto no es valido."
 MENSAJE_PROGRAMA_APROBADO = "No es posible modificar un programa que ya fue aprobado."
 MENSAJE_PROGRAMA_YA_EXISTENTE = "Ya fue creado un programa para la asignatura para el semestre siguiente."
+MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR = "No puede corregir un programa de asignatura porque no tiene los permisos."
+MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR = "El programa no esta disponible para ser corregido."
 
 # Mensajes relacionados a semestres y anios lectivos
 MENSAJE_NO_PUEDEN_HABER_VARIOS_SEMESTRES_CON_LA_MISMA_FECHA = "No se puede definir un semestre que este activo al mismo momento que otro. Verifique las fechas."
@@ -98,6 +100,7 @@ MENSAJE_TIPO_SEMESTRE_REPETIDO = (
 MENSAJE_SEGUNDO_SEMESTRE_DESPUES_DEL_PRIMERO = (
     "Un semestre del primer semestre debe tener fecha antes de uno del segundo semeste."
 )
+MENSAJE_FALLO_REUTILIZACION = "La reutilización del programa fallo. El programa anterior tiene fallas."
 
 # Mensajes relacionados a parametros de configuracion
 MENSAJE_NO_FUE_DEFINIDO_PERIODO_MODIFICACION = "No se completaron las configuraciones del programa. Debe definir los días para período de modificación."
@@ -113,3 +116,7 @@ MENSAJE_PERMISO_PROGRAMAS_PENDIENTES = (
     "No tiene permiso para accceder a programas pendientes."
 )
 MENSAJE_PERMISO_PROGRAMA = "No tiene permiso para acceder a este Programa."
+MENSAJE_NO_ESTAN_TODOS_LOS_PROGRAMAS = "Faltan programas por aprobar para este año lectivo."
+
+# MENSAJES DE APIs
+MENSAJE_CARRERA_PLAN = "El programa provisto no pertenece a la carrera provista."

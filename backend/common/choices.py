@@ -69,3 +69,8 @@ class ParametrosDeConfiguracion(TextChoices):
         "IPC",
         "Días previos al inicio del Semestre para Corregir el Programa",
     )
+
+class EstadosAprobacionPrograma(TextChoices):
+    APROBADO = "A", "Aprbado"
+    PEDIDO_CAMBIOS = "PC", "Pedir cambios"
+    APROBACION_DEPRECADA = "AD", "Aprobacion Deprecada"

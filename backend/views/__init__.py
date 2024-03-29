@@ -10,9 +10,11 @@ from .programas_de_asignatura import (
     InformacionEditarProgramaAPartirDelUltimoAPI,
     ObtenerFiltros,
     ObtenerProgramasHistorial,
+    GenerarMatriz,
+    PedirCambiosVersionProgramaAPI,
+    AprobarVersionProgramaAPI
 )
 from .programas_de_asignatura.pdf.generar_pdf import GenerarPDF
 
 from .authentication.google import GoogleLoginApi, GoogleAuthApi
-
-
+from .plan import APIListarPlanesDeEstudio

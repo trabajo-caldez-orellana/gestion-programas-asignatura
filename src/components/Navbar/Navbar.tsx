@@ -45,7 +45,7 @@ export default function Navbar({
               <Button text="Cerrar Sesion" onClick={logOutUser} />
             </li>
             <li>
-              <Button text="Notificaciones" />
+              <Button text="Notificaciones" onClick={() => {}} />
             </li>
           </>
         </ul>

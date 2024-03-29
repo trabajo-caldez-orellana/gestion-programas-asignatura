@@ -5,16 +5,12 @@ import {
 
 import {
   Inicio,
-  Carrera,
-  PlanEstudio,
-  Descriptores,
-  BloqueCurricular,
   Historial,
   ProgramaAsignatura,
   TareasPendientes,
   ProgramasVigentes,
-  Auditoria,
-  Login
+  Login,
+  Matriz
 } from '../pages'
 
 export const RUTAS = {
@@ -29,7 +25,13 @@ export const RUTAS = {
   GET_FILTROS_HISTORIAL: 'api/filtros/',
   GET_HISTORIAL: 'api/historial/',
   POST_CREAR_PROGRAMA_ASIGNATURA: 'api/programas/nuevo/',
-  POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/'
+  POST_EDITAR_PROGRAMA_ASIGNATURA: 'api/programas/editar/',
+  GET_PLANES_DE_ESTUDIO: 'api/planes-de-esutdio/',
+  GET_MATRIZ_DE_TRIBUTACION: 'api/informes/matriz/',
+  REUTILIZAR_ULTIMO_PROGRAMA:
+    'api/informacion-formularios/reutilizar-programa/',
+  APROBAR_PROGRAMA: 'api/programas/aprobar/',
+  PEDIR_CAMBIOS_PROGRAMA: 'api/programas/pedir_cambios/'
 }
 
 export const HANDLERS = {
@@ -46,11 +48,20 @@ export const MODOS_PROGRAMA_ASIGNATURA = {
   NUEVO: 'nuevo',
   EDITAR: 'editar',
   EDITAR_ULTIMO: 'editar-ultimo',
-  IMPRIMIR: 'imprimir'
+  IMPRIMIR: 'imprimir',
+  REVISAR: 'revisar'
 }
 
 export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
   id: 1,
+  informacionGeneral: {
+    nombreAsignatura: '',
+    codigoAsignatura: '',
+    carreras: [],
+    equipoDocente: [],
+    anioAcademico: '',
+    bloqueCurricular: ''
+  },
   cargaHoraria: {
     semanasDictado: 0,
     teoriaPresencial: 0,
@@ -64,10 +75,7 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
   },
   descriptores: {
     resultadosAprendizaje: [''],
-    ejesTransversales: [
-      { id: 1, nombre: 'Eje 1', nivel: 0 },
-      { id: 2, nombre: 'Eje 2', nivel: 2 }
-    ],
+    ejesTransversales: [],
     descriptores: [],
     actividadesReservadas: []
   },
@@ -83,7 +91,8 @@ export const NUEVO_PROGRAMA_ASIGNATURA: ProgramaAsignaturaInterface = {
     investigacionEstudiantes: '',
     extensionEstudiantes: '',
     extensionDocentes: ''
-  }
+  },
+  correlativas: []
 }
 
 export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
@@ -106,7 +115,9 @@ export const ERRORES_DEFAULT_PROGRAMA_ASIGNATURA: ProgramaAsignaturaErrores = {
     extensionEstudiantes: '',
     extensionDocentes: ''
   },
-  all: ''
+  correlativas: '',
+  all: '',
+  mensaje: ''
 }
 
 type CampoCargaHorariaType = {
@@ -238,38 +249,24 @@ type SidebarSection = {
 }
 
 export const RUTAS_PAGINAS = {
-  CARRERA: '/carrera',
-  PLAN_DE_ESTUDIO: '/plan-estudio',
-  DESCRIPTORES: '/descriptores',
-  BLOQUE_CURRICULAR: '/bloque-curricular',
   PROGRAMA_DE_ASIGNATURA: '/programa-asignatura',
-  AUDITORIA: '/auditoria',
   PROGRAMAS_VIGENTES: '/programas-vigentes',
   TAREAS_PENDIENTES: '/tareas-pendientes',
   HISTORIAL: '/historial',
   LOGIN: '/login',
+  MATRIZ: '/matriz-tributacion',
   INICIO: '/inicio'
 }
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 1,
-    name: 'Carrera',
+    name: 'Informes',
     sections: [
       {
         id: 1,
-        name: 'Carrera',
-        url: RUTAS_PAGINAS.CARRERA
-      },
-      {
-        id: 2,
-        name: 'Plan de Estudio',
-        url: RUTAS_PAGINAS.PLAN_DE_ESTUDIO
-      },
-      {
-        id: 3,
-        name: 'Descriptores',
-        url: RUTAS_PAGINAS.DESCRIPTORES
+        name: 'Matriz de Tributación',
+        url: RUTAS_PAGINAS.MATRIZ
       }
     ]
   },
@@ -277,16 +274,6 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     id: 2,
     name: 'Programas de Asignatura',
     sections: [
-      {
-        id: 1,
-        name: 'Bloque curricular',
-        url: RUTAS_PAGINAS.BLOQUE_CURRICULAR
-      },
-      {
-        id: 3,
-        name: 'Auditoria',
-        url: RUTAS_PAGINAS.AUDITORIA
-      },
       {
         id: 4,
         name: 'Programas vigentes',
@@ -317,38 +304,6 @@ export interface Pagina {
 }
 
 export const PAGINAS: Pagina[] = [
-  {
-    key: 'carrera',
-    title: 'Carrera',
-    path: RUTAS_PAGINAS.CARRERA,
-    enabled: true,
-    component: Carrera,
-    protectedByLogin: true
-  },
-  {
-    key: 'plan-estudio',
-    title: 'Plan de Estudio',
-    path: RUTAS_PAGINAS.PLAN_DE_ESTUDIO,
-    enabled: true,
-    component: PlanEstudio,
-    protectedByLogin: true
-  },
-  {
-    key: 'descriptores',
-    title: 'Descriptores',
-    path: RUTAS_PAGINAS.DESCRIPTORES,
-    enabled: true,
-    component: Descriptores,
-    protectedByLogin: true
-  },
-  {
-    key: 'bloque-curricular',
-    title: 'Bloque Curricular',
-    path: RUTAS_PAGINAS.BLOQUE_CURRICULAR,
-    enabled: true,
-    component: BloqueCurricular,
-    protectedByLogin: true
-  },
   {
     key: 'programas-vigentes',
     title: 'Programas Vigentes',
@@ -402,12 +357,12 @@ export const PAGINAS: Pagina[] = [
     protectedByLogin: true
   },
   {
-    key: 'auditoria',
-    title: 'Auditoria',
-    path: `${RUTAS_PAGINAS.AUDITORIA}`,
+    key: 'revisar-programa-de-asignatura',
+    title: 'Revisar Programa Asignatura',
+    path: `${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${MODOS_PROGRAMA_ASIGNATURA.REVISAR}/:id`,
     enabled: true,
-    component: Auditoria,
-    modo: MODOS_PROGRAMA_ASIGNATURA.EDITAR,
+    component: ProgramaAsignatura,
+    modo: MODOS_PROGRAMA_ASIGNATURA.REVISAR,
     protectedByLogin: true
   },
   {
@@ -437,6 +392,14 @@ export const PAGINAS: Pagina[] = [
     protectedByLogin: false
   },
   {
+    key: 'matriz-tributacion',
+    title: 'Matriz de Tributación',
+    path: RUTAS_PAGINAS.MATRIZ,
+    enabled: true,
+    component: Matriz,
+    protectedByLogin: true
+  },
+  {
     key: 'inicio',
     title: 'Pagina Inicio',
     path: RUTAS_PAGINAS.INICIO,
@@ -455,3 +418,40 @@ export const MENSAJES_DE_ERROR = {
   SELECCIONAR_ACTIVIDAD_RESERVADA:
     'Debe seleccionar al menos una actividad reservada.'
 }
+
+export interface DatoListaInterface {
+  id: number
+  informacion: string
+}
+
+export interface DatosListaSeleccionInterface extends DatoListaInterface {
+  seleccionado: boolean
+}
+
+export interface ModalProps {
+  open: boolean
+  children: React.ReactNode
+  modalTitle?: string
+  onClose: () => void
+}
+
+export const enum TIPO_CORRELATIVA {
+  NO_SELECCIONADO = '-',
+  REGULAR = 'R',
+  APROBADO = 'A'
+}
+
+export const enum REQUISITOS_CORRELATIVA {
+  ASIGNATURA = 'asignatura',
+  CANTIDAD_ASIGNATURAS = 'cantidad',
+  MODULO = 'modulo'
+}
+
+export const LISTADO_SELECCION_TIPOS_CORRELATIVA = [
+  {
+    id: TIPO_CORRELATIVA.NO_SELECCIONADO,
+    informacion: 'Seleccione Tipo de Correlativa'
+  },
+  { id: TIPO_CORRELATIVA.APROBADO, informacion: 'Aprobado' },
+  { id: TIPO_CORRELATIVA.REGULAR, informacion: 'Regular' }
+]

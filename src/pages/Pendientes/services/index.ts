@@ -14,6 +14,7 @@ interface AccionesPosiblesInterfaceAPI {
   reutilizar_ultimo: boolean
   modificar_ultimo: boolean
   nuevo: boolean
+  revisar_programa: boolean
 }
 
 interface TareaPendienteAPI {
@@ -39,7 +40,8 @@ const parserTareasPendientes = (
         modificarPrograma: tarea.acciones_posibles.modificar_programa,
         reutilizarUltimo: tarea.acciones_posibles.reutilizar_ultimo,
         modificarUltimo: tarea.acciones_posibles.modificar_ultimo,
-        nuevo: tarea.acciones_posibles.nuevo
+        nuevo: tarea.acciones_posibles.nuevo,
+        revisarPrograma: tarea.acciones_posibles.revisar_programa
       }
     }
   })
@@ -49,4 +51,29 @@ export const getTareasPendientes = async (): Promise<TareaPendiente[]> => {
   const response = await client.get(`${RUTAS.GET_TAREAS_PENDIENTES}`)
 
   return parserTareasPendientes(response.data.data)
+}
+
+interface ErroresRetilizarPrograma {
+  __all__?: string[]
+}
+
+const parseErrores = (erroresPrograma: ErroresRetilizarPrograma): string => {
+  return erroresPrograma.__all__ ? erroresPrograma.__all__[0] : ''
+}
+
+export const reutilizarUltimoPrograma = async (id_asignatura: number) => {
+  try {
+    const response = await client.get(
+      `${RUTAS.REUTILIZAR_ULTIMO_PROGRAMA}${id_asignatura}/`
+    )
+
+    return {
+      status: response.status
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      error: parseErrores(error.response.data.error)
+    }
+  }
 }

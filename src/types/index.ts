@@ -1,7 +1,7 @@
 export type {
   ProgramasAsignaturas,
   ProgramasVigentes,
-  Filtros,
+  FiltrosType,
   selectedFiltrosType,
   ProgramasHistorial
 } from './types'

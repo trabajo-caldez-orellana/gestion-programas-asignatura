@@ -16,7 +16,8 @@ from backend.models import (
     ProgramaTieneActividadReservada,
     Rol,
     Carrera,
-    Semestre
+    Semestre,
+    AuditoriaEstadoVersionPrograma
 )
 from backend.common.choices import (
     NivelDescriptor,
@@ -24,6 +25,7 @@ from backend.common.choices import (
     EstadoAsignatura,
     Roles,
     Semestres,
+    EstadosAprobacionPrograma
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -49,21 +51,23 @@ from backend.common.mensajes_de_error import (
     MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO,
     MENSAJE_NIVEL_INVALIDO,
     MENSAJE_VERSION_CERRADA_PARA_MODIFICACION,
-    MENSAJE_PROGRAMA_YA_EXISTENTE
+    MENSAJE_PROGRAMA_YA_EXISTENTE,
+    MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR,
+    MENSAJE_FALLO_REUTILIZACION,
+    MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR
     
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
 from backend.services.plan_de_estudio import ServicioPlanDeEstudio
 from backend.serializers import SerializerAsignatura
-
+from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
 
 class ServicioVersionProgramaAsignatura:
     """
     Todos los servicios relacionados a la creacion, modificacion, y seguimiento de los Programas
     de asignatura
     """
-
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
     servicio_planes = ServicioPlanDeEstudio()
@@ -218,13 +222,7 @@ class ServicioVersionProgramaAsignatura:
         Valida los datos del programa de la asignatura para ver si cumple con las reglas del negocio
         """
         # Valida los resultados de aprendizaje: Formato correcto, cantidad correcta.
-        try:
-            resultados = json.loads(resultados_de_aprendizaje)
-        except (TypeError, json.JSONDecodeError) as exc:
-            raise ValidationError(
-                {"resultados_de_aprendizaje": MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO}
-            ) from exc
-
+        resultados = json.loads(resultados_de_aprendizaje)
         if not isinstance(resultados, list):
             raise ValidationError(
                 {"resultados_de_aprendizaje": MENSAJE_RESULTADOS_CON_FORMATO_INCORRECTO}
@@ -321,11 +319,12 @@ class ServicioVersionProgramaAsignatura:
         ):
             with transaction.atomic():
                 # Creo un programa. Si falla algo, saltara una excepcion
+                resultados = json.loads(resultados_de_aprendizaje)
                 version_programa = VersionProgramaAsignatura(
                     estado=EstadoAsignatura.ABIERTO,
                     asignatura=asignatura,
                     semestre=semestre,
-                    resultados_de_aprendizaje=resultados_de_aprendizaje,
+                    resultados_de_aprendizaje=resultados,
                     contenidos=contenidos,
                     bibliografia=bibliografia,
                     recursos=recursos,
@@ -502,8 +501,8 @@ class ServicioVersionProgramaAsignatura:
         ):
             with transaction.atomic():
                 # Modifico el programa. Si falla algo, saltara una excepcion
-
-                version_programa.resultados_de_aprendizaje = resultados_de_aprendizaje
+                resultados = json.loads(resultados_de_aprendizaje)
+                version_programa.resultados_de_aprendizaje = resultados
                 version_programa.contenidos = contenidos
                 version_programa.bibliografia = bibliografia
                 version_programa.recursos = recursos
@@ -660,6 +659,7 @@ class ServicioVersionProgramaAsignatura:
             return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
+        # TODO. Enviar mail avisando a los directores de carrera
         programa.estado = EstadoAsignatura.PENDIENTE
         programa.save()
         return programa
@@ -675,7 +675,6 @@ class ServicioVersionProgramaAsignatura:
             semestre_anterior = self.servicio_semestre.obtener_semestre_anterior(semestre_dictado_asignatura)
             return VersionProgramaAsignatura.objects.get(semestre_id = semestre_anterior.id, asignatura_id=asignatura.id, estado=EstadoAsignatura.APROBADO)
 
-
     def reutilizar_ultimo_plan(self, asignatura: Asignatura):
         """
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
@@ -687,15 +686,15 @@ class ServicioVersionProgramaAsignatura:
         ):
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
-
-        if not self._el_programa_ya_existe():
+        semestre_siguiente = self.servicio_semestre.obtener_semestre_siguiente()
+        if self._el_programa_ya_existe(asignatura=asignatura, semestre=semestre_siguiente):
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
         try:
             ultimo_programa = self.obtener_ultimo_programa_de_asignatura_aprobado(asignatura)
         except VersionProgramaAsignatura.DoesNotExist as e:
             raise ValidationError(
-                {"asignatura": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES}
+                {"__all__": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES}
             ) from e
 
         descriptores_del_programa = ProgramaTieneDescriptor.objects.filter(
@@ -711,12 +710,12 @@ class ServicioVersionProgramaAsignatura:
 
         if not descriptores.exists():
             raise ValidationError(
-                {"descriptor": MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR}
+                {"__all__": MENSAJE_FALLO_REUTILIZACION}
             )
 
         if not ejes.exists():
             raise ValidationError(
-                {"eje_transversal": MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL}
+                {"__all__": MENSAJE_FALLO_REUTILIZACION}
             )
 
         actividades_reservadas = ProgramaTieneActividadReservada.objects.filter(
@@ -725,47 +724,51 @@ class ServicioVersionProgramaAsignatura:
         if not actividades_reservadas.exists():
             raise ValidationError(
                 {
-                    "actividades_reservadas": MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA
+                    "__all__": MENSAJE_FALLO_REUTILIZACION
                 }
             )
 
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
-            if self._validar_resultados_de_aprendizaje(
-                resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
-            ):
-                nuevo_programa = VersionProgramaAsignatura.objects.create(
-                    asignatura=ultimo_programa.asignatura,
-                    semestre=self.servicio_semestre.obtener_semestre_siguiente(),
-                    estado=EstadoAsignatura.ABIERTO,
-                    contenidos=ultimo_programa.contenidos,
-                    bibliografia=ultimo_programa.bibliografia,
-                    recursos=ultimo_programa.recursos,
-                    evaluacion=ultimo_programa.evaluacion,
-                    investigacion_docentes=ultimo_programa.investigacion_docentes,
-                    investigacion_estudiantes=ultimo_programa.investigacion_estudiantes,
-                    extension_docentes=ultimo_programa.extension_docentes,
-                    extension_estudiantes=ultimo_programa.extension_docentes,
-                    metodologia_aplicada = ultimo_programa.metodologia_aplicada,
-                    fundamentacion = ultimo_programa.fundamentacion,
-                    cronograma=ultimo_programa.cronograma,
+            try:
+                if self._validar_resultados_de_aprendizaje(
                     resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
-                )
-
-                for descriptor_del_programa in descriptores_del_programa:
-                    self._asignar_o_modificar_descriptor_prograna(
-                        descriptor=descriptor_del_programa.descriptor,
-                        programa=nuevo_programa,
-                        nivel=descriptor_del_programa.nivel,
+                ):
+                    nuevo_programa = VersionProgramaAsignatura.objects.create(
+                        asignatura=ultimo_programa.asignatura,
+                        semestre=self.servicio_semestre.obtener_semestre_siguiente(),
+                        estado=EstadoAsignatura.ABIERTO,
+                        contenidos=ultimo_programa.contenidos,
+                        bibliografia=ultimo_programa.bibliografia,
+                        recursos=ultimo_programa.recursos,
+                        evaluacion=ultimo_programa.evaluacion,
+                        investigacion_docentes=ultimo_programa.investigacion_docentes,
+                        investigacion_estudiantes=ultimo_programa.investigacion_estudiantes,
+                        extension_docentes=ultimo_programa.extension_docentes,
+                        extension_estudiantes=ultimo_programa.extension_docentes,
+                        metodologia_aplicada = ultimo_programa.metodologia_aplicada,
+                        fundamentacion = ultimo_programa.fundamentacion,
+                        cronograma=ultimo_programa.cronograma,
+                        resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
                     )
-                for actividad_reservada in actividades_reservadas:
-                    self._asignar_o_modificar_nivel_actividad_reservada(
-                        actividad=actividad_reservada.actividad_reservada,
-                        programa=nuevo_programa,
-                        nivel=actividad_reservada.nivel,
-                    )
 
-                return nuevo_programa
+                    for descriptor_del_programa in descriptores_del_programa:
+                        self._asignar_o_modificar_descriptor_prograna(
+                            descriptor=descriptor_del_programa.descriptor,
+                            programa=nuevo_programa,
+                            nivel=descriptor_del_programa.nivel,
+                        )
+                    for actividad_reservada in actividades_reservadas:
+                        self._asignar_o_modificar_nivel_actividad_reservada(
+                            actividad=actividad_reservada.actividad_reservada,
+                            programa=nuevo_programa,
+                            nivel=actividad_reservada.nivel,
+                        )
+
+                    self.presentar_programa_para_aprobacion(nuevo_programa)
+                    return nuevo_programa
+            except ValidationError as e:
+                raise ValidationError({"__all__": MENSAJE_FALLO_REUTILIZACION})
 
         return None
 
@@ -804,7 +807,7 @@ class ServicioVersionProgramaAsignatura:
                 semestre=semestre_para_reutilizar, asignatura=asignatura
             ).exists()
 
-
+        revisar = False
         se_puede_modificar = (
             version_programa is not None
             and version_programa.estado == EstadoAsignatura.ABIERTO
@@ -816,6 +819,7 @@ class ServicioVersionProgramaAsignatura:
             accion = "Presentar Programa de Asignatura."
         else:
             accion = "Revisar Programa de Asignatura."
+            revisar = True
 
         return {
             "asignatura": SerializerAsignatura(asignatura).data,
@@ -829,6 +833,7 @@ class ServicioVersionProgramaAsignatura:
                 "reutilizar_ultimo": se_puede_usar_ultimo,
                 "modificar_ultimo": se_puede_usar_ultimo,
                 "nuevo": version_programa is None,
+                "revisar_programa": revisar
             },
         }
 
@@ -845,7 +850,6 @@ class ServicioVersionProgramaAsignatura:
                 version = VersionProgramaAsignatura.objects.get(
                     semestre=semestre_siguente,
                     asignatura=rol.asignatura,
-                    estado__in=[EstadoAsignatura.ABIERTO, EstadoAsignatura.PENDIENTE]
                 )
             except VersionProgramaAsignatura.DoesNotExist:
                 return [
@@ -865,7 +869,7 @@ class ServicioVersionProgramaAsignatura:
             # Obtengo todas las materias para la carerra actual. Para eso primero debo obtener los planes.
             planes = self.servicio_planes.obtener_planes_activos_de_carrera(rol.carrera)
             id_planes = [plan.id for plan in planes]
-            asignaturas = Asignatura.objects.filter(plandeestudio__id__in=id_planes)
+            asignaturas = Asignatura.objects.filter(planes_de_estudio__id__in=id_planes)
             id_asignaturas = [asignatura.id for asignatura in asignaturas]
 
             versiones = VersionProgramaAsignatura.objects.filter(
@@ -874,15 +878,145 @@ class ServicioVersionProgramaAsignatura:
                 estado=EstadoAsignatura.PENDIENTE,
             )
 
-            return [
-                self._crear_objeto_para_lista_de_tareas_pendientes(
-                    version.asignatura, version
-                )
-                for version in versiones
-            ]
+            tareas_pendientes_director = []
+            for version in versiones:
+                try:
+                    auditoria = AuditoriaEstadoVersionPrograma.objects.get(
+                        version_programa_id=version.id,
+                        rol_id=rol.id
+                    )
+                    
+                    if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                        tarea = self._crear_objeto_para_lista_de_tareas_pendientes(
+                            version.asignatura, version
+                        )
+                        tareas_pendientes_director.append(tarea)
+                except AuditoriaEstadoVersionPrograma.DoesNotExist:
+                    tarea = self._crear_objeto_para_lista_de_tareas_pendientes(
+                        version.asignatura, version
+                    )
+                    tareas_pendientes_director.append(tarea)
+            
+            return tareas_pendientes_director
 
         if rol.rol == Roles.SECRETARIO:
             return []
+
+    def _verificar_programa_queda_aprobado(self, version_programa: VersionProgramaAsignatura):
+        planes_de_estudio_relacionados = version_programa.asignatura.planes_de_estudio.all()
+        carreras_de_planes_de_estudio = set()
+        
+        for plan in planes_de_estudio_relacionados:
+            carreras_de_planes_de_estudio.add(plan.carrera.id)
+
+        roles = Rol.objects.filter(carrera__id__in=carreras_de_planes_de_estudio, rol=Roles.DIRECTOR_CARRERA)
+
+        for rol in roles:
+            # Se que esto esta horriblemente ineficiente pero son 50 usuarios saludos
+            try:
+                auditoria = AuditoriaEstadoVersionPrograma.objects.get(
+                    version_programa_id=version_programa.id,
+                    rol_id=rol.id
+                )
+
+                if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                    return False
+            except AuditoriaEstadoVersionPrograma.DoesNotExist:
+                return False
+
+        return True
+
+    def _tiene_permiso_para_corregir_programas(self, rol: Rol, version_programa: VersionProgramaAsignatura):
+        if rol.rol != Roles.DIRECTOR_CARRERA:
+            return False
+        
+        carrera_rol = rol.carrera
+        planes_de_estudio_relacionados = version_programa.asignatura.planes_de_estudio.all()
+        carreras_de_planes_de_estudio = set()
+        for plan in planes_de_estudio_relacionados:
+            carreras_de_planes_de_estudio.add(plan.carrera)
+
+        if not(carrera_rol in carreras_de_planes_de_estudio):
+            return False
+        
+        return True
+
+    def pedir_cambios_programa_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol, mensaje: str):
+        if not version_programa.estado == EstadoAsignatura.PENDIENTE:
+            raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
+        if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
+
+        try:
+            auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
+                rol_id=rol.id,
+                version_programa_id=version_programa.id
+            )
+            
+            auditoria_anterior.estado = EstadosAprobacionPrograma.PEDIDO_CAMBIOS
+            auditoria_anterior.mensaje_cambios = mensaje
+            auditoria_anterior.full_clean()
+            auditoria_anterior.save(update_fields=["estado", "mensaje_cambios"])
+            
+        except AuditoriaEstadoVersionPrograma.DoesNotExist:
+            nueva_auditoria = AuditoriaEstadoVersionPrograma(
+                version_programa=version_programa,
+                rol=rol,
+                estado=EstadosAprobacionPrograma.PEDIDO_CAMBIOS,
+                mensaje_cambios=mensaje
+            )
+            nueva_auditoria.full_clean()
+            nueva_auditoria.save()
+
+        auditorias = AuditoriaEstadoVersionPrograma.objects.filter(
+                version_programa_id=version_programa.id,
+                estado=EstadosAprobacionPrograma.APROBADO
+        )
+        auditorias.update(
+            estado=EstadosAprobacionPrograma.APROBACION_DEPRECADA,
+            modificado_en=obtener_fecha_y_hora_actual()
+        )
+
+        version_programa.estado = EstadoAsignatura.ABIERTO
+        version_programa.full_clean()
+        version_programa.save(update_fields=["estado"])
+
+        # TODO. Enviar email notificando que se pidieron cambios
+
+    def aprobar_programa_de_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol):
+        if not version_programa.estado == EstadoAsignatura.PENDIENTE:
+            raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
+        if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
+            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
+
+        try:
+            auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
+                rol_id=rol.id,
+                estado__in=[
+                    EstadosAprobacionPrograma.APROBACION_DEPRECADA,
+                    EstadosAprobacionPrograma.PEDIDO_CAMBIOS
+                ],
+                version_programa_id=version_programa.id
+            )
+            auditoria_anterior.estado = EstadosAprobacionPrograma.APROBADO
+            auditoria_anterior.modificado_en = obtener_fecha_y_hora_actual()
+            auditoria_anterior.full_clean()
+            auditoria_anterior.save(update_fields=["estado", "modificado_en"])
+        except AuditoriaEstadoVersionPrograma.DoesNotExist:
+            nueva_auditoria = AuditoriaEstadoVersionPrograma(
+                version_programa=version_programa,
+                rol=rol,
+                estado=EstadosAprobacionPrograma.APROBADO,
+                mensaje_cambios="Aprobado"
+            )
+            nueva_auditoria.full_clean()
+            nueva_auditoria.save()
+
+        if self._verificar_programa_queda_aprobado(version_programa):
+            version_programa.estado = EstadoAsignatura.APROBADO
+            version_programa.full_clean()
+            version_programa.save(update_fields=["estado"])
+            # TODO. Enviar email notificando que se aprobaron los cambios
 
     def obtener_datos_para_nuevo_programa(self, asignatura: Asignatura):
         # obtengo todos los estandares/programas a los que pertenece la asignatura
@@ -926,7 +1060,38 @@ class ServicioVersionProgramaAsignatura:
             for actividad in actividades_reservadas_disponibles_para_nuevo_programa
         ]
 
+        equipo_docente = Rol.objects.filter(
+            rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE],
+            asignatura_id=asignatura.id
+        )
+        equipo_docente_inforamacion = [
+            {
+                "id": rol.id,
+                "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}"
+            }
+            for rol in equipo_docente
+        ]
+
         return {
+            "informacion_general": {
+                "nombre_asignatura": asignatura.denominacion,
+                "codigo_aignatura": asignatura.codigo,
+                "anio_academico": "-",
+                "bloque_curricular": asignatura.bloque_curricular.nombre,
+                "carreras": [{"id": carrera.id, "informacion": carrera.nombre} for carrera in carreras],
+                "equipo_docente": equipo_docente_inforamacion,
+            },
+            "carga_horaria": {
+                "semanas_dictado": asignatura.semanas_dictado,
+                "teoria_presencial": asignatura.semanal_teoria_presencial,
+                "practica_presencial": asignatura.semanal_practica_presencial,
+                "teorico_practico_presencial": asignatura.semanal_teorico_practico_presencial,
+                "laboratorio_presencial": asignatura.semanal_lab_presencial,
+                "teoria_distancia": asignatura.semanal_teoria_remoto,
+                "practica_distancia": asignatura.semanal_practica_remoto,
+                "teorico_practico_distancia": asignatura.semanal_teorico_practico_remoto,
+                "laboratorio_distancia": asignatura.semanal_lab_remoto,
+            },
             "ejes_transversales": ejes_transversales_del_programa,
             "descriptores": descriptores_del_programa,
             "actividades_reservadas": actividades_reservadas_del_programa

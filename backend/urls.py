@@ -15,7 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.generic import TemplateView
 from rest_framework_simplejwt import views as jwt_views
 
 from backend.views import (
@@ -33,7 +34,15 @@ from backend.views import (
     GenerarPDF,
     GoogleLoginApi,
     GoogleAuthApi,
+    GenerarMatriz,
+    APIListarPlanesDeEstudio,
+    AprobarVersionProgramaAPI,
+    PedirCambiosVersionProgramaAPI,
 )
+
+informes_patterns = [
+    path("matriz/<id_carrera>/<id_plan_de_estudio>/", GenerarMatriz.as_view()),
+]
 
 programas_patterns = [
     path("pendientes/", ListarProgramasPendientesAPI.as_view()),
@@ -41,18 +50,19 @@ programas_patterns = [
     path("pdf/<id_programa>/", GenerarPDF.as_view()),
     path("editar/<id_programa>/", ModificarProgramaAPI.as_view()),
     path("nuevo/<id_asignatura>/", NuevoProgramaAPI.as_view()),
+    path("aprobar/<id_programa>/", AprobarVersionProgramaAPI.as_view()),
+    path("pedir_cambios/<id_programa>/", PedirCambiosVersionProgramaAPI.as_view()),
     path("<id_programa>/", InformacionProgramaAPI.as_view()),
 ]
 
 formularios_patterns = [
+    path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
+    path("reutilizar-programa/<id_asignatura>/", ReutilizarUltimoPrograma.as_view()),
+    path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
     path(
         "editar/<id_programa>/",
         InformacionModificacionProgramaAPI.as_view(),
     ),
-    path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
-    # TODO. Crear una API nueva para editar el ultimo!!
-    path("reutilizar-programa", ReutilizarUltimoPrograma.as_view()),
-    path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
 ]
 
 filtros_patterns = [
@@ -63,6 +73,10 @@ historial_patterns = [
     path("", ObtenerProgramasHistorial.as_view()),
 ]
 
+planes_estudio_patterns = [
+    path("", APIListarPlanesDeEstudio.as_view()),
+]
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/login/google/", GoogleLoginApi.as_view(), name="login-with-google"),
@@ -71,5 +85,9 @@ urlpatterns = [
     path("api/programas/", include(programas_patterns)),
     path("api/filtros/", include(filtros_patterns)),
     path("api/historial/", include(historial_patterns)),
-    path("api/informacion-formularios/", include(formularios_patterns))
+    path("api/informacion-formularios/", include(formularios_patterns)),
+    path("api/informes/", include(informes_patterns)),
+    path("api/planes-de-esutdio/", include(planes_estudio_patterns)),
+    re_path("<path:route>", TemplateView.as_view(template_name='index.html'), name="index"),
+    re_path("", TemplateView.as_view(template_name='index.html'), name="index"),
 ]

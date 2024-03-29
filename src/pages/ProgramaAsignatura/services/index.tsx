@@ -14,6 +14,14 @@ const parserProgramaAsignatura = (
 ): ProgramaAsignaturaInterface => {
   return {
     id: programa.id,
+    informacionGeneral: {
+      nombreAsignatura: programa.informacion_general.nombre_asignatura,
+      codigoAsignatura: programa.informacion_general.codigo_aignatura,
+      bloqueCurricular: programa.informacion_general.bloque_curricular,
+      carreras: programa.informacion_general.carreras,
+      equipoDocente: programa.informacion_general.equipo_docente,
+      anioAcademico: programa.informacion_general.anio_academico
+    },
     cargaHoraria: {
       practicaDistancia: programa.carga_horaria.practica_distancia,
       teoriaDistancia: programa.carga_horaria.teoria_distancia,
@@ -48,7 +56,9 @@ const parserProgramaAsignatura = (
       extensionEstudiantes:
         programa.informacion_adicional.extension_estudiantes,
       extensionDocentes: programa.informacion_adicional.extension_docentes
-    }
+    },
+    // TODO. Parse correlativas desde el backend
+    correlativas: []
   }
 }
 
@@ -56,6 +66,26 @@ const parserNuevoProgramaAsignatura = (
   datos: NuevoProgramaAPIBody
 ): NuevoPrograma => {
   return {
+    informacionGeneral: {
+      nombreAsignatura: datos.informacion_general.nombre_asignatura,
+      codigoAsignatura: datos.informacion_general.codigo_aignatura,
+      bloqueCurricular: datos.informacion_general.bloque_curricular,
+      carreras: datos.informacion_general.carreras,
+      equipoDocente: datos.informacion_general.equipo_docente,
+      anioAcademico: datos.informacion_general.anio_academico
+    },
+    cargaHoraria: {
+      practicaDistancia: datos.carga_horaria.practica_distancia,
+      teoriaDistancia: datos.carga_horaria.teoria_distancia,
+      laboratorioDistancia: datos.carga_horaria.laboratorio_distancia,
+      teoricoPracticoDistancia: datos.carga_horaria.teorico_practico_distancia,
+      practicaPresencial: datos.carga_horaria.practica_presencial,
+      teoriaPresencial: datos.carga_horaria.teoria_presencial,
+      laboratorioPresencial: datos.carga_horaria.laboratorio_presencial,
+      teoricoPracticoPresencial:
+        datos.carga_horaria.teorico_practico_presencial,
+      semanasDictado: datos.carga_horaria.semanas_dictado
+    },
     ejesTransversales: datos.ejes_transversales,
     actividadesReservadas: datos.actividades_reservadas,
     descriptores: datos.descriptores
@@ -186,6 +216,7 @@ interface ProgramaPOSTBodyErrorInterface {
   actividades_reservadas?: string[]
   ejes_transversales?: string[]
   __all__?: string[]
+  mensaje?: string[]
 }
 
 const parseProgramaPOSTBody = (
@@ -277,12 +308,15 @@ const parseProgramaPOSTError = (
         ? responseError.extension_docentes[0]
         : ''
     },
-    all: responseError.__all__ ? responseError.__all__[0] : ''
+    // TODO. Cambiar cuadno cree la llamada a a la api
+    correlativas: '',
+    all: responseError.__all__ ? responseError.__all__[0] : '',
+    mensaje: responseError.mensaje ? responseError.mensaje[0] : ''
   }
 }
 
 export const crearProgramaAsignatura = async (
-  datos: ProgramaAsignatura,
+  datos: ProgramaAsignaturaInterface,
   presentar: boolean,
   id_asignatura: number
 ) => {
@@ -306,7 +340,7 @@ export const crearProgramaAsignatura = async (
 }
 
 export const modificarProgramaAsignatura = async (
-  datos: ProgramaAsignatura,
+  datos: ProgramaAsignaturaInterface,
   presentar: boolean,
   id_programa: number
 ) => {
@@ -315,6 +349,46 @@ export const modificarProgramaAsignatura = async (
   try {
     const response = await client.post(
       `${RUTAS.POST_EDITAR_PROGRAMA_ASIGNATURA}${id_programa}/`,
+      cuerpoPost
+    )
+
+    return {
+      status: response.status
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      error: parseProgramaPOSTError(error.response.data.error)
+    }
+  }
+}
+
+export const aprobarProgramaAsignatura = async (id_programa: number) => {
+  try {
+    const response = await client.get(
+      `${RUTAS.APROBAR_PROGRAMA}${id_programa}/`
+    )
+
+    return {
+      status: response.status
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      error: parseProgramaPOSTError(error.response.data.error)
+    }
+  }
+}
+
+export const pedirCambiosProgramaAsignatura = async (
+  id_programa: number,
+  mensaje: string
+) => {
+  const cuerpoPost = { mensaje: mensaje }
+
+  try {
+    const response = await client.post(
+      `${RUTAS.PEDIR_CAMBIOS_PROGRAMA}${id_programa}/`,
       cuerpoPost
     )
 

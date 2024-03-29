@@ -17,7 +17,7 @@ export default function App() {
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
-      <main className={`main-content ${isSidebarOpen ? 'sidebar-active' : ''}`}>
+      <main className="main-content">
         {/* <ProtectedRoute> */}
           <Routes>
             {PAGINAS.map((pagina) => (

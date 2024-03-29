@@ -10,7 +10,9 @@ import {
   getInformacionNuevoPrograma,
   getInformacionModificarAPartirUltimo,
   crearProgramaAsignatura,
-  modificarProgramaAsignatura
+  modificarProgramaAsignatura,
+  aprobarProgramaAsignatura,
+  pedirCambiosProgramaAsignatura
 } from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
@@ -30,6 +32,8 @@ type useProgramaAsignaturaType = {
   modoProgramaAsignatura: string
   loading: boolean
   errorInesperado: string
+  aprobarPrograma: () => void
+  pedirCambiosPrograma: (mensaje: string) => void
 }
 
 const MENSAJE_ERROR_INESPERADO =
@@ -149,6 +153,32 @@ const useProgramaAsignatura = (
     return esFormularioValido
   }
 
+  const aprobarPrograma = async () => {
+    const response = await aprobarProgramaAsignatura(parseInt(id))
+
+    if (response.status !== 200 && response.error) {
+      setErroresProgramaAsignatura(response.error)
+      return
+    }
+
+    if (response.status === 200) {
+      navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+    }
+  }
+
+  const pedirCambiosPrograma = async (mensaje: string) => {
+    const response = await pedirCambiosProgramaAsignatura(parseInt(id), mensaje)
+
+    if (response.status !== 200 && response.error) {
+      setErroresProgramaAsignatura(response.error)
+      return
+    }
+
+    if (response.status === 200) {
+      navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+    }
+  }
+
   const guardarPrograma = async (presentarAprobacion: boolean) => {
     if (validarDatosPrograma()) {
       if (
@@ -214,7 +244,9 @@ const useProgramaAsignatura = (
               ejesTransversales: response.data?.ejesTransversales,
               descriptores: response.data?.descriptores
             }
-            setProgramaAsignatura(datosNuevoPrograma)
+            datosNuevoPrograma.informacionGeneral =
+              response.data.informacionGeneral
+            datosNuevoPrograma.cargaHoraria = response.data.cargaHoraria
           } else if (response.status !== 200 && response.error) {
             setErrorInesperado(response.error || MENSAJE_ERROR_INESPERADO)
           }
@@ -225,7 +257,10 @@ const useProgramaAsignatura = (
 
         setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
         setLoading(false)
-      } else if (modo === MODOS_PROGRAMA_ASIGNATURA.VER) {
+      } else if (
+        modo === MODOS_PROGRAMA_ASIGNATURA.VER ||
+        modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR
+      ) {
         try {
           const response = await getProgramaAsignatura(id)
           if (response.status === 200 && response.data) {
@@ -275,7 +310,9 @@ const useProgramaAsignatura = (
     erroresProgramaAsignatura,
     loading,
     errorInesperado,
-    guardarPrograma
+    guardarPrograma,
+    aprobarPrograma,
+    pedirCambiosPrograma
   }
 }
 

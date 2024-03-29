@@ -1,5 +1,10 @@
 import { client } from '../../../utils/axiosClient'
-import { ProgramasVigentes, Filtros, selectedFiltrosType, ProgramasHistorial } from '../../../types'
+import {
+  ProgramasVigentes,
+  FiltrosType,
+  selectedFiltrosType,
+  ProgramasHistorial
+} from '../../../types'
 import { RUTAS } from '../../../constants/constants'
 
 export const getHistorial = async () => {
@@ -11,14 +16,16 @@ export const getHistorial = async () => {
 }
 
 export const getFiltros = async () => {
-  const response = await client.get<Filtros>(
+  const response = await client.get<FiltrosType>(
     `${RUTAS.GET_FILTROS_HISTORIAL}`
   )
 
   return response.data
 }
 
-export const getSearchHistorial = async (selectedFiltros: selectedFiltrosType | null) => {
+export const getSearchHistorial = async (
+  selectedFiltros: selectedFiltrosType | null
+) => {
   const params = `carrera=${selectedFiltros?.carrera}&semestre=${selectedFiltros?.semestre}&asignatura=${selectedFiltros?.asignatura}&anio_lectivo=${selectedFiltros?.anio_lectivo}`
   const response = await client.get<ProgramasHistorial>(
     `${RUTAS.GET_HISTORIAL}?${params}`
