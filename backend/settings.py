@@ -53,18 +53,19 @@ INSTALLED_APPS = [
     "djoser",
     "social_django",
     "backend",
+    "corsheaders"
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
@@ -166,6 +167,7 @@ AUTHENTICATION_BACKENDS = (
 # CORS
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_TRUSTED_ORIGINS = env.list("CORS_TRUSTED_ORIGINS", default=[])
+CORS_ALLOW_ALL_ORIGINS = True
 
 DJOSER = {
     "LOGIN_FIELD": "email",
