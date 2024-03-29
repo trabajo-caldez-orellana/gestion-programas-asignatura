@@ -31,10 +31,10 @@ const useHistorial = (): useHistorialType => {
         const anio_lectivo = response.find(item => item.tipo === 'anio_lectivo');
 
         const parsedSelectedFiltros = {
-          carrera: carreras ? carreras.opciones[0].id : null,
-          semestre: semestres ? semestres.opciones[0].id : null,
-          asignatura: asignaturas? asignaturas.opciones[0].id : null,
-          anio_lectivo: anio_lectivo ? anio_lectivo.opciones[0].id :null,
+          carrera: carreras && carreras.opciones.length! ? carreras.opciones[0].id : null,
+          semestre: semestres && semestres.opciones.length! ? semestres.opciones[0].id : null,
+          asignatura: asignaturas && asignaturas.opciones.length ! ? asignaturas.opciones[0].id : null,
+          anio_lectivo: anio_lectivo && anio_lectivo.opciones.length ! ? anio_lectivo.opciones[0].id :null,
         };
 
         setSelectedFiltros(parsedSelectedFiltros)
