@@ -9,10 +9,10 @@ import {
   BorrarCorrelativaButton,
   InfoContainer
 } from './CorrelativaStyled'
-import { Dropdown } from '../../../../components'
+import { Dropdown, Input } from '../../../../components'
 
 interface CorrelativaAsignaturasInterface {
-  asignaturaSeleccionada: number
+  asignaturaSeleccionada: DatoListaInterface
   tipo: TIPO_CORRELATIVA
   asignaturasDisponibles: DatoListaInterface[]
   enCambioTipoCorrelativa: (seleccion: string | number) => void
@@ -44,15 +44,28 @@ const CorrelativaAsignaturas: React.FC<CorrelativaAsignaturasInterface> = ({
         />
       </InfoContainer>
       <InfoContainer>
-        <Dropdown
-          name="Asignatura"
-          value={asignaturaSeleccionada}
-          error=""
-          label="Asignatura"
-          choices={asignaturasDisponibles}
-          onChange={enCambioAsignaturaSeleccionada}
-          modoLectura={modoLectura}
-        />
+        {modoLectura ? (
+          <Input
+            id="Asignatura"
+            type="text"
+            name="Asignatura"
+            mensajeDeError=""
+            value={asignaturaSeleccionada.informacion}
+            label="Asignatura"
+            onChange={() => {}}
+            modoLectura={modoLectura}
+          />
+        ) : (
+          <Dropdown
+            name="Asignatura"
+            value={asignaturaSeleccionada.id}
+            error=""
+            label="Asignatura"
+            choices={asignaturasDisponibles}
+            onChange={enCambioAsignaturaSeleccionada}
+            modoLectura={modoLectura}
+          />
+        )}
       </InfoContainer>
       <BorrarCorrelativaButton onClick={enBorradoCorrelativa}>
         <i className="fas fa-solid fa-trash" />

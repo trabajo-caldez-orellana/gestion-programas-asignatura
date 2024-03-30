@@ -238,7 +238,7 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
               tipo={correlativa.tipo}
               asignaturasDisponibles={asignaturasCorrelativasDisponibles}
               asignaturaSeleccionada={
-                correlativa.asignatura?.id || ASIGNATURA_VACIA.id
+                correlativa.asignatura || ASIGNATURA_VACIA
               }
               enCambioAsignaturaSeleccionada={(seleccion: number | string) =>
                 handleSeleccionarCorrelativaAsignatura(index, seleccion)
