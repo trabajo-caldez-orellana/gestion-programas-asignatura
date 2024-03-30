@@ -9,7 +9,8 @@ import {
   TIPO_CORRELATIVA,
   REQUISITOS_CORRELATIVA,
   DatoListaInterface,
-  MODOS_PROGRAMA_ASIGNATURA
+  MODOS_PROGRAMA_ASIGNATURA,
+  ASIGNATURA_VACIA
 } from '../../../constants/constants'
 import {
   SeccionFormulario,
@@ -23,11 +24,6 @@ import {
   CorrelativaModulo
 } from './ObjetosListaCorrelativas'
 import { concat } from 'lodash'
-
-const ASIGNATURA_VACIA: DatoListaInterface = {
-  id: -1,
-  informacion: ''
-}
 
 interface SeccionCorrelativasProps {
   programaAsignatura: ProgramaAsignaturaInterface
