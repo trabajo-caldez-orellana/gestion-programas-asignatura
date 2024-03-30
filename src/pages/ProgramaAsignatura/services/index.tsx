@@ -407,7 +407,7 @@ export const obtenerAsignaturasDisponiblesAPartirDeAsignatura = async (
   id_asignatura: string
 ) => {
   try {
-    const response = await client.post(
+    const response = await client.get(
       `${RUTAS.OBTENER_CORRELATIVAS_DISPONIBLES_ASIGNATURA}${id_asignatura}/`
     )
 
@@ -427,7 +427,7 @@ export const obtenerAsignaturasDisponiblesAPartirDePrograma = async (
   id_programa: string
 ) => {
   try {
-    const response = await client.post(
+    const response = await client.get(
       `${RUTAS.OBTENER_CORRELATIVAS_DISPONIBLES_PROGRAMA}${id_programa}/`
     )
 
