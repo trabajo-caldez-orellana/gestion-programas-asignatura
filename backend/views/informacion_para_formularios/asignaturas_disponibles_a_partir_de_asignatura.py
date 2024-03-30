@@ -23,6 +23,6 @@ class AsignaturasDisponiblesAPartirAsignatura(APIView):
         )
 
         serializer_asignatura = SerializerAsignaturaParaSeleccion(
-            data=listado_asignaturas, many=True
+            listado_asignaturas, many=True
         )
         return Response({"data": serializer_asignatura.data})
