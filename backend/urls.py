@@ -65,8 +65,8 @@ formularios_patterns = [
 ]
 
 opciones_patterns = [
-    path("asignaturas-correlativas-programa/<id_programa>", AsignaturasDisponiblesAPartirPrograma.as_view()),
-    path("asignaturas-correlativas/<id_asignatura>", AsignaturasDisponiblesAPartirAsignatura.as_view()),
+    path("asignaturas-correlativas-programa/<id_programa>/", AsignaturasDisponiblesAPartirPrograma.as_view()),
+    path("asignaturas-correlativas/<id_asignatura>/", AsignaturasDisponiblesAPartirAsignatura.as_view()),
 ]
 
 filtros_patterns = [
