@@ -900,6 +900,10 @@ class ServicioVersionProgramaAsignatura:
                 }
             )
 
+        correlativas_programa = Correlativa.objects.filter(
+            version_programa_asignatura_id=ultimo_programa.id
+        )
+
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
             try:
@@ -936,6 +940,18 @@ class ServicioVersionProgramaAsignatura:
                             programa=nuevo_programa,
                             nivel=actividad_reservada.nivel,
                         )
+
+                    for correlativa in correlativas_programa:
+                        correlativa_nueva = Correlativa(
+                            version_programa_asignatura=nuevo_programa,
+                            asignatura_correlativa=correlativa.asignatura_correlativa,
+                            tipo=correlativa.tipo,   
+                            requisito=correlativa.requisito,
+                            modulo=correlativa.modulo,
+                            cantidad_asignaturas=correlativa.cantidad_asignaturas
+                        )
+                        correlativa_nueva.full_clean()
+                        correlativa_nueva.save()
 
                     self.presentar_programa_para_aprobacion(nuevo_programa)
                     return nuevo_programa
