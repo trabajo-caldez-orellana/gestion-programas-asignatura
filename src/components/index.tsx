@@ -14,7 +14,8 @@ import {
   TextAreaStyled,
   ListadoDatos,
   SeleccionConModal,
-  DoubleSelectionInput
+  DoubleSelectionInput,
+  Dropdown
 } from './Formulario'
 import Button from './ui/Button'
 
@@ -37,5 +38,6 @@ export {
   TextAreaStyled,
   ListadoDatos,
   SeleccionConModal,
-  DoubleSelectionInput
+  DoubleSelectionInput,
+  Dropdown
 }

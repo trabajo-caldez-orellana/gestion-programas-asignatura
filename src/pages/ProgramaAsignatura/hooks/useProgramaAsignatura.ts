@@ -244,7 +244,9 @@ const useProgramaAsignatura = (
               ejesTransversales: response.data?.ejesTransversales,
               descriptores: response.data?.descriptores
             }
-            setProgramaAsignatura(datosNuevoPrograma)
+            datosNuevoPrograma.informacionGeneral =
+              response.data.informacionGeneral
+            datosNuevoPrograma.cargaHoraria = response.data.cargaHoraria
           } else if (response.status !== 200 && response.error) {
             setErrorInesperado(response.error || MENSAJE_ERROR_INESPERADO)
           }
