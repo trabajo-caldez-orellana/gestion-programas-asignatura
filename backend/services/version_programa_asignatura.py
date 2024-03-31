@@ -797,6 +797,19 @@ class ServicioVersionProgramaAsignatura:
                 #   "modulo": str | None
                 # }
 
+                try:
+                    ids_correlativas_formulario = [correlativa["id"] for correlativa in correlativas]
+                    instancias_correlativa_asignatura = Correlativa.objects.filter(
+                        version_programa_asignatura_id=version_programa.id
+                    )
+
+                    for instancia_correlativa in instancias_correlativa_asignatura:
+                        if instancia_correlativa.id not in ids_correlativas_formulario:
+                            instancia_correlativa.delete()
+
+                except Exception:
+                    raise ValidationError({"correlativas": MENSAJE_CORRELATIVA_INVALIDA})
+
                 for correlativa in correlativas:
                     try:
                         instancia_correlativa = Correlativa.objects.get(
