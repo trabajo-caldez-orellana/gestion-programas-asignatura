@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 
 from backend.models import Asignatura
 from backend.serializers import serializer_programa_asignatura
+from backend.serializers.programa_asignatura import SerializerCorrelativa
 from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura
 from backend.common.mensajes_de_error import (
     MENSAJE_ID_INEXISTENTE,
@@ -50,6 +51,7 @@ class NuevoProgramaAPI(APIView):
         actividades_reservadas = SerializadorEjesyActividades(many=True)
         ejes_transversales = SerializadorEjesyActividades(many=True)
         presentar_a_aprobacion = serializers.BooleanField()
+        correlativas = SerializerCorrelativa(many=True)
         
 
     def post(self, request, id_asignatura):
@@ -97,6 +99,7 @@ class NuevoProgramaAPI(APIView):
                 extension_estudiantes=validated_data["extension_estudiantes"],
                 metodologia_aplicada = validated_data["metodologia_aplicada"],
                 fundamentacion = validated_data["fundamentacion"],
+                correlativas=validated_data["correlativas"]
             )
         except ValidationError as e:
             return Response({"error": e.message_dict}, status=HTTP_400_BAD_REQUEST)

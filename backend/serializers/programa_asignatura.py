@@ -36,11 +36,11 @@ class SerializerProgramaTieneEjeTransversal(serializers.Serializer):
 
 
 class SerializerCorrelativa(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(required=False, allow_null=True)
     tipo = serializers.CharField()
     requisito = serializers.CharField()
     asignatura = SerializerAsignaturaParaSeleccion(required=False, source="asignatura_correlativa")
-    modulo = serializers.CharField(required=False)
+    modulo = serializers.CharField(required=False, allow_null=True)
     cantidadAsignaturas = serializers.CharField(required=False, source="cantidad_asignaturas")
 
 def serializer_programa_asignatura(
