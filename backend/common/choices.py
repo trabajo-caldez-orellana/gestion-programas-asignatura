@@ -81,3 +81,4 @@ class AccionesProgramaDeAsignatura(TextChoices):
     PRESENTAR = "P", "Presentar programa de asignatura para aprobación"
     APROBAR = "A", "Aprobar programa de asignatura"
     REUTILIZAR_ULTIMO_PROGRAMA = "RU", "Reutilizar úlitmo programa de asignatura"
+    PEDIR_CAMBIOS = "PC", "Pedir cambios en el programa de asignatura"

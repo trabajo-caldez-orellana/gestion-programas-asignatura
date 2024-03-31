@@ -1,10 +1,10 @@
 from backend.common.choices import AccionesProgramaDeAsignatura
-from backend.models import Rol, VersionProgramaAsignatura, AuditoriaRevisionDocentes
+from backend.models import Usuario, VersionProgramaAsignatura, AuditoriaRevisionDocentes
 
 class ServicioAuditoria:
-    def auditar_revision(self, rol: Rol, programa: VersionProgramaAsignatura, accion: AccionesProgramaDeAsignatura):
+    def auditar_revision(self, usuario: Usuario, programa: VersionProgramaAsignatura, accion: AccionesProgramaDeAsignatura):
         auditoria = AuditoriaRevisionDocentes(
-            rol=rol,
+            usuario=usuario,
             version_programa=programa,
             accion=accion
         )
