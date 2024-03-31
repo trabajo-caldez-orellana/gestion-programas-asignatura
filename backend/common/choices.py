@@ -74,3 +74,9 @@ class EstadosAprobacionPrograma(TextChoices):
     APROBADO = "A", "Aprbado"
     PEDIDO_CAMBIOS = "PC", "Pedir cambios"
     APROBACION_DEPRECADA = "AD", "Aprobacion Deprecada"
+
+class AccionesProgramaDeAsignatura(TextChoices):
+    CREAR_NUEVO = "CN", "Crear nuevo programa de asignatura"
+    EDITAR = "E", "Editar programa de asignatura"
+    PRESENTAR = "P", "Presentar programa de asignatura para aprobación"
+    APROBAR = "A", "Aprobar programa de asignatura"
