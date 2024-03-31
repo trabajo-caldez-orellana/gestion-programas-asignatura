@@ -194,3 +194,6 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ),
 }
+
+# Mailersend
+MAILERSEND_API_KEY = env.str("MAILERSEND_API_KEY", "")
