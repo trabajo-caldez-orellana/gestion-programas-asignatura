@@ -3,6 +3,7 @@ import './Login.css'
 import img from '../../img'
 const BASE_FRONTEND_URL = import.meta.env.VITE_BASE_FRONTEND_URL
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_OAUTH2_CLIENT_ID
+import { RUTAS_PAGINAS } from '../../constants/constants'
 
 const Login: React.FC = () => {
 
@@ -17,7 +18,7 @@ const Login: React.FC = () => {
     const params = new URLSearchParams({
       response_type: "code",
       client_id: CLIENT_ID,
-      redirect_uri: `${BASE_FRONTEND_URL}/inicio`,
+      redirect_uri: `${BASE_FRONTEND_URL}${RUTAS_PAGINAS.LOGIN_LOADING}`,
       prompt: "select_account",
       access_type: "offline",
       scope,

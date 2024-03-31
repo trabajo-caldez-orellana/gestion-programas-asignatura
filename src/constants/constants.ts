@@ -13,6 +13,8 @@ import {
   Matriz
 } from '../pages'
 
+import LoginLoading from '../pages/Login/LoginLoading'
+
 export const RUTAS = {
   GET_PROGRAMA_ASIGNATURA: '/api/programas/',
   GET_PROGRAMAS_ASIGNATURAS: '/api/programas/',
@@ -255,7 +257,8 @@ export const RUTAS_PAGINAS = {
   HISTORIAL: '/historial',
   LOGIN: '/login',
   MATRIZ: '/matriz-tributacion',
-  INICIO: '/inicio'
+  INICIO: '/',
+  LOGIN_LOADING: '/login-loading'
 }
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
@@ -405,6 +408,14 @@ export const PAGINAS: Pagina[] = [
     path: RUTAS_PAGINAS.INICIO,
     enabled: true,
     component: Inicio,
+    protectedByLogin: false
+  },
+  {
+    key: 'login-loading',
+    title: 'Cargando',
+    path: RUTAS_PAGINAS.LOGIN_LOADING,
+    enabled: true,
+    component: LoginLoading,
     protectedByLogin: false
   }
 ]
