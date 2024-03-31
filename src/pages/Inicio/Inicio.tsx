@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
-import axios from "axios";
 import Cookies from 'js-cookie';
 import useAuth from "../../hooks/useAuth";
-
-
-// import "./index.css";
+import { client } from '../../utils/axiosClient'
 
 const Inicio: React.FC = () => {
   const {setAuth} = useAuth()
@@ -18,13 +15,13 @@ const Inicio: React.FC = () => {
     const code = values.code ? values.code : null;
 
     if (code) {
-      onGogglelogin();
+      onGooglelogin();
     }
   }, []);
 
   const googleLoginHandler = (code: string) => {
-    return axios
-      .get(`http://127.0.0.1:8000/auth/login/google/${code}`)
+    return client
+      .get(`auth/login/google/${code}`)
       .then((res) => {
         const { user, access_token, refresh_token } = res.data;
   
@@ -50,7 +47,7 @@ const Inicio: React.FC = () => {
       });
   };
 
-  const onGogglelogin = async () => {
+  const onGooglelogin = async () => {
     const response = await googleLoginHandler(location.search);
     console.log(response);
   }

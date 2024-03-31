@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react'
-import axios from 'axios'
 import Cookies from 'js-cookie'
 import { jwtDecode } from "jwt-decode";
+import { client } from '../utils/axiosClient'
 
 interface Auth {
   isLoggedIn: boolean
@@ -41,8 +41,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const authUser = async () => {
-     axios
-     .get(`http://127.0.0.1:8000/auth/me/`, {
+     client
+     .get(`auth/me/`, {
        headers: {
          Authorization: `Bearer ${token}`
        }
@@ -64,7 +64,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const refreshToken = async () => {
       const refreshToken = Cookies.get('refresh_token');
       try {
-          const res = await axios.post("http://127.0.0.1:8000/auth/token/refresh/", {
+          const res = await client.post("auth/token/refresh/", {
               refresh: refreshToken,
           });
           if (res.status === 200) {
