@@ -14,6 +14,8 @@ from .notificacion import AdminNotificacion
 from .plan_de_estudio import AdminPlanDeEstudio
 from .semestre import AdminSemestre
 from .version_programa_asignatura import AdminVersionProgramaAsignatura
+from .auditoria_revision_docentes import AdminAuditoriaRevisionDocentes
+
 
 from backend.models import (
     AnioAcademico,
@@ -30,6 +32,7 @@ from backend.models import (
     Usuario,
     VersionProgramaAsignatura,
     ActividadReservada,
+    AuditoriaRevisionDocentes
 )
 
 admin.site.register(AnioAcademico, AdminAnioAcademico)
@@ -46,3 +49,4 @@ admin.site.register(Notificacion, AdminNotificacion)
 admin.site.register(PlanDeEstudio, AdminPlanDeEstudio)
 admin.site.register(Semestre, AdminSemestre)
 admin.site.register(VersionProgramaAsignatura, AdminVersionProgramaAsignatura)
+admin.site.register(AuditoriaRevisionDocentes, AdminAuditoriaRevisionDocentes)
