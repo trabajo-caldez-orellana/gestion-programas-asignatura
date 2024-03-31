@@ -1060,38 +1060,7 @@ class ServicioVersionProgramaAsignatura:
             for actividad in actividades_reservadas_disponibles_para_nuevo_programa
         ]
 
-        equipo_docente = Rol.objects.filter(
-            rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE],
-            asignatura_id=asignatura.id
-        )
-        equipo_docente_inforamacion = [
-            {
-                "id": rol.id,
-                "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}"
-            }
-            for rol in equipo_docente
-        ]
-
         return {
-            "informacion_general": {
-                "nombre_asignatura": asignatura.denominacion,
-                "codigo_aignatura": asignatura.codigo,
-                "anio_academico": "-",
-                "bloque_curricular": asignatura.bloque_curricular.nombre,
-                "carreras": [{"id": carrera.id, "informacion": carrera.nombre} for carrera in carreras],
-                "equipo_docente": equipo_docente_inforamacion,
-            },
-            "carga_horaria": {
-                "semanas_dictado": asignatura.semanas_dictado,
-                "teoria_presencial": asignatura.semanal_teoria_presencial,
-                "practica_presencial": asignatura.semanal_practica_presencial,
-                "teorico_practico_presencial": asignatura.semanal_teorico_practico_presencial,
-                "laboratorio_presencial": asignatura.semanal_lab_presencial,
-                "teoria_distancia": asignatura.semanal_teoria_remoto,
-                "practica_distancia": asignatura.semanal_practica_remoto,
-                "teorico_practico_distancia": asignatura.semanal_teorico_practico_remoto,
-                "laboratorio_distancia": asignatura.semanal_lab_remoto,
-            },
             "ejes_transversales": ejes_transversales_del_programa,
             "descriptores": descriptores_del_programa,
             "actividades_reservadas": actividades_reservadas_del_programa

@@ -6,8 +6,7 @@ import {
   SeccionDescriptores,
   BotonesProgramaAsignatura,
   BotonesRevisionProgramaAsignatura,
-  InformacionGeneral,
-  SeccionCorrelativas
+  InformacionGeneral
 } from './components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
@@ -70,12 +69,6 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
         setProgramaAsignatura={setProgramaAsignatura}
         modoProgramaAsignatura={modoProgramaAsignatura}
         erroresInfornacionAdicional={erroresProgramaAsignatura}
-      />
-      <SeccionCorrelativas
-        programaAsignatura={programaAsignatura}
-        setProgramaAsignatura={setProgramaAsignatura}
-        modoProgramaAsignatura={modoProgramaAsignatura}
-        erroresSeccionCorrelativas={erroresProgramaAsignatura}
       />
       <br />
       {modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR ? (
