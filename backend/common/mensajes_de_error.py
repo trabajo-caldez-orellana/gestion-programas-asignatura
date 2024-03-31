@@ -89,6 +89,7 @@ MENSAJE_TIPO_CORRELATIVA_INVALIDO = "El tipo de correlativa elegido es inválido
 MENSAJE_ASIGNATURA_NECESARIA = "Si la correlativa tiene como requerimiento una asignatura, se debe seleccionar una asignatura válida."
 MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA = "Si la correlativa tiene como requerimiento una cantidad de asignaturas aprobadas o regulares, se debe indicar un número de asignaturas."
 MENSAJE_MODULO_NECESARIO = "Si la correlativa tiene como requerimiento un módulo aprobado o regular, se debe indicar el módulo."
+MENSAJE_CORRELATIVA_INVALIDA = "El objeto de correlativa recibido es invalido."
 
 # Mensajes relacionados a semestres y anios lectivos
 MENSAJE_NO_PUEDEN_HABER_VARIOS_SEMESTRES_CON_LA_MISMA_FECHA = "No se puede definir un semestre que este activo al mismo momento que otro. Verifique las fechas."

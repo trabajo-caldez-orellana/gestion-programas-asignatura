@@ -39,9 +39,9 @@ class SerializerCorrelativa(serializers.Serializer):
     id = serializers.IntegerField(required=False, allow_null=True)
     tipo = serializers.CharField()
     requisito = serializers.CharField()
-    asignatura = SerializerAsignaturaParaSeleccion(required=False, source="asignatura_correlativa")
+    asignatura = SerializerAsignaturaParaSeleccion(required=False, source="asignatura_correlativa", allow_null=True)
     modulo = serializers.CharField(required=False, allow_null=True)
-    cantidadAsignaturas = serializers.CharField(required=False, source="cantidad_asignaturas")
+    cantidadAsignaturas = serializers.CharField(required=False, source="cantidad_asignaturas", allow_null=True)
 
 def serializer_programa_asignatura(
     programa: VersionProgramaAsignatura, solo_lectura: bool = False

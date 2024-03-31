@@ -62,7 +62,8 @@ from backend.common.mensajes_de_error import (
     MENSAJE_TIPO_CORRELATIVA_INVALIDO,
     MENSAJE_ASIGNATURA_NECESARIA,
     MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA,
-    MENSAJE_MODULO_NECESARIO
+    MENSAJE_MODULO_NECESARIO,
+    MENSAJE_CORRELATIVA_INVALIDA
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
@@ -545,6 +546,7 @@ class ServicioVersionProgramaAsignatura:
         investigacion_estudiantes: str,
         extension_docentes: str,
         extension_estudiantes: str,
+        correlativas: list,
         cronograma: str,
     ):
         """
@@ -780,6 +782,38 @@ class ServicioVersionProgramaAsignatura:
                                 "actividades_reservadas": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
                             }
                         ) from exc
+
+                # Obtengo todas las correlativas
+                # La lista de correlativas tiene el siguiente formato:
+                # {
+                #   "id": int | None,
+                #   "tipo": TipoCorrelativa,
+                #   "requisito": RequisitoCorrelativa,
+                #   "cantidadAsignaturas": int | None
+                #   "asignatura": {
+                #     "id": int,
+                #     "informacion": str
+                #   } | None,
+                #   "modulo": str | None
+                # }
+
+                for correlativa in correlativas:
+                    try:
+                        instancia_correlativa = Correlativa.objects.get(
+                            id=correlativa["id"]
+                        )
+                        self._asignar_o_modificar_correlativa(
+                            version_programa_asignatura=version_programa,
+                            objeto_correlativa=correlativa,
+                            instancia_correlativa=instancia_correlativa
+                        )
+                    except Correlativa.DoesNotExist:
+                        self._asignar_o_modificar_correlativa(
+                            version_programa_asignatura=version_programa,
+                            objeto_correlativa=correlativa
+                        )
+                    except Exception:
+                        raise ValidationError({"correlativas": MENSAJE_CORRELATIVA_INVALIDA})
 
             return version_programa
 
