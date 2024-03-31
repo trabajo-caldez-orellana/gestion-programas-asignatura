@@ -30,7 +30,7 @@ client.interceptors.request.use(async (config) => {
   // Verificar si hay un token de actualización y el token de acceso ha caducado
   if (!token && refreshToken) {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/auth/token/refresh/", {
+      const res = await client.post("auth/token/refresh/", {
         refresh: refreshToken,
       });
 

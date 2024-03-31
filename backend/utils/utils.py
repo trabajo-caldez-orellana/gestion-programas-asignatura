@@ -3,9 +3,6 @@ from typing import Dict, Any
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-import environ
-env = environ.Env()
-
 
 GOOGLE_ID_TOKEN_INFO_URL = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
 GOOGLE_ACCESS_TOKEN_OBTAIN_URL = 'https://oauth2.googleapis.com/token'
@@ -27,8 +24,8 @@ def generate_tokens_for_user(user):
 def google_get_access_token(*, code: str, redirect_uri: str) -> str:
     data = {
         'code': code,
-        'client_id': f'{env.str("GOOGLE_OAUTH2_CLIENT_ID", "")}',
-        'client_secret': f'{env.str("GOOGLE_OAUTH2_CLIENT_SECRET", "")}',
+        'client_id': settings.GOOGLE_OAUTH2_CLIENT_ID,
+        'client_secret': settings.GOOGLE_OAUTH2_CLIENT_SECRET,
         'redirect_uri': redirect_uri,
         'grant_type': 'authorization_code',
         'access_type': 'offline',

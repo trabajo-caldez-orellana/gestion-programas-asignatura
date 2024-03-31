@@ -13,6 +13,7 @@ interface Auth {
 interface AuthContextType {
   auth: Auth
   setAuth: React.Dispatch<React.SetStateAction<Auth>>
+  handleLogout: () => void
 }
 
 const defaultAuth: Auth = {
@@ -24,11 +25,19 @@ const defaultAuth: Auth = {
 
 const AuthContext = createContext<AuthContextType>({
   auth: defaultAuth,
-  setAuth: () => {}
+  setAuth: () => {},
+  handleLogout: () => {}
 })
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [auth, setAuth] = useState<Auth>(defaultAuth)
+
+  const handleLogout = () => {
+    Cookies.remove('token'); // Remueve el token
+    Cookies.remove('refresh_token'); // Remueve el token
+
+    window.location.href = '/login'
+  }
 
   useEffect(() => {
     const authUser = async () => {
@@ -96,7 +105,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, setAuth, handleLogout }}>
       {children}
     </AuthContext.Provider>
   )

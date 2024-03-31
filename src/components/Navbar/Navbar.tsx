@@ -8,16 +8,14 @@ import useAuth from "../../hooks/useAuth";
 interface NavbarProps {
   isSidebarOpen: boolean
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
-  handleLogout: () => void
 }
 
 export default function Navbar({
   isSidebarOpen,
   setIsSidebarOpen,
-  handleLogout
 }: NavbarProps) {
 
-  const { auth } = useAuth()
+  const { auth, handleLogout } = useAuth()
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 

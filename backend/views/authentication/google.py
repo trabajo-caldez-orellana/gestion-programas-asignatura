@@ -16,8 +16,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenRefreshView
-import environ
-env = environ.Env()
 
 def refresh_access_token(refresh_token):
     try:
@@ -43,13 +41,13 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         code = validated_data.get('code')
         error = validated_data.get('error')
 
-        login_url = f'{env.str("BASE_FRONTEND_URL", "")}/login'
+        login_url = f'{settings.BASE_FRONTEND_URL}/login'
     
         if error or not code:
             params = urlencode({'error': error})
             return redirect(f'{login_url}?{params}')
 
-        redirect_uri = f'{env.str("BASE_FRONTEND_URL", "")}/inicio'
+        redirect_uri = f'{settings.BASE_FRONTEND_URL}/inicio'
         access_token, refresh_token = google_get_access_token(code=code, redirect_uri=redirect_uri)
 
         user_data = google_get_user_info(access_token=access_token)
@@ -108,5 +106,5 @@ class GoogleAuthApi(PublicApiMixin, ApiErrorsMixin, APIView):
             return Response(response_data, status=status.HTTP_200_OK)
         else:
             # Si el usuario no está autenticado, devuelve un 401 Unauthorized
-             return Response({'error': 'Unauthorized'}, status=401)
+             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
