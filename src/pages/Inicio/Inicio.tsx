@@ -23,7 +23,6 @@ const Inicio: React.FC = () => {
   }, []);
 
   const googleLoginHandler = (code: string) => {
-    console.log("code", code)
     return axios
       .get(`http://127.0.0.1:8000/auth/login/google/${code}`)
       .then((res) => {

@@ -18,7 +18,6 @@ export default function App() {
     window.location.href = '/login'
   }
 
-  console.log('PAGINAS', PAGINAS)
   return (
     <AuthProvider>
       <Navbar

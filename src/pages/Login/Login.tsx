@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react'
+import React, { useCallback} from 'react'
 import './Login.css'
 import img from '../../img'
 const BASE_FRONTEND_URL = import.meta.env.VITE_BASE_FRONTEND_URL
@@ -6,17 +6,6 @@ const CLIENT_ID = import.meta.env.VITE_GOOGLE_OAUTH2_CLIENT_ID
 
 const Login: React.FC = () => {
 
-  console.log("RENDERIZA LOGIN")
-
-  const [username, setUsername] = useState(localStorage.getItem('goggleFirstName'))
-
-  console.log('username', username)
-  useEffect(() => {
-    const storedUsername = localStorage.getItem("user_goggle");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
-  }, []);
   const openGoogleLoginPage = useCallback(() => {
     const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     
