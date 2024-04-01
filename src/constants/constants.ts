@@ -403,19 +403,19 @@ export const PAGINAS: Pagina[] = [
     protectedByLogin: true
   },
   {
-    key: 'inicio',
-    title: 'Pagina Inicio',
-    path: RUTAS_PAGINAS.INICIO,
-    enabled: true,
-    component: Inicio,
-    protectedByLogin: false
-  },
-  {
     key: 'login-loading',
     title: 'Cargando',
     path: RUTAS_PAGINAS.LOGIN_LOADING,
     enabled: true,
     component: LoginLoading,
+    protectedByLogin: false
+  },
+  {
+    key: 'inicio',
+    title: 'Pagina Inicio',
+    path: RUTAS_PAGINAS.INICIO,
+    enabled: true,
+    component: Inicio,
     protectedByLogin: false
   }
 ]
