@@ -10,3 +10,4 @@ from .obtener_datos_pdf import ObtenerDatosPdf
 from .estandar import ServicioEstandar
 from .obtener_datos_matriz import ObtenerDatosMatriz
 from .servicio_auditoria import ServicioAuditoria
+from .servicio_email import ServicioEmail
