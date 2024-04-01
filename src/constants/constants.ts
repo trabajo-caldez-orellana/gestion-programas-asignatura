@@ -403,7 +403,7 @@ export const PAGINAS: Pagina[] = [
   },
   {
     key: 'login-loading',
-    title: 'Loading Login',
+    title: 'Cargando',
     enabled: true,
     path: RUTAS_PAGINAS.LOGIN_LOADING,
     component: LoginLoading,

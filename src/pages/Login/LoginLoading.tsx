@@ -4,6 +4,7 @@ import queryString from 'query-string'
 import Cookies from 'js-cookie'
 import useAuth from '../../hooks/useAuth'
 import { client } from '../../utils/axiosClient'
+import { RUTAS_PAGINAS } from '../../constants/constants'
 
 const LoginLoading: React.FC = () => {
   const { setAuth } = useAuth()
@@ -49,7 +50,7 @@ const LoginLoading: React.FC = () => {
           secure: true
         })
 
-        navigate('/historial')
+        navigate('/')
         return res.data
       })
       .catch((err) => {
@@ -58,8 +59,7 @@ const LoginLoading: React.FC = () => {
   }
 
   const onGooglelogin = async () => {
-    const response = await googleLoginHandler(location.search)
-    console.log(response)
+    await googleLoginHandler(location.search)
   }
 
   return <div>Loading...</div>
