@@ -5,6 +5,7 @@ import ProgramasVigentes from './ProgramasVigentes/ProgramasVigentes'
 import Inicio from './Inicio/Inicio'
 import Login from './Login/Login'
 import Matriz from './MatrizTributacion/Matriz'
+import LoginLoading from './Login/LoginLoading'
 
 export {
   TareasPendientes,
@@ -13,5 +14,6 @@ export {
   ProgramasVigentes,
   Inicio,
   Login,
-  Matriz
+  Matriz,
+  LoginLoading
 }

@@ -1,33 +1,32 @@
-import React, { useCallback} from 'react'
+import React, { useCallback } from 'react'
 import './Login.css'
 import img from '../../img'
+import { RUTAS_PAGINAS } from '../../constants/constants'
 const BASE_FRONTEND_URL = import.meta.env.VITE_BASE_FRONTEND_URL
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_OAUTH2_CLIENT_ID
-import { RUTAS_PAGINAS } from '../../constants/constants'
 
 const Login: React.FC = () => {
-
   const openGoogleLoginPage = useCallback(() => {
-    const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-    
+    const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
+
     const scope = [
-      "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/userinfo.profile",
-    ].join(" ");
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile'
+    ].join(' ')
 
     const params = new URLSearchParams({
-      response_type: "code",
+      response_type: 'code',
       client_id: CLIENT_ID,
       redirect_uri: `${BASE_FRONTEND_URL}${RUTAS_PAGINAS.LOGIN_LOADING}`,
-      prompt: "select_account",
-      access_type: "offline",
-      scope,
-    });
+      prompt: 'select_account',
+      access_type: 'offline',
+      scope
+    })
 
-    const url = `${googleAuthUrl}?${params}`;
+    const url = `${googleAuthUrl}?${params}`
 
-    window.location.href = url;
-  }, []);
+    window.location.href = url
+  }, [])
 
   return (
     <div className="container">
