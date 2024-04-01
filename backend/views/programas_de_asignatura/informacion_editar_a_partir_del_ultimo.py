@@ -43,6 +43,7 @@ PROGRAMA_VACIO = {
             "extension_docentes": "",
             "extension_estudiantes": "",
         },
+        "correlativas": []
     }
 
 class InformacionEditarProgramaAPartirDelUltimoAPI(APIView):

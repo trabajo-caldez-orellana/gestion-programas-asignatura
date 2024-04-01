@@ -5,9 +5,9 @@ from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 
 from django.core.exceptions import ValidationError
 
-from backend.serializers import serializer_programa_asignatura
+from backend.common.choices import AccionesProgramaDeAsignatura
 from backend.models import Asignatura
-from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura
+from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura, ServicioAuditoria
 from backend.common.mensajes_de_error import (
     MENSAJE_ID_INEXISTENTE,
     MENSAJE_PERMISO_PROGRAMA,
@@ -26,6 +26,7 @@ class ReutilizarUltimoPrograma(APIView):
         """
         servicio_rol = ServicioRoles()
         servicio_programa = ServicioVersionProgramaAsignatura()
+        servicio_auditoria = ServicioAuditoria()
 
         try:
             asignatura = Asignatura.objects.get(id=id_asignatura)
@@ -45,6 +46,12 @@ class ReutilizarUltimoPrograma(APIView):
             
             if data is None:
                 return Response({"error": {"__all__": [MENSAJE_ERROR_INESPERADO]}})
+            
+            servicio_auditoria.auditar_revision(
+                  request.user,
+                  data,
+                  AccionesProgramaDeAsignatura.REUTILIZAR_ULTIMO_PROGRAMA
+              )
             return Response()
 
         return Response(
