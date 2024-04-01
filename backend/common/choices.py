@@ -82,3 +82,11 @@ class TiposDeEmail(TextChoices):
     CAMBIOS_PEDIDOS = "cambio", "Se pidieron cambios al programa"
     PERIODO_MODIFICACION_ABIERTO = "periodo_modificacion", "El periodo para modificar/crear programas de asignatura se ha abierto"
     PROGRAMA_LISTO_PARA_CORRECCION = "pendiente_correccion", "El programa esta pendiente de ser corregido"
+    
+class AccionesProgramaDeAsignatura(TextChoices):
+    CREAR_NUEVO = "CN", "Crear nuevo programa de asignatura"
+    EDITAR = "E", "Editar programa de asignatura"
+    PRESENTAR = "P", "Presentar programa de asignatura para aprobación"
+    APROBAR = "A", "Aprobar programa de asignatura"
+    REUTILIZAR_ULTIMO_PROGRAMA = "RU", "Reutilizar úlitmo programa de asignatura"
+    PEDIR_CAMBIOS = "PC", "Pedir cambios en el programa de asignatura"

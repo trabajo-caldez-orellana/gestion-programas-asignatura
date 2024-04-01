@@ -7,8 +7,8 @@ from django.core.exceptions import ValidationError
 
 from backend.models import VersionProgramaAsignatura
 from backend.common.mensajes_de_error import MENSAJE_ID_INEXISTENTE, MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR
-from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura
-from backend.common.choices import Roles 
+from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura, ServicioAuditoria
+from backend.common.choices import Roles, AccionesProgramaDeAsignatura
 
 class AprobarVersionProgramaAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -23,6 +23,7 @@ class AprobarVersionProgramaAPI(APIView):
         
         servicio_roles = ServicioRoles()
         servicio_version_programa = ServicioVersionProgramaAsignatura()
+        servicio_auditoria = ServicioAuditoria()
 
         roles = servicio_roles.obtener_roles_usuario(usuario)
         roles_directores = roles.filter(rol=Roles.DIRECTOR_CARRERA)
@@ -39,6 +40,7 @@ class AprobarVersionProgramaAPI(APIView):
                   version_programa=version_programa,
                   rol=rol
               )
+              servicio_auditoria.auditar_revision(usuario, version_programa, AccionesProgramaDeAsignatura.APROBAR)
             except ValidationError as e:
               # La unica excepcion que tira es por no tener permisos
               return Response({"error": e.message_dict}, status=HTTP_401_UNAUTHORIZED)
