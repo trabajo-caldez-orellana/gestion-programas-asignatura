@@ -21,7 +21,7 @@ env = environ.Env()
 environ.Env.read_env()
 BASE_URL = env.str("BASE_URL", "")
 ENVIRONMENT = env.str("ENVIRONMENT", "development")
-POSTGRESS_LOCALLY = env.bool("POSTGRESS_LOCALLY", "development")
+POSTGRESS_LOCALLY = env.bool("POSTGRESS_LOCALLY", False)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -172,6 +172,7 @@ CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ORIGIN_WHITELIST = env.list("CORS_ORIGIN_WHITELIST", default=[])
 CORS_ALLOW_CREDENTIALS = env.bool("CORS_ALLOW_CREDENTIALS", True)
 
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
