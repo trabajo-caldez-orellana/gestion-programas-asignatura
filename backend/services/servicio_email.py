@@ -22,4 +22,5 @@ class ServicioEmail:
         mailer.set_html_content(html, mail_body)
         mailer.set_plaintext_content(texto, mail_body)
 
-        mailer.send(mail_body)
+        response = mailer.send(mail_body)
+        return response
