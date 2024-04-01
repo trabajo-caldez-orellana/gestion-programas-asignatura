@@ -186,3 +186,4 @@ SIMPLE_JWT = {
 
 # Mailersend
 MAILERSEND_API_KEY = env.str("MAILERSEND_API_KEY", "")
+MAILERSEND_FROM = env.str("MAILERSEND_FROM", "")
