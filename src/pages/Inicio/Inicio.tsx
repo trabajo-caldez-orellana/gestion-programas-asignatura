@@ -1,7 +1,10 @@
 import React from 'react'
+import useAuth from '../../hooks/useAuth'
 
 const Inicio: React.FC = () => {
-  return <div>INICIO!</div>
+  const { auth } = useAuth()
+
+  return <div>Bienvenido {auth.userFirstName}! :D</div>
 }
 
 export default Inicio
