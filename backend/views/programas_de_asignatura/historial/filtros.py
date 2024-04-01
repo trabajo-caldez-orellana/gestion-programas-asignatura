@@ -1,10 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
 from backend.models import Carrera, Semestre, Asignatura, AnioAcademico
 
 
 class ObtenerFiltros(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         carreras = Carrera.objects.all().order_by("nombre")
         semestres = Semestre.objects.all().order_by("fecha_inicio")

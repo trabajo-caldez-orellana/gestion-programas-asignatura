@@ -4,7 +4,7 @@ import SidebarSectionList from './SidebarSectionList'
 interface SidebarProps {
   userinfo: {
     name: string
-    email: string
+    email: string | null
   }
 }
 
