@@ -10,7 +10,8 @@ import {
   TareasPendientes,
   ProgramasVigentes,
   Login,
-  Matriz
+  Matriz,
+  LoginLoading
 } from '../pages'
 
 export const RUTAS = {
@@ -255,7 +256,8 @@ export const RUTAS_PAGINAS = {
   HISTORIAL: '/historial',
   LOGIN: '/login',
   MATRIZ: '/matriz-tributacion',
-  INICIO: '/inicio'
+  LOGIN_LOADING: '/login-loading',
+  INICIO: ''
 }
 
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
@@ -398,6 +400,14 @@ export const PAGINAS: Pagina[] = [
     enabled: true,
     component: Matriz,
     protectedByLogin: true
+  },
+  {
+    key: 'login-loading',
+    title: 'Loading Login',
+    enabled: true,
+    path: RUTAS_PAGINAS.LOGIN_LOADING,
+    component: LoginLoading,
+    protectedByLogin: false
   },
   {
     key: 'inicio',
