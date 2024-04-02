@@ -5,7 +5,8 @@ WORKDIR /app
 COPY package.json package-lock.json /app/
 RUN npm install
 COPY . /app/
-RUN npm run build
+CMD ["npm", "run", "build"]
+
 
 FROM python:3.11.8-bullseye
 
