@@ -4,7 +4,6 @@ import queryString from 'query-string'
 import Cookies from 'js-cookie'
 import useAuth from '../../hooks/useAuth'
 import { client } from '../../utils/axiosClient'
-import { RUTAS_PAGINAS } from '../../constants/constants'
 
 const LoginLoading: React.FC = () => {
   const { setAuth } = useAuth()
