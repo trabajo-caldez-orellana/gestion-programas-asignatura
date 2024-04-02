@@ -3,7 +3,8 @@ from typing import Optional, List
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
+from django.conf import settings
 
 from backend.models import (
     VersionProgramaAsignatura,
@@ -25,7 +26,8 @@ from backend.common.choices import (
     EstadoAsignatura,
     Roles,
     Semestres,
-    EstadosAprobacionPrograma
+    EstadosAprobacionPrograma,
+    TiposDeEmail
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -62,6 +64,7 @@ from backend.services.configuracion import ServicioConfiguracion
 from backend.services.plan_de_estudio import ServicioPlanDeEstudio
 from backend.serializers import SerializerAsignatura
 from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
+from backend.tasks import enviar_email_async
 
 class ServicioVersionProgramaAsignatura:
     """
@@ -242,7 +245,6 @@ class ServicioVersionProgramaAsignatura:
         programas_count = VersionProgramaAsignatura.objects.filter(asignatura_id=asignatura.id, semestre_id=semestre.id).count()
         return programas_count > 0
 
-
     def crear_nueva_version_programa_asignatura(
         self,
         asignatura: Asignatura,
@@ -265,7 +267,6 @@ class ServicioVersionProgramaAsignatura:
         """
         Crea una nueva version de un programa de asignatura para el semestre que viene!
         """
-        # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
         ):
@@ -662,6 +663,32 @@ class ServicioVersionProgramaAsignatura:
         # TODO. Enviar mail avisando a los directores de carrera
         programa.estado = EstadoAsignatura.PENDIENTE
         programa.save()
+
+        
+        subject = f"[{programa.asignatura.codigo} - {programa.asignatura.denominacion}] Programa listo para corrección."
+        context = {
+            "site_url": f"{settings.BASE_FRONTEND_URL}/tareas-pendientes"
+        }
+        
+        # obtener destinatarios
+        planes_de_estudio_relacionados = programa.asignatura.planes_de_estudio.all()
+        carreras_de_planes_de_estudio = set()
+        
+        for plan in planes_de_estudio_relacionados:
+            carreras_de_planes_de_estudio.add(plan.carrera)
+        
+        directores_de_carrera = set()
+        for carrera in carreras_de_planes_de_estudio:
+            roles = Rol.objects.filter(carrera_id=carrera.id, rol=Roles.DIRECTOR_CARRERA)
+            for rol in roles:
+                directores_de_carrera.add(rol.usuario.email)
+
+        enviar_email_async.delay(
+            TiposDeEmail.PROGRAMA_LISTO_PARA_CORRECCION,
+            list(directores_de_carrera),
+            subject,
+            context
+        )
         return programa
 
     def obtener_ultimo_programa_de_asignatura_aprobado(self, asignatura: Asignatura):
@@ -981,7 +1008,25 @@ class ServicioVersionProgramaAsignatura:
         version_programa.full_clean()
         version_programa.save(update_fields=["estado"])
 
-        # TODO. Enviar email notificando que se pidieron cambios
+        docentes_de_la_asignatura = set()
+        subject = f"[{version_programa.asignatura.codigo} - {version_programa.asignatura.denominacion}] Se requieren correcciones para el programa."
+        context = {
+            "site_url": f"{settings.BASE_FRONTEND_URL}/tareas-pendientes",
+            "mensaje": mensaje
+        }
+        roles = Rol.objects.filter(
+            Q(rol=Roles.DOCENTE) | Q(rol=Roles.TITULAR_CATEDRA),
+            asignatura_id=version_programa.asignatura.id
+        )
+        for rol_docente in roles:
+            docentes_de_la_asignatura.add(rol_docente.usuario.email)
+
+        enviar_email_async.delay(
+            TiposDeEmail.CAMBIOS_PEDIDOS,
+            list(docentes_de_la_asignatura),
+            subject,
+            context
+        )
 
     def aprobar_programa_de_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol):
         if not version_programa.estado == EstadoAsignatura.PENDIENTE:
@@ -1016,7 +1061,22 @@ class ServicioVersionProgramaAsignatura:
             version_programa.estado = EstadoAsignatura.APROBADO
             version_programa.full_clean()
             version_programa.save(update_fields=["estado"])
-            # TODO. Enviar email notificando que se aprobaron los cambios
+
+            docentes_de_la_asignatura = set()
+            subject = f"[{version_programa.asignatura.codigo} - {version_programa.asignatura.denominacion}] Programa aprobado."
+            roles = Rol.objects.filter(
+                Q(rol=Roles.DOCENTE) | Q(rol=Roles.TITULAR_CATEDRA),
+                asignatura_id=version_programa.asignatura.id
+            )
+            for rol_docente in roles:
+                docentes_de_la_asignatura.add(rol_docente.usuario.email)
+
+            enviar_email_async.delay(
+                TiposDeEmail.PROGRAMA_APROBADO,
+                list(docentes_de_la_asignatura),
+                subject,
+                {}
+            )
 
     def obtener_datos_para_nuevo_programa(self, asignatura: Asignatura):
         # obtengo todos los estandares/programas a los que pertenece la asignatura
