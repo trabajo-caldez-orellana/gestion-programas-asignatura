@@ -11,18 +11,49 @@
         <title>Notificacion: Cambios pedidos</title>          
     </head>
     
-    <body style="font-family:'sans-serif',Arial;margin:0;padding:0;word-spacing:normal;background-color:#ffffff;">
-    <div role="article" aria-roledescription="email" lang="en" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background-color:#ffffff;">
-        <table width="520px" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
-        >
-            
-          <tr>
-              <td align="center" width="100%">
-                Te pidieron cambios :(
-              </td>
-          </tr>
-            
-        </table>
+    <body style="font-family:'sans-serif',Arial;">
+    <div role="article" aria-roledescription="email" lang="en">
+      <table width="520px" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
+      >  
+        <tr>
+          <td align="center" width="100%" style="background-color: #2d669d; color: white; padding: 10px;">
+            <h1 style="font-size: 20px;">
+              Sistema de Gestion de <br />Programas de Asignatura
+            </h1>
+            <h3 style="font-size: 15px; margin: 0;">
+              Facultad de Ciencias Exactas y Tecnología
+            </h3>
+            <h3 style="font-size: 14px; margin: 0;">
+              Universidad Nacional de Tucumán
+            </h3>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p style="padding: 10px; margin: 0;">
+              Se pidieron cambios para el programa de asignatura de la asignatura {{asignatura}}.
+            </p>
+            <br />
+            <p style="padding: 20px; background-color: #00000022; margin: 0 10px;">
+              {{mensaje}}
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p style="padding: 10px; margin: 10px 0px;">
+              Visite el sitio para realizar las modificaciones.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            <a href="{{site_url}}" style="padding: 10px; margin: 10px; background-color: #2d669d; color: white; cursor: pointer; text-decoration: none;" target="_blank">
+              Ir al sitio
+            </a>
+          </td>
+        </tr>
+      </table>
     </div>
     
     </body>

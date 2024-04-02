@@ -8,22 +8,49 @@
         
         <meta name="supported-color-schemes" content="light">
         <meta name="color-scheme" content="light">
-        <title>Recordatorio: Crear un nuevo programa de asignatura</title>          
+        <title>Programa pendiente de correccion</title>          
     </head>
     
-    <body style="font-family:'sans-serif',Arial;margin:0;padding:0;word-spacing:normal;background-color:#ffffff;">
-    <div role="article" aria-roledescription="email" lang="en" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background-color:#ffffff;">
+    <body style="font-family:'sans-serif',Arial;">
+      <div role="article" aria-roledescription="email" lang="en">
         <table width="520px" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
-        >
-            
+        >  
           <tr>
-              <td align="center" width="100%">
-                Hay un programa listo para ser corregido!
-              </td>
+            <td align="center" width="100%" style="background-color: #2d669d; color: white; padding: 10px;">
+              <h1 style="font-size: 20px;">
+                Sistema de Gestion de <br />Programas de Asignatura
+              </h1>
+              <h3 style="font-size: 15px; margin: 0;">
+                Facultad de Ciencias Exactas y Tecnología
+              </h3>
+              <h3 style="font-size: 14px; margin: 0;">
+                Universidad Nacional de Tucumán
+              </h3>
+            </td>
           </tr>
-            
+          <tr>
+            <td>
+              <p style="padding: 10px; margin: 0;">
+                El programa de asignatura de la asignatura {{asignatura}} está listo para ser corregido.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p style="padding: 10px; margin: 10px 0px;">
+                Visite el sitio para realizar las correcciones.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center">
+              <a href="{{site_url}}" style="padding: 10px; margin: 10px; background-color: #2d669d; color: white; cursor: pointer; text-decoration: none;" target="_blank">
+                Ir al sitio
+              </a>
+            </td>
+          </tr>
         </table>
-    </div>
-    
-    </body>
+      </div>
+      
+      </body>
 </html>
