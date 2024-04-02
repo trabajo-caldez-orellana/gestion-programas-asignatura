@@ -1,13 +1,7 @@
 FROM python:3.11.4
 
 # Set the working directory to /home/app
-RUN mkdir /home/app
-WORKDIR /home/app
-
 EXPOSE 8000
-
-COPY . /home/app/
-
 # User without permissions
 # RUN adduser --disabled-password --gecos '' celeryuser
 
