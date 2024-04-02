@@ -667,7 +667,8 @@ class ServicioVersionProgramaAsignatura:
         
         subject = f"[{programa.asignatura.codigo} - {programa.asignatura.denominacion}] Programa listo para corrección."
         context = {
-            "site_url": f"{settings.BASE_FRONTEND_URL}/tareas-pendientes"
+            "site_url": f"{settings.BASE_FRONTEND_URL}/tareas-pendientes",
+            "asignatura": programa.asignatura.denominacion
         }
         
         # obtener destinatarios
@@ -1012,6 +1013,7 @@ class ServicioVersionProgramaAsignatura:
         subject = f"[{version_programa.asignatura.codigo} - {version_programa.asignatura.denominacion}] Se requieren correcciones para el programa."
         context = {
             "site_url": f"{settings.BASE_FRONTEND_URL}/tareas-pendientes",
+            "asignatura": version_programa.asignatura.denominacion,
             "mensaje": mensaje
         }
         roles = Rol.objects.filter(
@@ -1075,7 +1077,9 @@ class ServicioVersionProgramaAsignatura:
                 TiposDeEmail.PROGRAMA_APROBADO,
                 list(docentes_de_la_asignatura),
                 subject,
-                {}
+                {
+                    "asignatura": version_programa.asignatura.denominacion,            
+                }
             )
 
     def obtener_datos_para_nuevo_programa(self, asignatura: Asignatura):
