@@ -45,10 +45,12 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         except Usuario.DoesNotExist:
             first_name = user_data.get('given_name', '')
             last_name = user_data.get('family_name', '')
+            profile_picture = user_data.get('picture', '')
             user = Usuario.objects.create(
                 email=user_data['email'],
                 first_name=first_name,
                 last_name=last_name,
+                profile_picture=profile_picture
             )
             refresh_token = RefreshToken.for_user(user)
 
