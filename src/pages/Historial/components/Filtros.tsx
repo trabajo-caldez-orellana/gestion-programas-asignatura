@@ -1,16 +1,14 @@
 import '../Historial.css'
 import Button from '../../../components/ui/Button'
 import { FiltrosType, selectedFiltrosType } from 'types'
+import { Dropdown } from '../../../components'
+import { ITEM_VACIO } from '../../../constants/constants'
 
 interface FiltrosProps {
   filtros: FiltrosType
-  selectedFiltros: selectedFiltrosType | null
-  setSelectedFiltros: React.Dispatch<
-    React.SetStateAction<selectedFiltrosType | null>
-  >
-  searchHistorialProgramas: (
-    selectedFiltros: selectedFiltrosType | null
-  ) => void
+  selectedFiltros: selectedFiltrosType
+  setSelectedFiltros: (filtros: selectedFiltrosType) => void
+  searchHistorialProgramas: (selectedFiltros: selectedFiltrosType) => void
 }
 
 export default function Filtros({
@@ -19,29 +17,37 @@ export default function Filtros({
   filtros,
   setSelectedFiltros
 }: FiltrosProps) {
-  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { id, value } = event.target
-    setSelectedFiltros((prevSelectedFiltros) => ({
-      ...prevSelectedFiltros!,
-      [id]: parseInt(value, 10)
-    }))
+  const handleChangeSelect = (
+    tipo: 'carrera' | 'asignatura' | 'anio_lectivo' | 'semestre',
+    value: string | number
+  ) => {
+    const filtro = filtros.find((filtro) => filtro.tipo === tipo)
+    const item = filtro?.opciones.find((opcion) => opcion.id == value)
+
+    setSelectedFiltros({
+      ...selectedFiltros,
+      [tipo]: item
+    })
   }
 
   return (
     <section id="filter-components-container">
       <section id="filter-container">
-        {filtros.map((filtroGroup, index) => (
-          <div className="filter-group" key={index}>
-            <label htmlFor={filtroGroup.tipo}>{filtroGroup.nombre}:</label>
-            <select id={filtroGroup.tipo} onChange={handleChangeSelect}>
-              {filtroGroup.opciones.map((opcion) => (
-                <option key={opcion.id} value={opcion.id}>
-                  {opcion.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
+        {filtros.map((filtroGroup) => {
+          const filtros = [ITEM_VACIO].concat(filtroGroup.opciones)
+          return (
+            <Dropdown
+              key={filtroGroup.tipo}
+              name={filtroGroup.tipo}
+              label={filtroGroup.nombre}
+              error=""
+              value={selectedFiltros[filtroGroup.tipo].id}
+              choices={filtros}
+              onChange={(value) => handleChangeSelect(filtroGroup.tipo, value)}
+              modoLectura={false}
+            />
+          )
+        })}
       </section>
       <Button
         text="Buscar"

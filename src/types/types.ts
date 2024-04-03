@@ -1,3 +1,5 @@
+import { DatoListaInterface } from '../constants/constants'
+
 export type ProgramasAsignaturas = {
   id: number
   asignatura: {
@@ -35,22 +37,17 @@ export type ProgramasVigentes = {
   accion_requerida: string | null
 }[]
 
-type Filtro = {
-  id: number
-  nombre: string
-}
-
 export type FiltrosType = {
-  tipo: string
+  tipo: 'carrera' | 'semestre' | 'asignatura' | 'anio_lectivo'
   nombre: string
-  opciones: Filtro[]
+  opciones: DatoListaInterface[]
 }[]
 
 export type selectedFiltrosType = {
-  carrera: number | null | undefined
-  semestre: number | null | undefined
-  asignatura: number | null | undefined
-  anio_lectivo: number | null | undefined
+  carrera: DatoListaInterface
+  semestre: DatoListaInterface
+  asignatura: DatoListaInterface
+  anio_lectivo: DatoListaInterface
 }
 
 export type ProgramasHistorial = {

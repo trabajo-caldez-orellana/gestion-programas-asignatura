@@ -24,9 +24,30 @@ export const getFiltros = async () => {
 }
 
 export const getSearchHistorial = async (
-  selectedFiltros: selectedFiltrosType | null
+  selectedFiltros: selectedFiltrosType
 ) => {
-  const params = `carrera=${selectedFiltros?.carrera}&semestre=${selectedFiltros?.semestre}&asignatura=${selectedFiltros?.asignatura}&anio_lectivo=${selectedFiltros?.anio_lectivo}`
+  let params = ''
+
+  if (selectedFiltros.carrera.id !== -1) {
+    params += `carrera=${selectedFiltros.carrera.id}&`
+  }
+
+  if (selectedFiltros.semestre.id !== -1) {
+    params += `semestre=${selectedFiltros.semestre.id}&`
+  }
+
+  if (selectedFiltros.asignatura.id !== -1) {
+    params += `asignatura=${selectedFiltros.asignatura.id}&`
+  }
+
+  if (selectedFiltros.anio_lectivo.id !== -1) {
+    params += `anio_lectivo=${selectedFiltros.anio_lectivo.id}&`
+  }
+
+  if (params[params.length - 1] === '&') {
+    params = params.slice(0, -1)
+  }
+
   const response = await client.get<ProgramasHistorial>(
     `${RUTAS.GET_HISTORIAL}?${params}`
   )
