@@ -5,9 +5,9 @@ import './App.css'
 import { Navbar } from './components'
 import { PAGINAS } from './constants/constants'
 import { AuthProvider } from './context/authProvider'
+import { MainContentContainer } from './components'
 
 export default function App() {
-  // TODO: Empujar el contenido del main hacia la izquierda si se abre el sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
@@ -16,7 +16,7 @@ export default function App() {
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
-      <main className="main-content">
+      <MainContentContainer>
         {/* <ProtectedRoute> */}
         <Routes>
           {PAGINAS.map((pagina) => (
@@ -35,7 +35,7 @@ export default function App() {
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>
         {/* </ProtectedRoute> */}
-      </main>
+      </MainContentContainer>
     </AuthProvider>
   )
 }
