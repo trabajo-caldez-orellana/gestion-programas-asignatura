@@ -2,7 +2,8 @@ import {
   NavbarWrapper,
   SidebarContainer,
   BurgerButton,
-  ButtonList
+  ButtonList,
+  ContentOverlay
 } from './NavbarStyled'
 import Sidebar from './Sidebar/Sidebar'
 import Button from '../ui/Button'
@@ -56,6 +57,7 @@ export default function Navbar({
 
   return (
     <NavbarWrapper $isOpen={isSidebarOpen}>
+      {isSidebarOpen && <ContentOverlay $isOpen={isSidebarOpen} />}
       {auth.isLoggedIn && (
         <BurgerButton
           $isOpen={isSidebarOpen}
