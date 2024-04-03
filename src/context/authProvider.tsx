@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
-import Cookies from 'js-cookie'
-import { jwtDecode } from "jwt-decode";
+import { useNavigate } from 'react-router-dom'
 import { client } from '../utils/axiosClient'
 
 interface Auth {
@@ -8,104 +7,78 @@ interface Auth {
   userEmail: string | null
   userFirstName: string | null
   userLastName: string | null
+  userRoles: {
+    es_docente: boolean
+    es_administrador: boolean
+    es_director_de_carrera: boolean
+    es_secretario_academico: boolean
+  }
 }
 
 interface AuthContextType {
   auth: Auth
   setAuth: React.Dispatch<React.SetStateAction<Auth>>
   handleLogout: () => void
+  getAuthUser: () => void
 }
 
 const defaultAuth: Auth = {
   isLoggedIn: false,
   userEmail: null,
   userFirstName: null,
-  userLastName: null
+  userLastName: null,
+  userRoles: {
+    es_administrador: false,
+    es_director_de_carrera: false,
+    es_docente: false,
+    es_secretario_academico: false
+  }
 }
 
 const AuthContext = createContext<AuthContextType>({
   auth: defaultAuth,
   setAuth: () => {},
-  handleLogout: () => {}
+  handleLogout: () => {},
+  getAuthUser: () => {}
 })
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [auth, setAuth] = useState<Auth>(defaultAuth)
+  const navigate = useNavigate()
 
-  const handleLogout = () => {
-    Cookies.remove('token'); // Remueve el token
-    Cookies.remove('refresh_token'); // Remueve el token
+  const handleLogout = async () => {
+    const response = await client.get('auth/logout/')
 
-    window.location.href = '/login'
+    if (response.status === 200) {
+      setAuth(defaultAuth)
+      navigate('/')
+    }
+  }
+
+  const getAuthUser = async () => {
+    client
+      .get(`auth/me/`)
+      .then((res) => {
+        const { user, roles } = res.data.data
+        setAuth({
+          isLoggedIn: true,
+          userEmail: user.email,
+          userFirstName: user.first_name,
+          userLastName: user.last_name,
+          userRoles: roles
+        })
+      })
+      .catch((err) => {
+        console.log('[ERROR ON AUTH]', err)
+      })
   }
 
   useEffect(() => {
-    const authUser = async () => {
-     client
-     .get(`auth/me/`, {
-       headers: {
-         Authorization: `Bearer ${token}`
-       }
-     })
-     .then((res) => {
-       const { user } = res.data
-       setAuth({
-         isLoggedIn: true,
-         userEmail: user.email,
-         userFirstName: user.first_name,
-         userLastName: user.last_name
-       })
-     })
-     .catch((err) => {
-       console.error('Error fetching user data:', err)
-     })
-    }
-
-    const refreshToken = async () => {
-      const refreshToken = Cookies.get('refresh_token');
-      try {
-          const res = await client.post("auth/token/refresh/", {
-              refresh: refreshToken,
-          });
-          if (res.status === 200) {
-            // Calcula la fecha dentro de 15 minutos
-              const horaActual = new Date();
-              const quinceMinutosDespues = new Date(horaActual.getTime() + 15 * 60 * 1000);
-              Cookies.set('token', res.data.access, { expires: quinceMinutosDespues, secure: true });
-          } else {
-              // setIsAuthorized(false)
-          }
-      } catch (error) {
-          console.log(error);
-          // setIsAuthorized(false);
-      }
-    };
-
-    const token = Cookies.get('token')
-
-    if (!token || token && isTokenExpired(token)) {
-      refreshToken()
-    }
-
-    authUser()
-
-
+    getAuthUser()
   }, [])
 
-  const isTokenExpired = (token : string) => {
-    const decoded = jwtDecode(token);
-      const tokenExpiration = decoded.exp;
-      const now = Date.now() / 1000;
-
-      if (tokenExpiration) {
-        return tokenExpiration < now;
-      }
-      return false;
-  }
-
-
   return (
-    <AuthContext.Provider value={{ auth, setAuth, handleLogout }}>
+    <AuthContext.Provider value={{ auth, setAuth, handleLogout, getAuthUser }}>
       {children}
     </AuthContext.Provider>
   )
