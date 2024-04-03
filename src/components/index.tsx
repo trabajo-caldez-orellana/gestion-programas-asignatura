@@ -17,6 +17,7 @@ import {
   Dropdown
 } from './Formulario'
 import Button from './ui/Button'
+import { MainContentContainer } from './MainContentContainer'
 
 export {
   Navbar,
@@ -37,5 +38,6 @@ export {
   ListadoDatos,
   SeleccionConModal,
   DoubleSelectionInput,
-  Dropdown
+  Dropdown,
+  MainContentContainer
 }
