@@ -239,13 +239,20 @@ export const CAMPOS_INFORMACION_ADICIONAL: CampoInformacionAdicionalType = [
   }
 ]
 
-type SidebarSection = {
+export const enum ROLES {
+  DOCENTE = 'D',
+  DIRECTOR = 'DI',
+  SECRETARIO = 'S'
+}
+
+export interface SidebarSection {
   id: number
   name: string
   sections: {
     id: number
     name: string
     url: string
+    permisos: ROLES[]
   }[]
 }
 
@@ -268,7 +275,8 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
       {
         id: 1,
         name: 'Matriz de Tributación',
-        url: RUTAS_PAGINAS.MATRIZ
+        url: RUTAS_PAGINAS.MATRIZ,
+        permisos: [ROLES.DIRECTOR, ROLES.SECRETARIO]
       }
     ]
   },
@@ -279,17 +287,20 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
       {
         id: 4,
         name: 'Programas vigentes',
-        url: RUTAS_PAGINAS.PROGRAMAS_VIGENTES
+        url: RUTAS_PAGINAS.PROGRAMAS_VIGENTES,
+        permisos: [ROLES.DIRECTOR, ROLES.SECRETARIO, ROLES.DOCENTE]
       },
       {
         id: 6,
         name: 'Tareas Pendientes',
-        url: RUTAS_PAGINAS.TAREAS_PENDIENTES
+        url: RUTAS_PAGINAS.TAREAS_PENDIENTES,
+        permisos: [ROLES.DOCENTE, ROLES.DIRECTOR]
       },
       {
         id: 7,
         name: 'Historial',
-        url: RUTAS_PAGINAS.HISTORIAL
+        url: RUTAS_PAGINAS.HISTORIAL,
+        permisos: [ROLES.DIRECTOR, ROLES.SECRETARIO, ROLES.DOCENTE]
       }
     ]
   }

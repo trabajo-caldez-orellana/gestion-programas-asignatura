@@ -1,9 +1,10 @@
 import './Navbar.css'
 import Sidebar from '../Sidebar/Sidebar'
 import Button from '../ui/Button'
-import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import useAuth from "../../hooks/useAuth";
+import useAuth from '../../hooks/useAuth'
+import { RUTAS_PAGINAS } from '../../constants/constants'
 
 interface NavbarProps {
   isSidebarOpen: boolean
@@ -12,24 +13,22 @@ interface NavbarProps {
 
 export default function Navbar({
   isSidebarOpen,
-  setIsSidebarOpen,
+  setIsSidebarOpen
 }: NavbarProps) {
-
   const { auth, handleLogout } = useAuth()
-
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+  const navigate = useNavigate()
 
   const handleOpenSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState)
   }
 
-  useEffect(() => {
-    setIsAuthenticated(auth.isLoggedIn)
-  }, [auth])
+  const handleLoginButton = () => {
+    navigate(RUTAS_PAGINAS.LOGIN)
+  }
 
-  return isAuthenticated ? (
-    <>
-      <nav className={`navbar wrapper ${isSidebarOpen ? '' : 'inactive'}`}>
+  return (
+    <nav className={`navbar wrapper ${isSidebarOpen ? '' : 'inactive'}`}>
+      {auth.isLoggedIn && (
         <div className="section">
           <div className="top_navbar">
             <div className="hamburger">
@@ -39,31 +38,27 @@ export default function Navbar({
             </div>
           </div>
         </div>
-        <ul id="navbar-items">
+      )}
+      <ul id="navbar-items">
+        {auth.isLoggedIn ? (
           <>
             <li>
-              <Button text="Cerrar Sesion" onClick={handleLogout} />
-            </li>
-            <li>
-              <Button text="Notificaciones" onClick={() => {}} />
+              <Button text="Cerrar Sesión" onClick={handleLogout} />
             </li>
           </>
-        </ul>
+        ) : (
+          <>
+            <li>
+              <Button text="Iniciar Sesión" onClick={handleLoginButton} />
+            </li>
+          </>
+        )}
+      </ul>
+      {auth.isLoggedIn && (
         <div className="sidebar">
-          {auth.isLoggedIn ? (
-            <Sidebar
-              userinfo={{
-                name: `${auth.userFirstName} ${auth.userLastName}`,
-                email: auth.userEmail
-              }}
-            />
-          ) : (
-            <></>
-          )}
+          <Sidebar />
         </div>
-      </nav>
-    </>
-  ) : (
-    <></>
+      )}
+    </nav>
   )
 }
