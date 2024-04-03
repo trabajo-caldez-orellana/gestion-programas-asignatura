@@ -16,5 +16,5 @@ from .programas_de_asignatura import (
 )
 from .programas_de_asignatura.pdf.generar_pdf import GenerarPDF
 
-from .authentication.google import GoogleLoginApi, GoogleAuthApi
+from .authentication import GoogleLoginApi, GoogleAuthApi, LogoutAPI
 from .plan import APIListarPlanesDeEstudio
