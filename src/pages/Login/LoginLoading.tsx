@@ -4,6 +4,7 @@ import queryString from 'query-string'
 import Cookies from 'js-cookie'
 import useAuth from '../../hooks/useAuth'
 import { client } from '../../utils/axiosClient'
+import { Spinner } from '../../components'
 
 const LoginLoading: React.FC = () => {
   const { setAuth } = useAuth()
@@ -61,7 +62,7 @@ const LoginLoading: React.FC = () => {
     await googleLoginHandler(location.search)
   }
 
-  return <div>Loading...</div>
+  return <Spinner />
 }
 
 export default LoginLoading
