@@ -7,6 +7,7 @@ interface Auth {
   userEmail: string | null
   userFirstName: string | null
   userLastName: string | null
+  userProfilePicture: string | null
   userRoles: {
     es_docente: boolean
     es_administrador: boolean
@@ -27,6 +28,7 @@ const defaultAuth: Auth = {
   userEmail: null,
   userFirstName: null,
   userLastName: null,
+  userProfilePicture: null,
   userRoles: {
     es_administrador: false,
     es_director_de_carrera: false,
@@ -65,6 +67,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           userEmail: user.email,
           userFirstName: user.first_name,
           userLastName: user.last_name,
+          userProfilePicture: user.profile_picture,
           userRoles: roles
         })
       })
