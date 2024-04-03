@@ -7,6 +7,7 @@ import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import Filtros from './components/Filtros'
 import { ProgramasHistorial } from '../../types'
 import { client } from '../../utils/axiosClient'
+import { Titulo } from '../../components'
 
 export default function Historial() {
   const navigate = useNavigate()
@@ -66,6 +67,7 @@ export default function Historial() {
 
   return (
     <section className="section-content">
+      <Titulo> Historial de programas</Titulo>
       <Filtros
         filtros={filtros}
         setSelectedFiltros={setSelectedFiltros}
