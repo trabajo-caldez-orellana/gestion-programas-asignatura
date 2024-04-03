@@ -93,9 +93,7 @@ export default function Table({
             </>
           ) : (
             <tr>
-              {tableColumns.map((column) => (
-                <td>No hay datos disponibles</td>
-              ))}
+              <td>No hay datos disponibles</td>
             </tr>
           )}
         </tbody>
