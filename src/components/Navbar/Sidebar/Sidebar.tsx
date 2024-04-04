@@ -1,10 +1,12 @@
 import SidebarSectionList from './SidebarSectionList'
 import useAuth from '../../../hooks/useAuth'
+
 import {
   SidebarListContainer,
   UserInfoSection,
   UserCardContainer,
-  ProfilePicture
+  ProfilePicture,
+  BotonSeccion
 } from '../NavbarStyled'
 
 interface SidebarProps {
@@ -12,7 +14,12 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
-  const { auth } = useAuth()
+  const { auth, handleLogout } = useAuth()
+
+  const handleClickLogoutButton = () => {
+    onLinkClick()
+    handleLogout()
+  }
 
   return (
     <SidebarListContainer>
@@ -25,6 +32,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
         </UserCardContainer>
       </UserInfoSection>
       <SidebarSectionList onLinkClick={onLinkClick} />
+
+      <BotonSeccion className="cerrar-sesion" onClick={handleClickLogoutButton}>
+        Cerrar Sesión
+      </BotonSeccion>
     </SidebarListContainer>
   )
 }
