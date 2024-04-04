@@ -3,6 +3,7 @@ import TableProgramasVigentes from './components/TableProgramasVigentes'
 import { useNavigate } from 'react-router-dom'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import { client } from '../../utils/axiosClient'
+import { RUTAS_PAGINAS } from '../../constants/constants'
 
 export default function ProgramasVigentes() {
   const navigate = useNavigate()
@@ -17,7 +18,7 @@ export default function ProgramasVigentes() {
 
   const verPrograma = (id: number | string, modoPrograma: string) => {
     if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
-      navigate(`/programa-asignaturas/${id}`)
+      navigate(`${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${id}`)
   }
 
   const imprimir = (id: number | string) => {

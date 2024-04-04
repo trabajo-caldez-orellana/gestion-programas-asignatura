@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
+from rest_framework_simplejwt import views as jwt_views
 
 from backend.views import (
     ListarProgramasVigentesAPI,
@@ -31,12 +32,15 @@ from backend.views import (
     InformacionEditarProgramaAPartirDelUltimoAPI,
     ObtenerProgramasHistorial,
     GenerarPDF,
+    GoogleLoginApi,
+    GoogleAuthApi,
     GenerarMatriz,
     APIListarPlanesDeEstudio,
     AprobarVersionProgramaAPI,
     PedirCambiosVersionProgramaAPI,
     AsignaturasDisponiblesAPartirAsignatura,
-    AsignaturasDisponiblesAPartirPrograma
+    AsignaturasDisponiblesAPartirPrograma,
+    LogoutAPI,
 )
 
 informes_patterns = [
@@ -83,9 +87,9 @@ planes_estudio_patterns = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("auth/", include("djoser.urls")),
-    path("auth/", include("djoser.urls.authtoken")),
-    path("auth/", include("djoser.social.urls")),
+    path("auth/logout/", LogoutAPI.as_view()),
+    path("auth/login/google/", GoogleLoginApi.as_view(), name="login-with-google"),
+    path("auth/me/", GoogleAuthApi.as_view()),
     path("api/programas/", include(programas_patterns)),
     path("api/filtros/", include(filtros_patterns)),
     path("api/historial/", include(historial_patterns)),

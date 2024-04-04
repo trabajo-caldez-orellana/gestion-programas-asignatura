@@ -16,3 +16,4 @@ from .auditoria_estado_version_programa import AuditoriaEstadoVersionPrograma
 from .notificacion import Notificacion
 from .actividad_reservada import ActividadReservada
 from .programa_tiene_actividad_reservada import ProgramaTieneActividadReservada
+from .auditoria_revision_docentes import AuditoriaRevisionDocentes

@@ -10,7 +10,8 @@ import {
   TareasPendientes,
   ProgramasVigentes,
   Login,
-  Matriz
+  Matriz,
+  LoginLoading
 } from '../pages'
 
 export const RUTAS = {
@@ -39,7 +40,7 @@ export const RUTAS = {
 }
 
 export const HANDLERS = {
-  GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignaturas/:id',
+  GET_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignatura/:id',
   POST_PROGRAMA_ASIGNATURA_HANDLER: '/programa-asignatura/:id',
   GET_PROGRAMAS_ASIGNATURAS_HANDLER: '/programas-asignaturas/',
   GET_PROGRAMAS_VIGENTES_HANDLER: '/api/programas/vigentes/',
@@ -259,6 +260,7 @@ export const RUTAS_PAGINAS = {
   HISTORIAL: '/historial',
   LOGIN: '/login',
   MATRIZ: '/matriz-tributacion',
+  LOGIN_LOADING: '/login-loading',
   INICIO: ''
 }
 
@@ -404,12 +406,20 @@ export const PAGINAS: Pagina[] = [
     protectedByLogin: true
   },
   {
+    key: 'login-loading',
+    title: 'Cargando',
+    enabled: true,
+    path: RUTAS_PAGINAS.LOGIN_LOADING,
+    component: LoginLoading,
+    protectedByLogin: false
+  },
+  {
     key: 'inicio',
     title: 'Pagina Inicio',
     path: RUTAS_PAGINAS.INICIO,
     enabled: true,
     component: Inicio,
-    protectedByLogin: true
+    protectedByLogin: false
   }
 ]
 
