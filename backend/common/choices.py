@@ -79,3 +79,11 @@ class RequisitosCorrelativa(TextChoices):
     ASIGNATURA = 'asignatura', "Asignatura aprobada o regular"
     CANTIDAD_ASIGNATURAS = 'cantidad', "Número de asignaturas aprobadas o regulares"
     MODULO = 'modulo', "Módulo aprobado o regular"
+    
+class AccionesProgramaDeAsignatura(TextChoices):
+    CREAR_NUEVO = "CN", "Crear nuevo programa de asignatura"
+    EDITAR = "E", "Editar programa de asignatura"
+    PRESENTAR = "P", "Presentar programa de asignatura para aprobación"
+    APROBAR = "A", "Aprobar programa de asignatura"
+    REUTILIZAR_ULTIMO_PROGRAMA = "RU", "Reutilizar úlitmo programa de asignatura"
+    PEDIR_CAMBIOS = "PC", "Pedir cambios en el programa de asignatura"

@@ -20,3 +20,5 @@ from .informacion_para_formularios import (
     AsignaturasDisponiblesAPartirPrograma,
     AsignaturasDisponiblesAPartirAsignatura
 )
+
+from .authentication import GoogleLoginApi, GoogleAuthApi, LogoutAPI

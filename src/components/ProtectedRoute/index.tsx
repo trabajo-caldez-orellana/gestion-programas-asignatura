@@ -2,12 +2,13 @@ import { PropsWithChildren, useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { RUTAS_PAGINAS } from '../../constants/constants'
-import useProfile from '../../hooks/useProfile'
+import useAuth from '../../hooks/useAuth'
 
 const RUTAS_DESPROTEGIDAS = [RUTAS_PAGINAS.LOGIN]
 
 const ProtectedRoute: React.FC<PropsWithChildren> = ({ children }) => {
-  const { profileData, isLoading } = useProfile()
+
+  const { auth } = useAuth()
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -16,12 +17,12 @@ const ProtectedRoute: React.FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     const pathname = location.pathname
-    if (isLoading) {
-      setIsReadyToRender(false)
-      return
-    }
+    // if (isLoading) {
+    //   setIsReadyToRender(false)
+    //   return
+    // }
 
-    if (!profileData) {
+    if (!auth.isLoggedIn) {
       if (RUTAS_DESPROTEGIDAS.includes(pathname)) {
         setIsReadyToRender(true)
         return
@@ -33,7 +34,7 @@ const ProtectedRoute: React.FC<PropsWithChildren> = ({ children }) => {
       }
     }
     setIsReadyToRender(true)
-  }, [profileData, location, isLoading])
+  }, [auth, location, navigate])
 
   if (!isReadyToRender) {
     return <div>LOADING</div>

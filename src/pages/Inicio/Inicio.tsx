@@ -1,10 +1,10 @@
 import React from 'react'
-import useProfile from '../../hooks/useProfile'
+import useAuth from '../../hooks/useAuth'
 
 const Inicio: React.FC = () => {
-  const { profileData } = useProfile()
+  const { auth } = useAuth()
 
-  return <div>Bienvenido {profileData?.firstName}! :D</div>
+  return <div>Bienvenido {auth.userFirstName}! :D</div>
 }
 
 export default Inicio

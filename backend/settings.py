@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+from datetime import timedelta
 import dj_database_url
 
 # Inicializar las variables de entorno
@@ -20,7 +21,7 @@ env = environ.Env()
 environ.Env.read_env()
 BASE_URL = env.str("BASE_URL", "")
 ENVIRONMENT = env.str("ENVIRONMENT", "development")
-POSTGRESS_LOCALLY = env.bool("POSTGRESS_LOCALLY", "development")
+POSTGRESS_LOCALLY = env.bool("POSTGRESS_LOCALLY", False)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,12 +36,13 @@ SECRET_KEY = env.str("SECRET_KEY", "")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", False)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -49,11 +51,11 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     "django.contrib.staticfiles",
     "rest_framework",
+    'rest_framework_simplejwt',
     "rest_framework.authtoken",
-    "djoser",
+    'rest_framework_simplejwt.token_blacklist',
     "social_django",
     "backend",
-    "corsheaders"
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "backend.jwt.ReplaceRefreshedAccessTokenMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "social_django.middleware.SocialAuthExceptionMiddleware",
@@ -151,13 +154,15 @@ STATICFILES_STORAGE = (
     'whitenoise.storage.CompressedManifestStaticFilesStorage'
 )
 WHITENOISE_ROOT = BASE_DIR / 'build'
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Authentication
 AUTH_USER_MODEL = "backend.Usuario"
+
+BASE_FRONTEND_URL = env.str("BASE_FRONTEND_URL", "")
+GOOGLE_OAUTH2_CLIENT_ID = env.str("GOOGLE_OAUTH2_CLIENT_ID", "")
+GOOGLE_OAUTH2_CLIENT_SECRET = env.str("GOOGLE_OAUTH2_CLIENT_SECRET", "")
 
 AUTHENTICATION_BACKENDS = (
     "social_core.backends.google.GoogleOAuth2",
@@ -166,31 +171,25 @@ AUTHENTICATION_BACKENDS = (
 
 # CORS
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
-CORS_TRUSTED_ORIGINS = env.list("CORS_TRUSTED_ORIGINS", default=[])
-CORS_ALLOW_ALL_ORIGINS = True
-
-DJOSER = {
-    "LOGIN_FIELD": "email",
-}
-
-DJOSER = {
-    "LOGIN_FIELD": "email",
-    "SOCIAL_AUTH_TOKEN_STRATEGY": "backend.strategy.TokenStrategy",
-    "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": env.list("SOCIAL_AUTH_ALLOWED_REDIRECT_URIS", default=[]),
-}
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("GOOGLE_CLIENT_ID")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("GOOGLE_CLIENT_SECRET")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile",
-    "openid",
-]
-SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ["first_name", "last_name"]
-
+CORS_ORIGIN_WHITELIST = env.list("CORS_ORIGIN_WHITELIST", default=[])
+CORS_ALLOW_CREDENTIALS = env.bool("CORS_ALLOW_CREDENTIALS", True)
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'backend.jwt.CustomJWTAuthentication',
     ),
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Tiempo de vida del access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Tiempo de vida del refresh token
+}
+
+# Authentication cookies
+CUSTOM_AUTH_ACCESS_COOKIE="TAT"
+CUSTOM_TEMPORAL_NEW_ACCESS_COOKIE="temporary-access"
+CUSTOM_AUTH_REFRESH_COOKIE="TRT"
+CUSTOM_AUTH_COOKIE_SECURE=True
+CUSTOM_AUTH_COOKIE_HTTP_ONLY=True
+CUSTOM_AUTH_COOKIE_SAMESITE="Strict"

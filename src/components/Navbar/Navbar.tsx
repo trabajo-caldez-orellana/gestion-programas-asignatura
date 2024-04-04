@@ -3,20 +3,20 @@ import Sidebar from '../Sidebar/Sidebar'
 import Button from '../ui/Button'
 import { useEffect, useState } from 'react'
 
-import useProfile from '../../hooks/useProfile.ts'
+import useAuth from "../../hooks/useAuth";
 
 interface NavbarProps {
   isSidebarOpen: boolean
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
-  handleLogout: () => void
 }
 
 export default function Navbar({
   isSidebarOpen,
   setIsSidebarOpen,
-  handleLogout
 }: NavbarProps) {
-  const { profileData, isLoading } = useProfile()
+
+  const { auth, handleLogout } = useAuth()
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
   const handleOpenSidebar = () => {
@@ -24,8 +24,8 @@ export default function Navbar({
   }
 
   useEffect(() => {
-    setIsAuthenticated(!isLoading && !!profileData)
-  }, [profileData, isLoading])
+    setIsAuthenticated(auth.isLoggedIn)
+  }, [auth])
 
   return isAuthenticated ? (
     <>
@@ -50,11 +50,11 @@ export default function Navbar({
           </>
         </ul>
         <div className="sidebar">
-          {profileData ? (
+          {auth.isLoggedIn ? (
             <Sidebar
               userinfo={{
-                name: `${profileData.firstName} ${profileData.lastName}`,
-                email: profileData.email
+                name: `${auth.userFirstName} ${auth.userLastName}`,
+                email: auth.userEmail
               }}
             />
           ) : (

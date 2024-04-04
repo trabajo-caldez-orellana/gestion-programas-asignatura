@@ -6,10 +6,11 @@ from rest_framework import serializers
 
 from django.core.exceptions import ValidationError
 
+from backend.common.choices import AccionesProgramaDeAsignatura
 from backend.models import VersionProgramaAsignatura
 from backend.serializers import serializer_programa_asignatura
 from backend.serializers.programa_asignatura import SerializerCorrelativa
-from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura
+from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura, ServicioAuditoria
 from backend.common.mensajes_de_error import (
     MENSAJE_ID_INEXISTENTE,
     MENSAJE_PERMISO_PROGRAMA,
@@ -58,6 +59,7 @@ class ModificarProgramaAPI(APIView):
         """
         servicio_rol = ServicioRoles()
         servicio_programa = ServicioVersionProgramaAsignatura()
+        servicio_auditoria = ServicioAuditoria()
 
         try:
             programa = VersionProgramaAsignatura.objects.get(id=id_programa)
@@ -100,12 +102,22 @@ class ModificarProgramaAPI(APIView):
                 fundamentacion = validated_data["fundamentacion"],
                 correlativas=validated_data["correlativas"]
             )
+            servicio_auditoria.auditar_revision(
+                request.user,
+                programa_modificado,
+                AccionesProgramaDeAsignatura.EDITAR
+            )
         except ValidationError as e:
             return Response({"error": e.message_dict}, status=HTTP_400_BAD_REQUEST)
 
         if validated_data["presentar_a_aprobacion"]:
             try:
                 servicio_programa.presentar_programa_para_aprobacion(programa_modificado)
+                servicio_auditoria.auditar_revision(
+                    request.user,
+                    programa_modificado,
+                    AccionesProgramaDeAsignatura.PRESENTAR
+                )
             except ValidationError as e:
                 return Response({"error": e.message_dict}, status=HTTP_400_BAD_REQUEST)
 
