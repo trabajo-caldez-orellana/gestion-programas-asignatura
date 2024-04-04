@@ -24,7 +24,7 @@ class ObtenerDatosPdf:
             "usuario"
         )
         # Obtener todos los Plan de Estudio asociados a la asignatura
-        planes_de_estudio = asignatura.plandeestudio_set.all()
+        planes_de_estudio = asignatura.planes_de_estudio.all()
 
         # Obtenemos las carreras
         carreras = []
