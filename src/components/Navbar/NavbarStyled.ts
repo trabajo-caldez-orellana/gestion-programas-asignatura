@@ -75,6 +75,7 @@ export const UserInfoSection = styled.div`
 
 export const ProfilePicture = styled.img`
   height: 70px;
+  width: 70px;
   border-radius: 50%;
   padding: 10px;
 `
@@ -93,6 +94,8 @@ export const UserCardContainer = styled.div`
 
 export const SidebarListContainer = styled.div`
   width: 100%;
+  position: relative;
+  height: 100%;
 `
 
 export const ContentOverlay = styled.div<NavbarProps>`
@@ -143,10 +146,22 @@ export const BotonSeccion = styled.button`
   font-size: 14px;
   padding: 15px 30px;
   color: white;
-  height: 100%;
   cursor: pointer;
   width: 100%;
   text-align: left;
   font-weight: 100;
   background-color: transparent;
+
+  &.cerrar-sesion {
+    position: absolute;
+    bottom: 0;
+  }
+
+  &.cerrar-sesion:hover {
+    background-color: #00000022;
+  }
+`
+
+export const NavbarLogo = styled.img`
+  height: 50px;
 `

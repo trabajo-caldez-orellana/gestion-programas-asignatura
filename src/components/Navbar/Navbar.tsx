@@ -2,15 +2,11 @@ import {
   NavbarWrapper,
   SidebarContainer,
   BurgerButton,
-  ButtonList,
   ContentOverlay
 } from './NavbarStyled'
 import Sidebar from './Sidebar/Sidebar'
-import Button from '../ui/Button'
-import { useNavigate } from 'react-router-dom'
 import { useRef, useEffect } from 'react'
 import useAuth from '../../hooks/useAuth'
-import { RUTAS_PAGINAS } from '../../constants/constants'
 
 interface NavbarProps {
   isSidebarOpen: boolean
@@ -21,8 +17,7 @@ export default function Navbar({
   isSidebarOpen,
   setIsSidebarOpen
 }: NavbarProps) {
-  const { auth, handleLogout } = useAuth()
-  const navigate = useNavigate()
+  const { auth } = useAuth()
 
   const sidebarRef = useRef<HTMLDivElement>(null)
 
@@ -47,10 +42,6 @@ export default function Navbar({
     setIsSidebarOpen((state) => !state)
   }
 
-  const handleLoginButton = () => {
-    navigate(RUTAS_PAGINAS.LOGIN)
-  }
-
   const onLinkClick = () => {
     setIsSidebarOpen(false)
   }
@@ -66,17 +57,6 @@ export default function Navbar({
           <i className="fas fa-bars"></i>
         </BurgerButton>
       )}
-      <ButtonList>
-        {auth.isLoggedIn ? (
-          <li>
-            <Button text="Cerrar Sesión" onClick={handleLogout} />
-          </li>
-        ) : (
-          <li>
-            <Button text="Iniciar Sesión" onClick={handleLoginButton} />
-          </li>
-        )}
-      </ButtonList>
       {auth.isLoggedIn && (
         <SidebarContainer $isOpen={isSidebarOpen} ref={sidebarRef}>
           <Sidebar onLinkClick={onLinkClick} />
