@@ -7,7 +7,8 @@ import {
   NuevoPrograma,
   ProgramaAsignaturaErrores
 } from '../../../interfaces/interfaces'
-import { RUTAS } from '../../../constants/constants'
+import { DatoListaInterface, RUTAS } from '../../../constants/constants'
+import { Correlativa } from '../../../interfaces/interfaces'
 
 const parserProgramaAsignatura = (
   programa: ProgramaAsignaturaAPIBody
@@ -57,8 +58,7 @@ const parserProgramaAsignatura = (
         programa.informacion_adicional.extension_estudiantes,
       extensionDocentes: programa.informacion_adicional.extension_docentes
     },
-    // TODO. Parse correlativas desde el backend
-    correlativas: []
+    correlativas: programa.correlativas
   }
 }
 
@@ -197,6 +197,7 @@ interface ProgramaPOSTBodyInterface {
   actividades_reservadas: { id: number; nivel: number }[]
   ejes_transversales: { id: number; nivel: number }[]
   presentar_a_aprobacion: boolean
+  correlativas: Correlativa[]
 }
 
 interface ProgramaPOSTBodyErrorInterface {
@@ -215,6 +216,7 @@ interface ProgramaPOSTBodyErrorInterface {
   descriptores?: string[]
   actividades_reservadas?: string[]
   ejes_transversales?: string[]
+  correlativas?: string[]
   __all__?: string[]
   mensaje?: string[]
 }
@@ -259,7 +261,8 @@ const parseProgramaPOSTBody = (
     ejes_transversales: parsedEjesTransversales,
     presentar_a_aprobacion: presentar,
     metodologia_aplicada: programa.informacionAdicional.metodologiaAplicada,
-    fundamentacion: programa.informacionAdicional.fundamentacion
+    fundamentacion: programa.informacionAdicional.fundamentacion,
+    correlativas: programa.correlativas
   }
 }
 
@@ -308,8 +311,9 @@ const parseProgramaPOSTError = (
         ? responseError.extension_docentes[0]
         : ''
     },
-    // TODO. Cambiar cuadno cree la llamada a a la api
-    correlativas: '',
+    correlativas: responseError.correlativas
+      ? responseError.correlativas[0]
+      : '',
     all: responseError.__all__ ? responseError.__all__[0] : '',
     mensaje: responseError.mensaje ? responseError.mensaje[0] : ''
   }
@@ -399,6 +403,46 @@ export const pedirCambiosProgramaAsignatura = async (
     return {
       status: error.response.status,
       error: parseProgramaPOSTError(error.response.data.error)
+    }
+  }
+}
+
+export const obtenerAsignaturasDisponiblesAPartirDeAsignatura = async (
+  id_asignatura: string
+) => {
+  try {
+    const response = await client.get(
+      `${RUTAS.OBTENER_CORRELATIVAS_DISPONIBLES_ASIGNATURA}${id_asignatura}/`
+    )
+
+    return {
+      status: response.status,
+      data: response.data.data as DatoListaInterface[]
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      data: [] as DatoListaInterface[]
+    }
+  }
+}
+
+export const obtenerAsignaturasDisponiblesAPartirDePrograma = async (
+  id_programa: string
+) => {
+  try {
+    const response = await client.get(
+      `${RUTAS.OBTENER_CORRELATIVAS_DISPONIBLES_PROGRAMA}${id_programa}/`
+    )
+
+    return {
+      status: response.status,
+      data: response.data.data as DatoListaInterface[]
+    }
+  } catch (error: any) {
+    return {
+      status: error.response.status,
+      data: [] as DatoListaInterface[]
     }
   }
 }
