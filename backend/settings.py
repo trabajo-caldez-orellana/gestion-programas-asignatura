@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework_simplejwt',
     "rest_framework.authtoken",
+    'rest_framework_simplejwt.token_blacklist',
     "social_django",
     "backend",
 ]
@@ -65,6 +66,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "backend.jwt.ReplaceRefreshedAccessTokenMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "social_django.middleware.SocialAuthExceptionMiddleware",
@@ -171,12 +173,11 @@ AUTHENTICATION_BACKENDS = (
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ORIGIN_WHITELIST = env.list("CORS_ORIGIN_WHITELIST", default=[])
 CORS_ALLOW_CREDENTIALS = env.bool("CORS_ALLOW_CREDENTIALS", True)
-
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'backend.jwt.CustomJWTAuthentication',
     ),
 }
 
@@ -184,3 +185,11 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Tiempo de vida del access token
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Tiempo de vida del refresh token
 }
+
+# Authentication cookies
+CUSTOM_AUTH_ACCESS_COOKIE="TAT"
+CUSTOM_TEMPORAL_NEW_ACCESS_COOKIE="temporary-access"
+CUSTOM_AUTH_REFRESH_COOKIE="TRT"
+CUSTOM_AUTH_COOKIE_SECURE=True
+CUSTOM_AUTH_COOKIE_HTTP_ONLY=True
+CUSTOM_AUTH_COOKIE_SAMESITE="Strict"

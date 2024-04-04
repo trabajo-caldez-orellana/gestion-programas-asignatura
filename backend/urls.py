@@ -38,6 +38,7 @@ from backend.views import (
     APIListarPlanesDeEstudio,
     AprobarVersionProgramaAPI,
     PedirCambiosVersionProgramaAPI,
+    LogoutAPI,
 )
 
 informes_patterns = [
@@ -79,9 +80,9 @@ planes_estudio_patterns = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("auth/logout/", LogoutAPI.as_view()),
     path("auth/login/google/", GoogleLoginApi.as_view(), name="login-with-google"),
     path("auth/me/", GoogleAuthApi.as_view()),
-    path("auth/token/refresh/", jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path("api/programas/", include(programas_patterns)),
     path("api/filtros/", include(filtros_patterns)),
     path("api/historial/", include(historial_patterns)),
