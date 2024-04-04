@@ -1,18 +1,16 @@
 import './Sidebar.css'
 import SidebarSectionList from './SidebarSectionList'
+import useAuth from '../../hooks/useAuth'
 
-interface SidebarProps {
-  userinfo: {
-    name: string
-    email: string | null
-  }
-}
+export default function Sidebar() {
+  const { auth } = useAuth()
 
-export default function Sidebar({ userinfo }: SidebarProps) {
   return (
     <>
       <section className="sidebar-header">
-        <h1>{userinfo.name} </h1>
+        <h1>
+          {auth.userFirstName} {auth.userLastName}
+        </h1>
       </section>
       <section>
         <SidebarSectionList />
