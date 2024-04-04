@@ -12,14 +12,20 @@ import {
   crearProgramaAsignatura,
   modificarProgramaAsignatura,
   aprobarProgramaAsignatura,
-  pedirCambiosProgramaAsignatura
+  pedirCambiosProgramaAsignatura,
+  obtenerAsignaturasDisponiblesAPartirDeAsignatura,
+  obtenerAsignaturasDisponiblesAPartirDePrograma
 } from '../services'
 import {
   MODOS_PROGRAMA_ASIGNATURA,
   NUEVO_PROGRAMA_ASIGNATURA,
   ERRORES_DEFAULT_PROGRAMA_ASIGNATURA,
   RUTAS_PAGINAS,
-  MENSAJES_DE_ERROR
+  MENSAJES_DE_ERROR,
+  DatoListaInterface,
+  TIPO_CORRELATIVA,
+  REQUISITOS_CORRELATIVA,
+  ASIGNATURA_VACIA
 } from '../../../constants/constants'
 
 type useProgramaAsignaturaType = {
@@ -34,6 +40,7 @@ type useProgramaAsignaturaType = {
   errorInesperado: string
   aprobarPrograma: () => void
   pedirCambiosPrograma: (mensaje: string) => void
+  asignaturasDisponibles: DatoListaInterface[]
 }
 
 const MENSAJE_ERROR_INESPERADO =
@@ -43,6 +50,9 @@ const useProgramaAsignatura = (
   id: string = '',
   modo: string | null
 ): useProgramaAsignaturaType => {
+  const [asignaturasDisponibles, setAsignaturasDisponibles] = useState<
+    DatoListaInterface[]
+  >([])
   const [programaAsignatura, setProgramaAsignatura] =
     useState<ProgramaAsignaturaInterface>(NUEVO_PROGRAMA_ASIGNATURA)
   const [erroresProgramaAsignatura, setErroresProgramaAsignatura] =
@@ -148,6 +158,53 @@ const useProgramaAsignatura = (
         }
       }
     }
+
+    programaAsignatura.correlativas.forEach((correlativa) => {
+      if (correlativa.tipo === TIPO_CORRELATIVA.NO_SELECCIONADO) {
+        esFormularioValido = esFormularioValido && false
+        erroresFormulario = {
+          ...erroresFormulario,
+          correlativas: 'El tipo de correlativa es requerido.'
+        }
+      }
+
+      if (
+        correlativa.requisito === REQUISITOS_CORRELATIVA.ASIGNATURA &&
+        correlativa.asignatura === ASIGNATURA_VACIA
+      ) {
+        esFormularioValido = esFormularioValido && false
+        erroresFormulario = {
+          ...erroresFormulario,
+          correlativas:
+            'Es requerido elegir la asignatura para una asignatura correlativa.'
+        }
+      }
+
+      if (
+        correlativa.requisito === REQUISITOS_CORRELATIVA.CANTIDAD_ASIGNATURAS &&
+        (!correlativa.cantidadAsignaturas ||
+          correlativa.cantidadAsignaturas <= 0)
+      ) {
+        esFormularioValido = esFormularioValido && false
+        erroresFormulario = {
+          ...erroresFormulario,
+          correlativas:
+            'Es requerido indicar la cantidad de asignaturas para la correlativa de cantidad de asignaturas.'
+        }
+      }
+
+      if (
+        correlativa.requisito === REQUISITOS_CORRELATIVA.MODULO &&
+        !correlativa.modulo
+      ) {
+        esFormularioValido = esFormularioValido && false
+        erroresFormulario = {
+          ...erroresFormulario,
+          correlativas:
+            'Es requerido indicar el módulo para la correlativa de módulo.'
+        }
+      }
+    })
 
     setErroresProgramaAsignatura(erroresFormulario)
     return esFormularioValido
@@ -303,6 +360,23 @@ const useProgramaAsignatura = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
+  useEffect(() => {
+    if (
+      modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO ||
+      modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO
+    ) {
+      obtenerAsignaturasDisponiblesAPartirDeAsignatura(id).then((response) => {
+        setAsignaturasDisponibles(response.data)
+      })
+    } else if (modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR) {
+      obtenerAsignaturasDisponiblesAPartirDePrograma(id).then((response) => {
+        setAsignaturasDisponibles(response.data)
+      })
+    } else {
+      setAsignaturasDisponibles([])
+    }
+  }, [modo])
+
   return {
     programaAsignatura,
     setProgramaAsignatura,
@@ -312,7 +386,8 @@ const useProgramaAsignatura = (
     errorInesperado,
     guardarPrograma,
     aprobarPrograma,
-    pedirCambiosPrograma
+    pedirCambiosPrograma,
+    asignaturasDisponibles
   }
 }
 

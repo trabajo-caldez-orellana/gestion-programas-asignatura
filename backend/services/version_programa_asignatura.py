@@ -18,7 +18,8 @@ from backend.models import (
     Rol,
     Carrera,
     Semestre,
-    AuditoriaEstadoVersionPrograma
+    AuditoriaEstadoVersionPrograma,
+    Correlativa
 )
 from backend.common.choices import (
     NivelDescriptor,
@@ -27,7 +28,9 @@ from backend.common.choices import (
     Roles,
     Semestres,
     EstadosAprobacionPrograma,
-    TiposDeEmail
+    TiposDeEmail,
+    TipoCorrelativa,
+    RequisitosCorrelativa
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -56,8 +59,13 @@ from backend.common.mensajes_de_error import (
     MENSAJE_PROGRAMA_YA_EXISTENTE,
     MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR,
     MENSAJE_FALLO_REUTILIZACION,
-    MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR
-    
+    MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR,
+    MENSAJE_REQUISITO_CORRELATIVA_INVALIDO,
+    MENSAJE_TIPO_CORRELATIVA_INVALIDO,
+    MENSAJE_ASIGNATURA_NECESARIA,
+    MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA,
+    MENSAJE_MODULO_NECESARIO,
+    MENSAJE_CORRELATIVA_INVALIDA
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
@@ -200,6 +208,104 @@ class ServicioVersionProgramaAsignatura:
 
         return programa_tiene_actividad_reservada
 
+    def _asignar_o_modificar_correlativa(
+        self,
+        version_programa_asignatura: VersionProgramaAsignatura,
+        objeto_correlativa: object,
+        instancia_correlativa: Optional[Correlativa] = None,
+    ):
+        try:
+            tipo = objeto_correlativa["tipo"]
+        except Exception:
+            raise ValidationError({"correlativas": MENSAJE_TIPO_CORRELATIVA_INVALIDO})
+        
+        try:
+            requisito = objeto_correlativa["requisito"]
+        except Exception:
+            raise ValidationError({"correlativas": MENSAJE_REQUISITO_CORRELATIVA_INVALIDO})
+            
+        if tipo != TipoCorrelativa.APROBADO and tipo != TipoCorrelativa.REGULAR:
+            raise ValidationError({"correlativas": MENSAJE_TIPO_CORRELATIVA_INVALIDO})
+
+        if requisito == RequisitosCorrelativa.ASIGNATURA:
+            try:
+                asignatura = objeto_correlativa["asignatura_correlativa"]
+                
+                if asignatura is None:
+                    raise ValidationError({"correlativas": MENSAJE_ASIGNATURA_NECESARIA})
+                    
+                instancia_asignatura = Asignatura.objects.get(id=asignatura["id"])
+
+                if instancia_correlativa is None:
+                    correlativa_nueva = Correlativa(
+                        version_programa_asignatura=version_programa_asignatura,
+                        asignatura_correlativa=instancia_asignatura,
+                        tipo=tipo,
+                        requisito=RequisitosCorrelativa.ASIGNATURA
+                    )
+                    correlativa_nueva.full_clean()
+                    correlativa_nueva.save()
+                else:
+                    instancia_correlativa.tipo = tipo
+                    instancia_correlativa.requisito = RequisitosCorrelativa.ASIGNATURA
+                    instancia_correlativa.asignatura_correlativa = instancia_asignatura
+                    instancia_correlativa.full_clean()
+                    instancia_correlativa.save()
+
+            except Exception:
+                raise ValidationError({"correlativas": MENSAJE_ASIGNATURA_NECESARIA})
+
+        elif requisito == RequisitosCorrelativa.CANTIDAD_ASIGNATURAS:
+            try:
+                cantidad_asignaturas = objeto_correlativa["cantidad_asignaturas"]
+                if cantidad_asignaturas is None or cantidad_asignaturas == 0:
+                    raise ValidationError({"correlativas": MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA})
+
+                if instancia_correlativa is None:
+                    correlativa_nueva = Correlativa(
+                        version_programa_asignatura=version_programa_asignatura,
+                        cantidad_asignaturas=cantidad_asignaturas,
+                        tipo=tipo,
+                        requisito=RequisitosCorrelativa.CANTIDAD_ASIGNATURAS
+                    )
+                    correlativa_nueva.full_clean()
+                    correlativa_nueva.save()
+                else:
+                    instancia_correlativa.tipo = tipo
+                    instancia_correlativa.requisito = RequisitosCorrelativa.CANTIDAD_ASIGNATURAS
+                    instancia_correlativa.cantidad_asignaturas = cantidad_asignaturas
+                    instancia_correlativa.full_clean()
+                    instancia_correlativa.save()
+
+            except Exception:
+                raise ValidationError({"correlativas": MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA})
+        elif requisito == RequisitosCorrelativa.MODULO:
+            try:
+                modulo = objeto_correlativa["modulo"]
+                if modulo is None or modulo == "":
+                    raise ValidationError({"correlativas": MENSAJE_MODULO_NECESARIO})
+                
+                if instancia_correlativa is None:
+                    correlativa_nueva = Correlativa(
+                        version_programa_asignatura=version_programa_asignatura,
+                        modulo=modulo,
+                        tipo=tipo,
+                        requisito=RequisitosCorrelativa.MODULO
+                    )
+                    correlativa_nueva.full_clean()
+                    correlativa_nueva.save()
+                else:
+                    instancia_correlativa.tipo = tipo
+                    instancia_correlativa.requisito = RequisitosCorrelativa.MODULO
+                    instancia_correlativa.modulo = modulo
+                    instancia_correlativa.full_clean()
+                    instancia_correlativa.save()
+
+            except Exception:
+                raise ValidationError({"correlativas": MENSAJE_MODULO_NECESARIO})
+        else:
+            raise ValidationError({"correlativas": MENSAJE_REQUISITO_CORRELATIVA_INVALIDO})
+
     def _es_posible_crear_nueva_version_de_programa(
         self, semestre_asignatura: Semestres
     ):
@@ -263,6 +369,7 @@ class ServicioVersionProgramaAsignatura:
         extension_docentes: str,
         extension_estudiantes: str,
         cronograma: str,
+        correlativas: list
     ):
         """
         Crea una nueva version de un programa de asignatura para el semestre que viene!
@@ -402,6 +509,26 @@ class ServicioVersionProgramaAsignatura:
                             }
                         ) from exc
 
+                # Obtengo todas las correlativas
+                # La lista de correlativas tiene el siguiente formato:
+                # {
+                #   "id": int | None,
+                #   "tipo": TipoCorrelativa,
+                #   "requisito": RequisitoCorrelativa,
+                #   "cantidadAsignaturas": int | None
+                #   "asignatura": {
+                #     "id": int,
+                #     "informacion": str
+                #   } | None,
+                #   "modulo": str | None
+                # }
+
+                for correlativa in correlativas:
+                    self._asignar_o_modificar_correlativa(
+                        version_programa_asignatura=version_programa,
+                        objeto_correlativa=correlativa
+                    )
+                        
             return version_programa
 
     def modificar_version_programa_asignatura(
@@ -421,6 +548,7 @@ class ServicioVersionProgramaAsignatura:
         investigacion_estudiantes: str,
         extension_docentes: str,
         extension_estudiantes: str,
+        correlativas: list,
         cronograma: str,
     ):
         """
@@ -657,6 +785,51 @@ class ServicioVersionProgramaAsignatura:
                             }
                         ) from exc
 
+                # Obtengo todas las correlativas
+                # La lista de correlativas tiene el siguiente formato:
+                # {
+                #   "id": int | None,
+                #   "tipo": TipoCorrelativa,
+                #   "requisito": RequisitoCorrelativa,
+                #   "cantidadAsignaturas": int | None
+                #   "asignatura": {
+                #     "id": int,
+                #     "informacion": str
+                #   } | None,
+                #   "modulo": str | None
+                # }
+
+                try:
+                    ids_correlativas_formulario = [correlativa["id"] for correlativa in correlativas]
+                    instancias_correlativa_asignatura = Correlativa.objects.filter(
+                        version_programa_asignatura_id=version_programa.id
+                    )
+
+                    for instancia_correlativa in instancias_correlativa_asignatura:
+                        if instancia_correlativa.id not in ids_correlativas_formulario:
+                            instancia_correlativa.delete()
+
+                except Exception:
+                    raise ValidationError({"correlativas": MENSAJE_CORRELATIVA_INVALIDA})
+
+                for correlativa in correlativas:
+                    try:
+                        instancia_correlativa = Correlativa.objects.get(
+                            id=correlativa["id"]
+                        )
+                        self._asignar_o_modificar_correlativa(
+                            version_programa_asignatura=version_programa,
+                            objeto_correlativa=correlativa,
+                            instancia_correlativa=instancia_correlativa
+                        )
+                    except Correlativa.DoesNotExist:
+                        self._asignar_o_modificar_correlativa(
+                            version_programa_asignatura=version_programa,
+                            objeto_correlativa=correlativa
+                        )
+                    except Exception:
+                        raise ValidationError({"correlativas": MENSAJE_CORRELATIVA_INVALIDA})
+
             return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
@@ -756,6 +929,10 @@ class ServicioVersionProgramaAsignatura:
                 }
             )
 
+        correlativas_programa = Correlativa.objects.filter(
+            version_programa_asignatura_id=ultimo_programa.id
+        )
+
         # Asi si alguna falla, que no se guarde nada. Esta bien?
         with transaction.atomic():
             try:
@@ -792,6 +969,18 @@ class ServicioVersionProgramaAsignatura:
                             programa=nuevo_programa,
                             nivel=actividad_reservada.nivel,
                         )
+
+                    for correlativa in correlativas_programa:
+                        correlativa_nueva = Correlativa(
+                            version_programa_asignatura=nuevo_programa,
+                            asignatura_correlativa=correlativa.asignatura_correlativa,
+                            tipo=correlativa.tipo,   
+                            requisito=correlativa.requisito,
+                            modulo=correlativa.modulo,
+                            cantidad_asignaturas=correlativa.cantidad_asignaturas
+                        )
+                        correlativa_nueva.full_clean()
+                        correlativa_nueva.save()
 
                     self.presentar_programa_para_aprobacion(nuevo_programa)
                     return nuevo_programa

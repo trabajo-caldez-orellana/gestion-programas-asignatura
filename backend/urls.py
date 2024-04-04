@@ -38,6 +38,9 @@ from backend.views import (
     APIListarPlanesDeEstudio,
     AprobarVersionProgramaAPI,
     PedirCambiosVersionProgramaAPI,
+    AsignaturasDisponiblesAPartirAsignatura,
+    AsignaturasDisponiblesAPartirPrograma,
+    LogoutAPI,
 )
 
 informes_patterns = [
@@ -65,6 +68,11 @@ formularios_patterns = [
     ),
 ]
 
+opciones_patterns = [
+    path("asignaturas-correlativas-programa/<id_programa>/", AsignaturasDisponiblesAPartirPrograma.as_view()),
+    path("asignaturas-correlativas/<id_asignatura>/", AsignaturasDisponiblesAPartirAsignatura.as_view()),
+]
+
 filtros_patterns = [
     path("", ObtenerFiltros.as_view()),
 ]
@@ -79,15 +87,16 @@ planes_estudio_patterns = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("auth/logout/", LogoutAPI.as_view()),
     path("auth/login/google/", GoogleLoginApi.as_view(), name="login-with-google"),
     path("auth/me/", GoogleAuthApi.as_view()),
-    path("auth/token/refresh/", jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path("api/programas/", include(programas_patterns)),
     path("api/filtros/", include(filtros_patterns)),
     path("api/historial/", include(historial_patterns)),
     path("api/informacion-formularios/", include(formularios_patterns)),
     path("api/informes/", include(informes_patterns)),
     path("api/planes-de-esutdio/", include(planes_estudio_patterns)),
+    path("api/opciones/", include(opciones_patterns)),
     re_path("<path:route>", TemplateView.as_view(template_name='index.html'), name="index"),
     re_path("", TemplateView.as_view(template_name='index.html'), name="index"),
 ]

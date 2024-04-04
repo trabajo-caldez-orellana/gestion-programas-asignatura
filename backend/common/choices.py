@@ -83,6 +83,11 @@ class TiposDeEmail(TextChoices):
     PERIODO_MODIFICACION_ABIERTO = "periodo_modificacion", "El periodo para modificar/crear programas de asignatura se ha abierto"
     PROGRAMA_LISTO_PARA_CORRECCION = "pendiente_correccion", "El programa esta pendiente de ser corregido"
     
+class RequisitosCorrelativa(TextChoices):
+    ASIGNATURA = 'asignatura', "Asignatura aprobada o regular"
+    CANTIDAD_ASIGNATURAS = 'cantidad', "Número de asignaturas aprobadas o regulares"
+    MODULO = 'modulo', "Módulo aprobado o regular"
+    
 class AccionesProgramaDeAsignatura(TextChoices):
     CREAR_NUEVO = "CN", "Crear nuevo programa de asignatura"
     EDITAR = "E", "Editar programa de asignatura"
