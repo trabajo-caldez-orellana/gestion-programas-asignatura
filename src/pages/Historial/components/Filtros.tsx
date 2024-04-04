@@ -3,6 +3,7 @@ import Button from '../../../components/ui/Button'
 import { FiltrosType, selectedFiltrosType } from 'types'
 import { Dropdown } from '../../../components'
 import { ITEM_VACIO } from '../../../constants/constants'
+import { TituloSeccion } from '../../../components'
 
 interface FiltrosProps {
   filtros: FiltrosType
@@ -32,6 +33,7 @@ export default function Filtros({
 
   return (
     <section id="filter-components-container">
+      <h1 className="titulo-filtro">Filtros</h1>
       <section id="filter-container">
         {filtros.map((filtroGroup) => {
           const filtros = [ITEM_VACIO].concat(filtroGroup.opciones)
@@ -49,10 +51,12 @@ export default function Filtros({
           )
         })}
       </section>
-      <Button
-        text="Buscar"
+      <button
+        className="boton-filtrar"
         onClick={() => searchHistorialProgramas(selectedFiltros)}
-      />
+      >
+        Filtrar
+      </button>
     </section>
   )
 }
