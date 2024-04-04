@@ -1,9 +1,7 @@
 import '../Historial.css'
-import Button from '../../../components/ui/Button'
 import { FiltrosType, selectedFiltrosType } from 'types'
 import { Dropdown } from '../../../components'
 import { ITEM_VACIO } from '../../../constants/constants'
-import { TituloSeccion } from '../../../components'
 
 interface FiltrosProps {
   filtros: FiltrosType

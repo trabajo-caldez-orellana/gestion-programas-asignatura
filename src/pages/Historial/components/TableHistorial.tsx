@@ -76,9 +76,7 @@ export default function TableHistorial({
             </>
           ) : (
             <tr>
-              {tableColumns.map((col) => (
-                <td>-</td>
-              ))}
+              <td>No hay datos que coincidan con la búsqueda</td>
             </tr>
           )}
         </tbody>
