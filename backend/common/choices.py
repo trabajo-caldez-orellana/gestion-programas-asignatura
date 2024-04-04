@@ -75,6 +75,14 @@ class EstadosAprobacionPrograma(TextChoices):
     PEDIDO_CAMBIOS = "PC", "Pedir cambios"
     APROBACION_DEPRECADA = "AD", "Aprobacion Deprecada"
 
+class TiposDeEmail(TextChoices):
+    RECORDATORIO_PROGRAMA_NUEVO_ASIGNATURA = ("recordatorio_asignatura", "Recordatorio para crear un programa de asignatura.")
+    RECORDATORIO_CORRECION_PROGRAMA = ("recordatorio_correccion", "Recordatorio para corregir un programa de asignatura")
+    PROGRAMA_APROBADO = "programa_aprobado", "El programa fue aprobado"
+    CAMBIOS_PEDIDOS = "cambio", "Se pidieron cambios al programa"
+    PERIODO_MODIFICACION_ABIERTO = "periodo_modificacion", "El periodo para modificar/crear programas de asignatura se ha abierto"
+    PROGRAMA_LISTO_PARA_CORRECCION = "pendiente_correccion", "El programa esta pendiente de ser corregido"
+    
 class RequisitosCorrelativa(TextChoices):
     ASIGNATURA = 'asignatura', "Asignatura aprobada o regular"
     CANTIDAD_ASIGNATURAS = 'cantidad', "Número de asignaturas aprobadas o regulares"
