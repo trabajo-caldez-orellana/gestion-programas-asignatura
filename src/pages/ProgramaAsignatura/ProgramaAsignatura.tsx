@@ -26,7 +26,8 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     erroresProgramaAsignatura,
     guardarPrograma,
     aprobarPrograma,
-    pedirCambiosPrograma
+    pedirCambiosPrograma,
+    asignaturasDisponibles
   } = useProgramaAsignatura(id?.toString(), modo)
 
   const modoLectura =
@@ -72,6 +73,7 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
         erroresInfornacionAdicional={erroresProgramaAsignatura}
       />
       <SeccionCorrelativas
+        asignaturasDisponibles={asignaturasDisponibles}
         programaAsignatura={programaAsignatura}
         setProgramaAsignatura={setProgramaAsignatura}
         modoProgramaAsignatura={modoProgramaAsignatura}

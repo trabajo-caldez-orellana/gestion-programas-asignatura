@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 
 from backend.models import Asignatura
 from backend.serializers import serializer_programa_asignatura
+from backend.serializers.programa_asignatura import SerializerCorrelativa
 from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura, ServicioAuditoria
 from backend.common.choices import AccionesProgramaDeAsignatura
 from backend.common.mensajes_de_error import (
@@ -51,6 +52,7 @@ class NuevoProgramaAPI(APIView):
         actividades_reservadas = SerializadorEjesyActividades(many=True)
         ejes_transversales = SerializadorEjesyActividades(many=True)
         presentar_a_aprobacion = serializers.BooleanField()
+        correlativas = SerializerCorrelativa(many=True)
         
 
     def post(self, request, id_asignatura):
@@ -99,6 +101,7 @@ class NuevoProgramaAPI(APIView):
                 extension_estudiantes=validated_data["extension_estudiantes"],
                 metodologia_aplicada = validated_data["metodologia_aplicada"],
                 fundamentacion = validated_data["fundamentacion"],
+                correlativas=validated_data["correlativas"]
             )
             servicio_auditoria.auditar_revision(
                 request.user,

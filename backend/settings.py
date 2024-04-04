@@ -186,6 +186,12 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Tiempo de vida del refresh token
 }
 
+# Mailersend
+MAILERSEND_API_KEY = env.str("MAILERSEND_API_KEY", "")
+MAILERSEND_FROM = env.str("MAILERSEND_FROM", "")
+
+# Celery
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", "")
 # Authentication cookies
 CUSTOM_AUTH_ACCESS_COOKIE="TAT"
 CUSTOM_TEMPORAL_NEW_ACCESS_COOKIE="temporary-access"

@@ -9,9 +9,10 @@ from backend.models import (
     ProgramaTieneActividadReservada,
     ProgramaTieneDescriptor,
     Rol,
+    Correlativa
 )
 from backend.common.choices import TipoDescriptor, NivelDescriptor, Roles
-
+from backend.serializers.asignatura import SerializerAsignaturaParaSeleccion
 
 class SerializerProgramaTieneDescriptor(serializers.Serializer):
     id = serializers.IntegerField(source="descriptor_id")
@@ -33,6 +34,14 @@ class SerializerProgramaTieneEjeTransversal(serializers.Serializer):
     nivel = serializers.IntegerField()
     nombre = serializers.CharField(source="descriptor__descripcion")
 
+
+class SerializerCorrelativa(serializers.Serializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+    tipo = serializers.CharField()
+    requisito = serializers.CharField()
+    asignatura = SerializerAsignaturaParaSeleccion(required=False, source="asignatura_correlativa", allow_null=True)
+    modulo = serializers.CharField(required=False, allow_null=True)
+    cantidadAsignaturas = serializers.CharField(required=False, source="cantidad_asignaturas", allow_null=True)
 
 def serializer_programa_asignatura(
     programa: VersionProgramaAsignatura, solo_lectura: bool = False
@@ -173,6 +182,9 @@ def serializer_programa_asignatura(
         for rol in equipo_docente
     ]
 
+    correlativas_programa = Correlativa.objects.filter(version_programa_asignatura_id=programa.id)
+    serializador_correlativas = SerializerCorrelativa(correlativas_programa, many=True)
+
     return {
         "id": programa.id,
         "informacion_general": {
@@ -213,4 +225,5 @@ def serializer_programa_asignatura(
             "extension_docentes": programa.extension_docentes,
             "extension_estudiantes": programa.extension_estudiantes,
         },
+        "correlativas": serializador_correlativas.data
     }

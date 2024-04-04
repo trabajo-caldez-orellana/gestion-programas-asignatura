@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import queryString from 'query-string'
 import useAuth from '../../hooks/useAuth'
 import { client } from '../../utils/axiosClient'
+import { Spinner } from '../../components'
 
 const LoginLoading: React.FC = () => {
   const location = useLocation()
@@ -35,7 +36,7 @@ const LoginLoading: React.FC = () => {
     await googleLoginHandler(location.search)
   }
 
-  return <div>Loading...</div>
+  return <Spinner />
 }
 
 export default LoginLoading
