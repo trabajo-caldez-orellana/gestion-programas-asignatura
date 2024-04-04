@@ -1,8 +1,14 @@
-import './Navbar.css'
-import Sidebar from '../Sidebar/Sidebar'
+import {
+  NavbarWrapper,
+  SidebarContainer,
+  BurgerButton,
+  ButtonList,
+  ContentOverlay
+} from './NavbarStyled'
+import Sidebar from './Sidebar/Sidebar'
 import Button from '../ui/Button'
 import { useNavigate } from 'react-router-dom'
-
+import { useRef, useEffect } from 'react'
 import useAuth from '../../hooks/useAuth'
 import { RUTAS_PAGINAS } from '../../constants/constants'
 
@@ -18,47 +24,64 @@ export default function Navbar({
   const { auth, handleLogout } = useAuth()
   const navigate = useNavigate()
 
-  const handleOpenSidebar = () => {
-    setIsSidebarOpen((prevState) => !prevState)
+  const sidebarRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        setIsSidebarOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  const handleOpenSidebar = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    setIsSidebarOpen((state) => !state)
   }
 
   const handleLoginButton = () => {
     navigate(RUTAS_PAGINAS.LOGIN)
   }
 
+  const onLinkClick = () => {
+    setIsSidebarOpen(false)
+  }
+
   return (
-    <nav className={`navbar wrapper ${isSidebarOpen ? '' : 'inactive'}`}>
+    <NavbarWrapper $isOpen={isSidebarOpen}>
+      {isSidebarOpen && <ContentOverlay $isOpen={isSidebarOpen} />}
       {auth.isLoggedIn && (
-        <div className="section">
-          <div className="top_navbar">
-            <div className="hamburger">
-              <a href="#" onClick={handleOpenSidebar}>
-                <i className="fas fa-bars"></i>
-              </a>
-            </div>
-          </div>
-        </div>
+        <BurgerButton
+          $isOpen={isSidebarOpen}
+          onClick={(event) => handleOpenSidebar(event)}
+        >
+          <i className="fas fa-bars"></i>
+        </BurgerButton>
       )}
-      <ul id="navbar-items">
+      <ButtonList>
         {auth.isLoggedIn ? (
-          <>
-            <li>
-              <Button text="Cerrar Sesión" onClick={handleLogout} />
-            </li>
-          </>
+          <li>
+            <Button text="Cerrar Sesión" onClick={handleLogout} />
+          </li>
         ) : (
-          <>
-            <li>
-              <Button text="Iniciar Sesión" onClick={handleLoginButton} />
-            </li>
-          </>
+          <li>
+            <Button text="Iniciar Sesión" onClick={handleLoginButton} />
+          </li>
         )}
-      </ul>
+      </ButtonList>
       {auth.isLoggedIn && (
-        <div className="sidebar">
-          <Sidebar />
-        </div>
+        <SidebarContainer $isOpen={isSidebarOpen} ref={sidebarRef}>
+          <Sidebar onLinkClick={onLinkClick} />
+        </SidebarContainer>
       )}
-    </nav>
+    </NavbarWrapper>
   )
 }

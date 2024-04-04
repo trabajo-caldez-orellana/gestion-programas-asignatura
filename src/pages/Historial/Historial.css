@@ -10,10 +10,8 @@
 
 #filter-container {
   width: 100%;
-  border: 2px solid var(--primary-color);
-  padding: 10px;
+  padding: 10px 0;
   box-sizing: border-box;
-  margin-bottom: 20px;
   min-width: 70rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -39,4 +37,32 @@
   color: #fff;
   border: none;
   cursor: pointer;
+}
+
+.titulo-filtro {
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  width: 100%;
+  background-color: var(--dark-color);
+  box-sizing: border-box;
+  font-weight: 100;
+  padding: 5px;
+  text-transform: uppercase;
+  margin: 0 auto 0 0;
+}
+
+.boton-filtrar {
+  padding: 5px 10px;
+  width: 250px;
+  border: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+}
+
+.boton-filtrar:hover {
+  background-color: var(--primary-color);
+  color: white;
 }

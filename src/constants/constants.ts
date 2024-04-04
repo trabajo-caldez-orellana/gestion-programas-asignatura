@@ -481,6 +481,11 @@ export const LISTADO_SELECCION_TIPOS_CORRELATIVA = [
   { id: TIPO_CORRELATIVA.REGULAR, informacion: 'Regular' }
 ]
 
+export const ITEM_VACIO: DatoListaInterface = {
+  id: -1,
+  informacion: 'Seleccionar filtro'
+}
+
 export const ASIGNATURA_VACIA: DatoListaInterface = {
   id: -1,
   informacion: ''

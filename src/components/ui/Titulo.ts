@@ -6,12 +6,18 @@ export const Titulo = styled.h1`
   width: 100%;
   text-align: center;
   box-sizing: border-box;
+  margin: 10px;
+  text-transform: uppercase;
 `
 
 export const Subtitulo = styled.h2`
   color: black;
   text-align: center;
-  margin: 0;
+  font-size: 25px;
+  margin: -5px;
+  text-transform: uppercase;
+  color: var(--third-color);
+  font-weight: normal;
 `
 
 export const TituloSeccion = styled.h3`

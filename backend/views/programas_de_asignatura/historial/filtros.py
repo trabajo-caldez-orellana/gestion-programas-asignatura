@@ -20,7 +20,7 @@ class ObtenerFiltros(APIView):
                     "tipo": "carrera",
                     "nombre": "Carreras",
                     "opciones": [
-                        {"id": carrera.id, "nombre": carrera.nombre}
+                        {"id": carrera.id, "informacion": carrera.nombre}
                         for carrera in carreras
                     ],
                 },
@@ -28,7 +28,7 @@ class ObtenerFiltros(APIView):
                     "tipo": "semestre",
                     "nombre": "Semestres",
                     "opciones": [
-                        {"id": semestre.id, "nombre": str(semestre)}
+                        {"id": semestre.id, "informacion": str(semestre)}
                         for semestre in semestres
                     ],
                 },
@@ -36,7 +36,7 @@ class ObtenerFiltros(APIView):
                     "tipo": "asignatura",
                     "nombre": "Asignaturas",
                     "opciones": [
-                        {"id": asignatura.id, "nombre": asignatura.denominacion}
+                        {"id": asignatura.id, "informacion": asignatura.denominacion}
                         for asignatura in asignaturas
                     ],
                 },
@@ -44,7 +44,7 @@ class ObtenerFiltros(APIView):
                     "tipo": "anio_lectivo",
                     "nombre": "Años lectivos",
                     "opciones": [
-                        {"id": anio.id, "nombre": str(anio)} for anio in anios_lectivos
+                        {"id": anio.id, "informacion": str(anio)} for anio in anios_lectivos
                     ],
                 },
             ]

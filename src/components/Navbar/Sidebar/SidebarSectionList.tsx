@@ -1,14 +1,27 @@
-import './SidebarSectionList.css'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   ROLES,
   SIDEBAR_SECTIONS,
   SidebarSection
-} from '../../constants/constants'
-import useAuth from '../../hooks/useAuth'
+} from '../../../constants/constants'
+import useAuth from '../../../hooks/useAuth'
 import { useEffect, useState } from 'react'
-export default function SidebarSectionList() {
+import {
+  SectionContainer,
+  SectionTitle,
+  Title,
+  SubsectionList,
+  SubsectionItem,
+  BotonSeccion
+} from '../NavbarStyled'
+
+interface SectionProps {
+  onLinkClick: () => void
+}
+
+const SidebarSectionList: React.FC<SectionProps> = ({ onLinkClick }) => {
   const { auth } = useAuth()
+  const navigate = useNavigate()
   const [seccionesFiltradas, setSeccionesFiltradas] = useState<
     SidebarSection[]
   >([])
@@ -41,15 +54,20 @@ export default function SidebarSectionList() {
     setSeccionesFiltradas(secciones)
   }, [auth])
 
+  const handleLinkRedirect = (navigateTo: string) => {
+    navigate(navigateTo)
+    onLinkClick()
+  }
+
   return (
     <>
       {seccionesFiltradas.map((section) => {
         return (
-          <section key={section.id}>
-            <section className="section-header">
-              <h2>{section.name}</h2>
-            </section>
-            <ul className="sidebar-section-items">
+          <SectionContainer key={section.id}>
+            <SectionTitle>
+              <Title>{section.name}</Title>
+            </SectionTitle>
+            <SubsectionList>
               {section.sections.map((subsection) => {
                 if (
                   auth.userRoles.es_administrador ||
@@ -61,18 +79,22 @@ export default function SidebarSectionList() {
                     subsection.permisos.includes(ROLES.SECRETARIO))
                 ) {
                   return (
-                    <li key={subsection.id}>
-                      <div>
-                        <Link to={subsection.url}>{subsection.name}</Link>
-                      </div>
-                    </li>
+                    <SubsectionItem key={subsection.id}>
+                      <BotonSeccion
+                        onClick={() => handleLinkRedirect(subsection.url)}
+                      >
+                        {subsection.name}
+                      </BotonSeccion>
+                    </SubsectionItem>
                   )
                 }
               })}
-            </ul>
-          </section>
+            </SubsectionList>
+          </SectionContainer>
         )
       })}
     </>
   )
 }
+
+export default SidebarSectionList

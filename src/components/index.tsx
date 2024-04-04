@@ -1,6 +1,5 @@
 import Navbar from './Navbar/Navbar'
 import Modal from './Modal/Modal'
-import Sidebar from './Sidebar/Sidebar'
 import Table from './Table/Table'
 import ProtectedRoute from './ProtectedRoute'
 import { Titulo, Subtitulo, TituloSeccion } from './ui/Titulo'
@@ -18,12 +17,12 @@ import {
   Dropdown
 } from './Formulario'
 import Button from './ui/Button'
+import { MainContentContainer } from './MainContentContainer'
 import Spinner from './Spinner/Spinner'
 
 export {
   Navbar,
   Modal,
-  Sidebar,
   Table,
   ProtectedRoute,
   Titulo,
@@ -41,5 +40,6 @@ export {
   SeleccionConModal,
   DoubleSelectionInput,
   Dropdown,
+  MainContentContainer,
   Spinner
 }

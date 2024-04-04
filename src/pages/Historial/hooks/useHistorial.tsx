@@ -3,9 +3,7 @@ import { ProgramasHistorial, selectedFiltrosType } from '../../../types'
 import { getSearchHistorial } from '../services'
 
 type useHistorialType = {
-  searchHistorialProgramas: (
-    selectedFiltros: selectedFiltrosType | null
-  ) => void
+  searchHistorialProgramas: (selectedFiltros: selectedFiltrosType) => void
   loading: boolean
   error: boolean
 }
@@ -21,7 +19,7 @@ const useHistorial = ({ setProgramasHistorial }: Props): useHistorialType => {
   const [error, setError] = useState<boolean>(false)
 
   const searchHistorialProgramas = async (
-    selectedFiltros: selectedFiltrosType | null
+    selectedFiltros: selectedFiltrosType
   ) => {
     try {
       const response = await getSearchHistorial(selectedFiltros)
