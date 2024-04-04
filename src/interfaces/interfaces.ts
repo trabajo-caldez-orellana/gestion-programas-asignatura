@@ -224,13 +224,7 @@ export interface ProgramaAsignaturaAPIBody {
     extension_docentes: string
     extension_estudiantes: string
   }
-  correlativas: {
-    tipo: TIPO_CORRELATIVA
-    requisito: REQUISITOS_CORRELATIVA
-    asignatura?: DatoListaInterface
-    modulo?: string
-    cantidad?: string
-  }[]
+  correlativas: Correlativa[]
 }
 
 export interface NuevoProgramaAPIBody {

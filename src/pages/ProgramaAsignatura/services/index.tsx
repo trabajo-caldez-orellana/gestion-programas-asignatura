@@ -8,6 +8,7 @@ import {
   ProgramaAsignaturaErrores
 } from '../../../interfaces/interfaces'
 import { DatoListaInterface, RUTAS } from '../../../constants/constants'
+import { Correlativa } from '../../../interfaces/interfaces'
 
 const parserProgramaAsignatura = (
   programa: ProgramaAsignaturaAPIBody
@@ -57,8 +58,7 @@ const parserProgramaAsignatura = (
         programa.informacion_adicional.extension_estudiantes,
       extensionDocentes: programa.informacion_adicional.extension_docentes
     },
-    // TODO. Parse correlativas desde el backend
-    correlativas: []
+    correlativas: programa.correlativas
   }
 }
 
@@ -197,6 +197,7 @@ interface ProgramaPOSTBodyInterface {
   actividades_reservadas: { id: number; nivel: number }[]
   ejes_transversales: { id: number; nivel: number }[]
   presentar_a_aprobacion: boolean
+  correlativas: Correlativa[]
 }
 
 interface ProgramaPOSTBodyErrorInterface {
@@ -215,6 +216,7 @@ interface ProgramaPOSTBodyErrorInterface {
   descriptores?: string[]
   actividades_reservadas?: string[]
   ejes_transversales?: string[]
+  correlativas?: string[]
   __all__?: string[]
   mensaje?: string[]
 }
@@ -259,7 +261,8 @@ const parseProgramaPOSTBody = (
     ejes_transversales: parsedEjesTransversales,
     presentar_a_aprobacion: presentar,
     metodologia_aplicada: programa.informacionAdicional.metodologiaAplicada,
-    fundamentacion: programa.informacionAdicional.fundamentacion
+    fundamentacion: programa.informacionAdicional.fundamentacion,
+    correlativas: programa.correlativas
   }
 }
 
@@ -308,8 +311,9 @@ const parseProgramaPOSTError = (
         ? responseError.extension_docentes[0]
         : ''
     },
-    // TODO. Cambiar cuadno cree la llamada a a la api
-    correlativas: '',
+    correlativas: responseError.correlativas
+      ? responseError.correlativas[0]
+      : '',
     all: responseError.__all__ ? responseError.__all__[0] : '',
     mensaje: responseError.mensaje ? responseError.mensaje[0] : ''
   }

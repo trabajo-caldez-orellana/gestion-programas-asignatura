@@ -74,3 +74,8 @@ class EstadosAprobacionPrograma(TextChoices):
     APROBADO = "A", "Aprbado"
     PEDIDO_CAMBIOS = "PC", "Pedir cambios"
     APROBACION_DEPRECADA = "AD", "Aprobacion Deprecada"
+
+class RequisitosCorrelativa(TextChoices):
+    ASIGNATURA = 'asignatura', "Asignatura aprobada o regular"
+    CANTIDAD_ASIGNATURAS = 'cantidad', "Número de asignaturas aprobadas o regulares"
+    MODULO = 'modulo', "Módulo aprobado o regular"
