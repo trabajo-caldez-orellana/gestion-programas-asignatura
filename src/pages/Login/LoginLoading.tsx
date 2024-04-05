@@ -22,7 +22,7 @@ const LoginLoading: React.FC = () => {
   const googleLoginHandler = (code: string) => {
     return client
       .get(`auth/login/google/${code}`)
-      .then((res) => {
+      .then(() => {
         getAuthUser()
         navigate('/')
         return true
