@@ -180,16 +180,6 @@
             </tr>
             <tr>
               <td>
-                <ul>
-                  <li>Horas totales de Ciencias Básicas: 2</li>
-                  <li>Horas totales de Tecnologías Básica: 3</li>
-                  <li>Horas totales de Tecnologías Aplicadas: 2</li>
-                  <li>Horas totales de Tecnologías Complementarias: 3</li>
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <td>
                 Duracion del dictado en semanas: {{asignatura.semanas_dictado}}
               </td>
             </tr>
@@ -268,7 +258,7 @@
         <td class="seccion">Metodología aplicada</td>
         <td>
           <p class="campo-texto">
-            {{asignatura.get_metodologia}}
+            {{programa.metodologia_aplicada}}
           </p>
         </td>
       </tr>
@@ -299,20 +289,20 @@
           <table class="border-none">
             <tr>
               <td>
-                <p>Asignaturas correlativas para cursar:</p>
+                <p>Correlativas aprobadas:</p>
                 <ul>
                   {% for asignatura_regular in correlativas_regular %}
-                  <li>{{ asignatura_regular.denominacion }}</li>
+                  <li>{{ asignatura_regular }}</li>
                   {% endfor %}
                 </ul>
               </td>
             </tr>
             <tr>
               <td>
-                <p>Asignaturas correlativas para rendir exámen final:</p>
+                <p>Correlativas regulares:</p>
                 <ul>
                   {% for asignatura_aprobada in correlativas_aprobado %}
-                  <li>{{ asignatura_aprobada.denominacion }}</li>
+                  <li>{{ asignatura_aprobada }}</li>
                   {% endfor %}
                 </ul>
               </td>

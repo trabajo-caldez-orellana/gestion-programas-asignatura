@@ -2,7 +2,7 @@
 from backend.models import VersionProgramaAsignatura, Correlativa, Estandar, ProgramaTieneDescriptor
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
-from backend.common.choices import TipoCorrelativa, NivelDescriptor
+from backend.common.choices import TipoCorrelativa, NivelDescriptor, RequisitosCorrelativa
 from backend.models import VersionProgramaAsignatura, Rol
 from backend.common.mensajes_de_error import (
     MENSAJE_ID_INEXISTENTE,
@@ -34,22 +34,47 @@ class ObtenerDatosPdf:
 
         # Obtenemos las correlativas
         correlativas_regular = Correlativa.objects.filter(
-            asignatura_correlativa=asignatura, tipo=TipoCorrelativa.REGULAR
+            version_programa_asignatura=programa, tipo=TipoCorrelativa.REGULAR
         )
 
-        asignaturas_correlativas_regular = [
-            correlativa.version_programa_asignatura.asignatura
-            for correlativa in correlativas_regular
-        ]
+        asignaturas_correlativas_regular = []
+        
+        for correlativa in correlativas_regular:
+            if correlativa.requisito == RequisitosCorrelativa.ASIGNATURA:
+                asignaturas_correlativas_regular.append(
+                    f"{correlativa.asignatura_correlativa.codigo} - {correlativa.asignatura_correlativa.denominacion}"
+                )
+            elif correlativa.requisito == RequisitosCorrelativa.CANTIDAD_ASIGNATURAS:
+                asignatura_string ="asignaturas" if correlativa.cantidad_asignaturas > 1 else "asignatura"
+                asignaturas_correlativas_regular.append(
+                    f"{correlativa.cantidad_asignaturas} {asignatura_string}"
+                )
+            else:
+                asignaturas_correlativas_regular.append(
+                    f"Módulo {correlativa.modulo}"
+                )
+
 
         correlativas_aprobado = Correlativa.objects.filter(
-            asignatura_correlativa=asignatura, tipo=TipoCorrelativa.APROBADO
+            version_programa_asignatura=programa, tipo=TipoCorrelativa.APROBADO
         )
 
-        asignaturas_correlativas_aprobado = [
-            correlativa.version_programa_asignatura.asignatura
-            for correlativa in correlativas_aprobado
-        ]
+        asignaturas_correlativas_aprobado = []
+        
+        for correlativa in correlativas_aprobado:
+            if correlativa.requisito == RequisitosCorrelativa.ASIGNATURA:
+                asignaturas_correlativas_aprobado.append(
+                    f"{correlativa.asignatura_correlativa.codigo} - {correlativa.asignatura_correlativa.denominacion}"
+                )
+            elif correlativa.requisito == RequisitosCorrelativa.CANTIDAD_ASIGNATURAS:
+                asignatura_string ="asignaturas" if correlativa.cantidad_asignaturas > 1 else "asignatura"
+                asignaturas_correlativas_aprobado.append(
+                    f"{correlativa.cantidad_asignaturas} {asignatura_string}"
+                )
+            else:
+                asignaturas_correlativas_aprobado.append(
+                    f"Módulo {correlativa.modulo}"
+                )
 
         # Obtenemos el año académico
         anio_academico = programa.semestre.anio_academico.fecha_inicio
