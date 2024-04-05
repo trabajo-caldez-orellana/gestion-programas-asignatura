@@ -54,6 +54,7 @@ export default function TableHistorial({
                             }
                             className="fas fa-eye"
                             title="Ver programa"
+                            style={{ cursor: 'pointer' }}
                           ></i>
                         ) : null}
                         {item.acciones_posibles.imprimir ? (
@@ -65,6 +66,7 @@ export default function TableHistorial({
                               )
                             }
                             className="fas fa-print"
+                            style={{ cursor: 'pointer' }}
                             title="Imprimir"
                           ></i>
                         ) : null}
