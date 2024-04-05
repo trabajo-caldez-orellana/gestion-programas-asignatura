@@ -1,7 +1,6 @@
 import '../Historial.css'
 import { FiltrosType, selectedFiltrosType } from 'types'
 import { Dropdown } from '../../../components'
-import { ITEM_VACIO } from '../../../constants/constants'
 
 interface FiltrosProps {
   filtros: FiltrosType
@@ -34,7 +33,6 @@ export default function Filtros({
       <h1 className="titulo-filtro">Filtros</h1>
       <section id="filter-container">
         {filtros.map((filtroGroup) => {
-          const filtros = [ITEM_VACIO].concat(filtroGroup.opciones)
           return (
             <Dropdown
               key={filtroGroup.tipo}
@@ -42,7 +40,7 @@ export default function Filtros({
               label={filtroGroup.nombre}
               error=""
               value={selectedFiltros[filtroGroup.tipo].id}
-              choices={filtros}
+              choices={filtroGroup.opciones}
               onChange={(value) => handleChangeSelect(filtroGroup.tipo, value)}
               modoLectura={false}
             />
