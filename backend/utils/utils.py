@@ -38,10 +38,11 @@ def google_get_access_token(*, code: str, redirect_uri: str) -> str:
     if not response.ok:
         raise ValidationError('Failed to obtain access token from Google.')
 
+    print("GOOGLE RESPONSE JSON", response.json())
+    print("GOOGLE RESPONSE CONTENT", response.content)
+    print("GOOGLE RESPONSE STATUS", response.status_code)
     access_token = response.json()['access_token']
     refresh_token = response.json()['refresh_token']
-
-
     return access_token, refresh_token
 
 
