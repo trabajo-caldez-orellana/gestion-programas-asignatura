@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Programa de asignatura</title>
     <style>
+      @page {
+        margin: 100px 1cm 80px 1cm;
+      }
+
       table {
         border-collapse: collapse;
         width: 100%;
@@ -52,30 +56,9 @@
       .tabla-padre li, .tabla-padre .campo-texto {
         padding-left: 2rem;
       }
-
-      .header {
-        height: 80px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        border-bottom: 1px solid black;
-        margin-bottom: 20px;
-      }
-
-      .header img {
-        filter: grayscale(100%);
-        -webkit-filter: grayscale(100%);
-        height: 80px;
-      }
     </style>
   </head>
   <body>
-    <header
-      class="header"
-    >
-      <img src="https://programas-asignatura-unt.netlify.app/assets/email/UNT.png"/>
-      <img src="https://programas-asignatura-unt.netlify.app/assets/email/FACET.png"/>
-    </header>
     <table border="1" class="tabla-padre">
       <!-- Informacion curricular -->
       <tr>
