@@ -25,10 +25,10 @@ const LoginLoading: React.FC = () => {
       .then((res) => {
         getAuthUser()
         navigate('/')
-        return res.data
+        return true
       })
-      .catch((err) => {
-        return err
+      .catch(() => {
+        navigate('/')
       })
   }
 
