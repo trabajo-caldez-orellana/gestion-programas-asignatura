@@ -27,10 +27,10 @@ class ObtenerDatosPdf:
         planes_de_estudio = asignatura.planes_de_estudio.all()
 
         # Obtenemos las carreras
-        carreras = []
+        carreras = set()
 
         for plan_de_estudio in planes_de_estudio:
-            carreras.append(plan_de_estudio.carrera)
+            carreras.add(plan_de_estudio.carrera)
 
         # Obtenemos las correlativas
         correlativas_regular = Correlativa.objects.filter(
