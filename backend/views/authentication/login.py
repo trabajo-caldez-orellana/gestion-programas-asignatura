@@ -35,7 +35,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             return redirect(f'{login_url}?{params}')
 
         redirect_uri = f'{settings.BASE_FRONTEND_URL}/login-loading'
-        access_token, refresh_token = google_get_access_token(code=code, redirect_uri=redirect_uri)
+        access_token = google_get_access_token(code=code, redirect_uri=redirect_uri)
 
         user_data = google_get_user_info(access_token=access_token)
 
