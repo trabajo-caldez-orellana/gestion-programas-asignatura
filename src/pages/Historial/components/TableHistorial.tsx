@@ -31,7 +31,7 @@ export default function TableHistorial({
         <thead>
           <tr>
             {tableColumns.map((column) => (
-              <th>{column}</th>
+              <th key={column}>{column}</th>
             ))}
           </tr>
         </thead>
