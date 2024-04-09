@@ -6,8 +6,9 @@ export const client = axios.create({
   baseURL: BASE_URL
 })
 
-client.defaults.withCredentials = true;
-
+client.defaults.xsrfHeaderName = 'X-CSRFToken'
+client.defaults.xsrfCookieName = 'csrftoken'
+client.defaults.withCredentials = true
 
 client.interceptors.response.use((response) => {
   if (response.data) {
