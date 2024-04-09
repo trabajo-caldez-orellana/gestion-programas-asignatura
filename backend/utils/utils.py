@@ -32,8 +32,11 @@ def google_get_access_token(*, code: str, redirect_uri: str) -> str:
     }
 
     # import pdb; pdb.set_trace()
-
     response = requests.post(GOOGLE_ACCESS_TOKEN_OBTAIN_URL, data=data)
+
+    print('GOOGLE TOKEN RESPONSE!!!')
+    print('[STATUS CODE]', response.status_code)
+    print('[CONTENT]', response.content)
 
     if not response.ok:
         raise ValidationError('Failed to obtain access token from Google.')
