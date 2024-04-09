@@ -27,11 +27,16 @@ const useHistorial = (): useHistorialType => {
     const fetchData = async () => {
       try {
         const response = await getFiltros()
-        setFiltros(response)
+        const filtrosConOpcionVacia: FiltrosType = response.map((item) => ({
+          ...item,
+          opciones: [ITEM_VACIO].concat(item.opciones)
+        }))
+        setFiltros(filtrosConOpcionVacia)
         setLoading(false)
       } catch (err) {
-        console.error(err)
         setError(true)
+        setLoading(false)
+        setFiltros([])
       }
     }
     fetchData()
