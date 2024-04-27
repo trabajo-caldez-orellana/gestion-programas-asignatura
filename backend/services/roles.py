@@ -23,7 +23,7 @@ class ServicioRoles:
     def usuario_tiene_permiso_para_acceder_a_programa(
         self, usuario: Usuario, programa: VersionProgramaAsignatura
     ) -> bool:
-        if programa.estado == EstadoAsignatura.ABIERTO:
+        if programa.estado == EstadoAsignatura.APROBADO:
             return True
 
         roles = self.obtener_roles_usuario(usuario)
