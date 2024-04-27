@@ -30,6 +30,7 @@ const SidebarSectionList: React.FC<SectionProps> = ({ onLinkClick }) => {
     const secciones = SIDEBAR_SECTIONS.filter((seccion) => {
       const subseccionesFiltradas = seccion.sections.filter((subsection) => {
         if (
+          subsection.permisos === null ||
           auth.userRoles.es_administrador ||
           (auth.userRoles.es_director_de_carrera &&
             subsection.permisos.includes(ROLES.DOCENTE)) ||
@@ -70,6 +71,7 @@ const SidebarSectionList: React.FC<SectionProps> = ({ onLinkClick }) => {
             <SubsectionList>
               {section.sections.map((subsection) => {
                 if (
+                  subsection.permisos === null ||
                   auth.userRoles.es_administrador ||
                   (auth.userRoles.es_director_de_carrera &&
                     subsection.permisos.includes(ROLES.DOCENTE)) ||
