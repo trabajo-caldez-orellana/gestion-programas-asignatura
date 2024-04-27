@@ -52,9 +52,11 @@ const CorrelativaModulo: React.FC<CorrelativaAsignaturasInterface> = ({
           modoLectura={modoLectura}
         />
       </InfoContainer>
-      <BorrarCorrelativaButton onClick={enBorradoCorrelativa}>
-        <i className="fas fa-solid fa-trash" />
-      </BorrarCorrelativaButton>
+      {!modoLectura && (
+        <BorrarCorrelativaButton onClick={enBorradoCorrelativa}>
+          <i className="fas fa-solid fa-trash" />
+        </BorrarCorrelativaButton>
+      )}
     </CorrelativaContainer>
   )
 }

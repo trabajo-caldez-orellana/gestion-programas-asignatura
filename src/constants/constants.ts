@@ -256,7 +256,7 @@ export interface SidebarSection {
     id: number
     name: string
     url: string
-    permisos: ROLES[]
+    permisos: ROLES[] | null
   }[]
 }
 
@@ -292,7 +292,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         id: 4,
         name: 'Programas vigentes',
         url: RUTAS_PAGINAS.PROGRAMAS_VIGENTES,
-        permisos: [ROLES.DIRECTOR, ROLES.SECRETARIO, ROLES.DOCENTE]
+        permisos: null
       },
       {
         id: 6,
@@ -304,7 +304,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
         id: 7,
         name: 'Historial',
         url: RUTAS_PAGINAS.HISTORIAL,
-        permisos: [ROLES.DIRECTOR, ROLES.SECRETARIO, ROLES.DOCENTE]
+        permisos: null
       }
     ]
   }

@@ -287,12 +287,14 @@ const SeccionCorrelativas: React.FC<SeccionCorrelativasProps> = ({
           )
       })}
       <MensajeDeError>{erroresSeccionCorrelativas.correlativas}</MensajeDeError>
-      <BotonAgregarCorrelativa
-        onClick={handleAgregarCorrelativa}
-        disabled={modoLectura}
-      >
-        Agregar correlativa
-      </BotonAgregarCorrelativa>
+      {!modoLectura && (
+        <BotonAgregarCorrelativa
+          onClick={handleAgregarCorrelativa}
+          disabled={modoLectura}
+        >
+          Agregar correlativa
+        </BotonAgregarCorrelativa>
+      )}
     </SeccionFormulario>
   )
 }
