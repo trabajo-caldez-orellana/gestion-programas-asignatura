@@ -937,7 +937,7 @@ class ServicioVersionProgramaAsignatura:
         with transaction.atomic():
             try:
                 if self._validar_resultados_de_aprendizaje(
-                    resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
+                    resultados_de_aprendizaje=json.dumps(ultimo_programa.resultados_de_aprendizaje),
                 ):
                     nuevo_programa = VersionProgramaAsignatura.objects.create(
                         asignatura=ultimo_programa.asignatura,
