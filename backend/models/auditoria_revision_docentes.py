@@ -13,7 +13,9 @@ class AuditoriaRevisionDocentes(models.Model):
     )
     usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
     modificado_en = models.DateTimeField(default=obtener_fecha_y_hora_actual)
-    accion = models.CharField(choices=AccionesProgramaDeAsignatura.choices, max_length=2)
+    accion = models.CharField(
+        choices=AccionesProgramaDeAsignatura.choices, max_length=2
+    )
 
     class Meta:
         verbose_name_plural = "Auditorias Revisión de Docentes"

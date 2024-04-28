@@ -6,14 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0007_correlativa_cantidad_asignaturas_correlativa_modulo_and_more'),
+        (
+            "backend",
+            "0007_correlativa_cantidad_asignaturas_correlativa_modulo_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='usuario',
-            name='profile_picture',
-            field=models.URLField(default='https://upload.wikimedia.org/wikipedia/commons/b/bf/Test_card.png', max_length=255),
+            model_name="usuario",
+            name="profile_picture",
+            field=models.URLField(
+                default="https://upload.wikimedia.org/wikipedia/commons/b/bf/Test_card.png",
+                max_length=255,
+            ),
             preserve_default=False,
         ),
     ]

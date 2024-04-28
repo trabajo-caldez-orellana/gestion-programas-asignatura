@@ -33,7 +33,7 @@ class CustomJWTAuthentication(authentication.JWTAuthentication):
         reason = check.process_view(request, None, (), {})
         if reason:
             raise PermissionDenied(f"CSRF Failed: {reason}")
-        
+
     def authenticate(self, request):
         """
         Checks if the access token is valid. If the access token is valid, lets the user pass.
@@ -83,6 +83,7 @@ class CustomJWTAuthentication(authentication.JWTAuthentication):
         except TokenError:
             raise AuthenticationFailed(REFRESH_TOKEN_EXPIRED_MESSAGE)
 
+
 class ReplaceRefreshedAccessTokenMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -104,4 +105,3 @@ class ReplaceRefreshedAccessTokenMiddleware:
             )
 
         return response
- 

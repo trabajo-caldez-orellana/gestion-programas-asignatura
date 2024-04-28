@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from backend.services import ServicioPlanDeEstudio
 
+
 class APIListarPlanesDeEstudio(APIView):
     # permission_classes = [IsAuthenticated,]
 

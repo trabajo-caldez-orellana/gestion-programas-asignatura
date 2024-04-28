@@ -25,38 +25,34 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
 
         validated_data = input_serializer.validated_data
 
-        code = validated_data.get('code')
-        error = validated_data.get('error')
+        code = validated_data.get("code")
+        error = validated_data.get("error")
 
-        login_url = f'{settings.BASE_FRONTEND_URL}/login'
-    
+        login_url = f"{settings.BASE_FRONTEND_URL}/login"
+
         if error or not code:
-            params = urlencode({'error': error})
-            return redirect(f'{login_url}?{params}')
+            params = urlencode({"error": error})
+            return redirect(f"{login_url}?{params}")
 
-        redirect_uri = f'{settings.BASE_FRONTEND_URL}/login-loading'
+        redirect_uri = f"{settings.BASE_FRONTEND_URL}/login-loading"
         access_token = google_get_access_token(code=code, redirect_uri=redirect_uri)
         user_data = google_get_user_info(access_token=access_token)
 
         try:
-            user = Usuario.objects.get(email=user_data['email'])
+            user = Usuario.objects.get(email=user_data["email"])
             refresh_token = RefreshToken.for_user(user)
         except Usuario.DoesNotExist:
-            first_name = user_data.get('given_name', '')
-            last_name = user_data.get('family_name', '')
-            profile_picture = user_data.get('picture', '')
+            first_name = user_data.get("given_name", "")
+            last_name = user_data.get("family_name", "")
+            profile_picture = user_data.get("picture", "")
             user = Usuario.objects.create(
-                email=user_data['email'],
+                email=user_data["email"],
                 first_name=first_name,
                 last_name=last_name,
-                profile_picture=profile_picture
+                profile_picture=profile_picture,
             )
             refresh_token = RefreshToken.for_user(user)
-
 
         response = Response({}, status=status.HTTP_200_OK)
         response = agregar_cookies_jwt(response, refresh_token)
         return response
-
-
-    

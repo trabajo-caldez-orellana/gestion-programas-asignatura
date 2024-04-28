@@ -65,13 +65,13 @@ class Rol(models.Model):
 
         if self.rol == Roles.SECRETARIO:
             if self.asignatura is not None:
-                error_message[
-                    "asignatura"
-                ] = MENSAJE_SECRETARIO_SELECCIONA_ASIGNATURA_O_CARRERA
+                error_message["asignatura"] = (
+                    MENSAJE_SECRETARIO_SELECCIONA_ASIGNATURA_O_CARRERA
+                )
             if self.carrera is not None:
-                error_message[
-                    "carrera"
-                ] = MENSAJE_SECRETARIO_SELECCIONA_ASIGNATURA_O_CARRERA
+                error_message["carrera"] = (
+                    MENSAJE_SECRETARIO_SELECCIONA_ASIGNATURA_O_CARRERA
+                )
 
         if error_message.keys:  # pragma: no branch
             raise ValidationError(error_message)

@@ -2,6 +2,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 from django.conf import settings
 
+
 def refresh_access_token(refresh_token):
     try:
         refresh_token = RefreshToken(refresh_token)
@@ -11,6 +12,7 @@ def refresh_access_token(refresh_token):
         # Manejar el caso en que el refresh token sea inválido o haya expirado
         # Por ejemplo, puedes devolver un error al frontend
         return None
+
 
 def agregar_cookies_jwt(response, credentials: RefreshToken):
     response.set_cookie(
@@ -32,6 +34,7 @@ def agregar_cookies_jwt(response, credentials: RefreshToken):
     )
 
     return response
+
 
 def eliminar_cookies_jwt(response):
     response.delete_cookie(settings.CUSTOM_AUTH_ACCESS_COOKIE)

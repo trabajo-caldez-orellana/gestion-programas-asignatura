@@ -13,274 +13,731 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Usuario',
+            name="Usuario",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('email', models.EmailField(max_length=255, unique=True)),
-                ('first_name', models.CharField(max_length=255)),
-                ('last_name', models.CharField(max_length=255)),
-                ('is_active', models.BooleanField(default=True)),
-                ('is_staff', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                ("email", models.EmailField(max_length=255, unique=True)),
+                ("first_name", models.CharField(max_length=255)),
+                ("last_name", models.CharField(max_length=255)),
+                ("is_active", models.BooleanField(default=True)),
+                ("is_staff", models.BooleanField(default=False)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='ActividadReservada',
+            name="ActividadReservada",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('descripcion', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("descripcion", models.CharField(max_length=255)),
             ],
             options={
-                'verbose_name_plural': 'Actividades Reservadas',
+                "verbose_name_plural": "Actividades Reservadas",
             },
         ),
         migrations.CreateModel(
-            name='AnioAcademico',
+            name="AnioAcademico",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('fecha_inicio', models.DateField()),
-                ('fecha_fin', models.DateField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("fecha_inicio", models.DateField()),
+                ("fecha_fin", models.DateField()),
             ],
         ),
         migrations.CreateModel(
-            name='Asignatura',
+            name="Asignatura",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('denominacion', models.CharField(max_length=255)),
-                ('codigo', models.CharField(max_length=6, unique=True, validators=[django.core.validators.MinLengthValidator(6)])),
-                ('metodologia', models.CharField(choices=[('P', 'Presencial'), ('V', 'Virtual'), ('H', 'Hibrido')], max_length=1)),
-                ('semanas_dictado', models.PositiveIntegerField()),
-                ('semanal_teoria_presencial', models.PositiveIntegerField(blank=True, null=True)),
-                ('semanal_practica_presencial', models.PositiveIntegerField(blank=True, null=True)),
-                ('semanal_teorico_practico_presencial', models.PositiveIntegerField(blank=True, null=True)),
-                ('semanal_lab_presencial', models.PositiveIntegerField(blank=True, null=True)),
-                ('semanal_teoria_remoto', models.PositiveIntegerField(blank=True, null=True)),
-                ('semanal_practica_remoto', models.PositiveIntegerField(blank=True, null=True)),
-                ('semanal_teorico_practico_remoto', models.PositiveIntegerField(blank=True, null=True)),
-                ('semanal_lab_remoto', models.PositiveIntegerField(blank=True, null=True)),
-                ('carga_rtf', models.PositiveIntegerField()),
-                ('semestre_dictado', models.CharField(blank=True, choices=[('PS', 'Primer Semestre'), ('SS', 'Segundo Semestre')], max_length=2, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("denominacion", models.CharField(max_length=255)),
+                (
+                    "codigo",
+                    models.CharField(
+                        max_length=6,
+                        unique=True,
+                        validators=[django.core.validators.MinLengthValidator(6)],
+                    ),
+                ),
+                (
+                    "metodologia",
+                    models.CharField(
+                        choices=[
+                            ("P", "Presencial"),
+                            ("V", "Virtual"),
+                            ("H", "Hibrido"),
+                        ],
+                        max_length=1,
+                    ),
+                ),
+                ("semanas_dictado", models.PositiveIntegerField()),
+                (
+                    "semanal_teoria_presencial",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "semanal_practica_presencial",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "semanal_teorico_practico_presencial",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "semanal_lab_presencial",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "semanal_teoria_remoto",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "semanal_practica_remoto",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "semanal_teorico_practico_remoto",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "semanal_lab_remoto",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                ("carga_rtf", models.PositiveIntegerField()),
+                (
+                    "semestre_dictado",
+                    models.CharField(
+                        blank=True,
+                        choices=[("PS", "Primer Semestre"), ("SS", "Segundo Semestre")],
+                        max_length=2,
+                        null=True,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='BloqueCurricular',
+            name="BloqueCurricular",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=255)),
-                ('coeficiente', models.DecimalField(decimal_places=2, max_digits=5)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
+                ("coeficiente", models.DecimalField(decimal_places=2, max_digits=5)),
             ],
             options={
-                'verbose_name_plural': 'Bloques Curriculares',
+                "verbose_name_plural": "Bloques Curriculares",
             },
         ),
         migrations.CreateModel(
-            name='Carrera',
+            name="Carrera",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
-            name='Configuracion',
+            name="Configuracion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(choices=[('IPM', 'Días previos al inicio del Semestre para Modificar el Programa'), ('IPV', 'Días previos al inicio del Semestre para Validar el Programa'), ('IPC', 'Días previos al inicio del Semestre para Corregir el Programa')], max_length=255, unique=True)),
-                ('valor', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "nombre",
+                    models.CharField(
+                        choices=[
+                            (
+                                "IPM",
+                                "Días previos al inicio del Semestre para Modificar el Programa",
+                            ),
+                            (
+                                "IPV",
+                                "Días previos al inicio del Semestre para Validar el Programa",
+                            ),
+                            (
+                                "IPC",
+                                "Días previos al inicio del Semestre para Corregir el Programa",
+                            ),
+                        ],
+                        max_length=255,
+                        unique=True,
+                    ),
+                ),
+                ("valor", models.IntegerField()),
             ],
             options={
-                'verbose_name_plural': 'Configuraciones',
+                "verbose_name_plural": "Configuraciones",
             },
         ),
         migrations.CreateModel(
-            name='Descriptor',
+            name="Descriptor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('descripcion', models.CharField(max_length=255)),
-                ('tipo', models.CharField(choices=[('E', 'Eje Transversal'), ('D', 'Descriptor')], max_length=1)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("descripcion", models.CharField(max_length=255)),
+                (
+                    "tipo",
+                    models.CharField(
+                        choices=[("E", "Eje Transversal"), ("D", "Descriptor")],
+                        max_length=1,
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Descriptores',
+                "verbose_name_plural": "Descriptores",
             },
         ),
         migrations.CreateModel(
-            name='Semestre',
+            name="Semestre",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('fecha_inicio', models.DateField()),
-                ('fecha_fin', models.DateField()),
-                ('semestre', models.CharField(choices=[('PS', 'Primer Semestre'), ('SS', 'Segundo Semestre')], max_length=2)),
-                ('anio_academico', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.anioacademico')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("fecha_inicio", models.DateField()),
+                ("fecha_fin", models.DateField()),
+                (
+                    "semestre",
+                    models.CharField(
+                        choices=[("PS", "Primer Semestre"), ("SS", "Segundo Semestre")],
+                        max_length=2,
+                    ),
+                ),
+                (
+                    "anio_academico",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="backend.anioacademico",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='VersionProgramaAsignatura',
+            name="VersionProgramaAsignatura",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('estado', models.CharField(choices=[('A', 'Abierto'), ('P', 'Pendiente'), ('AP', 'Aprobado')], default='A', max_length=2)),
-                ('contenidos', models.TextField()),
-                ('bibliografia', models.TextField()),
-                ('recursos', models.TextField()),
-                ('evaluacion', models.TextField()),
-                ('investigacion_docentes', models.TextField()),
-                ('investigacion_estudiantes', models.TextField()),
-                ('extension_docentes', models.TextField()),
-                ('extension_estudiantes', models.TextField()),
-                ('cronograma', models.TextField()),
-                ('resultados_de_aprendizaje', models.JSONField()),
-                ('creado_en', models.DateTimeField(default=backend.common.funciones_fecha.obtener_fecha_y_hora_actual)),
-                ('asignatura', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.asignatura')),
-                ('semestre', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.semestre')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("A", "Abierto"),
+                            ("P", "Pendiente"),
+                            ("AP", "Aprobado"),
+                        ],
+                        default="A",
+                        max_length=2,
+                    ),
+                ),
+                ("contenidos", models.TextField()),
+                ("bibliografia", models.TextField()),
+                ("recursos", models.TextField()),
+                ("evaluacion", models.TextField()),
+                ("investigacion_docentes", models.TextField()),
+                ("investigacion_estudiantes", models.TextField()),
+                ("extension_docentes", models.TextField()),
+                ("extension_estudiantes", models.TextField()),
+                ("cronograma", models.TextField()),
+                ("resultados_de_aprendizaje", models.JSONField()),
+                (
+                    "creado_en",
+                    models.DateTimeField(
+                        default=backend.common.funciones_fecha.obtener_fecha_y_hora_actual
+                    ),
+                ),
+                (
+                    "asignatura",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="backend.asignatura",
+                    ),
+                ),
+                (
+                    "semestre",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="backend.semestre",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Versiones de Programa de Asignatura',
+                "verbose_name_plural": "Versiones de Programa de Asignatura",
             },
         ),
         migrations.CreateModel(
-            name='Rol',
+            name="Rol",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rol', models.CharField(choices=[('DC', 'Director de Carrera'), ('TC', 'Titular de Catedra'), ('SA', 'Secretario Academico'), ('D', 'Docente')], max_length=2)),
-                ('asignatura', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='backend.asignatura')),
-                ('carrera', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='backend.carrera')),
-                ('usuario', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "rol",
+                    models.CharField(
+                        choices=[
+                            ("DC", "Director de Carrera"),
+                            ("TC", "Titular de Catedra"),
+                            ("SA", "Secretario Academico"),
+                            ("D", "Docente"),
+                        ],
+                        max_length=2,
+                    ),
+                ),
+                (
+                    "asignatura",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="backend.asignatura",
+                    ),
+                ),
+                (
+                    "carrera",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="backend.carrera",
+                    ),
+                ),
+                (
+                    "usuario",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Roles',
+                "verbose_name_plural": "Roles",
             },
         ),
         migrations.CreateModel(
-            name='ProgramaTieneDescriptor',
+            name="ProgramaTieneDescriptor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nivel', models.IntegerField(choices=[(0, 'Nada'), (1, 'Bajo / Si'), (2, 'Medio'), (3, 'Alto')])),
-                ('descriptor', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.descriptor')),
-                ('version_programa_asignatura', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.versionprogramaasignatura')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "nivel",
+                    models.IntegerField(
+                        choices=[
+                            (0, "Nada"),
+                            (1, "Bajo / Si"),
+                            (2, "Medio"),
+                            (3, "Alto"),
+                        ]
+                    ),
+                ),
+                (
+                    "descriptor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="backend.descriptor",
+                    ),
+                ),
+                (
+                    "version_programa_asignatura",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="backend.versionprogramaasignatura",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Descriptores para Programas',
+                "verbose_name_plural": "Descriptores para Programas",
             },
         ),
         migrations.CreateModel(
-            name='ProgramaTieneActividadReservada',
+            name="ProgramaTieneActividadReservada",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nivel', models.IntegerField(choices=[(0, 'Nada'), (1, 'Bajo / Si'), (2, 'Medio'), (3, 'Alto')])),
-                ('actividad_reservada', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.actividadreservada')),
-                ('version_programa_asignatura', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.versionprogramaasignatura')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "nivel",
+                    models.IntegerField(
+                        choices=[
+                            (0, "Nada"),
+                            (1, "Bajo / Si"),
+                            (2, "Medio"),
+                            (3, "Alto"),
+                        ]
+                    ),
+                ),
+                (
+                    "actividad_reservada",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="backend.actividadreservada",
+                    ),
+                ),
+                (
+                    "version_programa_asignatura",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="backend.versionprogramaasignatura",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Actividades Reservadas para Programas',
+                "verbose_name_plural": "Actividades Reservadas para Programas",
             },
         ),
         migrations.CreateModel(
-            name='PlanDeEstudio',
+            name="PlanDeEstudio",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('fecha_inicio', models.DateField()),
-                ('fecha_fin', models.DateField(blank=True, null=True)),
-                ('version', models.TextField()),
-                ('nombre', models.TextField()),
-                ('asignaturas', models.ManyToManyField(to='backend.asignatura')),
-                ('carrera', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.carrera')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("fecha_inicio", models.DateField()),
+                ("fecha_fin", models.DateField(blank=True, null=True)),
+                ("version", models.TextField()),
+                ("nombre", models.TextField()),
+                ("asignaturas", models.ManyToManyField(to="backend.asignatura")),
+                (
+                    "carrera",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="backend.carrera",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Planes de Estudio',
+                "verbose_name_plural": "Planes de Estudio",
             },
         ),
         migrations.CreateModel(
-            name='Notificacion',
+            name="Notificacion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo', models.CharField(choices=[('VP', 'Version pendiente para correccion')], max_length=2)),
-                ('creada', models.DateTimeField(default=backend.common.funciones_fecha.obtener_fecha_y_hora_actual)),
-                ('leida', models.DateTimeField(blank=True, null=True)),
-                ('mensaje', models.CharField(blank=True, max_length=255, null=True)),
-                ('redirecciona', models.URLField(max_length=255)),
-                ('usuario', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo",
+                    models.CharField(
+                        choices=[("VP", "Version pendiente para correccion")],
+                        max_length=2,
+                    ),
+                ),
+                (
+                    "creada",
+                    models.DateTimeField(
+                        default=backend.common.funciones_fecha.obtener_fecha_y_hora_actual
+                    ),
+                ),
+                ("leida", models.DateTimeField(blank=True, null=True)),
+                ("mensaje", models.CharField(blank=True, max_length=255, null=True)),
+                ("redirecciona", models.URLField(max_length=255)),
+                (
+                    "usuario",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Notificaciones',
+                "verbose_name_plural": "Notificaciones",
             },
         ),
         migrations.CreateModel(
-            name='Estandar',
+            name="Estandar",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=255)),
-                ('fecha_inicio', models.DateField()),
-                ('carrera', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.carrera')),
-                ('descriptores', models.ManyToManyField(blank=True, null=True, to='backend.descriptor')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
+                ("fecha_inicio", models.DateField()),
+                (
+                    "carrera",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="backend.carrera",
+                    ),
+                ),
+                (
+                    "descriptores",
+                    models.ManyToManyField(
+                        blank=True, null=True, to="backend.descriptor"
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Estándares',
+                "verbose_name_plural": "Estándares",
             },
         ),
         migrations.CreateModel(
-            name='Correlativa',
+            name="Correlativa",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo', models.CharField(choices=[('R', 'Regular'), ('A', 'Aprobado')], max_length=1)),
-                ('asignatura_correlativa', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.asignatura')),
-                ('version_programa_asignatura', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.versionprogramaasignatura')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo",
+                    models.CharField(
+                        choices=[("R", "Regular"), ("A", "Aprobado")], max_length=1
+                    ),
+                ),
+                (
+                    "asignatura_correlativa",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="backend.asignatura",
+                    ),
+                ),
+                (
+                    "version_programa_asignatura",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="backend.versionprogramaasignatura",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='AuditoriaEstadoVersionPrograma',
+            name="AuditoriaEstadoVersionPrograma",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('estado', models.CharField(choices=[('A', 'Abierto'), ('P', 'Pendiente'), ('AP', 'Aprobado')], max_length=2)),
-                ('modificado_en', models.DateTimeField(default=django.utils.timezone.now)),
-                ('rol', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.rol')),
-                ('version_programa', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.versionprogramaasignatura')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("A", "Abierto"),
+                            ("P", "Pendiente"),
+                            ("AP", "Aprobado"),
+                        ],
+                        max_length=2,
+                    ),
+                ),
+                (
+                    "modificado_en",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                (
+                    "rol",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="backend.rol"
+                    ),
+                ),
+                (
+                    "version_programa",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="backend.versionprogramaasignatura",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Auditorias Estado Version Programas',
+                "verbose_name_plural": "Auditorias Estado Version Programas",
             },
         ),
         migrations.AddField(
-            model_name='asignatura',
-            name='bloque_curricular',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.bloquecurricular'),
+            model_name="asignatura",
+            name="bloque_curricular",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                to="backend.bloquecurricular",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='anioacademico',
-            constraint=models.CheckConstraint(check=models.Q(('fecha_inicio__lte', models.F('fecha_fin'))), name='backend_anio_academico_fecha_fin_posterior_a_fecha_inicio', violation_error_message='Fecha fin mayor o igual a fecha inicio.'),
+            model_name="anioacademico",
+            constraint=models.CheckConstraint(
+                check=models.Q(("fecha_inicio__lte", models.F("fecha_fin"))),
+                name="backend_anio_academico_fecha_fin_posterior_a_fecha_inicio",
+                violation_error_message="Fecha fin mayor o igual a fecha inicio.",
+            ),
         ),
         migrations.AddField(
-            model_name='actividadreservada',
-            name='estandar',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='backend.estandar'),
+            model_name="actividadreservada",
+            name="estandar",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="backend.estandar"
+            ),
         ),
         migrations.AddField(
-            model_name='usuario',
-            name='groups',
-            field=models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups'),
+            model_name="usuario",
+            name="groups",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                related_name="user_set",
+                related_query_name="user",
+                to="auth.group",
+                verbose_name="groups",
+            ),
         ),
         migrations.AddField(
-            model_name='usuario',
-            name='user_permissions',
-            field=models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions'),
+            model_name="usuario",
+            name="user_permissions",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="Specific permissions for this user.",
+                related_name="user_set",
+                related_query_name="user",
+                to="auth.permission",
+                verbose_name="user permissions",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='semestre',
-            constraint=models.CheckConstraint(check=models.Q(('fecha_inicio__lte', models.F('fecha_fin'))), name='backend_semestre_fecha_fin_posterior_a_fecha_inicio', violation_error_message='Fecha fin mayor o igual a fecha inicio.'),
+            model_name="semestre",
+            constraint=models.CheckConstraint(
+                check=models.Q(("fecha_inicio__lte", models.F("fecha_fin"))),
+                name="backend_semestre_fecha_fin_posterior_a_fecha_inicio",
+                violation_error_message="Fecha fin mayor o igual a fecha inicio.",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='semestre',
-            constraint=models.UniqueConstraint(fields=('anio_academico', 'semestre'), name='backend_semestre_un_semestre_de_tipo_por_anio_academico'),
+            model_name="semestre",
+            constraint=models.UniqueConstraint(
+                fields=("anio_academico", "semestre"),
+                name="backend_semestre_un_semestre_de_tipo_por_anio_academico",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='plandeestudio',
-            constraint=models.CheckConstraint(check=models.Q(('fecha_inicio__lte', models.F('fecha_fin'))), name='backend_plan_de_estudio_fecha_fin_posterior_a_fecha_inicio', violation_error_message='Fecha fin mayor o igual a fecha inicio.'),
+            model_name="plandeestudio",
+            constraint=models.CheckConstraint(
+                check=models.Q(("fecha_inicio__lte", models.F("fecha_fin"))),
+                name="backend_plan_de_estudio_fecha_fin_posterior_a_fecha_inicio",
+                violation_error_message="Fecha fin mayor o igual a fecha inicio.",
+            ),
         ),
     ]

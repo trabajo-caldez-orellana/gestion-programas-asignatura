@@ -7,6 +7,7 @@ from backend.services import ServicioSemestre
 from backend.common.choices import EstadoAsignatura
 from backend.serializers import ProgramasVigentesSerializer
 
+
 class ListarProgramasVigentesAPI(APIView):
     permission_classes = [
         IsAuthenticated,
@@ -22,7 +23,7 @@ class ListarProgramasVigentesAPI(APIView):
         semestre_actual = servicio_semestre.obtener_semestre_actual()
 
         programas_vigentes = VersionProgramaAsignatura.objects.filter(
-            semestre = semestre_actual, estado = EstadoAsignatura.APROBADO
+            semestre=semestre_actual, estado=EstadoAsignatura.APROBADO
         )
 
         serializer = ProgramasVigentesSerializer()

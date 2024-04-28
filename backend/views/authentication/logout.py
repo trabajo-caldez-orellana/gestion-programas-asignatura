@@ -8,6 +8,7 @@ from django.conf import settings
 
 from backend.views.authentication.utils import eliminar_cookies_jwt
 
+
 class LogoutAPI(APIView):
     class InputSerializer(Serializer):
         refresh = CharField()

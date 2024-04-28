@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class ProgramasVigentesSerializer(serializers.Serializer):
     def to_representation(self, instance):
         result = []
@@ -8,7 +9,7 @@ class ProgramasVigentesSerializer(serializers.Serializer):
                 "id": programa.id,
                 "asignatura": {
                     "id": programa.asignatura.id,
-                    "nombre": programa.asignatura.denominacion
+                    "nombre": programa.asignatura.denominacion,
                 },
                 "estado": programa.estado,
                 "id_programa": programa.id,
@@ -16,7 +17,7 @@ class ProgramasVigentesSerializer(serializers.Serializer):
                     "ver_programa": True,
                     "imprimir": True,
                 },
-                "accion_requerida": False
+                "accion_requerida": False,
             }
             result.append(asignatura_data)
         return result

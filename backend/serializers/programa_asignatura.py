@@ -9,10 +9,11 @@ from backend.models import (
     ProgramaTieneActividadReservada,
     ProgramaTieneDescriptor,
     Rol,
-    Correlativa
+    Correlativa,
 )
 from backend.common.choices import TipoDescriptor, NivelDescriptor, Roles
 from backend.serializers.asignatura import SerializerAsignaturaParaSeleccion
+
 
 class SerializerProgramaTieneDescriptor(serializers.Serializer):
     id = serializers.IntegerField(source="descriptor_id")
@@ -39,9 +40,14 @@ class SerializerCorrelativa(serializers.Serializer):
     id = serializers.IntegerField(required=False, allow_null=True)
     tipo = serializers.CharField()
     requisito = serializers.CharField()
-    asignatura = SerializerAsignaturaParaSeleccion(required=False, source="asignatura_correlativa", allow_null=True)
+    asignatura = SerializerAsignaturaParaSeleccion(
+        required=False, source="asignatura_correlativa", allow_null=True
+    )
     modulo = serializers.CharField(required=False, allow_null=True)
-    cantidadAsignaturas = serializers.CharField(required=False, source="cantidad_asignaturas", allow_null=True)
+    cantidadAsignaturas = serializers.CharField(
+        required=False, source="cantidad_asignaturas", allow_null=True
+    )
+
 
 def serializer_programa_asignatura(
     programa: VersionProgramaAsignatura, solo_lectura: bool = False
@@ -77,18 +83,19 @@ def serializer_programa_asignatura(
         descriptores_del_programa = []
         ejes_transversales_del_programa = []
         actividades_reservadas_del_programa = []
-        
+
         for descriptor in descriptores_disponibles_para_modificar_programa:
-            try: 
+            try:
                 descriptor_del_programa = ProgramaTieneDescriptor.objects.get(
                     version_programa_asignatura_id=programa.id,
-                    descriptor_id=descriptor.id
+                    descriptor_id=descriptor.id,
                 )
                 descriptores_del_programa.append(
                     {
                         "id": descriptor_del_programa.descriptor_id,
                         "nombre": descriptor_del_programa.descriptor.descripcion,
-                        "seleccionado": descriptor_del_programa.nivel != NivelDescriptor.NADA
+                        "seleccionado": descriptor_del_programa.nivel
+                        != NivelDescriptor.NADA,
                     }
                 )
             except ProgramaTieneDescriptor.DoesNotExist:
@@ -96,21 +103,20 @@ def serializer_programa_asignatura(
                     {
                         "id": descriptor.id,
                         "nombre": descriptor.descripcion,
-                        "seleccionado": False
+                        "seleccionado": False,
                     }
                 )
 
         for eje in ejes_transversales_disponibles_para_modificar_programa:
-            try: 
+            try:
                 eje_del_programa = ProgramaTieneDescriptor.objects.get(
-                    version_programa_asignatura_id=programa.id,
-                    descriptor_id=eje.id
+                    version_programa_asignatura_id=programa.id, descriptor_id=eje.id
                 )
                 ejes_transversales_del_programa.append(
                     {
                         "id": eje_del_programa.descriptor_id,
                         "nombre": eje_del_programa.descriptor.descripcion,
-                        "nivel": eje_del_programa.nivel
+                        "nivel": eje_del_programa.nivel,
                     }
                 )
             except ProgramaTieneDescriptor.DoesNotExist:
@@ -118,21 +124,21 @@ def serializer_programa_asignatura(
                     {
                         "id": eje.id,
                         "nombre": eje.descripcion,
-                        "nivel": NivelDescriptor.NADA
+                        "nivel": NivelDescriptor.NADA,
                     }
                 )
-        
+
         for actividad in actividades_reservadas_disponibles_pera_modificar_programa:
-            try: 
+            try:
                 actividad_del_programa = ProgramaTieneActividadReservada.objects.get(
                     version_programa_asignatura_id=programa.id,
-                    actividad_reservada_id=actividad.id
+                    actividad_reservada_id=actividad.id,
                 )
                 actividades_reservadas_del_programa.append(
                     {
                         "id": actividad_del_programa.actividad_reservada_id,
                         "nombre": actividad_del_programa.actividad_reservada.descripcion,
-                        "nivel": actividad_del_programa.nivel
+                        "nivel": actividad_del_programa.nivel,
                     }
                 )
             except ProgramaTieneActividadReservada.DoesNotExist:
@@ -140,14 +146,15 @@ def serializer_programa_asignatura(
                     {
                         "id": actividad.id,
                         "nombre": actividad.descripcion,
-                        "nivel": NivelDescriptor.NADA
+                        "nivel": NivelDescriptor.NADA,
                     }
                 )
 
     else:
         # El array con el nivel
         descriptores_del_programa = ProgramaTieneDescriptor.objects.filter(
-            version_programa_asignatura=programa, descriptor__tipo=TipoDescriptor.DESCRIPTOR
+            version_programa_asignatura=programa,
+            descriptor__tipo=TipoDescriptor.DESCRIPTOR,
         ).values("descriptor_id", "descriptor__descripcion", "nivel")
         ejes_transversales_del_programa = ProgramaTieneDescriptor.objects.filter(
             version_programa_asignatura=programa,
@@ -171,18 +178,20 @@ def serializer_programa_asignatura(
 
     equipo_docente = Rol.objects.filter(
         rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE],
-        asignatura_id=programa.asignatura.id
+        asignatura_id=programa.asignatura.id,
     )
 
     equipo_docente_inforamacion = [
         {
             "id": rol.id,
-            "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}"
+            "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}",
         }
         for rol in equipo_docente
     ]
 
-    correlativas_programa = Correlativa.objects.filter(version_programa_asignatura_id=programa.id)
+    correlativas_programa = Correlativa.objects.filter(
+        version_programa_asignatura_id=programa.id
+    )
     serializador_correlativas = SerializerCorrelativa(correlativas_programa, many=True)
 
     return {
@@ -192,7 +201,10 @@ def serializer_programa_asignatura(
             "codigo_aignatura": programa.asignatura.codigo,
             "anio_academico": str(programa.semestre.anio_academico),
             "bloque_curricular": programa.asignatura.bloque_curricular.nombre,
-            "carreras": [{"id": carrera.id, "informacion": carrera.nombre} for carrera in carreras_de_la_asignatura],
+            "carreras": [
+                {"id": carrera.id, "informacion": carrera.nombre}
+                for carrera in carreras_de_la_asignatura
+            ],
             "equipo_docente": equipo_docente_inforamacion,
         },
         "carga_horaria": {
@@ -225,5 +237,5 @@ def serializer_programa_asignatura(
             "extension_docentes": programa.extension_docentes,
             "extension_estudiantes": programa.extension_estudiantes,
         },
-        "correlativas": serializador_correlativas.data
+        "correlativas": serializador_correlativas.data,
     }

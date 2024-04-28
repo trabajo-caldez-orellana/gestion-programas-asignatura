@@ -6,20 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0002_alter_anioacademico_options'),
+        ("backend", "0002_alter_anioacademico_options"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='versionprogramaasignatura',
-            name='fundamentacion',
-            field=models.TextField(default='One default'),
+            model_name="versionprogramaasignatura",
+            name="fundamentacion",
+            field=models.TextField(default="One default"),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='versionprogramaasignatura',
-            name='metodologia_aplicada',
-            field=models.TextField(default='One default'),
+            model_name="versionprogramaasignatura",
+            name="metodologia_aplicada",
+            field=models.TextField(default="One default"),
             preserve_default=False,
         ),
     ]

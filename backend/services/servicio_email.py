@@ -6,11 +6,20 @@ from django.utils.html import strip_tags
 
 from backend.common.choices import TiposDeEmail
 
+
 class ServicioEmail:
-    def enviar_email(self, tipo: TiposDeEmail, destinatarios: list[str], subject: str, context: object):
+    def enviar_email(
+        self,
+        tipo: TiposDeEmail,
+        destinatarios: list[str],
+        subject: str,
+        context: object,
+    ):
         mailer = emails.NewEmail(settings.MAILERSEND_API_KEY)
         mail_from = {"email": settings.MAILERSEND_FROM}
-        destinatarios_array = [{"email": destinatario} for destinatario in destinatarios]
+        destinatarios_array = [
+            {"email": destinatario} for destinatario in destinatarios
+        ]
 
         mail_body = {}
 
