@@ -824,7 +824,6 @@ class ServicioVersionProgramaAsignatura:
             return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
-        # TODO. Enviar mail avisando a los directores de carrera
         programa.estado = EstadoAsignatura.PENDIENTE
         programa.save()
 
@@ -882,7 +881,6 @@ class ServicioVersionProgramaAsignatura:
         """
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
         """
-        # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
 
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
@@ -908,24 +906,9 @@ class ServicioVersionProgramaAsignatura:
             version_programa_asignatura=ultimo_programa
         )
 
-        descriptores = descriptores_del_programa.filter(
-            descriptor__tipo=TipoDescriptor.DESCRIPTOR
-        )
-        ejes = descriptores_del_programa.filter(
-            descriptor__tipo=TipoDescriptor.EJE_TRANSVERSAL
-        )
-
-        if not descriptores.exists():
-            raise ValidationError({"__all__": MENSAJE_FALLO_REUTILIZACION})
-
-        if not ejes.exists():
-            raise ValidationError({"__all__": MENSAJE_FALLO_REUTILIZACION})
-
         actividades_reservadas = ProgramaTieneActividadReservada.objects.filter(
             version_programa_asignatura=ultimo_programa
         )
-        if not actividades_reservadas.exists():
-            raise ValidationError({"__all__": MENSAJE_FALLO_REUTILIZACION})
 
         correlativas_programa = Correlativa.objects.filter(
             version_programa_asignatura_id=ultimo_programa.id
