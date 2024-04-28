@@ -1,4 +1,6 @@
 from urllib.parse import urlencode
+import string
+import random
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -18,6 +20,15 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     class InputSerializer(serializers.Serializer):
         code = serializers.CharField(required=False)
         error = serializers.CharField(required=False)
+
+    def generate_password(self):
+        # Define the characters to use in the password
+        characters = string.ascii_letters + string.digits + string.punctuation
+        
+        # Generate a random password by sampling from the characters
+        password = ''.join(random.choice(characters) for _ in range(12))
+        
+        return password
 
     def get(self, request, *args, **kwargs):
         input_serializer = self.InputSerializer(data=request.GET)
@@ -51,6 +62,9 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
                 last_name=last_name,
                 profile_picture=profile_picture,
             )
+            user.set_password(self.generate_password())
+            user.save()
+
             refresh_token = RefreshToken.for_user(user)
 
         response = Response({}, status=status.HTTP_200_OK)
