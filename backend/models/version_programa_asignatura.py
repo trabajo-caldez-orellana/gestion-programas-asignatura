@@ -29,6 +29,12 @@ class VersionProgramaAsignatura(models.Model):
 
     class Meta:
         verbose_name_plural = "Versiones de Programa de Asignatura"
+        constraints = [
+            models.UniqueConstraint(
+                name="version_semestre_asignatura_ux",
+                fields=["asignatura", "semestre"],
+            )
+        ]
 
     def __str__(self):
         return f"{self.asignatura}-{self.semestre}"

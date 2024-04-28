@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from backend.services import obtener_programas_historial
 
+
 class ObtenerProgramasHistorial(APIView):
     permission_classes = [
         IsAuthenticated,
@@ -33,6 +34,8 @@ class ObtenerProgramasHistorial(APIView):
             anio_lectivo_id = int(anio_lectivo_id)
 
         # Llamar al servicio para obtener los programas historiales
-        data = obtener_programas_historial(carrera_id, semestre_id, asignatura_id, anio_lectivo_id)
+        data = obtener_programas_historial(
+            carrera_id, semestre_id, asignatura_id, anio_lectivo_id
+        )
 
         return Response(data)

@@ -44,7 +44,8 @@ class ObtenerFiltros(APIView):
                     "tipo": "anio_lectivo",
                     "nombre": "Años lectivos",
                     "opciones": [
-                        {"id": anio.id, "informacion": str(anio)} for anio in anios_lectivos
+                        {"id": anio.id, "informacion": str(anio)}
+                        for anio in anios_lectivos
                     ],
                 },
             ]

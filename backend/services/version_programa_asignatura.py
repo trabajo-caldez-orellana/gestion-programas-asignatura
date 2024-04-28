@@ -19,7 +19,7 @@ from backend.models import (
     Carrera,
     Semestre,
     AuditoriaEstadoVersionPrograma,
-    Correlativa
+    Correlativa,
 )
 from backend.common.choices import (
     NivelDescriptor,
@@ -30,7 +30,7 @@ from backend.common.choices import (
     EstadosAprobacionPrograma,
     TiposDeEmail,
     TipoCorrelativa,
-    RequisitosCorrelativa
+    RequisitosCorrelativa,
 )
 from backend.common.constantes import (
     MINIMO_RESULTADOS_DE_APRENDIZAJE,
@@ -65,7 +65,7 @@ from backend.common.mensajes_de_error import (
     MENSAJE_ASIGNATURA_NECESARIA,
     MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA,
     MENSAJE_MODULO_NECESARIO,
-    MENSAJE_CORRELATIVA_INVALIDA
+    MENSAJE_CORRELATIVA_INVALIDA,
 )
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
@@ -74,11 +74,13 @@ from backend.serializers import SerializerAsignatura
 from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
 from backend.tasks import enviar_email_async
 
+
 class ServicioVersionProgramaAsignatura:
     """
     Todos los servicios relacionados a la creacion, modificacion, y seguimiento de los Programas
     de asignatura
     """
+
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
     servicio_planes = ServicioPlanDeEstudio()
@@ -218,22 +220,26 @@ class ServicioVersionProgramaAsignatura:
             tipo = objeto_correlativa["tipo"]
         except Exception:
             raise ValidationError({"correlativas": MENSAJE_TIPO_CORRELATIVA_INVALIDO})
-        
+
         try:
             requisito = objeto_correlativa["requisito"]
         except Exception:
-            raise ValidationError({"correlativas": MENSAJE_REQUISITO_CORRELATIVA_INVALIDO})
-            
+            raise ValidationError(
+                {"correlativas": MENSAJE_REQUISITO_CORRELATIVA_INVALIDO}
+            )
+
         if tipo != TipoCorrelativa.APROBADO and tipo != TipoCorrelativa.REGULAR:
             raise ValidationError({"correlativas": MENSAJE_TIPO_CORRELATIVA_INVALIDO})
 
         if requisito == RequisitosCorrelativa.ASIGNATURA:
             try:
                 asignatura = objeto_correlativa["asignatura_correlativa"]
-                
+
                 if asignatura is None:
-                    raise ValidationError({"correlativas": MENSAJE_ASIGNATURA_NECESARIA})
-                    
+                    raise ValidationError(
+                        {"correlativas": MENSAJE_ASIGNATURA_NECESARIA}
+                    )
+
                 instancia_asignatura = Asignatura.objects.get(id=asignatura["id"])
 
                 if instancia_correlativa is None:
@@ -241,7 +247,7 @@ class ServicioVersionProgramaAsignatura:
                         version_programa_asignatura=version_programa_asignatura,
                         asignatura_correlativa=instancia_asignatura,
                         tipo=tipo,
-                        requisito=RequisitosCorrelativa.ASIGNATURA
+                        requisito=RequisitosCorrelativa.ASIGNATURA,
                     )
                     correlativa_nueva.full_clean()
                     correlativa_nueva.save()
@@ -259,38 +265,44 @@ class ServicioVersionProgramaAsignatura:
             try:
                 cantidad_asignaturas = objeto_correlativa["cantidad_asignaturas"]
                 if cantidad_asignaturas is None or cantidad_asignaturas == 0:
-                    raise ValidationError({"correlativas": MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA})
+                    raise ValidationError(
+                        {"correlativas": MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA}
+                    )
 
                 if instancia_correlativa is None:
                     correlativa_nueva = Correlativa(
                         version_programa_asignatura=version_programa_asignatura,
                         cantidad_asignaturas=cantidad_asignaturas,
                         tipo=tipo,
-                        requisito=RequisitosCorrelativa.CANTIDAD_ASIGNATURAS
+                        requisito=RequisitosCorrelativa.CANTIDAD_ASIGNATURAS,
                     )
                     correlativa_nueva.full_clean()
                     correlativa_nueva.save()
                 else:
                     instancia_correlativa.tipo = tipo
-                    instancia_correlativa.requisito = RequisitosCorrelativa.CANTIDAD_ASIGNATURAS
+                    instancia_correlativa.requisito = (
+                        RequisitosCorrelativa.CANTIDAD_ASIGNATURAS
+                    )
                     instancia_correlativa.cantidad_asignaturas = cantidad_asignaturas
                     instancia_correlativa.full_clean()
                     instancia_correlativa.save()
 
             except Exception:
-                raise ValidationError({"correlativas": MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA})
+                raise ValidationError(
+                    {"correlativas": MENSAJE_CANTIDAD_ASIGNATURAS_NECESARIA}
+                )
         elif requisito == RequisitosCorrelativa.MODULO:
             try:
                 modulo = objeto_correlativa["modulo"]
                 if modulo is None or modulo == "":
                     raise ValidationError({"correlativas": MENSAJE_MODULO_NECESARIO})
-                
+
                 if instancia_correlativa is None:
                     correlativa_nueva = Correlativa(
                         version_programa_asignatura=version_programa_asignatura,
                         modulo=modulo,
                         tipo=tipo,
-                        requisito=RequisitosCorrelativa.MODULO
+                        requisito=RequisitosCorrelativa.MODULO,
                     )
                     correlativa_nueva.full_clean()
                     correlativa_nueva.save()
@@ -304,7 +316,9 @@ class ServicioVersionProgramaAsignatura:
             except Exception:
                 raise ValidationError({"correlativas": MENSAJE_MODULO_NECESARIO})
         else:
-            raise ValidationError({"correlativas": MENSAJE_REQUISITO_CORRELATIVA_INVALIDO})
+            raise ValidationError(
+                {"correlativas": MENSAJE_REQUISITO_CORRELATIVA_INVALIDO}
+            )
 
     def _es_posible_crear_nueva_version_de_programa(
         self, semestre_asignatura: Semestres
@@ -347,8 +361,12 @@ class ServicioVersionProgramaAsignatura:
 
         return True
 
-    def _el_programa_ya_existe(self, asignatura: Asignatura, semestre: Semestre) -> bool:
-        programas_count = VersionProgramaAsignatura.objects.filter(asignatura_id=asignatura.id, semestre_id=semestre.id).count()
+    def _el_programa_ya_existe(
+        self, asignatura: Asignatura, semestre: Semestre
+    ) -> bool:
+        programas_count = VersionProgramaAsignatura.objects.filter(
+            asignatura_id=asignatura.id, semestre_id=semestre.id
+        ).count()
         return programas_count > 0
 
     def crear_nueva_version_programa_asignatura(
@@ -369,7 +387,7 @@ class ServicioVersionProgramaAsignatura:
         extension_docentes: str,
         extension_estudiantes: str,
         cronograma: str,
-        correlativas: list
+        correlativas: list,
     ):
         """
         Crea una nueva version de un programa de asignatura para el semestre que viene!
@@ -383,22 +401,6 @@ class ServicioVersionProgramaAsignatura:
 
         if self._el_programa_ya_existe(asignatura, semestre):
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
-
-
-        mensajes_de_error = {}
-        if len(descriptores) == 0:
-            mensajes_de_error["descriptores"] = MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR
-        if len(actividades_reservadas) == 0:
-            mensajes_de_error[
-                "actividades_reservadas"
-            ] = MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA
-        if len(ejes_transversales) == 0:
-            mensajes_de_error[
-                "ejes_transversales"
-            ] = MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL
-
-        if len(mensajes_de_error.keys()) > 0:
-            raise ValidationError(mensajes_de_error)
 
         # Obtengo todos los descriptores
         # La lista de descriptores tiene el siguiente formato:
@@ -441,8 +443,8 @@ class ServicioVersionProgramaAsignatura:
                     investigacion_estudiantes=investigacion_estudiantes,
                     extension_docentes=extension_docentes,
                     extension_estudiantes=extension_estudiantes,
-                    metodologia_aplicada = metodologia_aplicada,
-                    fundamentacion = fundamentacion,
+                    metodologia_aplicada=metodologia_aplicada,
+                    fundamentacion=fundamentacion,
                     cronograma=cronograma,
                 )
                 version_programa.full_clean()
@@ -526,9 +528,9 @@ class ServicioVersionProgramaAsignatura:
                 for correlativa in correlativas:
                     self._asignar_o_modificar_correlativa(
                         version_programa_asignatura=version_programa,
-                        objeto_correlativa=correlativa
+                        objeto_correlativa=correlativa,
                     )
-                        
+
             return version_programa
 
     def modificar_version_programa_asignatura(
@@ -576,50 +578,29 @@ class ServicioVersionProgramaAsignatura:
 
         mensajes_de_error = {}
 
-        cantidad_descriptores = 0
         for descriptor in descriptores:
             try:
-                if descriptor["seleccionado"]:
-                    cantidad_descriptores += 1
+                _ = descriptor["seleccionado"]
             except (TypeError, KeyError, ValueError) as exc:
-                raise ValidationError(
-                    {"descriptores": MENSAJE_FORMATO_DESCRIPTORES_INVALIDO}
-                ) from exc
+                mensajes_de_error["descriptores"] = (
+                    MENSAJE_FORMATO_DESCRIPTORES_INVALIDO
+                )
 
-        if cantidad_descriptores == 0:
-            mensajes_de_error["descriptores"] = MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR
-
-        cantidad_actividades_reservadas = 0
         for actividad in actividades_reservadas:
             try:
-                if actividad["nivel"] != NivelDescriptor.NADA:
-                    cantidad_actividades_reservadas += 1
+                _ = actividad["nivel"]
             except (TypeError, KeyError, ValueError) as exc:
-                raise ValidationError(
-                    {
-                        "actividades_reservadas": MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
-                    }
-                ) from exc
+                mensajes_de_error["actividades_reservadas"] = (
+                    MENSAJE_FORMATO_ACTIVIDADES_RESERVADAS_INVALIDO
+                )
 
-        if cantidad_actividades_reservadas == 0:
-            mensajes_de_error[
-                "actividades_reservadas"
-            ] = MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA
-
-        cantidad_ejes_transversales = 0
         for eje in ejes_transversales:
             try:
-                if eje["nivel"] != NivelDescriptor.NADA:
-                    cantidad_ejes_transversales += 1
+                _ = eje["nivel"]
             except (TypeError, KeyError, ValueError) as exc:
-                raise ValidationError(
-                    {"ejes_transversales": MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO}
-                ) from exc
-
-        if cantidad_ejes_transversales == 0:
-            mensajes_de_error[
-                "ejes_transversales"
-            ] = MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL
+                mensajes_de_error["ejes_transversales"] = (
+                    MENSAJE_FORMATO_EJES_TRANSVERSALES_INVALIDO
+                )
 
         if len(mensajes_de_error.keys()) > 0:
             raise ValidationError(mensajes_de_error)
@@ -681,7 +662,11 @@ class ServicioVersionProgramaAsignatura:
                             self._asignar_o_modificar_descriptor_prograna(
                                 instancia_descriptor,
                                 version_programa,
-                                NivelDescriptor.BAJO if descriptor["seleccionado"] else NivelDescriptor.NADA,
+                                (
+                                    NivelDescriptor.BAJO
+                                    if descriptor["seleccionado"]
+                                    else NivelDescriptor.NADA
+                                ),
                                 instancia,
                             )
 
@@ -777,7 +762,7 @@ class ServicioVersionProgramaAsignatura:
                                     instancia_actividad_reservada,
                                     version_programa,
                                     actividad["nivel"],
-                            )
+                                )
                     except (TypeError, KeyError, ValueError) as exc:
                         raise ValidationError(
                             {
@@ -800,7 +785,9 @@ class ServicioVersionProgramaAsignatura:
                 # }
 
                 try:
-                    ids_correlativas_formulario = [correlativa["id"] for correlativa in correlativas]
+                    ids_correlativas_formulario = [
+                        correlativa["id"] for correlativa in correlativas
+                    ]
                     instancias_correlativa_asignatura = Correlativa.objects.filter(
                         version_programa_asignatura_id=version_programa.id
                     )
@@ -810,7 +797,9 @@ class ServicioVersionProgramaAsignatura:
                             instancia_correlativa.delete()
 
                 except Exception:
-                    raise ValidationError({"correlativas": MENSAJE_CORRELATIVA_INVALIDA})
+                    raise ValidationError(
+                        {"correlativas": MENSAJE_CORRELATIVA_INVALIDA}
+                    )
 
                 for correlativa in correlativas:
                     try:
@@ -820,40 +809,42 @@ class ServicioVersionProgramaAsignatura:
                         self._asignar_o_modificar_correlativa(
                             version_programa_asignatura=version_programa,
                             objeto_correlativa=correlativa,
-                            instancia_correlativa=instancia_correlativa
+                            instancia_correlativa=instancia_correlativa,
                         )
                     except Correlativa.DoesNotExist:
                         self._asignar_o_modificar_correlativa(
                             version_programa_asignatura=version_programa,
-                            objeto_correlativa=correlativa
+                            objeto_correlativa=correlativa,
                         )
                     except Exception:
-                        raise ValidationError({"correlativas": MENSAJE_CORRELATIVA_INVALIDA})
+                        raise ValidationError(
+                            {"correlativas": MENSAJE_CORRELATIVA_INVALIDA}
+                        )
 
             return version_programa
 
     def presentar_programa_para_aprobacion(self, programa: VersionProgramaAsignatura):
-        # TODO. Enviar mail avisando a los directores de carrera
         programa.estado = EstadoAsignatura.PENDIENTE
         programa.save()
 
-        
         subject = f"[{programa.asignatura.codigo} - {programa.asignatura.denominacion}] Programa listo para corrección."
         context = {
             "site_url": f"{settings.BASE_FRONTEND_URL}/tareas-pendientes",
-            "asignatura": programa.asignatura.denominacion
+            "asignatura": programa.asignatura.denominacion,
         }
-        
+
         # obtener destinatarios
         planes_de_estudio_relacionados = programa.asignatura.planes_de_estudio.all()
         carreras_de_planes_de_estudio = set()
-        
+
         for plan in planes_de_estudio_relacionados:
             carreras_de_planes_de_estudio.add(plan.carrera)
-        
+
         directores_de_carrera = set()
         for carrera in carreras_de_planes_de_estudio:
-            roles = Rol.objects.filter(carrera_id=carrera.id, rol=Roles.DIRECTOR_CARRERA)
+            roles = Rol.objects.filter(
+                carrera_id=carrera.id, rol=Roles.DIRECTOR_CARRERA
+            )
             for rol in roles:
                 directores_de_carrera.add(rol.usuario.email)
 
@@ -861,7 +852,7 @@ class ServicioVersionProgramaAsignatura:
             TiposDeEmail.PROGRAMA_LISTO_PARA_CORRECCION,
             list(directores_de_carrera),
             subject,
-            context
+            context,
         )
         return programa
 
@@ -870,17 +861,26 @@ class ServicioVersionProgramaAsignatura:
         semestre_actual = self.servicio_semestre.obtener_semestre_actual()
 
         if semestre_dictado_asignatura is None:
-            return VersionProgramaAsignatura.objects.get(semestre_id = semestre_actual.id, asignatura_id=asignatura.id, estado=EstadoAsignatura.APROBADO)
-        
+            return VersionProgramaAsignatura.objects.get(
+                semestre_id=semestre_actual.id,
+                asignatura_id=asignatura.id,
+                estado=EstadoAsignatura.APROBADO,
+            )
+
         else:
-            semestre_anterior = self.servicio_semestre.obtener_semestre_anterior(semestre_dictado_asignatura)
-            return VersionProgramaAsignatura.objects.get(semestre_id = semestre_anterior.id, asignatura_id=asignatura.id, estado=EstadoAsignatura.APROBADO)
+            semestre_anterior = self.servicio_semestre.obtener_semestre_anterior(
+                semestre_dictado_asignatura
+            )
+            return VersionProgramaAsignatura.objects.get(
+                semestre_id=semestre_anterior.id,
+                asignatura_id=asignatura.id,
+                estado=EstadoAsignatura.APROBADO,
+            )
 
     def reutilizar_ultimo_plan(self, asignatura: Asignatura):
         """
         Toma la ultima version del plan de la asignatura, y crea una nueva con los mismos datos.
         """
-        # TODO. Fijarse que no exista ya un programa para la asignatura para ese semestre
 
         if not self._es_posible_crear_nueva_version_de_programa(
             asignatura.semestre_dictado
@@ -888,11 +888,15 @@ class ServicioVersionProgramaAsignatura:
             raise ValidationError({"__all__": MENSAJE_PROGRAMAS_CERRADOS})
 
         semestre_siguiente = self.servicio_semestre.obtener_semestre_siguiente()
-        if self._el_programa_ya_existe(asignatura=asignatura, semestre=semestre_siguiente):
+        if self._el_programa_ya_existe(
+            asignatura=asignatura, semestre=semestre_siguiente
+        ):
             raise ValidationError({"__all__": MENSAJE_PROGRAMA_YA_EXISTENTE})
 
         try:
-            ultimo_programa = self.obtener_ultimo_programa_de_asignatura_aprobado(asignatura)
+            ultimo_programa = self.obtener_ultimo_programa_de_asignatura_aprobado(
+                asignatura
+            )
         except VersionProgramaAsignatura.DoesNotExist as e:
             raise ValidationError(
                 {"__all__": MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES}
@@ -902,32 +906,9 @@ class ServicioVersionProgramaAsignatura:
             version_programa_asignatura=ultimo_programa
         )
 
-        descriptores = descriptores_del_programa.filter(
-            descriptor__tipo=TipoDescriptor.DESCRIPTOR
-        )
-        ejes = descriptores_del_programa.filter(
-            descriptor__tipo=TipoDescriptor.EJE_TRANSVERSAL
-        )
-
-        if not descriptores.exists():
-            raise ValidationError(
-                {"__all__": MENSAJE_FALLO_REUTILIZACION}
-            )
-
-        if not ejes.exists():
-            raise ValidationError(
-                {"__all__": MENSAJE_FALLO_REUTILIZACION}
-            )
-
         actividades_reservadas = ProgramaTieneActividadReservada.objects.filter(
             version_programa_asignatura=ultimo_programa
         )
-        if not actividades_reservadas.exists():
-            raise ValidationError(
-                {
-                    "__all__": MENSAJE_FALLO_REUTILIZACION
-                }
-            )
 
         correlativas_programa = Correlativa.objects.filter(
             version_programa_asignatura_id=ultimo_programa.id
@@ -937,7 +918,9 @@ class ServicioVersionProgramaAsignatura:
         with transaction.atomic():
             try:
                 if self._validar_resultados_de_aprendizaje(
-                    resultados_de_aprendizaje=json.dumps(ultimo_programa.resultados_de_aprendizaje),
+                    resultados_de_aprendizaje=json.dumps(
+                        ultimo_programa.resultados_de_aprendizaje
+                    ),
                 ):
                     nuevo_programa = VersionProgramaAsignatura.objects.create(
                         asignatura=ultimo_programa.asignatura,
@@ -951,8 +934,8 @@ class ServicioVersionProgramaAsignatura:
                         investigacion_estudiantes=ultimo_programa.investigacion_estudiantes,
                         extension_docentes=ultimo_programa.extension_docentes,
                         extension_estudiantes=ultimo_programa.extension_docentes,
-                        metodologia_aplicada = ultimo_programa.metodologia_aplicada,
-                        fundamentacion = ultimo_programa.fundamentacion,
+                        metodologia_aplicada=ultimo_programa.metodologia_aplicada,
+                        fundamentacion=ultimo_programa.fundamentacion,
                         cronograma=ultimo_programa.cronograma,
                         resultados_de_aprendizaje=ultimo_programa.resultados_de_aprendizaje,
                     )
@@ -974,10 +957,10 @@ class ServicioVersionProgramaAsignatura:
                         correlativa_nueva = Correlativa(
                             version_programa_asignatura=nuevo_programa,
                             asignatura_correlativa=correlativa.asignatura_correlativa,
-                            tipo=correlativa.tipo,   
+                            tipo=correlativa.tipo,
                             requisito=correlativa.requisito,
                             modulo=correlativa.modulo,
-                            cantidad_asignaturas=correlativa.cantidad_asignaturas
+                            cantidad_asignaturas=correlativa.cantidad_asignaturas,
                         )
                         correlativa_nueva.full_clean()
                         correlativa_nueva.save()
@@ -1040,9 +1023,9 @@ class ServicioVersionProgramaAsignatura:
 
         return {
             "asignatura": SerializerAsignatura(asignatura).data,
-            "id_programa": version_programa.id
-            if version_programa is not None
-            else None,
+            "id_programa": (
+                version_programa.id if version_programa is not None else None
+            ),
             "accion_requerida": accion,
             "acciones_posibles": {
                 "ver_programa": version_programa is not None,
@@ -1050,7 +1033,7 @@ class ServicioVersionProgramaAsignatura:
                 "reutilizar_ultimo": se_puede_usar_ultimo,
                 "modificar_ultimo": se_puede_usar_ultimo,
                 "nuevo": version_programa is None,
-                "revisar_programa": revisar
+                "revisar_programa": revisar,
             },
         }
 
@@ -1079,7 +1062,7 @@ class ServicioVersionProgramaAsignatura:
                         rol.asignatura, version
                     )
                 ]
-            
+
             return []
 
         if rol.rol == Roles.DIRECTOR_CARRERA:
@@ -1099,10 +1082,9 @@ class ServicioVersionProgramaAsignatura:
             for version in versiones:
                 try:
                     auditoria = AuditoriaEstadoVersionPrograma.objects.get(
-                        version_programa_id=version.id,
-                        rol_id=rol.id
+                        version_programa_id=version.id, rol_id=rol.id
                     )
-                    
+
                     if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
                         tarea = self._crear_objeto_para_lista_de_tareas_pendientes(
                             version.asignatura, version
@@ -1113,27 +1095,32 @@ class ServicioVersionProgramaAsignatura:
                         version.asignatura, version
                     )
                     tareas_pendientes_director.append(tarea)
-            
+
             return tareas_pendientes_director
 
         if rol.rol == Roles.SECRETARIO:
             return []
 
-    def _verificar_programa_queda_aprobado(self, version_programa: VersionProgramaAsignatura):
-        planes_de_estudio_relacionados = version_programa.asignatura.planes_de_estudio.all()
+    def _verificar_programa_queda_aprobado(
+        self, version_programa: VersionProgramaAsignatura
+    ):
+        planes_de_estudio_relacionados = (
+            version_programa.asignatura.planes_de_estudio.all()
+        )
         carreras_de_planes_de_estudio = set()
-        
+
         for plan in planes_de_estudio_relacionados:
             carreras_de_planes_de_estudio.add(plan.carrera.id)
 
-        roles = Rol.objects.filter(carrera__id__in=carreras_de_planes_de_estudio, rol=Roles.DIRECTOR_CARRERA)
+        roles = Rol.objects.filter(
+            carrera__id__in=carreras_de_planes_de_estudio, rol=Roles.DIRECTOR_CARRERA
+        )
 
         for rol in roles:
             # Se que esto esta horriblemente ineficiente pero son 50 usuarios saludos
             try:
                 auditoria = AuditoriaEstadoVersionPrograma.objects.get(
-                    version_programa_id=version_programa.id,
-                    rol_id=rol.id
+                    version_programa_id=version_programa.id, rol_id=rol.id
                 )
 
                 if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
@@ -1143,55 +1130,62 @@ class ServicioVersionProgramaAsignatura:
 
         return True
 
-    def _tiene_permiso_para_corregir_programas(self, rol: Rol, version_programa: VersionProgramaAsignatura):
+    def _tiene_permiso_para_corregir_programas(
+        self, rol: Rol, version_programa: VersionProgramaAsignatura
+    ):
         if rol.rol != Roles.DIRECTOR_CARRERA:
             return False
-        
+
         carrera_rol = rol.carrera
-        planes_de_estudio_relacionados = version_programa.asignatura.planes_de_estudio.all()
+        planes_de_estudio_relacionados = (
+            version_programa.asignatura.planes_de_estudio.all()
+        )
         carreras_de_planes_de_estudio = set()
         for plan in planes_de_estudio_relacionados:
             carreras_de_planes_de_estudio.add(plan.carrera)
 
-        if not(carrera_rol in carreras_de_planes_de_estudio):
+        if not (carrera_rol in carreras_de_planes_de_estudio):
             return False
-        
+
         return True
 
-    def pedir_cambios_programa_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol, mensaje: str):
+    def pedir_cambios_programa_asignatura(
+        self, version_programa: VersionProgramaAsignatura, rol: Rol, mensaje: str
+    ):
         if not version_programa.estado == EstadoAsignatura.PENDIENTE:
             raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
         if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
-            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
+            raise ValidationError(
+                {"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR}
+            )
 
         try:
             auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
-                rol_id=rol.id,
-                version_programa_id=version_programa.id
+                rol_id=rol.id, version_programa_id=version_programa.id
             )
-            
+
             auditoria_anterior.estado = EstadosAprobacionPrograma.PEDIDO_CAMBIOS
             auditoria_anterior.mensaje_cambios = mensaje
             auditoria_anterior.full_clean()
             auditoria_anterior.save(update_fields=["estado", "mensaje_cambios"])
-            
+
         except AuditoriaEstadoVersionPrograma.DoesNotExist:
             nueva_auditoria = AuditoriaEstadoVersionPrograma(
                 version_programa=version_programa,
                 rol=rol,
                 estado=EstadosAprobacionPrograma.PEDIDO_CAMBIOS,
-                mensaje_cambios=mensaje
+                mensaje_cambios=mensaje,
             )
             nueva_auditoria.full_clean()
             nueva_auditoria.save()
 
         auditorias = AuditoriaEstadoVersionPrograma.objects.filter(
-                version_programa_id=version_programa.id,
-                estado=EstadosAprobacionPrograma.APROBADO
+            version_programa_id=version_programa.id,
+            estado=EstadosAprobacionPrograma.APROBADO,
         )
         auditorias.update(
             estado=EstadosAprobacionPrograma.APROBACION_DEPRECADA,
-            modificado_en=obtener_fecha_y_hora_actual()
+            modificado_en=obtener_fecha_y_hora_actual(),
         )
 
         version_programa.estado = EstadoAsignatura.ABIERTO
@@ -1203,11 +1197,11 @@ class ServicioVersionProgramaAsignatura:
         context = {
             "site_url": f"{settings.BASE_FRONTEND_URL}/tareas-pendientes",
             "asignatura": version_programa.asignatura.denominacion,
-            "mensaje": mensaje
+            "mensaje": mensaje,
         }
         roles = Rol.objects.filter(
             Q(rol=Roles.DOCENTE) | Q(rol=Roles.TITULAR_CATEDRA),
-            asignatura_id=version_programa.asignatura.id
+            asignatura_id=version_programa.asignatura.id,
         )
         for rol_docente in roles:
             docentes_de_la_asignatura.add(rol_docente.usuario.email)
@@ -1216,23 +1210,27 @@ class ServicioVersionProgramaAsignatura:
             TiposDeEmail.CAMBIOS_PEDIDOS,
             list(docentes_de_la_asignatura),
             subject,
-            context
+            context,
         )
 
-    def aprobar_programa_de_asignatura(self, version_programa: VersionProgramaAsignatura, rol: Rol):
+    def aprobar_programa_de_asignatura(
+        self, version_programa: VersionProgramaAsignatura, rol: Rol
+    ):
         if not version_programa.estado == EstadoAsignatura.PENDIENTE:
             raise ValidationError({"__all__": MENSAJE_NO_TIENE_PERMISO_PARA_CORREGIR})
         if not self._tiene_permiso_para_corregir_programas(rol, version_programa):
-            raise ValidationError({"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR})
+            raise ValidationError(
+                {"__all__": MENSAJE_PROGRAMA_NO_SE_ENCUENTRA_DISPONIBLE_PARA_CORREGIR}
+            )
 
         try:
             auditoria_anterior = AuditoriaEstadoVersionPrograma.objects.get(
                 rol_id=rol.id,
                 estado__in=[
                     EstadosAprobacionPrograma.APROBACION_DEPRECADA,
-                    EstadosAprobacionPrograma.PEDIDO_CAMBIOS
+                    EstadosAprobacionPrograma.PEDIDO_CAMBIOS,
                 ],
-                version_programa_id=version_programa.id
+                version_programa_id=version_programa.id,
             )
             auditoria_anterior.estado = EstadosAprobacionPrograma.APROBADO
             auditoria_anterior.modificado_en = obtener_fecha_y_hora_actual()
@@ -1243,7 +1241,7 @@ class ServicioVersionProgramaAsignatura:
                 version_programa=version_programa,
                 rol=rol,
                 estado=EstadosAprobacionPrograma.APROBADO,
-                mensaje_cambios="Aprobado"
+                mensaje_cambios="Aprobado",
             )
             nueva_auditoria.full_clean()
             nueva_auditoria.save()
@@ -1257,7 +1255,7 @@ class ServicioVersionProgramaAsignatura:
             subject = f"[{version_programa.asignatura.codigo} - {version_programa.asignatura.denominacion}] Programa aprobado."
             roles = Rol.objects.filter(
                 Q(rol=Roles.DOCENTE) | Q(rol=Roles.TITULAR_CATEDRA),
-                asignatura_id=version_programa.asignatura.id
+                asignatura_id=version_programa.asignatura.id,
             )
             for rol_docente in roles:
                 docentes_de_la_asignatura.add(rol_docente.usuario.email)
@@ -1267,8 +1265,8 @@ class ServicioVersionProgramaAsignatura:
                 list(docentes_de_la_asignatura),
                 subject,
                 {
-                    "asignatura": version_programa.asignatura.denominacion,            
-                }
+                    "asignatura": version_programa.asignatura.denominacion,
+                },
             )
 
     def obtener_datos_para_nuevo_programa(self, asignatura: Asignatura):
@@ -1293,34 +1291,42 @@ class ServicioVersionProgramaAsignatura:
             for descriptor in estandar.descriptores.filter(
                 tipo=TipoDescriptor.DESCRIPTOR
             ):
-                descriptores_del_programa_disponibles_para_nuevo_programa.add(descriptor)
+                descriptores_del_programa_disponibles_para_nuevo_programa.add(
+                    descriptor
+                )
             for eje in estandar.descriptores.filter(
                 tipo=TipoDescriptor.EJE_TRANSVERSAL
             ):
                 ejes_transversales_del_programa_disponibles.add(eje)
-
 
         ejes_transversales_del_programa = [
             {"id": eje.id, "nombre": eje.descripcion, "nivel": NivelDescriptor.NADA}
             for eje in ejes_transversales_del_programa_disponibles
         ]
         descriptores_del_programa = [
-            {"id": descriptor.id, "nombre": descriptor.descripcion, "seleccionado": False}
+            {
+                "id": descriptor.id,
+                "nombre": descriptor.descripcion,
+                "seleccionado": False,
+            }
             for descriptor in descriptores_del_programa_disponibles_para_nuevo_programa
         ]
         actividades_reservadas_del_programa = [
-            {"id": actividad.id, "nombre": actividad.descripcion, "nivel": NivelDescriptor.NADA}
+            {
+                "id": actividad.id,
+                "nombre": actividad.descripcion,
+                "nivel": NivelDescriptor.NADA,
+            }
             for actividad in actividades_reservadas_disponibles_para_nuevo_programa
         ]
 
         equipo_docente = Rol.objects.filter(
-            rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE],
-            asignatura_id=asignatura.id
+            rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE], asignatura_id=asignatura.id
         )
         equipo_docente_inforamacion = [
             {
                 "id": rol.id,
-                "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}"
+                "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}",
             }
             for rol in equipo_docente
         ]
@@ -1331,7 +1337,10 @@ class ServicioVersionProgramaAsignatura:
                 "codigo_aignatura": asignatura.codigo,
                 "anio_academico": "-",
                 "bloque_curricular": asignatura.bloque_curricular.nombre,
-                "carreras": [{"id": carrera.id, "informacion": carrera.nombre} for carrera in carreras],
+                "carreras": [
+                    {"id": carrera.id, "informacion": carrera.nombre}
+                    for carrera in carreras
+                ],
                 "equipo_docente": equipo_docente_inforamacion,
             },
             "carga_horaria": {
@@ -1347,5 +1356,5 @@ class ServicioVersionProgramaAsignatura:
             },
             "ejes_transversales": ejes_transversales_del_programa,
             "descriptores": descriptores_del_programa,
-            "actividades_reservadas": actividades_reservadas_del_programa
+            "actividades_reservadas": actividades_reservadas_del_programa,
         }

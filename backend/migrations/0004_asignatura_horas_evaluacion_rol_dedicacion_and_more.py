@@ -6,24 +6,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0003_versionprogramaasignatura_fundamentacion_and_more'),
+        ("backend", "0003_versionprogramaasignatura_fundamentacion_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='asignatura',
-            name='horas_evaluacion',
+            model_name="asignatura",
+            name="horas_evaluacion",
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='rol',
-            name='dedicacion',
-            field=models.CharField(choices=[('N', 'No exclusiva'), ('E', 'Exclusiva')], default='N', max_length=2),
+            model_name="rol",
+            name="dedicacion",
+            field=models.CharField(
+                choices=[("N", "No exclusiva"), ("E", "Exclusiva")],
+                default="N",
+                max_length=2,
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='plandeestudio',
-            name='asignaturas',
-            field=models.ManyToManyField(related_name='planes_de_estudio', to='backend.asignatura'),
+            model_name="plandeestudio",
+            name="asignaturas",
+            field=models.ManyToManyField(
+                related_name="planes_de_estudio", to="backend.asignatura"
+            ),
         ),
     ]

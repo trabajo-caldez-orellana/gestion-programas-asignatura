@@ -7,19 +7,22 @@ from backend.models import VersionProgramaAsignatura
 from backend.services import ServicioPlanDeEstudio
 from backend.serializers import SerializerAsignaturaParaSeleccion
 
+
 class AsignaturasDisponiblesAPartirPrograma(APIView):
     def get(self, request, id_programa):
         try:
             programa = VersionProgramaAsignatura.objects.get(id=id_programa)
         except VersionProgramaAsignatura.DoesNotExist:
             return Response(
-              status=HTTP_400_BAD_REQUEST,
-              data={"error": {"__all__": MENSAJE_ID_INEXISTENTE}}
+                status=HTTP_400_BAD_REQUEST,
+                data={"error": {"__all__": MENSAJE_ID_INEXISTENTE}},
             )
-        
+
         servicio_planes = ServicioPlanDeEstudio()
-        listado_asignaturas = servicio_planes.obtener_asignaturas_disponibles_para_correlativa(
-            programa.asignatura
+        listado_asignaturas = (
+            servicio_planes.obtener_asignaturas_disponibles_para_correlativa(
+                programa.asignatura
+            )
         )
 
         serializer_asignatura = SerializerAsignaturaParaSeleccion(

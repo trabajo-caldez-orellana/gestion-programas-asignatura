@@ -6,12 +6,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0001_initial'),
+        ("backend", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='anioacademico',
-            options={'verbose_name': 'Año académico', 'verbose_name_plural': 'Años académicos'},
+            name="anioacademico",
+            options={
+                "verbose_name": "Año académico",
+                "verbose_name_plural": "Años académicos",
+            },
         ),
     ]

@@ -7,11 +7,15 @@ from django.core.exceptions import ValidationError
 
 from backend.common.choices import AccionesProgramaDeAsignatura
 from backend.models import Asignatura
-from backend.services import ServicioRoles, ServicioVersionProgramaAsignatura, ServicioAuditoria
+from backend.services import (
+    ServicioRoles,
+    ServicioVersionProgramaAsignatura,
+    ServicioAuditoria,
+)
 from backend.common.mensajes_de_error import (
     MENSAJE_ID_INEXISTENTE,
     MENSAJE_PERMISO_PROGRAMA,
-    MENSAJE_ERROR_INESPERADO
+    MENSAJE_ERROR_INESPERADO,
 )
 
 
@@ -38,20 +42,20 @@ class ReutilizarUltimoPrograma(APIView):
 
         if servicio_rol.usuario_tiene_permiso_para_crear_programa(
             usuario=request.user, asignatura=asignatura
-        ):  
+        ):
             try:
-              data = servicio_programa.reutilizar_ultimo_plan(asignatura)
+                data = servicio_programa.reutilizar_ultimo_plan(asignatura)
             except ValidationError as e:
                 return Response({"error": e.message_dict}, status=HTTP_400_BAD_REQUEST)
-            
+
             if data is None:
                 return Response({"error": {"__all__": [MENSAJE_ERROR_INESPERADO]}})
-            
+
             servicio_auditoria.auditar_revision(
-                  request.user,
-                  data,
-                  AccionesProgramaDeAsignatura.REUTILIZAR_ULTIMO_PROGRAMA
-              )
+                request.user,
+                data,
+                AccionesProgramaDeAsignatura.REUTILIZAR_ULTIMO_PROGRAMA,
+            )
             return Response()
 
         return Response(

@@ -15,9 +15,11 @@ class ServicioRoles:
         roles = self.obtener_roles_usuario(usuario)
 
         for rol in roles:
-            if (rol.rol == Roles.DOCENTE or rol.rol == Roles.TITULAR_CATEDRA) and rol.asignatura == asignatura:
+            if (
+                rol.rol == Roles.DOCENTE or rol.rol == Roles.TITULAR_CATEDRA
+            ) and rol.asignatura == asignatura:
                 return True
-        
+
         return False
 
     def usuario_tiene_permiso_para_acceder_a_programa(

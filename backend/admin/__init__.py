@@ -32,7 +32,7 @@ from backend.models import (
     Usuario,
     VersionProgramaAsignatura,
     ActividadReservada,
-    AuditoriaRevisionDocentes
+    AuditoriaRevisionDocentes,
 )
 
 admin.site.register(AnioAcademico, AdminAnioAcademico)

@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
@@ -61,7 +62,10 @@ programas_patterns = [
 formularios_patterns = [
     path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
     path("reutilizar-programa/<id_asignatura>/", ReutilizarUltimoPrograma.as_view()),
-    path("editar_ultimo/<id_asignatura>/", InformacionEditarProgramaAPartirDelUltimoAPI.as_view()),
+    path(
+        "editar_ultimo/<id_asignatura>/",
+        InformacionEditarProgramaAPartirDelUltimoAPI.as_view(),
+    ),
     path(
         "editar/<id_programa>/",
         InformacionModificacionProgramaAPI.as_view(),
@@ -69,8 +73,14 @@ formularios_patterns = [
 ]
 
 opciones_patterns = [
-    path("asignaturas-correlativas-programa/<id_programa>/", AsignaturasDisponiblesAPartirPrograma.as_view()),
-    path("asignaturas-correlativas/<id_asignatura>/", AsignaturasDisponiblesAPartirAsignatura.as_view()),
+    path(
+        "asignaturas-correlativas-programa/<id_programa>/",
+        AsignaturasDisponiblesAPartirPrograma.as_view(),
+    ),
+    path(
+        "asignaturas-correlativas/<id_asignatura>/",
+        AsignaturasDisponiblesAPartirAsignatura.as_view(),
+    ),
 ]
 
 filtros_patterns = [
@@ -97,6 +107,8 @@ urlpatterns = [
     path("api/informes/", include(informes_patterns)),
     path("api/planes-de-esutdio/", include(planes_estudio_patterns)),
     path("api/opciones/", include(opciones_patterns)),
-    re_path("<path:route>", TemplateView.as_view(template_name='index.html'), name="index"),
-    re_path("", TemplateView.as_view(template_name='index.html'), name="index"),
+    re_path(
+        "<path:route>", TemplateView.as_view(template_name="index.html"), name="index"
+    ),
+    re_path("", TemplateView.as_view(template_name="index.html"), name="index"),
 ]

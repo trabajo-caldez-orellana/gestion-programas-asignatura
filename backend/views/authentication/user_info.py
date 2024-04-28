@@ -27,15 +27,22 @@ class GoogleAuthApi(APIView):
 
         user = request.user
         response_data = {
-                'user': UserSerializer(user).data,
-                'roles': {
-                    'es_docente': Rol.objects.filter(Q(rol=Roles.DOCENTE) | Q(rol=Roles.TITULAR_CATEDRA), usuario_id=user.id).exists(),
-                    'es_administrador': user.is_superuser,
-                    'es_director_de_carrera': Rol.objects.filter(rol=Roles.DIRECTOR_CARRERA, usuario_id=user.id).exists(),
-                    'es_secretario_academico': Rol.objects.filter(rol=Roles.SECRETARIO, usuario_id=user.id).exists()
-                },
-            }
-        
+            "user": UserSerializer(user).data,
+            "roles": {
+                "es_docente": Rol.objects.filter(
+                    Q(rol=Roles.DOCENTE) | Q(rol=Roles.TITULAR_CATEDRA),
+                    usuario_id=user.id,
+                ).exists(),
+                "es_administrador": user.is_superuser,
+                "es_director_de_carrera": Rol.objects.filter(
+                    rol=Roles.DIRECTOR_CARRERA, usuario_id=user.id
+                ).exists(),
+                "es_secretario_academico": Rol.objects.filter(
+                    rol=Roles.SECRETARIO, usuario_id=user.id
+                ).exists(),
+            },
+        }
+
         response = Response(
             data={"data": response_data, "expires_at": exp_time},
         )

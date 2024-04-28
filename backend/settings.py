@@ -48,12 +48,12 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    'whitenoise.runserver_nostatic',
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "rest_framework",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
     "rest_framework.authtoken",
-    'rest_framework_simplejwt.token_blacklist',
+    "rest_framework_simplejwt.token_blacklist",
     "social_django",
     "backend",
 ]
@@ -104,8 +104,7 @@ DATABASES = {
 }
 
 
-
-if ENVIRONMENT == 'production' or POSTGRESS_LOCALLY == True: 
+if ENVIRONMENT == "production" or POSTGRESS_LOCALLY == True:
     DATABASE_URL_PRODUCTION = env.str("DATABASE_URL_PRODUCTION", "")
     DATABASES["default"] = dj_database_url.parse(DATABASE_URL_PRODUCTION)
 
@@ -150,10 +149,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "build", "assets"),
 ]
-STATICFILES_STORAGE = (
-    'whitenoise.storage.CompressedManifestStaticFilesStorage'
-)
-WHITENOISE_ROOT = BASE_DIR / 'build'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+WHITENOISE_ROOT = BASE_DIR / "build"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -176,14 +173,12 @@ CORS_ALLOW_CREDENTIALS = env.bool("CORS_ALLOW_CREDENTIALS", True)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'backend.jwt.CustomJWTAuthentication',
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("backend.jwt.CustomJWTAuthentication",),
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Tiempo de vida del access token
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Tiempo de vida del refresh token
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),  # Tiempo de vida del access token
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Tiempo de vida del refresh token
 }
 
 # Mailersend
@@ -193,10 +188,10 @@ MAILERSEND_FROM = env.str("MAILERSEND_FROM", "")
 # Celery
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", "")
 # Authentication cookies
-CUSTOM_AUTH_ACCESS_COOKIE="TAT"
-CUSTOM_TEMPORAL_NEW_ACCESS_COOKIE="temporary-access"
-CUSTOM_AUTH_REFRESH_COOKIE="TRT"
-CUSTOM_AUTH_COOKIE_SECURE=True
-CUSTOM_AUTH_COOKIE_HTTP_ONLY=True
-CUSTOM_AUTH_COOKIE_SAMESITE="Strict"
+CUSTOM_AUTH_ACCESS_COOKIE = "TAT"
+CUSTOM_TEMPORAL_NEW_ACCESS_COOKIE = "temporary-access"
+CUSTOM_AUTH_REFRESH_COOKIE = "TRT"
+CUSTOM_AUTH_COOKIE_SECURE = True
+CUSTOM_AUTH_COOKIE_HTTP_ONLY = True
+CUSTOM_AUTH_COOKIE_SAMESITE = "Strict"
 CORS_ALLOW_METHODS = ["GET", "POST"]
