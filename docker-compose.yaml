@@ -1,22 +1,12 @@
 version: '3'
 services:
 
-  # redis:
-  #   image: redis:latest
-  #   container_name: rd01
-  #   ports:
-  #     - '6379:6379'
+  redis:
+    image: redis:latest
+    container_name: rd01
+    ports:
+      - '6379:6379'
   
-  # celery:
-  #   build: .
-  #   container_name: cl01
-  #   command: celery -A server worker -l info
-  #   volumes:
-  #     - .:/src
-  #   depends_on:
-  #     - redis
-  #   links:
-  #     - redis
 
   backend:
       build:
@@ -24,11 +14,21 @@ services:
         dockerfile: Dockerfile.backend
       ports:
         - "8000:8000"  # Puerto del contenedor expuesto
-      # links:
-      #   - redis
-      # depends_on:
-      #   - redis
+      links:
+        - redis
+      depends_on:
+        - redis
 
       volumes:
         - ./:/app
 
+  celery:
+    image: celery:latest
+    container_name: cl01
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - ./:/app
+
+    links:
+      - redis
