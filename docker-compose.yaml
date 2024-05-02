@@ -15,3 +15,18 @@ services:
       - "8000:8000"  # Puerto del contenedor expuesto
     depends_on:
       - redis
+
+  celery:
+    container_name: celery
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    command: celery -A backend worker -l INFO
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  
