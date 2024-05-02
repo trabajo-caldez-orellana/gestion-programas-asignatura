@@ -4,7 +4,7 @@ from backend.services.servicio_email import ServicioEmail
 from backend.common.choices import TiposDeEmail
 
 
-@shared_task()
+@shared_task
 def enviar_email_async(
     tipo: TiposDeEmail, destinatarios: list[str], subject: str, context: object
 ):
