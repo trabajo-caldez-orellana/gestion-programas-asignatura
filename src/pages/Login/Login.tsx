@@ -24,10 +24,6 @@ const Login: React.FC = () => {
     })
 
     const url = `${googleAuthUrl}?${params}`
-    console.log(
-      'LA URL DE MIERDA',
-      `${BASE_FRONTEND_URL}${RUTAS_PAGINAS.LOGIN_LOADING}`
-    )
 
     window.location.href = url
   }, [])
