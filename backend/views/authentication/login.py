@@ -24,10 +24,10 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     def generate_password(self):
         # Define the characters to use in the password
         characters = string.ascii_letters + string.digits + string.punctuation
-        
+
         # Generate a random password by sampling from the characters
-        password = ''.join(random.choice(characters) for _ in range(12))
-        
+        password = "".join(random.choice(characters) for _ in range(12))
+
         return password
 
     def get(self, request, *args, **kwargs):
