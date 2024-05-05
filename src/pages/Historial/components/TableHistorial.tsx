@@ -1,3 +1,4 @@
+import { Spinner } from '../../../components'
 import '../../../components/Table/Table.css'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 import { tableRowProgramasVigentes } from 'props/props'
@@ -13,6 +14,8 @@ interface TableProps {
     id: number | string | null,
     modoPrograma: ModosProgramaAsignatura
   ) => void
+  isLoading: boolean
+  error: boolean
 }
 
 type ModosProgramaAsignatura = keyof typeof MODOS_PROGRAMA_ASIGNATURA
@@ -21,11 +24,26 @@ export default function TableHistorial({
   tableColumns,
   tableData,
   verPrograma,
-  imprimir
+  imprimir,
+  isLoading,
+  error
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
 
-  return (
+  return isLoading ? (
+    <div
+      style={{
+        width: '300px',
+        height: '300px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto'
+      }}
+    >
+      <Spinner />
+    </div>
+  ) : (
     <article>
       <table className="content-table">
         <thead>
@@ -35,6 +53,7 @@ export default function TableHistorial({
             ))}
           </tr>
         </thead>
+
         <tbody>
           {tableData && tableData.length > 0 ? (
             <>
@@ -76,6 +95,10 @@ export default function TableHistorial({
                 </tr>
               ))}
             </>
+          ) : error ? (
+            <tr>
+              <td>Ocurrió un error al momento de realizar la búsqueda</td>
+            </tr>
           ) : (
             <tr>
               <td>No hay datos que coincidan con la búsqueda</td>
