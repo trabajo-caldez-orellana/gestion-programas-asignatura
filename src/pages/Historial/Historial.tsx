@@ -22,15 +22,18 @@ export default function Historial() {
     errorFiltros
   } = useFiltros()
 
-  const { searchHistorialProgramas, loading, error } = useHistorial({
+  const {
+    searchHistorialProgramas,
+    loading: tablaLoading,
+    error: errorTabla
+  } = useHistorial({
     setProgramasHistorial
   })
 
   const tableColumns = ['Asignatura', 'Acciones']
 
-  if (error || errorFiltros) return <h1>Error</h1>
-
-  if (loading || loadingFiltros || !filtros) return <h1>Cargando...</h1>
+  if (errorFiltros) return <h1>Error</h1>
+  if (loadingFiltros || !filtros) return <h1>Cargando...</h1>
 
   const verPrograma = (id: number | null, modoPrograma: string) => {
     if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
@@ -74,11 +77,14 @@ export default function Historial() {
         searchHistorialProgramas={searchHistorialProgramas}
         selectedFiltros={selectedFiltros}
       />
+
       <TableHistorial
         tableColumns={tableColumns}
         tableData={programasHistorial}
         verPrograma={verPrograma}
         imprimir={imprimir}
+        isLoading={tablaLoading}
+        error={errorTabla}
       />
     </section>
   )

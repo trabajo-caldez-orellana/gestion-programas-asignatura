@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import Button from '../../../components/ui/Button'
-import { Modal } from '../../../components'
+import { Modal, Spinner } from '../../../components'
 
 interface BotonesProgramaAsignatura {
   error: string
   handleAprobarPrograma: () => void
   handlePedirCambiosPrograma: (mensaje: string) => void
+  isLoading: boolean
 }
 
 export default function BotonesRevisionProgramaAsignatura({
   error,
   handleAprobarPrograma,
-  handlePedirCambiosPrograma
+  handlePedirCambiosPrograma,
+  isLoading
 }: BotonesProgramaAsignatura) {
   const [modalAbierto, setModalAbierto] = useState<boolean>(false)
   const [mensajeDeCambios, setMensajeDeCambios] = useState<string>('')
@@ -44,8 +46,17 @@ export default function BotonesRevisionProgramaAsignatura({
         <Button text="PEDIR CAMBIOS" onClick={handleBotonPedirCambios} />
       </Modal>
       <div className="acciones-programa-asignatura">
-        <Button text="APROBAR" onClick={handleAprobarPrograma} />
-        <Button text="PEDIR CAMBIOS" onClick={() => setModalAbierto(true)} />
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <Button text="APROBAR" onClick={handleAprobarPrograma} />
+            <Button
+              text="PEDIR CAMBIOS"
+              onClick={() => setModalAbierto(true)}
+            />
+          </>
+        )}
       </div>
     </>
   )

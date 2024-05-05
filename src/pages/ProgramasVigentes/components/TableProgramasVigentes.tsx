@@ -1,4 +1,4 @@
-import { Titulo } from '../../../components'
+import { Spinner } from '../../../components'
 import '../../../components/Table/Table.css'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../../constants/constants'
 
@@ -28,6 +28,8 @@ interface TableProps {
     modoPrograma: ModosProgramaAsignatura
   ) => void
   imprimir: (id: number | string, modoPrograma: ModosProgramaAsignatura) => void
+  isLoading: boolean
+  error: boolean
 }
 
 type ModosProgramaAsignatura = keyof typeof MODOS_PROGRAMA_ASIGNATURA
@@ -36,13 +38,27 @@ export default function Table({
   tableColumns,
   tableData,
   verPrograma,
-  imprimir
+  imprimir,
+  isLoading,
+  error
 }: TableProps) {
   // Si acciones no es null entonces renderizamos esa columna
 
-  return (
+  return isLoading ? (
+    <div
+      style={{
+        width: '300px',
+        height: '300px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto'
+      }}
+    >
+      <Spinner />
+    </div>
+  ) : (
     <article>
-      <Titulo>Programas Vigentes</Titulo>
       <table className="content-table">
         <thead>
           <tr>
@@ -91,9 +107,13 @@ export default function Table({
                 </tr>
               ))}
             </>
+          ) : error ? (
+            <tr>
+              <td>Ocurrió un error al momento de realizar la búsqueda</td>
+            </tr>
           ) : (
             <tr>
-              <td>No hay datos disponibles</td>
+              <td>No hay datos que coincidan con la búsqueda</td>
             </tr>
           )}
         </tbody>

@@ -21,12 +21,13 @@ const useHistorial = ({ setProgramasHistorial }: Props): useHistorialType => {
   const searchHistorialProgramas = async (
     selectedFiltros: selectedFiltrosType
   ) => {
+    setLoading(true)
     try {
       const response = await getSearchHistorial(selectedFiltros)
       setProgramasHistorial(response)
       setLoading(false)
     } catch (err) {
-      console.error(err)
+      setLoading(false)
       setError(true)
     }
   }

@@ -9,6 +9,7 @@ import {
   InformacionGeneral,
   SeccionCorrelativas
 } from './components'
+import { Spinner } from '../../components'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import useProgramaAsignatura from './hooks/useProgramaAsignatura'
 
@@ -21,13 +22,14 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
     programaAsignatura,
     setProgramaAsignatura,
     modoProgramaAsignatura,
-    loading,
-    errorInesperado,
+    cargandoPrograma: loading,
+    errorCargandoPrograma: errorInesperado,
     erroresProgramaAsignatura,
     guardarPrograma,
     aprobarPrograma,
     pedirCambiosPrograma,
-    asignaturasDisponibles
+    asignaturasDisponibles,
+    accionEnProgreso
   } = useProgramaAsignatura(id?.toString(), modo)
 
   const modoLectura =
@@ -54,7 +56,7 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
       </div>
     )
 
-  if (loading || !programaAsignatura) return <h1>Cargando...</h1>
+  if (loading) return <Spinner />
 
   return (
     <section className="section-content">
@@ -85,12 +87,14 @@ const ProgramaAsignatura: React.FC<{ modo: string }> = ({ modo }) => {
           handleAprobarPrograma={handleAprobarPrograma}
           handlePedirCambiosPrograma={handlePedirCambiosPrograma}
           error={erroresProgramaAsignatura.all}
+          isLoading={accionEnProgreso}
         />
       ) : (
         <BotonesProgramaAsignatura
           error={erroresProgramaAsignatura.all}
           modoLectura={modoLectura}
           handlePostPrograma={handlePostPrograma}
+          isLoading={accionEnProgreso}
         />
       )}
     </section>

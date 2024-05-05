@@ -29,17 +29,18 @@ import {
 } from '../../../constants/constants'
 
 type useProgramaAsignaturaType = {
+  cargandoPrograma: boolean
+  errorCargandoPrograma: string
+  modoProgramaAsignatura: string
   programaAsignatura: ProgramaAsignaturaInterface
+  erroresProgramaAsignatura: ProgramaAsignaturaErrores
   setProgramaAsignatura: React.Dispatch<
     React.SetStateAction<ProgramaAsignaturaInterface>
   >
-  erroresProgramaAsignatura: ProgramaAsignaturaErrores
   guardarPrograma: (presentarAprobacion: boolean) => void
-  modoProgramaAsignatura: string
-  loading: boolean
-  errorInesperado: string
   aprobarPrograma: () => void
   pedirCambiosPrograma: (mensaje: string) => void
+  accionEnProgreso: boolean
   asignaturasDisponibles: DatoListaInterface[]
 }
 
@@ -61,8 +62,9 @@ const useProgramaAsignatura = (
   const [modoProgramaAsignatura, setModoProgramaAsignatura] = useState<string>(
     MODOS_PROGRAMA_ASIGNATURA.VER
   )
-  const [loading, setLoading] = useState<boolean>(true)
-  const [errorInesperado, setErrorInesperado] = useState<string>('')
+  const [cargandoPrograma, setCargandoPrograma] = useState<boolean>(true)
+  const [accionEnProgreso, setAccionEnProgreso] = useState<boolean>(false)
+  const [errorCargandoPrograma, setErrorCargandoPrograma] = useState<string>('')
   const navigate = useNavigate()
 
   const validarDatosPrograma = (): boolean => {
@@ -108,53 +110,6 @@ const useProgramaAsignatura = (
           ...erroresFormulario.descriptores,
           resultadosAprendizaje:
             MENSAJES_DE_ERROR.CANTIDAD_RESULTADOS_APRENDIZAJE
-        }
-      }
-    }
-
-    const cantidadDescriptores =
-      programaAsignatura.descriptores.descriptores.filter(
-        (item) => item.seleccionado
-      ).length
-    const cantidadActividadesReservadas =
-      programaAsignatura.descriptores.actividadesReservadas.filter(
-        (item) => item.nivel !== 0
-      ).length
-    const cantidadEjesTrasversales =
-      programaAsignatura.descriptores.ejesTransversales.filter(
-        (item) => item.nivel !== 0
-      ).length
-
-    if (cantidadActividadesReservadas === 0) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        descriptores: {
-          ...erroresFormulario.descriptores,
-          actividadesReservadas:
-            MENSAJES_DE_ERROR.SELECCIONAR_ACTIVIDAD_RESERVADA
-        }
-      }
-    }
-
-    if (cantidadDescriptores === 0) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        descriptores: {
-          ...erroresFormulario.descriptores,
-          descriptores: MENSAJES_DE_ERROR.SELECCIONAR_DESCRIPTOR
-        }
-      }
-    }
-
-    if (cantidadEjesTrasversales === 0) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        descriptores: {
-          ...erroresFormulario.descriptores,
-          ejesTransversales: MENSAJES_DE_ERROR.SELECCIONAR_EJE_TRANSVERSAL
         }
       }
     }
@@ -212,31 +167,38 @@ const useProgramaAsignatura = (
 
   const aprobarPrograma = async () => {
     const response = await aprobarProgramaAsignatura(parseInt(id))
+    setAccionEnProgreso(true)
 
     if (response.status !== 200 && response.error) {
       setErroresProgramaAsignatura(response.error)
+      setAccionEnProgreso(false)
       return
     }
 
     if (response.status === 200) {
       navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+      setAccionEnProgreso(false)
     }
   }
 
   const pedirCambiosPrograma = async (mensaje: string) => {
     const response = await pedirCambiosProgramaAsignatura(parseInt(id), mensaje)
+    setAccionEnProgreso(true)
 
     if (response.status !== 200 && response.error) {
       setErroresProgramaAsignatura(response.error)
+      setAccionEnProgreso(false)
       return
     }
 
     if (response.status === 200) {
       navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+      setAccionEnProgreso(false)
     }
   }
 
   const guardarPrograma = async (presentarAprobacion: boolean) => {
+    setAccionEnProgreso(true)
     if (validarDatosPrograma()) {
       if (
         modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO ||
@@ -250,11 +212,13 @@ const useProgramaAsignatura = (
 
         if (response.status === 200) {
           navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+          setAccionEnProgreso(false)
           return
         }
 
         if (response.error) {
           setErroresProgramaAsignatura(response.error)
+          setAccionEnProgreso(false)
         }
       } else {
         const response = await modificarProgramaAsignatura(
@@ -265,11 +229,13 @@ const useProgramaAsignatura = (
 
         if (response.status === 200) {
           navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
+          setAccionEnProgreso(false)
           return
         }
 
         if (response.error) {
           setErroresProgramaAsignatura(response.error)
+          setAccionEnProgreso(false)
         }
       }
     }
@@ -305,15 +271,15 @@ const useProgramaAsignatura = (
               response.data.informacionGeneral
             datosNuevoPrograma.cargaHoraria = response.data.cargaHoraria
           } else if (response.status !== 200 && response.error) {
-            setErrorInesperado(response.error || MENSAJE_ERROR_INESPERADO)
+            setErrorCargandoPrograma(response.error || MENSAJE_ERROR_INESPERADO)
           }
-          setLoading(false)
+          setCargandoPrograma(false)
         } catch (err) {
-          setErrorInesperado(MENSAJE_ERROR_INESPERADO)
+          setErrorCargandoPrograma(MENSAJE_ERROR_INESPERADO)
         }
 
         setProgramaAsignatura(NUEVO_PROGRAMA_ASIGNATURA)
-        setLoading(false)
+        setCargandoPrograma(false)
       } else if (
         modo === MODOS_PROGRAMA_ASIGNATURA.VER ||
         modo === MODOS_PROGRAMA_ASIGNATURA.REVISAR
@@ -323,11 +289,11 @@ const useProgramaAsignatura = (
           if (response.status === 200 && response.data) {
             setProgramaAsignatura(response.data)
           } else if (response.status !== 200 && response.error) {
-            setErrorInesperado(response.error || MENSAJE_ERROR_INESPERADO)
+            setErrorCargandoPrograma(response.error || MENSAJE_ERROR_INESPERADO)
           }
-          setLoading(false)
+          setCargandoPrograma(false)
         } catch (err) {
-          setErrorInesperado(MENSAJE_ERROR_INESPERADO)
+          setErrorCargandoPrograma(MENSAJE_ERROR_INESPERADO)
         }
       } else if (modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR) {
         try {
@@ -335,11 +301,11 @@ const useProgramaAsignatura = (
           if (response.status === 200 && response.data) {
             setProgramaAsignatura(response.data)
           } else if (response.status !== 200 && response.error) {
-            setErrorInesperado(response.error || MENSAJE_ERROR_INESPERADO)
+            setErrorCargandoPrograma(response.error || MENSAJE_ERROR_INESPERADO)
           }
-          setLoading(false)
+          setCargandoPrograma(false)
         } catch (err) {
-          setErrorInesperado(MENSAJE_ERROR_INESPERADO)
+          setErrorCargandoPrograma(MENSAJE_ERROR_INESPERADO)
         }
       } else {
         try {
@@ -347,11 +313,11 @@ const useProgramaAsignatura = (
           if (response.status === 200 && response.data) {
             setProgramaAsignatura(response.data)
           } else if (response.status !== 200 && response.error) {
-            setErrorInesperado(response.error || MENSAJE_ERROR_INESPERADO)
+            setErrorCargandoPrograma(response.error || MENSAJE_ERROR_INESPERADO)
           }
-          setLoading(false)
+          setCargandoPrograma(false)
         } catch (err) {
-          setErrorInesperado(MENSAJE_ERROR_INESPERADO)
+          setErrorCargandoPrograma(MENSAJE_ERROR_INESPERADO)
         }
       }
     }
@@ -382,11 +348,12 @@ const useProgramaAsignatura = (
     setProgramaAsignatura,
     modoProgramaAsignatura,
     erroresProgramaAsignatura,
-    loading,
-    errorInesperado,
+    cargandoPrograma,
+    errorCargandoPrograma,
     guardarPrograma,
     aprobarPrograma,
     pedirCambiosPrograma,
+    accionEnProgreso,
     asignaturasDisponibles
   }
 }
