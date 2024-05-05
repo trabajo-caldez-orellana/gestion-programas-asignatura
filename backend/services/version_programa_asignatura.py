@@ -1209,7 +1209,8 @@ class ServicioVersionProgramaAsignatura:
             asignatura_id=version_programa.asignatura.id,
         )
         for rol_docente in roles:
-            docentes_de_la_asignatura.add(rol_docente.usuario.email)
+            if self.servicio_roles.rol_participa_del_semestre(rol_docente, version_programa.semestre):
+                docentes_de_la_asignatura.add(rol_docente.usuario.email)
 
         enviar_email_async.delay(
             TiposDeEmail.CAMBIOS_PEDIDOS,
