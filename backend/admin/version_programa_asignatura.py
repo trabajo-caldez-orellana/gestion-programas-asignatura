@@ -26,6 +26,7 @@ class AdminVersionProgramaAsignatura(admin.ModelAdmin):
         ActividadReservadaInline,
         CorrelativaInline,
     ]
+    list_filter = [ "estado", "semestre", "asignatura"]
 
     fieldsets = [
         (
