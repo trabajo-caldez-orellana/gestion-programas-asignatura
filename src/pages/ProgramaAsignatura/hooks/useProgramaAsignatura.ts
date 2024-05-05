@@ -112,53 +112,6 @@ const useProgramaAsignatura = (
       }
     }
 
-    const cantidadDescriptores =
-      programaAsignatura.descriptores.descriptores.filter(
-        (item) => item.seleccionado
-      ).length
-    const cantidadActividadesReservadas =
-      programaAsignatura.descriptores.actividadesReservadas.filter(
-        (item) => item.nivel !== 0
-      ).length
-    const cantidadEjesTrasversales =
-      programaAsignatura.descriptores.ejesTransversales.filter(
-        (item) => item.nivel !== 0
-      ).length
-
-    if (cantidadActividadesReservadas === 0) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        descriptores: {
-          ...erroresFormulario.descriptores,
-          actividadesReservadas:
-            MENSAJES_DE_ERROR.SELECCIONAR_ACTIVIDAD_RESERVADA
-        }
-      }
-    }
-
-    if (cantidadDescriptores === 0) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        descriptores: {
-          ...erroresFormulario.descriptores,
-          descriptores: MENSAJES_DE_ERROR.SELECCIONAR_DESCRIPTOR
-        }
-      }
-    }
-
-    if (cantidadEjesTrasversales === 0) {
-      esFormularioValido = esFormularioValido && false
-      erroresFormulario = {
-        ...erroresFormulario,
-        descriptores: {
-          ...erroresFormulario.descriptores,
-          ejesTransversales: MENSAJES_DE_ERROR.SELECCIONAR_EJE_TRANSVERSAL
-        }
-      }
-    }
-
     programaAsignatura.correlativas.forEach((correlativa) => {
       if (correlativa.tipo === TIPO_CORRELATIVA.NO_SELECCIONADO) {
         esFormularioValido = esFormularioValido && false

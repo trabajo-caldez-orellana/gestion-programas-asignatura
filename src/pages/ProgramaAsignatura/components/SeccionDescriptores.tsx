@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 import {
   Formulario,
   TituloSeccion,
@@ -47,6 +49,24 @@ export default function SeccionDescriptores({
         seleccionado: descriptor.seleccionado
       }
     })
+
+  const [cantidadEjesTransversales, setCantidadEjesTransversales] =
+    useState<number>(0)
+  const [cantidadActividadesReservadas, setCantidadActividadesReservadas] =
+    useState<number>(0)
+
+  useEffect(() => {
+    const cantidadActividades = descriptores.actividadesReservadas.filter(
+      (item) => item.nivel !== 0
+    ).length
+
+    const cantidadEjes = descriptores.ejesTransversales.filter(
+      (item) => item.nivel !== 0
+    ).length
+
+    setCantidadActividadesReservadas(cantidadActividades)
+    setCantidadEjesTransversales(cantidadEjes)
+  }, [descriptores])
 
   const handleResultadosAprendizajeChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
@@ -203,7 +223,7 @@ export default function SeccionDescriptores({
         <InputOutsideContainer>
           <SeleccionConModal
             name="ejes-transversales"
-            valorInput={descriptores.ejesTransversales.length}
+            valorInput={cantidadEjesTransversales}
             mensajeDeError={erroresPrograma.descriptores.ejesTransversales}
             isDisabled={modoLectura}
             tituloModal="Ejes Transversales"
@@ -257,8 +277,8 @@ export default function SeccionDescriptores({
         <InputOutsideContainer>
           <SeleccionConModal
             name="actividades-reservadas"
-            valorInput={descriptores.ejesTransversales.length}
-            mensajeDeError={erroresPrograma.descriptores.ejesTransversales}
+            valorInput={cantidadActividadesReservadas}
+            mensajeDeError={erroresPrograma.descriptores.actividadesReservadas}
             isDisabled={modoLectura}
             tituloModal="Actividades Reservadas"
           >
