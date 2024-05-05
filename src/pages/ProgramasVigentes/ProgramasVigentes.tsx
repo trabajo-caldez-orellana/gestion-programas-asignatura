@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { MODOS_PROGRAMA_ASIGNATURA } from '../../constants/constants'
 import { client } from '../../utils/axiosClient'
 import { RUTAS_PAGINAS } from '../../constants/constants'
+import { Titulo } from '../../components'
 
 export default function ProgramasVigentes() {
   const navigate = useNavigate()
@@ -11,10 +12,6 @@ export default function ProgramasVigentes() {
   const { programasVigentes, loading, error } = useProgramasVigentes()
 
   const tableColumns = ['Asignatura', 'Estado', 'Acciones']
-
-  if (error) return <h1>Error</h1>
-
-  if (loading || !programasVigentes) return <h1>Cargando...</h1>
 
   const verPrograma = (id: number | string, modoPrograma: string) => {
     if (modoPrograma === MODOS_PROGRAMA_ASIGNATURA.VER)
@@ -51,11 +48,14 @@ export default function ProgramasVigentes() {
 
   return (
     <section className="section-content">
+      <Titulo>Programas Vigentes</Titulo>
       <TableProgramasVigentes
         tableColumns={tableColumns}
         tableData={programasVigentes}
         verPrograma={verPrograma}
         imprimir={imprimir}
+        isLoading={loading}
+        error={error}
       />
     </section>
   )
