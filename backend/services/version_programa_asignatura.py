@@ -686,7 +686,7 @@ class ServicioVersionProgramaAsignatura:
                     try:
                         try:
                             instancia_eje_transversal = Descriptor.objects.get(
-                                id=eje["id"]
+                                id=eje["id"], tipo=TipoDescriptor.EJE_TRANSVERSAL
                             )
                         except Descriptor.DoesNotExist as exc:
                             raise ValidationError(
@@ -696,7 +696,7 @@ class ServicioVersionProgramaAsignatura:
                         try:
                             eje_transversal_programa = (
                                 ProgramaTieneDescriptor.objects.get(
-                                    descriptor=instancia_descriptor,
+                                    descriptor=instancia_eje_transversal,
                                     version_programa_asignatura=version_programa,
                                 )
                             )
