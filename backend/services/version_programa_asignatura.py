@@ -845,7 +845,8 @@ class ServicioVersionProgramaAsignatura:
                 carrera_id=carrera.id, rol=Roles.DIRECTOR_CARRERA
             )
             for rol in roles:
-                directores_de_carrera.add(rol.usuario.email)
+                if self.servicio_roles.rol_participa_del_semestre(rol, programa.semestre):
+                    directores_de_carrera.add(rol.usuario.email)
 
         enviar_email_async.delay(
             TiposDeEmail.PROGRAMA_LISTO_PARA_CORRECCION,
