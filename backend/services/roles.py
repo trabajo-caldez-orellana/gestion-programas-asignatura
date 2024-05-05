@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 
-from backend.models import Usuario, Rol, VersionProgramaAsignatura, Asignatura
+from backend.models import Usuario, Rol, VersionProgramaAsignatura, Asignatura, Semestre
 from backend.common.choices import EstadoAsignatura, Roles
 
 
@@ -45,4 +45,21 @@ class ServicioRoles:
                 if rol.asignatura == programa.asignatura:
                     return True
 
+        return False
+
+    def rol_participa_del_semestre(self, rol: Rol, semestre: Semestre) -> bool:
+        if rol.fecha_inicio <= semestre.fecha_inicio:
+            if rol.fecha_fin is None:
+                return True
+            
+            if rol.fecha_fin > semestre.fecha_inicio:
+                return True
+        
+        if rol.fecha_inicio > semestre.fecha_inicio:
+            if rol.fecha_inicio < semestre.fecha_fin:
+                return True
+        
+        if rol.fecha_fin <= semestre.fecha_fin and rol.fecha_fin >= semestre.fecha_inicio:
+            return True
+        
         return False

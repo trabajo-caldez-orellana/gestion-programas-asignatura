@@ -6,6 +6,8 @@ from backend.models import (
 )
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
+
+from backend.services import ServicioRoles
 from backend.common.choices import (
     TipoCorrelativa,
     NivelDescriptor,
@@ -19,6 +21,7 @@ from backend.common.choices import TipoDescriptor
 
 
 class ObtenerDatosPdf:
+    servicio_rol = ServicioRoles()
     def obtener_datos_programa(self, id_programa):
         # Obtenemos todos los datos que necesitamos para generar el PDF
         try:
@@ -29,9 +32,16 @@ class ObtenerDatosPdf:
                 status=HTTP_400_BAD_REQUEST,
             )
         asignatura = programa.asignatura
-        docentes = Rol.objects.filter(asignatura=programa.asignatura).select_related(
+
+        roles_de_la_asignatura = Rol.objects.filter(asignatura=programa.asignatura).select_related(
             "usuario"
         )
+
+        docentes = []
+        for rol in roles_de_la_asignatura:
+            if self.servicio_rol.rol_participa_del_semestre(rol=rol, semestre=programa.semestre):
+                docentes.append(rol)
+
         # Obtener todos los Plan de Estudio asociados a la asignatura
         planes_de_estudio = asignatura.planes_de_estudio.all()
 
