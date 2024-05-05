@@ -45,9 +45,6 @@ from backend.common.mensajes_de_error import (
     MENSAJE_DESCRIPTOR,
     MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES,
     MENSAJE_PROGRAMAS_CERRADOS,
-    MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
-    MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR,
-    MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
     MENSAJE_DESCRIPTOR_INVALIDO,
     MENSAJE_EJE_TRANSVERSAL_INVALIDO,
     MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA,
@@ -1320,9 +1317,14 @@ class ServicioVersionProgramaAsignatura:
             for actividad in actividades_reservadas_disponibles_para_nuevo_programa
         ]
 
+        hoy = obtener_fecha_y_hora_actual().date()
         equipo_docente = Rol.objects.filter(
-            rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE], asignatura_id=asignatura.id
+            Q(fecha_fin__isnull=True) | Q(fecha_fin__gte=hoy),
+            fecha_inicio__lte=hoy,
+            rol__in=[Roles.TITULAR_CATEDRA,Roles.DOCENTE],
+            asignatura_id=asignatura.id
         )
+
         equipo_docente_inforamacion = [
             {
                 "id": rol.id,
