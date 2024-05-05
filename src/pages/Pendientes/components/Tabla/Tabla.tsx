@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Modal } from '../../../../components'
+import { Modal, Spinner } from '../../../../components'
 import './Tabla.css'
 import {
   RUTAS_PAGINAS,
@@ -11,7 +11,8 @@ import { reutilizarUltimoPrograma } from '../../services'
 import useTareasPendientes from '../../hooks/useTareasPendientes'
 
 export default function Tabla() {
-  const { tareasPendientes, refetchTareas } = useTareasPendientes()
+  const { tareasPendientes, refetchTareas, loading, error } =
+    useTareasPendientes()
 
   const navigate = useNavigate()
   const [cargando, setCargando] = useState<boolean>(false)
@@ -78,7 +79,20 @@ export default function Tabla() {
     )
   }
 
-  return (
+  return loading ? (
+    <div
+      style={{
+        width: '300px',
+        height: '300px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto'
+      }}
+    >
+      <Spinner />
+    </div>
+  ) : (
     <article>
       <Modal
         open={modalAbierto}
@@ -163,9 +177,13 @@ export default function Tabla() {
                 </tr>
               ))}
             </>
+          ) : error ? (
+            <tr>
+              <td>Ocurrió un error al momento de realizar la búsqueda</td>
+            </tr>
           ) : (
             <tr>
-              <td>No hay tareas pendientes</td>
+              <td>No hay datos que coincidan con la búsqueda</td>
             </tr>
           )}
         </tbody>
