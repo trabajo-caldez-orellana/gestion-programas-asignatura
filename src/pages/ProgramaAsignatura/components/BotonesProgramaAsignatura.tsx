@@ -1,16 +1,18 @@
-import { Button, MensajeDeError } from '../../../components'
+import { Button, MensajeDeError, Spinner } from '../../../components'
 import { SeccionFormulario } from './SeccionFormulario'
 
 interface BotonesProgramaAsignatura {
   error: string
   modoLectura: boolean
   handlePostPrograma: (isDraft: boolean) => () => void
+  isLoading: boolean
 }
 
 export default function BotonesProgramaAsignatura({
   error,
   modoLectura,
-  handlePostPrograma
+  handlePostPrograma,
+  isLoading
 }: BotonesProgramaAsignatura) {
   if (modoLectura) return null
 
@@ -18,11 +20,20 @@ export default function BotonesProgramaAsignatura({
     <SeccionFormulario>
       {{ error } && <MensajeDeError>{error}</MensajeDeError>}
       <div className="acciones-programa-asignatura">
-        <Button text="Guardar borrador" onClick={handlePostPrograma(false)} />
-        <Button
-          text="Enviar para aprobacion"
-          onClick={handlePostPrograma(true)}
-        />
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <Button
+              text="Guardar borrador"
+              onClick={handlePostPrograma(false)}
+            />
+            <Button
+              text="Enviar para aprobacion"
+              onClick={handlePostPrograma(true)}
+            />
+          </>
+        )}
       </div>
     </SeccionFormulario>
   )
