@@ -67,6 +67,7 @@ from backend.common.mensajes_de_error import (
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
 from backend.services.plan_de_estudio import ServicioPlanDeEstudio
+from backend.services.roles import ServicioRoles
 from backend.serializers import SerializerAsignatura
 from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
 from backend.tasks import enviar_email_async
@@ -81,6 +82,7 @@ class ServicioVersionProgramaAsignatura:
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
     servicio_planes = ServicioPlanDeEstudio()
+    servicio_roles = ServicioRoles()
 
     def _es_nivel_descriptor_valido(
         self, descriptor: Descriptor, nivel: NivelDescriptor
@@ -1037,6 +1039,9 @@ class ServicioVersionProgramaAsignatura:
     def _listar_tareas_pendientes_para_rol(self, rol: Rol) -> list:
         semestre_siguente = self.servicio_semestre.obtener_semestre_siguiente()
 
+        if not self.servicio_roles.rol_participa_del_semestre(rol, semestre_siguente):
+            return []
+
         if rol.rol == Roles.DOCENTE or rol.rol == Roles.TITULAR_CATEDRA:
             if not self._es_posible_crear_nueva_version_de_programa(
                 rol.asignatura.semestre_dictado
@@ -1110,20 +1115,22 @@ class ServicioVersionProgramaAsignatura:
             carreras_de_planes_de_estudio.add(plan.carrera.id)
 
         roles = Rol.objects.filter(
-            carrera__id__in=carreras_de_planes_de_estudio, rol=Roles.DIRECTOR_CARRERA
+            carrera__id__in=carreras_de_planes_de_estudio,
+            rol=Roles.DIRECTOR_CARRERA
         )
 
         for rol in roles:
-            # Se que esto esta horriblemente ineficiente pero son 50 usuarios saludos
-            try:
-                auditoria = AuditoriaEstadoVersionPrograma.objects.get(
-                    version_programa_id=version_programa.id, rol_id=rol.id
-                )
+            if self.servicio_roles.rol_participa_del_semestre(rol, version_programa.semestre):
+                # Se que esto esta horriblemente ineficiente pero son 50 usuarios saludos
+                try:
+                    auditoria = AuditoriaEstadoVersionPrograma.objects.get(
+                        version_programa_id=version_programa.id, rol_id=rol.id
+                    )
 
-                if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                    if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                        return False
+                except AuditoriaEstadoVersionPrograma.DoesNotExist:
                     return False
-            except AuditoriaEstadoVersionPrograma.DoesNotExist:
-                return False
 
         return True
 
@@ -1255,7 +1262,8 @@ class ServicioVersionProgramaAsignatura:
                 asignatura_id=version_programa.asignatura.id,
             )
             for rol_docente in roles:
-                docentes_de_la_asignatura.add(rol_docente.usuario.email)
+                if self.servicio_roles.rol_participa_del_semestre(rol_docente):
+                    docentes_de_la_asignatura.add(rol_docente.usuario.email)
 
             enviar_email_async.delay(
                 TiposDeEmail.PROGRAMA_APROBADO,

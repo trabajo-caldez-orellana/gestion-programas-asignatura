@@ -30,21 +30,21 @@ class ServicioRoles:
 
         roles = self.obtener_roles_usuario(usuario)
         for rol in roles:
-            if rol.rol == Roles.SECRETARIO:
-                return True
-
-            if rol.rol == Roles.DIRECTOR_CARRERA:
-                # Verifica que la carrera tenga esa asignatura!
-                planes_relacionados = programa.asignatura.planes_de_estudio.all()
-                planes_count = planes_relacionados.filter(carrera=rol.carrera).count()
-
-                if planes_count > 0:
+            if self.rol_participa_del_semestre(rol, programa.semestre):
+                if rol.rol == Roles.SECRETARIO:
                     return True
 
-            else:
-                if rol.asignatura == programa.asignatura:
-                    return True
+                if rol.rol == Roles.DIRECTOR_CARRERA:
+                    # Verifica que la carrera tenga esa asignatura!
+                    planes_relacionados = programa.asignatura.planes_de_estudio.all()
+                    planes_count = planes_relacionados.filter(carrera=rol.carrera).count()
 
+                    if planes_count > 0:
+                        return True
+
+                else:
+                    if rol.asignatura == programa.asignatura:
+                        return True
         return False
 
     def rol_participa_del_semestre(self, rol: Rol, semestre: Semestre) -> bool:
