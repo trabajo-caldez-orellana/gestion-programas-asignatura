@@ -13,6 +13,7 @@ from backend.models import (
 )
 from backend.common.choices import TipoDescriptor, NivelDescriptor, Roles
 from backend.serializers.asignatura import SerializerAsignaturaParaSeleccion
+from backend.services.roles import ServicioRoles
 
 
 class SerializerProgramaTieneDescriptor(serializers.Serializer):
@@ -176,18 +177,21 @@ def serializer_programa_asignatura(
             actividades_reservadas_del_programa, many=True
         ).data
 
+
     equipo_docente = Rol.objects.filter(
         rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE],
         asignatura_id=programa.asignatura.id,
     )
 
-    equipo_docente_inforamacion = [
-        {
-            "id": rol.id,
-            "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}",
-        }
-        for rol in equipo_docente
-    ]
+    equipo_docente_inforamacion = []
+    servicio_rol = ServicioRoles()
+
+    for rol in equipo_docente:
+        if servicio_rol.rol_participa_del_semestre(rol, programa.semestre):
+            equipo_docente_inforamacion.append({
+                "id": rol.id,
+                "informacion": f"{str(rol.usuario)} - {rol.get_rol()} - {rol.get_dedicacion()}",
+            })
 
     correlativas_programa = Correlativa.objects.filter(
         version_programa_asignatura_id=programa.id

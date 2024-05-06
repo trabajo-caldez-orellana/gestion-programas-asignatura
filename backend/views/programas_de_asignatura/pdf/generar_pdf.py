@@ -20,7 +20,7 @@ def get_page_body(boxes):
 
 class GenerarPDF(APIView):
     permission_classes = [
-        IsAuthenticated,
+        # IsAuthenticated,
     ]
 
     def get(self, request, id_programa):
@@ -44,7 +44,6 @@ class GenerarPDF(APIView):
         main_html = get_template("programa_de_asignatura.html")
         main_doc = main_html.render(context)
         main_doc = HTML(string=main_doc).render()
-        print(main_doc.pages)
 
         # Template of header
         header_html = get_template("documento_header.html")

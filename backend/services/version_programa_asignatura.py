@@ -45,9 +45,6 @@ from backend.common.mensajes_de_error import (
     MENSAJE_DESCRIPTOR,
     MENSAJE_NO_HAY_PROGRAMAS_EXISTENTES,
     MENSAJE_PROGRAMAS_CERRADOS,
-    MENSAJE_PROGRAMA_DEBE_TENER_EJE_TRANSVERSAL,
-    MENSAJE_PROGRAMA_DEBE_TENER_DESCRIPTOR,
-    MENSAJE_PROGRAMA_DEBE_TENER_ACTIVIDAD_RESERVADA,
     MENSAJE_DESCRIPTOR_INVALIDO,
     MENSAJE_EJE_TRANSVERSAL_INVALIDO,
     MENSAJE_ACTIVIDAD_RESERVADA_INVALIDA,
@@ -70,6 +67,7 @@ from backend.common.mensajes_de_error import (
 from backend.services.semestre import ServicioSemestre
 from backend.services.configuracion import ServicioConfiguracion
 from backend.services.plan_de_estudio import ServicioPlanDeEstudio
+from backend.services.roles import ServicioRoles
 from backend.serializers import SerializerAsignatura
 from backend.common.funciones_fecha import obtener_fecha_y_hora_actual
 from backend.tasks import enviar_email_async
@@ -84,6 +82,7 @@ class ServicioVersionProgramaAsignatura:
     servicio_semestre = ServicioSemestre()
     servicio_configuracion = ServicioConfiguracion()
     servicio_planes = ServicioPlanDeEstudio()
+    servicio_roles = ServicioRoles()
 
     def _es_nivel_descriptor_valido(
         self, descriptor: Descriptor, nivel: NivelDescriptor
@@ -846,7 +845,8 @@ class ServicioVersionProgramaAsignatura:
                 carrera_id=carrera.id, rol=Roles.DIRECTOR_CARRERA
             )
             for rol in roles:
-                directores_de_carrera.add(rol.usuario.email)
+                if self.servicio_roles.rol_participa_del_semestre(rol, programa.semestre):
+                    directores_de_carrera.add(rol.usuario.email)
 
         enviar_email_async.delay(
             TiposDeEmail.PROGRAMA_LISTO_PARA_CORRECCION,
@@ -1040,6 +1040,9 @@ class ServicioVersionProgramaAsignatura:
     def _listar_tareas_pendientes_para_rol(self, rol: Rol) -> list:
         semestre_siguente = self.servicio_semestre.obtener_semestre_siguiente()
 
+        if not self.servicio_roles.rol_participa_del_semestre(rol, semestre_siguente):
+            return []
+
         if rol.rol == Roles.DOCENTE or rol.rol == Roles.TITULAR_CATEDRA:
             if not self._es_posible_crear_nueva_version_de_programa(
                 rol.asignatura.semestre_dictado
@@ -1113,20 +1116,22 @@ class ServicioVersionProgramaAsignatura:
             carreras_de_planes_de_estudio.add(plan.carrera.id)
 
         roles = Rol.objects.filter(
-            carrera__id__in=carreras_de_planes_de_estudio, rol=Roles.DIRECTOR_CARRERA
+            carrera__id__in=carreras_de_planes_de_estudio,
+            rol=Roles.DIRECTOR_CARRERA
         )
 
         for rol in roles:
-            # Se que esto esta horriblemente ineficiente pero son 50 usuarios saludos
-            try:
-                auditoria = AuditoriaEstadoVersionPrograma.objects.get(
-                    version_programa_id=version_programa.id, rol_id=rol.id
-                )
+            if self.servicio_roles.rol_participa_del_semestre(rol, version_programa.semestre):
+                # Se que esto esta horriblemente ineficiente pero son 50 usuarios saludos
+                try:
+                    auditoria = AuditoriaEstadoVersionPrograma.objects.get(
+                        version_programa_id=version_programa.id, rol_id=rol.id
+                    )
 
-                if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                    if auditoria.estado != EstadosAprobacionPrograma.APROBADO:
+                        return False
+                except AuditoriaEstadoVersionPrograma.DoesNotExist:
                     return False
-            except AuditoriaEstadoVersionPrograma.DoesNotExist:
-                return False
 
         return True
 
@@ -1204,7 +1209,8 @@ class ServicioVersionProgramaAsignatura:
             asignatura_id=version_programa.asignatura.id,
         )
         for rol_docente in roles:
-            docentes_de_la_asignatura.add(rol_docente.usuario.email)
+            if self.servicio_roles.rol_participa_del_semestre(rol_docente, version_programa.semestre):
+                docentes_de_la_asignatura.add(rol_docente.usuario.email)
 
         enviar_email_async.delay(
             TiposDeEmail.CAMBIOS_PEDIDOS,
@@ -1258,7 +1264,8 @@ class ServicioVersionProgramaAsignatura:
                 asignatura_id=version_programa.asignatura.id,
             )
             for rol_docente in roles:
-                docentes_de_la_asignatura.add(rol_docente.usuario.email)
+                if self.servicio_roles.rol_participa_del_semestre(rol_docente):
+                    docentes_de_la_asignatura.add(rol_docente.usuario.email)
 
             enviar_email_async.delay(
                 TiposDeEmail.PROGRAMA_APROBADO,
@@ -1320,9 +1327,14 @@ class ServicioVersionProgramaAsignatura:
             for actividad in actividades_reservadas_disponibles_para_nuevo_programa
         ]
 
+        hoy = obtener_fecha_y_hora_actual().date()
         equipo_docente = Rol.objects.filter(
-            rol__in=[Roles.TITULAR_CATEDRA, Roles.DOCENTE], asignatura_id=asignatura.id
+            Q(fecha_fin__isnull=True) | Q(fecha_fin__gte=hoy),
+            fecha_inicio__lte=hoy,
+            rol__in=[Roles.TITULAR_CATEDRA,Roles.DOCENTE],
+            asignatura_id=asignatura.id
         )
+
         equipo_docente_inforamacion = [
             {
                 "id": rol.id,

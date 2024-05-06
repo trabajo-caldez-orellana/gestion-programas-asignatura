@@ -33,6 +33,8 @@ class Rol(models.Model):
     )
     rol = models.CharField(max_length=2, choices=Roles.choices)
     dedicacion = models.CharField(max_length=2, choices=Dedicaciones.choices)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField(null=True, blank=True)
 
     def get_dedicacion(self):
         return self.get_dedicacion_display()
