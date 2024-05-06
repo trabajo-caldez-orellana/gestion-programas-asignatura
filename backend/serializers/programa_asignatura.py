@@ -13,7 +13,7 @@ from backend.models import (
 )
 from backend.common.choices import TipoDescriptor, NivelDescriptor, Roles
 from backend.serializers.asignatura import SerializerAsignaturaParaSeleccion
-from backend.services import ServicioRoles
+from backend.services.roles import ServicioRoles
 
 
 class SerializerProgramaTieneDescriptor(serializers.Serializer):
