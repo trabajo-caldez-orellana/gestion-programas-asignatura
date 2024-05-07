@@ -276,7 +276,6 @@ export interface DatosAsignaturaTareaPendiente {
 export interface AccionesPosiblesInterface {
   verPrograma: boolean
   modificarPrograma: boolean
-  reutilizarUltimo: boolean
   modificarUltimo: boolean
   nuevo: boolean
   revisarPrograma: boolean
