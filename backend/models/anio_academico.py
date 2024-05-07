@@ -25,4 +25,4 @@ class AnioAcademico(models.Model):
         return self.fecha_inicio <= hoy <= self.fecha_fin
 
     def __str__(self):
-        return "Año académico {} - {}".format(self.fecha_inicio, self.fecha_fin)
+        return str(self.fecha_inicio.year)

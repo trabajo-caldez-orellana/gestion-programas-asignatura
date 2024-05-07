@@ -32,4 +32,4 @@ class Semestre(models.Model):
         return self.fecha_inicio <= hoy <= self.fecha_fin
 
     def __str__(self):
-        return "Semestre {} - {}".format(self.fecha_inicio, self.fecha_fin)
+        return "{} - {}".format(self.get_semestre_display(), str(self.anio_academico))
