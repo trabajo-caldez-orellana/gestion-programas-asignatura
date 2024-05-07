@@ -17,20 +17,22 @@ interface DoubleSelectionInputInterface {
   mensajeDeError: string
   handleListChange: (id: number) => void
   datosParaSeleccion: DatosListaSeleccionInterface[]
+  modoLectura: boolean
 }
 
 const DoubleSelectionInput: React.FC<DoubleSelectionInputInterface> = ({
   titulo,
   mensajeDeError,
   handleListChange,
-  datosParaSeleccion
+  datosParaSeleccion,
+  modoLectura
 }) => {
   return (
     <ContenedorLista>
       <TituloLista>{titulo}</TituloLista>
       {mensajeDeError && <MensajeDeError>{mensajeDeError}</MensajeDeError>}
       <DoubleSelectionCoulmunsContainer className="selector-descritores">
-        <DoubleSelectionCoulumn>
+        <DoubleSelectionCoulumn className={modoLectura ? 'lectura' : ''}>
           <TituloColumna>Seleccionado</TituloColumna>
           <ListadoColumna>
             {datosParaSeleccion.map(
@@ -43,19 +45,24 @@ const DoubleSelectionInput: React.FC<DoubleSelectionInputInterface> = ({
             )}
           </ListadoColumna>
         </DoubleSelectionCoulumn>
-        <DoubleSelectionCoulumn>
-          <TituloColumna>No Seleccionado</TituloColumna>
-          <ListadoColumna>
-            {datosParaSeleccion.map(
-              (item) =>
-                !item.seleccionado && (
-                  <Item key={item.id} onClick={() => handleListChange(item.id)}>
-                    {item.informacion}
-                  </Item>
-                )
-            )}
-          </ListadoColumna>
-        </DoubleSelectionCoulumn>
+        {!modoLectura && (
+          <DoubleSelectionCoulumn>
+            <TituloColumna>No Seleccionado</TituloColumna>
+            <ListadoColumna>
+              {datosParaSeleccion.map(
+                (item) =>
+                  !item.seleccionado && (
+                    <Item
+                      key={item.id}
+                      onClick={() => handleListChange(item.id)}
+                    >
+                      {item.informacion}
+                    </Item>
+                  )
+              )}
+            </ListadoColumna>
+          </DoubleSelectionCoulumn>
+        )}
       </DoubleSelectionCoulmunsContainer>
     </ContenedorLista>
   )

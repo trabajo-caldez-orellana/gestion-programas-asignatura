@@ -330,6 +330,7 @@ export default function SeccionDescriptores({
         </InputOutsideContainer>
         <WholeWidthInputContainer>
           <DoubleSelectionInput
+            modoLectura={modoLectura}
             datosParaSeleccion={datosListaSeleccionDescriptores}
             titulo="DESCRIPTORES"
             mensajeDeError={erroresPrograma.descriptores.descriptores}

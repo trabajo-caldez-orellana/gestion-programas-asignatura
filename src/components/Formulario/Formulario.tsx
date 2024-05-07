@@ -176,6 +176,10 @@ export const ListadoColumna = styled.li`
 export const DoubleSelectionCoulumn = styled.div`
   width: 50%;
   background-color: #00000022;
+
+  &.lectura {
+    width: 100%;
+  }
 `
 
 export const TituloColumna = styled(TituloLista)`
