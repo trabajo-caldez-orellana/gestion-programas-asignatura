@@ -34,6 +34,9 @@ export const SectionDivider = styled.hr`
   width: 90%;
   background-color: var(--secondary-color);
   border: none;
+  width: 100%;
+  height: auto;
+  resize: none;
 `
 
 export const TextAreaContainer = styled.div`

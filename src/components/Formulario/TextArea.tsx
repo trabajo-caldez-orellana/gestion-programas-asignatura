@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
   TextAreaLabel,
   MensajeDeError,
@@ -25,6 +25,15 @@ const TextArea: React.FC<TextAreaTextoInterface> = ({
   onChange,
   modoLectura
 }) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (textareaRef.current?.style) {
+      textareaRef.current.style.height = 'auto' // Reset height
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight + textareaRef.current.style.lineHeight}px` // Set new height
+    }
+  }, [textareaRef.current?.scrollHeight])
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(name, e.target.value)
   }
@@ -39,9 +48,8 @@ const TextArea: React.FC<TextAreaTextoInterface> = ({
         name={name}
         value={value}
         onChange={handleChange}
-        rows={4}
-        cols={50}
         disabled={modoLectura}
+        ref={textareaRef}
       />
       {mensajeDeError && <MensajeDeError>{mensajeDeError}</MensajeDeError>}
     </TextAreaContainer>
