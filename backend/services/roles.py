@@ -58,8 +58,10 @@ class ServicioRoles:
         if rol.fecha_inicio > semestre.fecha_inicio:
             if rol.fecha_inicio < semestre.fecha_fin:
                 return True
+            else:
+                return False
         
-        if rol.fecha_fin <= semestre.fecha_fin and rol.fecha_fin >= semestre.fecha_inicio:
+        if rol.fecha_fin is not None and rol.fecha_fin <= semestre.fecha_fin and rol.fecha_fin >= semestre.fecha_inicio:
             return True
         
         return False
