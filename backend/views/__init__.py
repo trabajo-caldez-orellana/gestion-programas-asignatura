@@ -4,7 +4,6 @@ from .programas_de_asignatura import (
     InformacionProgramaAPI,
     InformacionNuevoProgramaAPI,
     InformacionModificacionProgramaAPI,
-    ReutilizarUltimoPrograma,
     ModificarProgramaAPI,
     NuevoProgramaAPI,
     InformacionEditarProgramaAPartirDelUltimoAPI,

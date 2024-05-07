@@ -27,7 +27,6 @@ from backend.views import (
     InformacionProgramaAPI,
     InformacionModificacionProgramaAPI,
     InformacionNuevoProgramaAPI,
-    ReutilizarUltimoPrograma,
     ModificarProgramaAPI,
     NuevoProgramaAPI,
     InformacionEditarProgramaAPartirDelUltimoAPI,
@@ -61,7 +60,6 @@ programas_patterns = [
 
 formularios_patterns = [
     path("nuevo/<id_asignatura>/", InformacionNuevoProgramaAPI.as_view()),
-    path("reutilizar-programa/<id_asignatura>/", ReutilizarUltimoPrograma.as_view()),
     path(
         "editar_ultimo/<id_asignatura>/",
         InformacionEditarProgramaAPartirDelUltimoAPI.as_view(),
