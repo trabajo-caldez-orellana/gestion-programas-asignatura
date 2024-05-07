@@ -7,7 +7,9 @@ export default function Modal({
   open,
   children,
   modalTitle,
-  onClose
+  onClose,
+  className = '',
+  botonGuardado = false
 }: ModalProps) {
   const portalRoot = document.getElementById('portal')
   if (!open || !portalRoot) return null
@@ -15,10 +17,14 @@ export default function Modal({
   return ReactDom.createPortal(
     <>
       <div className="overlay" />
-      <div className="modal">
+      <div className={`modal ${className}`}>
         <h2>{modalTitle}</h2>
         {children}
-        <Button text="X" onClick={onClose} cssClass="close-modal-button" />
+        <Button
+          text={botonGuardado ? 'Guardar' : 'X'}
+          onClick={onClose}
+          cssClass="close-modal-button"
+        />
       </div>
     </>,
     portalRoot

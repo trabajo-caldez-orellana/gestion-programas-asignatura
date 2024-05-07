@@ -18,6 +18,7 @@ interface SeleccionConModalInterface {
   children: React.ReactNode
   tituloModal: string
   onOpenModal?: () => void
+  className?: string
 }
 
 const SeleccionConModal: React.FC<SeleccionConModalInterface> = ({
@@ -27,7 +28,8 @@ const SeleccionConModal: React.FC<SeleccionConModalInterface> = ({
   isDisabled,
   children,
   tituloModal,
-  onOpenModal
+  onOpenModal,
+  className = ''
 }) => {
   const [modalAbierto, setModalAbierto] = useState<boolean>(false)
 
@@ -46,9 +48,11 @@ const SeleccionConModal: React.FC<SeleccionConModalInterface> = ({
   return (
     <ModalInputContainer>
       <Modal
+        className={className}
         onClose={handleCloseModal}
         open={modalAbierto}
         modalTitle={tituloModal}
+        botonGuardado={true}
       >
         {children}
       </Modal>

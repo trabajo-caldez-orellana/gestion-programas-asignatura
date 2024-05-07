@@ -458,6 +458,8 @@ export interface ModalProps {
   children: React.ReactNode
   modalTitle?: string
   onClose: () => void
+  className?: string
+  botonGuardado?: boolean
 }
 
 export const enum TIPO_CORRELATIVA {
