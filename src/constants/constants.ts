@@ -490,3 +490,5 @@ export const ASIGNATURA_VACIA: DatoListaInterface = {
   id: -1,
   informacion: ''
 }
+
+export const VALOR_CAMPO_TEXTO_VACIO = 'Pendiente'

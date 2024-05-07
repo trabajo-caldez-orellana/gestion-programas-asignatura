@@ -25,7 +25,8 @@ import {
   DatoListaInterface,
   TIPO_CORRELATIVA,
   REQUISITOS_CORRELATIVA,
-  ASIGNATURA_VACIA
+  ASIGNATURA_VACIA,
+  VALOR_CAMPO_TEXTO_VACIO
 } from '../../../constants/constants'
 
 type useProgramaAsignaturaType = {
@@ -67,36 +68,57 @@ const useProgramaAsignatura = (
   const [errorCargandoPrograma, setErrorCargandoPrograma] = useState<string>('')
   const navigate = useNavigate()
 
-  const validarDatosPrograma = (): boolean => {
+  const validarDatosPrograma = (presentarAprobacion: boolean): boolean => {
     let esFormularioValido = true
     let erroresFormulario = ERRORES_DEFAULT_PROGRAMA_ASIGNATURA
+    let programaProvisional = programaAsignatura
 
     const camposTextoRequeridos = [
-      'bibliografia',
+      'fundamentacion',
       'contenidos',
       'cronograma',
-      'fundamentacion',
+      'bibliografia',
       'metodologiaAplicada',
       'recursos',
       'evaluacion',
       'investigacionDocentes',
       'investigacionEstudiantes',
-      'extensionDocentes',
-      'extensionEstudiantes'
+      'extensionEstudiantes',
+      'extensionDocentes'
     ]
 
     camposTextoRequeridos.forEach((campo) => {
-      if (!programaAsignatura.informacionAdicional[campo]) {
-        esFormularioValido = false
-        erroresFormulario = {
-          ...erroresFormulario,
-          informacionAdicional: {
-            ...erroresFormulario.informacionAdicional,
-            [campo]: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
+      if (presentarAprobacion) {
+        if (
+          !programaAsignatura.informacionAdicional[campo] ||
+          programaAsignatura.informacionAdicional[campo] ===
+            VALOR_CAMPO_TEXTO_VACIO
+        ) {
+          esFormularioValido = false
+          erroresFormulario = {
+            ...erroresFormulario,
+            informacionAdicional: {
+              ...erroresFormulario.informacionAdicional,
+              [campo]: MENSAJES_DE_ERROR.CAMPO_REQUERIDO
+            }
+          }
+        }
+      } else {
+        if (!programaAsignatura.informacionAdicional[campo]) {
+          programaProvisional = {
+            ...programaProvisional,
+            informacionAdicional: {
+              ...programaProvisional.informacionAdicional,
+              [campo]: VALOR_CAMPO_TEXTO_VACIO
+            }
           }
         }
       }
     })
+
+    if (!presentarAprobacion) {
+      setProgramaAsignatura(programaProvisional)
+    }
 
     const cantidadResultados =
       programaAsignatura.descriptores.resultadosAprendizaje.filter(
@@ -203,7 +225,7 @@ const useProgramaAsignatura = (
 
   const guardarPrograma = async (presentarAprobacion: boolean) => {
     setAccionEnProgreso(true)
-    if (validarDatosPrograma()) {
+    if (validarDatosPrograma(presentarAprobacion)) {
       if (
         modo === MODOS_PROGRAMA_ASIGNATURA.NUEVO ||
         modo === MODOS_PROGRAMA_ASIGNATURA.EDITAR_ULTIMO
