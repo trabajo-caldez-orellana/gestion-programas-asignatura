@@ -168,7 +168,6 @@ def set_up_tests():
     plan_carrera_1 = PlanDeEstudio.objects.create(
         carrera=carrera_1,
         fecha_inicio=fecha_inicio,
-        version="1",
         nombre="Plan de estudio Ingenieria en Computacion",
     )
     plan_carrera_1.asignaturas.set([asignatura_carrera_1, asignatura_compartida])
@@ -178,7 +177,6 @@ def set_up_tests():
     plan_carrera_2 = PlanDeEstudio.objects.create(
         carrera=carrera_2,
         fecha_inicio=fecha_inicio,
-        version="1",
         nombre="Plan de estudio Ingenieria Química",
     )
     plan_carrera_2.asignaturas.set([asignatura_carrera_2, asignatura_compartida])
