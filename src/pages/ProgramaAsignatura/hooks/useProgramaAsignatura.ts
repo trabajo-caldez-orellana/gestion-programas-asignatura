@@ -179,6 +179,8 @@ const useProgramaAsignatura = (
       navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
       setAccionEnProgreso(false)
     }
+
+    setAccionEnProgreso(false)
   }
 
   const pedirCambiosPrograma = async (mensaje: string) => {
@@ -186,8 +188,8 @@ const useProgramaAsignatura = (
     setAccionEnProgreso(true)
 
     if (response.status !== 200 && response.error) {
-      setErroresProgramaAsignatura(response.error)
       setAccionEnProgreso(false)
+      setErroresProgramaAsignatura(response.error)
       return
     }
 
@@ -195,6 +197,8 @@ const useProgramaAsignatura = (
       navigate(RUTAS_PAGINAS.TAREAS_PENDIENTES)
       setAccionEnProgreso(false)
     }
+
+    setAccionEnProgreso(false)
   }
 
   const guardarPrograma = async (presentarAprobacion: boolean) => {
@@ -239,6 +243,7 @@ const useProgramaAsignatura = (
         }
       }
     }
+    setAccionEnProgreso(false)
   }
 
   useEffect(
