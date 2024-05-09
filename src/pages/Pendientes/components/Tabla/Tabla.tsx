@@ -1,23 +1,17 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Modal, Spinner } from '../../../../components'
+import { Spinner } from '../../../../components'
 import './Tabla.css'
 import {
   RUTAS_PAGINAS,
   MODOS_PROGRAMA_ASIGNATURA
 } from '../../../../constants/constants'
-import { reutilizarUltimoPrograma } from '../../services'
 import useTareasPendientes from '../../hooks/useTareasPendientes'
 
 export default function Tabla() {
-  const { tareasPendientes, refetchTareas, loading, error } =
-    useTareasPendientes()
+  const { tareasPendientes, loading, error } = useTareasPendientes()
 
   const navigate = useNavigate()
-  const [cargando, setCargando] = useState<boolean>(false)
-  const [modalAbierto, setModalAbierto] = useState<boolean>(false)
-  const [mensajeRespuesta, setMensajeRespuesta] = useState<string>('')
 
   const columnasTablaPendientes = [
     'ASIGNATURA',
@@ -27,32 +21,6 @@ export default function Tabla() {
 
   const handleVerPrograma = (id: number | null) => {
     navigate(`${RUTAS_PAGINAS.PROGRAMA_DE_ASIGNATURA}/${id}`)
-  }
-
-  const handleReutilizarUltimoPrograma = async (id: number | null) => {
-    setCargando(true)
-    setModalAbierto(true)
-    setMensajeRespuesta('')
-
-    if (id) {
-      const response = await reutilizarUltimoPrograma(id)
-      if (response.status === 200) {
-        setMensajeRespuesta('Programa reutilizado con exito.')
-        refetchTareas()
-      } else {
-        if (response.error) {
-          setMensajeRespuesta(response.error)
-        } else {
-          setMensajeRespuesta('Error inesperado. Intente nuevamente más tarde.')
-        }
-      }
-
-      setCargando(false)
-      return
-    }
-
-    setCargando(false)
-    setMensajeRespuesta('No se selcciono ninguna asignatura')
   }
 
   const handleModificarPrograma = (id: number | null) => {
@@ -94,13 +62,6 @@ export default function Tabla() {
     </div>
   ) : (
     <article>
-      <Modal
-        open={modalAbierto}
-        onClose={() => setModalAbierto(false)}
-        modalTitle="Reutilizar Ultimo Programa"
-      >
-        {cargando ? 'Cargando...' : mensajeRespuesta}
-      </Modal>
       <table className="content-table">
         <thead>
           <tr>
@@ -133,15 +94,6 @@ export default function Tabla() {
                             }
                             className="fas fa-edit boton-accion"
                             title="Editar programa"
-                          ></i>
-                        )}
-                        {item.accionesPosibles.reutilizarUltimo && (
-                          <i
-                            onClick={() =>
-                              handleReutilizarUltimoPrograma(item.asignatura.id)
-                            }
-                            className="fas fa-redo boton-accion"
-                            title="Usar ultimo programa"
                           ></i>
                         )}
                         {item.accionesPosibles.modificarUltimo && (

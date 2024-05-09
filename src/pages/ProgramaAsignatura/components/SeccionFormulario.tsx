@@ -9,6 +9,14 @@ export const SeccionFormulario = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  &.resultado-aprendizaje-text {
+    width: 100%;
+    min-height: 100px;
+    padding: 8px;
+    overflow-y: hidden;
+    resize: none;
+  }
 `
 
 export const InputOutsideContainer = styled.div`

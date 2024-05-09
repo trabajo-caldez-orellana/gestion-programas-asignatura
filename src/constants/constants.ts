@@ -458,6 +458,8 @@ export interface ModalProps {
   children: React.ReactNode
   modalTitle?: string
   onClose: () => void
+  className?: string
+  botonGuardado?: boolean
 }
 
 export const enum TIPO_CORRELATIVA {
@@ -490,3 +492,5 @@ export const ASIGNATURA_VACIA: DatoListaInterface = {
   id: -1,
   informacion: ''
 }
+
+export const VALOR_CAMPO_TEXTO_VACIO = 'Pendiente'

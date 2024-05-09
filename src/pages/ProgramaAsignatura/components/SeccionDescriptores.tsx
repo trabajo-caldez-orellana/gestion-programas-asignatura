@@ -189,6 +189,7 @@ export default function SeccionDescriptores({
       <Formulario>
         <InputOutsideContainer>
           <SeleccionConModal
+            className="resultadosAprendizaje"
             onOpenModal={abrirModalResultados}
             name="resultados-aprendizaje"
             valorInput={resultadosAprendizajeCount()}
@@ -200,11 +201,11 @@ export default function SeccionDescriptores({
               <div key={index}>
                 {/* {TODO: CREAR COMPONENTE} */}
                 <textarea
+                  className="resultado-aprendizaje-text"
                   key={index}
                   value={resultado}
                   onChange={(e) => handleResultadosAprendizajeChange(e, index)}
-                  rows={4}
-                  cols={50}
+                  rows={2}
                   disabled={modoLectura}
                 />
                 {index === descriptores.resultadosAprendizaje.length - 1 && (
@@ -226,6 +227,7 @@ export default function SeccionDescriptores({
             valorInput={cantidadEjesTransversales}
             mensajeDeError={erroresPrograma.descriptores.ejesTransversales}
             isDisabled={modoLectura}
+            className="resultadosAprendizaje"
             tituloModal="Ejes Transversales"
           >
             {descriptores.ejesTransversales.map((eje, index) => (
@@ -278,6 +280,7 @@ export default function SeccionDescriptores({
           <SeleccionConModal
             name="actividades-reservadas"
             valorInput={cantidadActividadesReservadas}
+            className="resultadosAprendizaje"
             mensajeDeError={erroresPrograma.descriptores.actividadesReservadas}
             isDisabled={modoLectura}
             tituloModal="Actividades Reservadas"
@@ -330,6 +333,7 @@ export default function SeccionDescriptores({
         </InputOutsideContainer>
         <WholeWidthInputContainer>
           <DoubleSelectionInput
+            modoLectura={modoLectura}
             datosParaSeleccion={datosListaSeleccionDescriptores}
             titulo="DESCRIPTORES"
             mensajeDeError={erroresPrograma.descriptores.descriptores}

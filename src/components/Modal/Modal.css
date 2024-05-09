@@ -42,3 +42,8 @@
   border-radius: 0 0 5px 5px;
   font-size: 16px;
 }
+
+.resultadosAprendizaje {
+  width: 90% !important;
+  max-width: 900px !important;
+}

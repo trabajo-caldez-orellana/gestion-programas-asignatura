@@ -34,6 +34,9 @@ export const SectionDivider = styled.hr`
   width: 90%;
   background-color: var(--secondary-color);
   border: none;
+  width: 100%;
+  height: auto;
+  resize: none;
 `
 
 export const TextAreaContainer = styled.div`
@@ -173,6 +176,10 @@ export const ListadoColumna = styled.li`
 export const DoubleSelectionCoulumn = styled.div`
   width: 50%;
   background-color: #00000022;
+
+  &.lectura {
+    width: 100%;
+  }
 `
 
 export const TituloColumna = styled(TituloLista)`
