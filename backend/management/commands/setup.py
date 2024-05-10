@@ -256,7 +256,6 @@ class Command(BaseCommand):
             plan_inactivo = PlanDeEstudio(
                 fecha_inicio=fecha_inicio_anio_anterior,
                 fecha_fin=fecha_fin_anio_anterior,
-                version=f"Version Plan {nombre_carrera} número 1.",
                 nombre=f"Plan de Estudios {nombre_carrera}",
                 carrera=carrera,
             )
@@ -269,7 +268,6 @@ class Command(BaseCommand):
 
             plan_activo = PlanDeEstudio(
                 fecha_inicio=fecha_inicio_anio_actual,
-                version=f"Version Plan {nombre_carrera} número 2.",
                 nombre=f"Plan de Estudios {nombre_carrera}",
                 carrera=carrera,
             )
