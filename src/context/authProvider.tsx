@@ -21,6 +21,8 @@ interface AuthContextType {
   setAuth: React.Dispatch<React.SetStateAction<Auth>>
   handleLogout: () => void
   getAuthUser: () => void
+  loading: boolean
+  error: boolean
 }
 
 const defaultAuth: Auth = {
@@ -41,11 +43,15 @@ const AuthContext = createContext<AuthContextType>({
   auth: defaultAuth,
   setAuth: () => {},
   handleLogout: () => {},
-  getAuthUser: () => {}
+  getAuthUser: () => {},
+  loading: true,
+  error: false
 })
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [auth, setAuth] = useState<Auth>(defaultAuth)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const navigate = useNavigate()
 
   const handleLogout = async () => {
@@ -58,6 +64,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const getAuthUser = async () => {
+    setLoading(true)
     client
       .get(`auth/me/`)
       .then((res) => {
@@ -70,9 +77,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           userProfilePicture: user.profile_picture,
           userRoles: roles
         })
+        setLoading(false)
       })
       .catch((err) => {
         console.log('[ERROR ON AUTH]', err)
+        setLoading(false)
+        setError(true)
       })
   }
 
@@ -81,7 +91,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, handleLogout, getAuthUser }}>
+    <AuthContext.Provider value={{ auth, setAuth, handleLogout, getAuthUser, loading, error}}>
       {children}
     </AuthContext.Provider>
   )
