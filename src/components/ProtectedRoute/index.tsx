@@ -7,25 +7,18 @@ import { RUTAS_PAGINAS } from '../../constants/constants'
 import useAuth from '../../hooks/useAuth'
 import Spinner from '../Spinner/Spinner'
 
-const RUTAS_DESPROTEGIDAS = [RUTAS_PAGINAS.LOGIN, RUTAS_PAGINAS.LOGIN_LOADING]
+const RUTAS_DESPROTEGIDAS = [RUTAS_PAGINAS.LOGIN, RUTAS_PAGINAS.LOGIN_LOADING, '/']
 
 const ProtectedRoute: React.FC<PropsWithChildren> = ({ children }) => {
   const { auth, loading } = useAuth()
 
-  console.log('auth', auth)
-
-  console.log(loading, 'loading')
-
   const navigate = useNavigate()
   const location = useLocation()
-
-  console.log(location, 'location')
 
   const [isReadyToRender, setIsReadyToRender] = useState<boolean>(false)
 
   useEffect(() => {
     const pathname = location.pathname
-    console.log(pathname, 'pathname')
     // Si la autenticación está en proceso, no hacer nada
     if (loading) return
 
