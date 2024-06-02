@@ -17,7 +17,7 @@ class ManagerPlanDeEstudio(models.Manager):
 class PlanDeEstudio(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField(blank=True, null=True)
-    nombre = models.CharField()
+    nombre = models.CharField(max_length=255)
 
     carrera = models.ForeignKey("Carrera", on_delete=models.PROTECT)
     asignaturas = models.ManyToManyField(Asignatura, related_name="planes_de_estudio")
