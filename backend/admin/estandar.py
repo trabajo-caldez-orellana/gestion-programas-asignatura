@@ -15,7 +15,7 @@ class AdminEstandar(admin.ModelAdmin):
         if user.is_superuser:
             return True
 
-        roles = Rol.objects.filter(user=user)
+        roles = Rol.objects.filter(usuario=user)
 
         for rol in roles:
             if rol.rol == Roles.SECRETARIO:
